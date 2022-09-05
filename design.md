@@ -1,0 +1,77 @@
+Panels:
+- Process Control/Status
+  - Process Start/Stop
+  - Client Connection Status
+  - Device Connection Status?
+  - Error/Update Status?
+- Devices
+  - Show all devices that have connected, devices should save index on first connect
+  - Device UI
+    - Allow/Deny
+    - Forget/Remove
+    - Set display name
+    - Set message limits
+- Log
+  - Set log level
+  - Clear log
+  - Upload to Sentry
+- Settings
+  - All intiface settings
+- News
+  - Fetch from website
+- About/Help
+  - Static
+
+Blocs:
+- Intiface Process
+  - Backed by process or native library calls
+  - States:
+    - Not Started
+    - Starting    
+    - Running
+    - Error (crash, didn't come up)
+  - Emits:
+    - Log Messages
+    - Error Messages (?)
+    - Client Connected
+    - Client Disconnected
+    - Client Rejected
+    - Device Added
+    - Device Removed
+  - Needed by:
+    - Log Panel
+      - Log events
+    - Process Panel
+      - State changes, Start/Stop controls
+    - Device panel
+      - Device Connected/Added/Removed events
+- Intiface Configuration
+  - Backed by file/app storage
+  - No states (just saves to/loads from file or app storage)
+  - Needed by:
+    - Settings Panel
+      - Update configurations
+    - Process Panel
+      - Create arguments for starting process
+- User Device Configuration
+  - Backed by file/app storage
+  - No states (just saves to/loads from file or app storage)
+  - Needed by:
+    - Device Panel
+- Updater
+  - Backed by API to github or device config storage
+  - States:
+    - Idle
+    - Updating
+    - Statuses Updated
+    - Engine Updated (Desktop Only, Engine built into app on mobile)
+    - Device Config File Updated
+    - News Updated
+    - Error
+  - Emits:
+    - Update Needed
+    - Update Successful
+  - Needed by:
+    - Process panel? If we keep errors/updates there? Turn off while updating?
+    - News Panel - Update
+    - Settings Panel - Status/Trigger update checks
