@@ -137,55 +137,51 @@ Map<String, dynamic> _$ClientRejectedToJson(ClientRejected instance) =>
 
 EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
     EngineMessage()
-      ..messageVersion = json['messageVersion'] == null
+      ..messageVersion = json['MessageVersion'] == null
           ? null
           : MessageVersion.fromJson(
-              json['messageVersion'] as Map<String, dynamic>)
-      ..engineLog = json['engineLog'] == null
-          ? null
-          : EngineLog.fromJson(json['engineLog'] as Map<String, dynamic>)
-      ..engineStarted = json['engineStarted'] == null
+              json['MessageVersion'] as Map<String, dynamic>)
+      ..engineStarted = json['EngineStarted'] == null
           ? null
           : EngineStarted.fromJson(
-              json['engineStarted'] as Map<String, dynamic>)
-      ..engineError = json['engineError'] == null
+              json['EngineStarted'] as Map<String, dynamic>)
+      ..engineError = json['EngineError'] == null
           ? null
-          : EngineError.fromJson(json['engineError'] as Map<String, dynamic>)
-      ..engineStopped = json['engineStopped'] == null
+          : EngineError.fromJson(json['EngineError'] as Map<String, dynamic>)
+      ..engineStopped = json['EngineStopped'] == null
           ? null
           : EngineStopped.fromJson(
-              json['engineStopped'] as Map<String, dynamic>)
-      ..clientConnected = json['clientConnected'] == null
+              json['EngineStopped'] as Map<String, dynamic>)
+      ..clientConnected = json['ClientConnected'] == null
           ? null
           : ClientConnected.fromJson(
-              json['clientConnected'] as Map<String, dynamic>)
-      ..clientDisconnected = json['clientDisconnected'] == null
+              json['ClientConnected'] as Map<String, dynamic>)
+      ..clientDisconnected = json['ClientDisconnected'] == null
           ? null
           : ClientDisconnected.fromJson(
-              json['clientDisconnected'] as Map<String, dynamic>)
-      ..deviceConnected = json['deviceConnected'] == null
+              json['ClientDisconnected'] as Map<String, dynamic>)
+      ..deviceConnected = json['DeviceConnected'] == null
           ? null
           : DeviceConnected.fromJson(
-              json['deviceConnected'] as Map<String, dynamic>)
-      ..deviceDisconnected = json['deviceDisconnected'] == null
+              json['DeviceConnected'] as Map<String, dynamic>)
+      ..deviceDisconnected = json['DeviceDisconnected'] == null
           ? null
           : DeviceDisconnected.fromJson(
-              json['deviceDisconnected'] as Map<String, dynamic>)
-      ..clientRejected = json['clientRejected'] == null
+              json['DeviceDisconnected'] as Map<String, dynamic>)
+      ..clientRejected = json['ClientRejected'] == null
           ? null
           : ClientRejected.fromJson(
-              json['clientRejected'] as Map<String, dynamic>);
+              json['ClientRejected'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
     <String, dynamic>{
-      'messageVersion': instance.messageVersion,
-      'engineLog': instance.engineLog,
-      'engineStarted': instance.engineStarted,
-      'engineError': instance.engineError,
-      'engineStopped': instance.engineStopped,
-      'clientConnected': instance.clientConnected,
-      'clientDisconnected': instance.clientDisconnected,
-      'deviceConnected': instance.deviceConnected,
-      'deviceDisconnected': instance.deviceDisconnected,
-      'clientRejected': instance.clientRejected,
+      'MessageVersion': instance.messageVersion,
+      'EngineStarted': instance.engineStarted,
+      'EngineError': instance.engineError,
+      'EngineStopped': instance.engineStopped,
+      'ClientConnected': instance.clientConnected,
+      'ClientDisconnected': instance.clientDisconnected,
+      'DeviceConnected': instance.deviceConnected,
+      'DeviceDisconnected': instance.deviceDisconnected,
+      'ClientRejected': instance.clientRejected,
     };

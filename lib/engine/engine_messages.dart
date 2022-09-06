@@ -42,7 +42,7 @@ class EngineLogMessage {
 
 @JsonSerializable() //)
 class EngineLog {
-  EngineLogMessage? message = null;
+  EngineLogMessage? message;
   factory EngineLog.fromJson(Map<String, dynamic> json) => _$EngineLogFromJson(json);
   Map<String, dynamic> toJson() => _$EngineLogToJson(this);
   EngineLog();
@@ -114,18 +114,19 @@ class ClientRejected {
   ClientRejected();
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.pascal)
 class EngineMessage {
-  MessageVersion? messageVersion = null;
-  EngineLog? engineLog = null;
-  EngineStarted? engineStarted = null;
-  EngineError? engineError = null;
-  EngineStopped? engineStopped = null;
-  ClientConnected? clientConnected = null;
-  ClientDisconnected? clientDisconnected = null;
-  DeviceConnected? deviceConnected = null;
-  DeviceDisconnected? deviceDisconnected = null;
-  ClientRejected? clientRejected = null;
+  MessageVersion? messageVersion;
+  // TODO Restore engine log messages, just needs two levels of json decoding.
+  //EngineLog? engineLog ;
+  EngineStarted? engineStarted;
+  EngineError? engineError;
+  EngineStopped? engineStopped;
+  ClientConnected? clientConnected;
+  ClientDisconnected? clientDisconnected;
+  DeviceConnected? deviceConnected;
+  DeviceDisconnected? deviceDisconnected;
+  ClientRejected? clientRejected;
 
   factory EngineMessage.fromJson(Map<String, dynamic> json) => _$EngineMessageFromJson(json);
 

@@ -1,17 +1,22 @@
-part of 'engine_control_cubit.dart';
+part of 'engine_control_bloc.dart';
 
-enum EngineControlStatus { stopped, starting, running, error }
+enum EngineControlStatus {
+  stopped,
+  starting,
+  clientDisconnected,
+  clientConnected,
+  error;
 
-extension EngineControlStatusX on EngineControlStatus {
   bool get isStopped => this == EngineControlStatus.stopped;
   bool get isStarting => this == EngineControlStatus.starting;
-  bool get isRunning => this == EngineControlStatus.running;
+  bool get isRunning => this == EngineControlStatus.clientConnected || this == EngineControlStatus.clientDisconnected;
+  bool get isClientConnected => this == EngineControlStatus.clientConnected;
+  bool get isClientDisconnected => this == EngineControlStatus.clientDisconnected;
   bool get isError => this == EngineControlStatus.error;
 }
 
-@JsonSerializable()
 class EngineControlState extends Equatable {
-  EngineControlState({
+  const EngineControlState({
     this.status = EngineControlStatus.stopped,
   });
 
@@ -24,8 +29,6 @@ class EngineControlState extends Equatable {
       status: status ?? this.status,
     );
   }
-
-  Map<String, dynamic> toJson() => _$EngineControlStateToJson(this);
 
   @override
   List<Object?> get props => [status];

@@ -20,7 +20,9 @@ class ProcessEngineProvider implements EngineProvider {
       throw const EngineProviderStartException("Process path cannot be null/empty for ProcessEngineProvider");
     }
     print("Starting ${parameters.engineArguments}");
-    _serverProcess = await Process.start(parameters.processPath!, parameters.engineArguments);
+    //_serverProcess = await Process.start(parameters.processPath!, parameters.engineArguments);
+    _serverProcess = await Process.start(
+        "C:\\Users\\qdot\\code\\intiface-cli-rs\\target\\debug\\intiface-cli.exe", parameters.engineArguments);
     // Wait for the process to bring up its server before trying to connect.
     // TODO We should get the websocket port as an argument here.
     _ipcChannel = WebSocketChannel.connect(
