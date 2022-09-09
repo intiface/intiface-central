@@ -20,7 +20,7 @@ void main() async {
     const String windowTitle = kDebugMode ? "Intiface Central DEBUG" : "Intiface Central";
 
     WindowOptions windowOptions = const WindowOptions(
-      //size: Size(600, 200),
+      size: Size(800, 600),
       center: true,
       title: windowTitle,
       //backgroundColor: Colors.transparent,

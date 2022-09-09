@@ -32,7 +32,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
     on<EngineControlEventStop>((event, emit) async {
       emit(state.copyWith(status: EngineControlStatus.starting));
       await _repo.stop();
-      emit(state.copyWith(status: EngineControlStatus.clientDisconnected));
+      emit(state.copyWith(status: EngineControlStatus.stopped));
     });
   }
 

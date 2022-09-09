@@ -1,10 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/body_widget.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/control_widget.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:intiface_central/navigation_cubit.dart';
 
 class IntifaceCentralApp extends StatelessWidget {
   const IntifaceCentralApp(
@@ -31,12 +33,15 @@ class IntifaceCentralView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Intiface Central',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: BlocProvider(
-            create: (context) => EngineControlBloc(RepositoryProvider.of(context)),
-            child: const IntifaceCentralPage()));
+        home: MultiBlocProvider(providers: [
+          BlocProvider(create: (context) => EngineControlBloc(RepositoryProvider.of(context))),
+          BlocProvider(create: (context) => NavigationCubit()),
+          BlocProvider(create: (context) => IntifaceConfigurationCubit(RepositoryProvider.of(context)))
+        ], child: const IntifaceCentralPage()));
   }
 }
 
@@ -46,15 +51,7 @@ class IntifaceCentralPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(mainAxisSize: MainAxisSize.max, children: const [
-      ControlWidget(),
-      /*
-      Row(children: const [
-        Expanded(
-          child: SizedBox(),
-        )
-      ])
-      */
-    ]));
+        body: Column(
+            mainAxisSize: MainAxisSize.max, children: [const ControlWidget(), const Divider(height: 2), BodyWidget()]));
   }
 }

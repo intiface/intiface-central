@@ -1,8 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:intiface_central/configuration/intiface_configuration_provider.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 
+class IntifaceConfigurationState {}
+
+class IntifaceConfigurationStateNone extends IntifaceConfigurationState {}
+
+class StartServerOnStartupState extends IntifaceConfigurationState {
+  final bool value;
+  StartServerOnStartupState(this.value);
+}
+
+class ServerNameState extends IntifaceConfigurationState {
+  final String value;
+  ServerNameState(this.value);
+}
+/*
 enum IntifaceConfigurationStatus {
   none,
   serverName,
@@ -48,13 +61,19 @@ class IntifaceConfigurationState extends Equatable {
   @override
   List<Object?> get props => [status];
 }
+*/
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
-  IntifaceConfigurationCubit(this._repo) : super(const IntifaceConfigurationState());
+  IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
+
+  set startServerOnStartup(bool value) {
+    _repo.startServerOnStartup = value;
+    emit(StartServerOnStartupState(value));
+  }
 
   void serverName(String value) {
     _repo.serverName = value;
-    emit(state.copyWith(status: IntifaceConfigurationStatus.serverName));
+    emit(ServerNameState(value));
   }
 }
