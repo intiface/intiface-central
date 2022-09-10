@@ -27,8 +27,8 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateNews,
           (NavigationCubit cubit) => cubit.goNews(),
           const NavigationRailDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
+            icon: Icon(Icons.newspaper_outlined),
+            selectedIcon: Icon(Icons.newspaper),
             label: Text('News'),
           ),
           () => const NewsWidget()),
@@ -36,8 +36,8 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateDevices,
           (NavigationCubit cubit) => cubit.goDevices(),
           const NavigationRailDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
+            icon: Icon(Icons.vibration_outlined),
+            selectedIcon: Icon(Icons.vibration),
             label: Text('Devices'),
           ),
           () => const NewsWidget()),
