@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/news_widget.dart';
 import 'package:intiface_central/settings_widget.dart';
@@ -57,7 +58,7 @@ class BodyWidget extends StatelessWidget {
             selectedIcon: Icon(Icons.text_snippet),
             label: Text('Log'),
           ),
-          () => const NewsWidget()),
+          () => const LogWidget()),
       NavigationDestination(
           (state) => state is NavigationStateAbout,
           (NavigationCubit cubit) => cubit.goAbout(),

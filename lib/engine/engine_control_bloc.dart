@@ -21,9 +21,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       await _repo.start();
       emit(state.copyWith(status: EngineControlStatus.clientDisconnected));
       return emit.forEach(stream, onData: (EngineMessage message) {
-        print("$message");
         if (message.clientConnected != null) {
-          print("CLIENT CONNECTED");
           return state.copyWith(status: EngineControlStatus.clientConnected);
         }
         return state;

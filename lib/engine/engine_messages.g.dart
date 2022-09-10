@@ -60,13 +60,23 @@ Map<String, dynamic> _$EngineLogMessageToJson(EngineLogMessage instance) =>
       'target': instance.target,
     };
 
-EngineLog _$EngineLogFromJson(Map<String, dynamic> json) => EngineLog()
-  ..message = json['message'] == null
-      ? null
-      : EngineLogMessage.fromJson(json['message'] as Map<String, dynamic>);
+EngineLog _$EngineLogFromJson(Map<String, dynamic> json) => $checkedCreate(
+      'EngineLog',
+      json,
+      ($checkedConvert) {
+        $checkKeys(
+          json,
+          allowedKeys: const ['message'],
+        );
+        final val = EngineLog();
+        $checkedConvert('message', (v) => val.rawMessage = v as String?);
+        return val;
+      },
+      fieldKeyMap: const {'rawMessage': 'message'},
+    );
 
 Map<String, dynamic> _$EngineLogToJson(EngineLog instance) => <String, dynamic>{
-      'message': instance.message,
+      'message': instance.rawMessage,
     };
 
 EngineStarted _$EngineStartedFromJson(Map<String, dynamic> json) =>
@@ -141,6 +151,9 @@ EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
           ? null
           : MessageVersion.fromJson(
               json['MessageVersion'] as Map<String, dynamic>)
+      ..engineLog = json['EngineLog'] == null
+          ? null
+          : EngineLog.fromJson(json['EngineLog'] as Map<String, dynamic>)
       ..engineStarted = json['EngineStarted'] == null
           ? null
           : EngineStarted.fromJson(
@@ -176,6 +189,7 @@ EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
     <String, dynamic>{
       'MessageVersion': instance.messageVersion,
+      'EngineLog': instance.engineLog,
       'EngineStarted': instance.engineStarted,
       'EngineError': instance.engineError,
       'EngineStopped': instance.engineStopped,

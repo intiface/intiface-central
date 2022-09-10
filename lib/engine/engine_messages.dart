@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'engine_messages.g.dart';
@@ -6,7 +8,6 @@ part 'engine_messages.g.dart';
 class MessageVersion {
   int version = -1;
   factory MessageVersion.fromJson(Map<String, dynamic> json) => _$MessageVersionFromJson(json);
-  Map<String, dynamic> toJson() => _$MessageVersionToJson(this);
   MessageVersion();
 }
 
@@ -14,7 +15,6 @@ class MessageVersion {
 class EngineLogMessageSpan {
   String? name;
   factory EngineLogMessageSpan.fromJson(Map<String, dynamic> json) => _$EngineLogMessageSpanFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineLogMessageSpanToJson(this);
   EngineLogMessageSpan();
 }
 
@@ -25,7 +25,6 @@ class EngineLogMessageFields {
   EngineLogMessageSpan? span;
   List<EngineLogMessageSpan>? spans;
   factory EngineLogMessageFields.fromJson(Map<String, dynamic> json) => _$EngineLogMessageFieldsFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineLogMessageFieldsToJson(this);
   EngineLogMessageFields();
 }
 
@@ -33,25 +32,31 @@ class EngineLogMessageFields {
 class EngineLogMessage {
   String timestamp = "";
   String level = "";
-  Map<String, dynamic> fields = new Map();
+  Map<String, dynamic> fields = {};
   String target = "";
   factory EngineLogMessage.fromJson(Map<String, dynamic> json) => _$EngineLogMessageFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineLogMessageToJson(this);
   EngineLogMessage();
 }
 
-@JsonSerializable() //)
+@JsonSerializable(checked: true, disallowUnrecognizedKeys: true) //)
 class EngineLog {
+  @JsonKey(name: "message")
+  String? rawMessage;
+
+  @JsonKey(ignore: true)
   EngineLogMessage? message;
-  factory EngineLog.fromJson(Map<String, dynamic> json) => _$EngineLogFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineLogToJson(this);
+
+  factory EngineLog.fromJson(Map<String, dynamic> json) {
+    EngineLog log = _$EngineLogFromJson(json);
+    log.message = EngineLogMessage.fromJson(jsonDecode(log.rawMessage!));
+    return log;
+  }
   EngineLog();
 }
 
 @JsonSerializable()
 class EngineStarted {
   factory EngineStarted.fromJson(Map<String, dynamic> json) => _$EngineStartedFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineStartedToJson(this);
   EngineStarted();
 }
 
@@ -59,14 +64,12 @@ class EngineStarted {
 class EngineError {
   String error = "";
   factory EngineError.fromJson(Map<String, dynamic> json) => _$EngineErrorFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineErrorToJson(this);
   EngineError();
 }
 
 @JsonSerializable()
 class EngineStopped {
   factory EngineStopped.fromJson(Map<String, dynamic> json) => _$EngineStoppedFromJson(json);
-  Map<String, dynamic> toJson() => _$EngineStoppedToJson(this);
   EngineStopped();
 }
 
@@ -75,14 +78,12 @@ class ClientConnected {
   @JsonKey(name: "client_name")
   String clientName = "";
   factory ClientConnected.fromJson(Map<String, dynamic> json) => _$ClientConnectedFromJson(json);
-  Map<String, dynamic> toJson() => _$ClientConnectedToJson(this);
   ClientConnected();
 }
 
 @JsonSerializable()
 class ClientDisconnected {
   factory ClientDisconnected.fromJson(Map<String, dynamic> json) => _$ClientDisconnectedFromJson(json);
-  Map<String, dynamic> toJson() => _$ClientDisconnectedToJson(this);
   ClientDisconnected();
 }
 
@@ -94,7 +95,6 @@ class DeviceConnected {
   @JsonKey(name: "display_name", defaultValue: null)
   final String? displayName;
   factory DeviceConnected.fromJson(Map<String, dynamic> json) => _$DeviceConnectedFromJson(json);
-  Map<String, dynamic> toJson() => _$DeviceConnectedToJson(this);
   DeviceConnected({required this.name, required this.index, required this.address, this.displayName});
 }
 
@@ -102,7 +102,6 @@ class DeviceConnected {
 class DeviceDisconnected {
   int index = -1;
   factory DeviceDisconnected.fromJson(Map<String, dynamic> json) => _$DeviceDisconnectedFromJson(json);
-  Map<String, dynamic> toJson() => _$DeviceDisconnectedToJson(this);
   DeviceDisconnected();
 }
 
@@ -110,7 +109,6 @@ class DeviceDisconnected {
 class ClientRejected {
   String reason = "";
   factory ClientRejected.fromJson(Map<String, dynamic> json) => _$ClientRejectedFromJson(json);
-  Map<String, dynamic> toJson() => _$ClientRejectedToJson(this);
   ClientRejected();
 }
 
@@ -118,7 +116,7 @@ class ClientRejected {
 class EngineMessage {
   MessageVersion? messageVersion;
   // TODO Restore engine log messages, just needs two levels of json decoding.
-  //EngineLog? engineLog ;
+  EngineLog? engineLog;
   EngineStarted? engineStarted;
   EngineError? engineError;
   EngineStopped? engineStopped;

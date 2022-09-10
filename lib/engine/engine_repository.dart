@@ -8,16 +8,22 @@ import 'package:intiface_central/configuration/intiface_configuration_repository
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:loggy/loggy.dart';
 
 class EngineRepository {
   final EngineProvider _provider;
   final IntifaceConfigurationRepository _configRepo;
-  final StreamController<EngineMessage> _engineMessageStream = StreamController();
+  final StreamController<EngineMessage> _engineMessageStream = StreamController.broadcast();
 
   EngineRepository(this._provider, this._configRepo) {
     _provider.engineRawMessageStream.forEach((element) {
-      var message = EngineMessage.fromJson(jsonDecode(element));
-      _engineMessageStream.add(message);
+      try {
+        var message = EngineMessage.fromJson(jsonDecode(element));
+        _engineMessageStream.add(message);
+      } catch (e) {
+        print(e);
+        logError("Error decoding engine message: $e");
+      }
     });
   }
 

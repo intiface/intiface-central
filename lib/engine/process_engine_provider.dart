@@ -1,5 +1,6 @@
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
+import 'package:loggy/loggy.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:io';
 import 'dart:async';
@@ -30,11 +31,9 @@ class ProcessEngineProvider implements EngineProvider {
     );
     _ipcChannel!.stream.forEach((element) {
       try {
-        print("$element");
         _processMessageStream.add(element);
       } catch (e, stacktrace) {
-        print("$e");
-        print("$stacktrace");
+        logError("Error adding message to stream: $e");
         stop();
       }
     });
