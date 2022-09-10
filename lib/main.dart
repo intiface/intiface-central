@@ -62,7 +62,20 @@ void main() async {
 
   engineRepo.messageStream.forEach((message) {
     if (message.engineLog != null) {
-      logInfo(message.engineLog!.message!.fields["message"]);
+      // TODO Turn level into an enum
+      var level = message.engineLog!.message!.level;
+      if (level == "DEBUG") {
+        logDebug(message.engineLog!.message!.fields["message"]);
+      } else if (level == "INFO") {
+        logInfo(message.engineLog!.message!.fields["message"]);
+      } else if (level == "ERROR") {
+        logError(message.engineLog!.message!.fields["message"]);
+      } else if (level == "WARN") {
+        logWarning(message.engineLog!.message!.fields["message"]);
+      } else if (level == "TRACE") {
+        // TODO Implement trace logging level for loggy
+        //log(message.engineLog!.message!.fields["message"]);
+      }
     }
   });
 
