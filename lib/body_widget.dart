@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/device_widget.dart';
 import 'package:intiface_central/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/news_widget.dart';
@@ -27,7 +28,7 @@ class BodyWidget extends StatelessWidget {
       NavigationDestination((state) => state is NavigationStateNews, (NavigationCubit cubit) => cubit.goNews(),
           Icons.newspaper_outlined, Icons.newspaper, 'News', () => const NewsWidget()),
       NavigationDestination((state) => state is NavigationStateDevices, (NavigationCubit cubit) => cubit.goDevices(),
-          Icons.vibration_outlined, Icons.vibration, 'Devices', () => const NewsWidget()),
+          Icons.vibration_outlined, Icons.vibration, 'Devices', () => const DeviceWidget()),
       NavigationDestination((state) => state is NavigationStateSettings, (NavigationCubit cubit) => cubit.goSettings(),
           Icons.settings_outlined, Icons.settings, 'Settings', () => const SettingWidget()),
       NavigationDestination((state) => state is NavigationStateLogs, (NavigationCubit cubit) => cubit.goLogs(),
@@ -64,18 +65,12 @@ class BodyWidget extends StatelessWidget {
                       destinations: destinations
                           .map((v) => NavigationRailDestination(icon: Icon(v.icon), label: Text(v.title)))
                           .toList()),
-                  Expanded(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [destinations[selectedIndex].widgetProvider()]))
+                  Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
                 ]));
               }
               return Expanded(
                   child: Column(children: <Widget>[
-                Expanded(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [destinations[selectedIndex].widgetProvider()])),
+                Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
                 BottomNavigationBar(
                     currentIndex: selectedIndex,
                     onTap: (int index) {

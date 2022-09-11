@@ -17,7 +17,7 @@ class ClientDisconnectedState extends EngineControlState {}
 
 class DeviceConnectedState extends EngineControlState {
   final String name;
-  final String displayName;
+  final String? displayName;
   final String address;
   final String protocol;
   final int index;
@@ -38,8 +38,17 @@ class EngineControlEventStart extends EngineControlEvent {}
 
 class EngineControlEventStop extends EngineControlEvent {}
 
+class EngineDevice {
+  final int index;
+  final String name;
+  final String address;
+
+  const EngineDevice(this.index, this.name, this.address);
+}
+
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   final EngineRepository _repo;
+  final Map<int, EngineDevice> _devices = {};
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
@@ -55,11 +64,14 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           return ClientDisconnectedState();
         }
         if (message.deviceConnected != null) {
-          return DeviceConnectedState(message.deviceConnected!.name, message.deviceConnected!.displayName!,
-              message.deviceConnected!.index, message.deviceConnected!.address, "lovense");
+          var deviceInfo = message.deviceConnected!;
+          _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.address);
+          return DeviceConnectedState(
+              deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.address, "lovense");
         }
         if (message.deviceDisconnected != null) {
-          return DeviceDisconnectedState(message.deviceConnected!.index);
+          _devices.remove(message.deviceDisconnected!.index);
+          return DeviceDisconnectedState(message.deviceDisconnected!.index);
         }
         return state;
       });
@@ -69,6 +81,8 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       emit(EngineStoppedState());
     });
   }
+
+  List<EngineDevice> get devices => _devices.values.toList();
 
   // TODO How to we detect/emit if the external process crashed on desktop?
 }
