@@ -6,6 +6,16 @@ class IntifaceConfigurationState {}
 
 class IntifaceConfigurationStateNone extends IntifaceConfigurationState {}
 
+class UseLightThemeState extends IntifaceConfigurationState {
+  final bool value;
+  UseLightThemeState(this.value);
+}
+
+class UseSideNavigationBar extends IntifaceConfigurationState {
+  final bool value;
+  UseSideNavigationBar(this.value);
+}
+
 class StartServerOnStartupState extends IntifaceConfigurationState {
   final bool value;
   StartServerOnStartupState(this.value);
@@ -63,6 +73,24 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set startServerOnStartup(bool value) {
     _repo.startServerOnStartup = value;
     emit(StartServerOnStartupState(value));
+  }
+
+  bool get useSideNavigationBar {
+    return _repo.useSideNavigationBar;
+  }
+
+  set useSideNavigationBar(value) {
+    _repo.useSideNavigationBar = value;
+    emit(UseSideNavigationBar(value));
+  }
+
+  bool get useLightTheme {
+    return _repo.useLightTheme;
+  }
+
+  set useLightTheme(value) {
+    _repo.useLightTheme = value;
+    emit(UseLightThemeState(value));
   }
 
   bool get startServerOnStartup {

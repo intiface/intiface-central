@@ -1,6 +1,8 @@
 import 'package:intiface_central/configuration/intiface_configuration_provider.dart';
 import 'dart:io';
 
+import 'package:intiface_central/util/intiface_util.dart';
+
 class IntifaceConfigurationRepository {
   IntifaceConfigurationProvider provider;
 
@@ -20,6 +22,8 @@ class IntifaceConfigurationRepository {
     showExtendedUI = provider.getBool("showExtendedUI") ?? false;
     allowRawMessages = provider.getBool("allowRawMessages") ?? false;
     unreadNews = provider.getBool("unreadNews") ?? false;
+    useSideNavigationBar = provider.getBool("useSideNavigationBar") ?? isDesktop();
+    useLightTheme = provider.getBool("useLightTheme") ?? true;
 
     // True on all platforms
     withBluetoothLE = provider.getBool("withBluetoothLE") ?? true;
@@ -35,51 +39,54 @@ class IntifaceConfigurationRepository {
     withLovenseHIDDongle = provider.getBool("withLovenseHIDDongle") ?? false;
     withLovenseSerialDongle = provider.getBool("withLovenseSerialDongle") ?? false;
   }
-
+  bool get useSideNavigationBar => provider.getBool("useSideNavigationBar")!;
+  set useSideNavigationBar(bool value) => provider.setBool("useSideNavigationBar", value);
+  bool get useLightTheme => provider.getBool("useLightTheme")!;
+  set useLightTheme(bool value) => provider.setBool("useLightTheme", value);
   String get serverName => provider.getString("serverName")!;
   set serverName(String value) => provider.setString("serverName", value);
-  get serverMaxPingTime => provider.getInt("maxPingTime")!;
-  set serverMaxPingTime(value) => provider.setInt("maxPingTime", value);
-  get websocketServerAllInterfaces => provider.getBool("websocketServerAllInterfaces")!;
-  set websocketServerAllInterfaces(value) => provider.setBool("websocketServerAllInterfaces", value);
-  get websocketServerPort => provider.getInt("websocketServerPort")!;
-  set websocketServerPort(value) => provider.setInt("websocketServerPort", value);
-  get serverLogLevel => provider.getString("serverLogLevel")!;
-  set serverLogLevel(value) => provider.setString("serverLogLevel", value);
-  get usePrereleaseEngine => provider.getBool("usePrereleaseEngine")!;
-  set usePrereleaseEngine(value) => provider.setBool("usePrereleaseEngine", value);
-  get checkForUpdateOnStart => provider.getBool("checkForUpdateOnStart")!;
-  set checkForUpdateOnStart(value) => provider.setBool("checkForUpdateOnStart", value);
-  get hasUsableEngineExecutable => provider.getBool("hasUsableEngineExecutable")!;
-  set hasUsableEngineExecutable(value) => provider.setBool("hasUsableEngineExecutable", value);
-  get startServerOnStartup => provider.getBool("startServerOnStartup")!;
-  set startServerOnStartup(value) => provider.setBool("startServerOnStartup", value);
-  get withBluetoothLE => provider.getBool("withBluetoothLE")!;
-  set withBluetoothLE(value) => provider.setBool("withBluetoothLE", value);
-  get withSerialPort => provider.getBool("withSerialPort")!;
-  set withSerialPort(value) => provider.setBool("withSerialPort", value);
-  get withHID => provider.getBool("withHID")!;
-  set withHID(value) => provider.setBool("withHID", value);
-  get withLovenseHIDDongle => provider.getBool("withLovenseHIDDongle")!;
-  set withLovenseHIDDongle(value) => provider.setBool("withLovenseHIDDongle", value);
-  get withLovenseSerialDongle => provider.getBool("withLovenseSerialDongle")!;
-  set withLovenseSerialDongle(value) => provider.setBool("withLovenseSerialDongle", value);
-  get withLovenseConnectService => provider.getBool("withLovenseConnectService")!;
-  set withLovenseConnectService(value) => provider.setBool("withLovenseConnectService", value);
-  get withXInput => provider.getBool("withXInput")!;
-  set withXInput(value) => provider.setBool("withXInput", value);
-  get withDeviceWebsocketServer => provider.getBool("withDeviceWebsocketServer")!;
-  set withDeviceWebsocketServer(value) => provider.setBool("withDeviceWebsocketServer", value);
-  get crashReporting => provider.getBool("crashReporting")!;
-  set crashReporting(value) => provider.setBool("crashReporting", value);
-  get showNotifications => provider.getBool("showNotifications")!;
-  set showNotifications(value) => provider.setBool("showNotifications", value);
-  get hasRunFirstUse => provider.getBool("hasRunFirstUse")!;
-  set hasRunFirstUse(value) => provider.setBool("hasRunFirstUse", value);
-  get showExtendedUI => provider.getBool("showExtendedUI")!;
-  set showExtendedUI(value) => provider.setBool("showExtendedUI", value);
-  get allowRawMessages => provider.getBool("allowRawMessages")!;
-  set allowRawMessages(value) => provider.setBool("allowRawMessages", value);
-  get unreadNews => provider.getBool("unreadNews")!;
-  set unreadNews(value) => provider.setBool("unreadNews", value);
+  int get serverMaxPingTime => provider.getInt("maxPingTime")!;
+  set serverMaxPingTime(int value) => provider.setInt("maxPingTime", value);
+  bool get websocketServerAllInterfaces => provider.getBool("websocketServerAllInterfaces")!;
+  set websocketServerAllInterfaces(bool value) => provider.setBool("websocketServerAllInterfaces", value);
+  int get websocketServerPort => provider.getInt("websocketServerPort")!;
+  set websocketServerPort(int value) => provider.setInt("websocketServerPort", value);
+  String get serverLogLevel => provider.getString("serverLogLevel")!;
+  set serverLogLevel(String value) => provider.setString("serverLogLevel", value);
+  bool get usePrereleaseEngine => provider.getBool("usePrereleaseEngine")!;
+  set usePrereleaseEngine(bool value) => provider.setBool("usePrereleaseEngine", value);
+  bool get checkForUpdateOnStart => provider.getBool("checkForUpdateOnStart")!;
+  set checkForUpdateOnStart(bool value) => provider.setBool("checkForUpdateOnStart", value);
+  bool get hasUsableEngineExecutable => provider.getBool("hasUsableEngineExecutable")!;
+  set hasUsableEngineExecutable(bool value) => provider.setBool("hasUsableEngineExecutable", value);
+  bool get startServerOnStartup => provider.getBool("startServerOnStartup")!;
+  set startServerOnStartup(bool value) => provider.setBool("startServerOnStartup", value);
+  bool get withBluetoothLE => provider.getBool("withBluetoothLE")!;
+  set withBluetoothLE(bool value) => provider.setBool("withBluetoothLE", value);
+  bool get withSerialPort => provider.getBool("withSerialPort")!;
+  set withSerialPort(bool value) => provider.setBool("withSerialPort", value);
+  bool get withHID => provider.getBool("withHID")!;
+  set withHID(bool value) => provider.setBool("withHID", value);
+  bool get withLovenseHIDDongle => provider.getBool("withLovenseHIDDongle")!;
+  set withLovenseHIDDongle(bool value) => provider.setBool("withLovenseHIDDongle", value);
+  bool get withLovenseSerialDongle => provider.getBool("withLovenseSerialDongle")!;
+  set withLovenseSerialDongle(bool value) => provider.setBool("withLovenseSerialDongle", value);
+  bool get withLovenseConnectService => provider.getBool("withLovenseConnectService")!;
+  set withLovenseConnectService(bool value) => provider.setBool("withLovenseConnectService", value);
+  bool get withXInput => provider.getBool("withXInput")!;
+  set withXInput(bool value) => provider.setBool("withXInput", value);
+  bool get withDeviceWebsocketServer => provider.getBool("withDeviceWebsocketServer")!;
+  set withDeviceWebsocketServer(bool value) => provider.setBool("withDeviceWebsocketServer", value);
+  bool get crashReporting => provider.getBool("crashReporting")!;
+  set crashReporting(bool value) => provider.setBool("crashReporting", value);
+  bool get showNotifications => provider.getBool("showNotifications")!;
+  set showNotifications(bool value) => provider.setBool("showNotifications", value);
+  bool get hasRunFirstUse => provider.getBool("hasRunFirstUse")!;
+  set hasRunFirstUse(bool value) => provider.setBool("hasRunFirstUse", value);
+  bool get showExtendedUI => provider.getBool("showExtendedUI")!;
+  set showExtendedUI(bool value) => provider.setBool("showExtendedUI", value);
+  bool get allowRawMessages => provider.getBool("allowRawMessages")!;
+  set allowRawMessages(bool value) => provider.setBool("allowRawMessages", value);
+  bool get unreadNews => provider.getBool("unreadNews")!;
+  set unreadNews(bool value) => provider.setBool("unreadNews", value);
 }

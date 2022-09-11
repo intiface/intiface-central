@@ -20,9 +20,11 @@ class IntifaceCentralApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-        providers: [RepositoryProvider(create: (_) => _configRepo), RepositoryProvider(create: (_) => _engineRepo)],
-        child: const IntifaceCentralView());
+    return MultiBlocProvider(providers: [
+      BlocProvider(create: (context) => EngineControlBloc(_engineRepo)),
+      BlocProvider(create: (context) => NavigationCubit()),
+      BlocProvider(create: (context) => IntifaceConfigurationCubit(_configRepo))
+    ], child: const IntifaceCentralView());
   }
 }
 
@@ -31,17 +33,22 @@ class IntifaceCentralView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Intiface Central',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: MultiBlocProvider(providers: [
-          BlocProvider(create: (context) => EngineControlBloc(RepositoryProvider.of(context))),
-          BlocProvider(create: (context) => NavigationCubit()),
-          BlocProvider(create: (context) => IntifaceConfigurationCubit(RepositoryProvider.of(context)))
-        ], child: const IntifaceCentralPage()));
+    return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+        buildWhen: (previous, current) => current is UseLightThemeState,
+        builder: (context, state) => MaterialApp(
+            title: 'Intiface Central',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primarySwatch: Colors.blue,
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primarySwatch: Colors.blue,
+            ),
+            themeMode:
+                BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark,
+            home: const IntifaceCentralPage()));
   }
 }
 

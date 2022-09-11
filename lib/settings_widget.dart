@@ -15,6 +15,16 @@ class SettingWidget extends StatelessWidget {
               SettingsSection(title: const Text("Updates"), tiles: [
                 CustomSettingsTile(child: TextButton(onPressed: () => {}, child: const Text("Check For Updates")))
               ]),
+              SettingsSection(title: const Text("App Settings"), tiles: [
+                SettingsTile.switchTile(
+                    initialValue: cubit.useLightTheme,
+                    onToggle: (value) => cubit.useLightTheme = value,
+                    title: const Text("Light Theme")),
+                SettingsTile.switchTile(
+                    initialValue: cubit.useSideNavigationBar,
+                    onToggle: (value) => cubit.useSideNavigationBar = value,
+                    title: const Text("Side Navigation Bar")),
+              ]),
               SettingsSection(title: const Text("Server Settings"), tiles: [
                 SettingsTile.switchTile(
                     initialValue: cubit.startServerOnStartup,

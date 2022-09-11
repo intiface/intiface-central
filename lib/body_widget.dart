@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/news_widget.dart';
@@ -35,54 +36,57 @@ class BodyWidget extends StatelessWidget {
           Icons.help_outlined, Icons.help, 'About', () => const NewsWidget()),
     ];
 
-    return BlocBuilder<NavigationCubit, NavigationState>(builder: (context, state) {
-      var navCubit = BlocProvider.of<NavigationCubit>(context);
-      var selectedIndex = 0;
-      for (var element in destinations) {
-        if (element.stateCheck(state)) {
-          break;
-        }
-        selectedIndex += 1;
-      }
-      if (selectedIndex >= destinations.length) {
-        selectedIndex = 0;
-      }
+    return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+        buildWhen: (previous, current) => current is UseSideNavigationBar,
+        builder: (context, state) => BlocBuilder<NavigationCubit, NavigationState>(builder: (context, state) {
+              var navCubit = BlocProvider.of<NavigationCubit>(context);
+              var selectedIndex = 0;
+              for (var element in destinations) {
+                if (element.stateCheck(state)) {
+                  break;
+                }
+                selectedIndex += 1;
+              }
+              if (selectedIndex >= destinations.length) {
+                selectedIndex = 0;
+              }
 
-      if (isDesktop()) {
-        return Expanded(
-            child: Row(children: <Widget>[
-          NavigationRail(
-              selectedIndex: selectedIndex,
-              groupAlignment: -1.0,
-              onDestinationSelected: (int index) {
-                destinations[index].navigate(navCubit);
-              },
-              labelType: NavigationRailLabelType.all,
-              destinations: destinations
-                  .map((v) => NavigationRailDestination(icon: Icon(v.icon), label: Text(v.title)))
-                  .toList()),
-          Expanded(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [destinations[selectedIndex].widgetProvider()]))
-        ]));
-      }
-      return Expanded(
-          child: Column(children: <Widget>[
-        Expanded(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, children: [destinations[selectedIndex].widgetProvider()])),
-        BottomNavigationBar(
-            currentIndex: selectedIndex,
-            onTap: (int index) {
-              destinations[index].navigate(navCubit);
-            },
-            type: BottomNavigationBarType.fixed,
-            items: destinations
-                .map((dest) => BottomNavigationBarItem(
-                    icon: Icon(dest.icon), activeIcon: Icon(dest.selectedIcon), label: dest.title))
-                .toList())
-      ]));
-    });
+              if (BlocProvider.of<IntifaceConfigurationCubit>(context).useSideNavigationBar) {
+                return Expanded(
+                    child: Row(children: <Widget>[
+                  NavigationRail(
+                      selectedIndex: selectedIndex,
+                      groupAlignment: -1.0,
+                      onDestinationSelected: (int index) {
+                        destinations[index].navigate(navCubit);
+                      },
+                      labelType: NavigationRailLabelType.all,
+                      destinations: destinations
+                          .map((v) => NavigationRailDestination(icon: Icon(v.icon), label: Text(v.title)))
+                          .toList()),
+                  Expanded(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [destinations[selectedIndex].widgetProvider()]))
+                ]));
+              }
+              return Expanded(
+                  child: Column(children: <Widget>[
+                Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [destinations[selectedIndex].widgetProvider()])),
+                BottomNavigationBar(
+                    currentIndex: selectedIndex,
+                    onTap: (int index) {
+                      destinations[index].navigate(navCubit);
+                    },
+                    type: BottomNavigationBarType.fixed,
+                    items: destinations
+                        .map((dest) => BottomNavigationBarItem(
+                            icon: Icon(dest.icon), activeIcon: Icon(dest.selectedIcon), label: dest.title))
+                        .toList())
+              ]));
+            }));
   }
 }
