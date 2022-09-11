@@ -115,7 +115,6 @@ class ClientRejected {
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class EngineMessage {
   MessageVersion? messageVersion;
-  // TODO Restore engine log messages, just needs two levels of json decoding.
   EngineLog? engineLog;
   EngineStarted? engineStarted;
   EngineError? engineError;

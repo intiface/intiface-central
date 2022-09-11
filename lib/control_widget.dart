@@ -20,18 +20,18 @@ class ControlWidget extends StatelessWidget {
           var statusMessage = "Unknown Status";
           var statusIcon = Icons.question_mark;
           void Function()? buttonAction = () => engineControlBloc.add(EngineControlEventStop());
-          if (state.status.isClientConnected) {
-            statusMessage = "Client Connected";
+          if (state is ClientConnectedState) {
+            statusMessage = state.clientName;
             statusIcon = Icons.phone_in_talk;
-          } else if (state.status.isClientDisconnected) {
+          } else if (state is ClientDisconnectedState) {
             statusMessage = "Server running, no client connected";
             statusIcon = Icons.phone_disabled;
-          } else if (state.status.isStarting) {
+          } else if (state is EngineStartedState) {
             statusMessage = "Server starting up";
             statusIcon = Icons.block;
             // In the case of starting up,
             buttonAction = null;
-          } else if (state.status.isStopped) {
+          } else if (state is EngineStoppedState) {
             statusMessage = "Server not running";
             statusIcon = Icons.block;
             buttonAction = () => engineControlBloc.add(EngineControlEventStart());
@@ -40,12 +40,12 @@ class ControlWidget extends StatelessWidget {
             IconButton(
                 iconSize: 90,
                 onPressed: buttonAction,
-                tooltip: state.status.isStopped ? "Start Server" : "Stop Server",
-                icon: Icon(state.status.isStopped ? Icons.play_arrow : Icons.stop)),
+                tooltip: state is EngineStoppedState ? "Start Server" : "Stop Server",
+                icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop)),
             Expanded(
                 child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               //Text("Network Address: $_wifiIP"),
-              Text("Client Status: ${state.status.isClientConnected ? "Client Connected" : "No Client Connected"}"),
+              Text("Client Status: ${state is ClientConnectedState ? state.clientName : "No Client Connected"}"),
               Text("Device Status:"),
             ])),
             Tooltip(message: statusMessage, child: Icon(statusIcon, size: 70)),
