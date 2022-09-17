@@ -356,6 +356,8 @@ dependencies = [
 [[package]]
 name = "buttplug_derive"
 version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03aff4c65e86203fa86ae3bed20b7b4c1885c1670c4f99a062e0de1366ac2ed2"
 dependencies = [
  "quote",
  "syn",
