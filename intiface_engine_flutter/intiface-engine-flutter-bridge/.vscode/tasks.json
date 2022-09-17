@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "cargo build",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "rust: cargo build"
+		},
+		{
+			"type": "shell",
+			"command": "cargo +nightly clippy",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "rust: cargo clippy"
+		},
+		{
+			"type": "shell",
+			"command": "cargo +nightly doc --no-deps",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "rust: cargo doc"
+		},
+		{
+			"type": "shell",
+			"command": "cargo test",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"options": {
+				"cwd": "buttplug/",
+				"env": {
+					"RUST_LOG": "DEBUG"
+				}
+			},
+			"group": "build",
+			"label": "rust: cargo test"
+		}
+	]
+}

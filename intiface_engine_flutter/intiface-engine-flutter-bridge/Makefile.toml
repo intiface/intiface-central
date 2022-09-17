@@ -1,0 +1,60 @@
+[env]
+# CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+# CARGO_MAKE_WORKSPACE_INCLUDE_MEMBERS = ["ffi", "audio-data-model"]
+ANDROID_PLATFORM_VERSION = "31"
+# LIB_OUT_DIR = "debug"
+# TARGET_OS = "unknown"
+# DEV = true
+# RELEASE = false
+
+[config]
+default_to_workspace = false
+
+[tasks.android-ndk-build]
+command = "cargo"
+args = [
+  "ndk",
+  "--platform",
+  "${ANDROID_PLATFORM_VERSION}",
+  "--target",
+  "${ANDROID_TARGET}",
+  "-o",
+  "../android/src/main/jniLibs/",
+  "build",
+  "--release",
+]
+condition = {env_set = ["ANDROID_TARGET"]}
+private = true
+
+[tasks.android-aarch64]
+env = {ANDROID_TARGET = "arm64-v8a"}
+run_task = "android-ndk-build"
+
+[tasks.android-x86_64]
+env = {ANDROID_TARGET = "x86_64-linux-android"}
+run_task = "android-ndk-build"
+
+[tasks.android-arm7]
+env = {ANDROID_TARGET = "armeabi-v7a"}
+run_task = "android-ndk-build"
+
+[tasks.build-android]
+# dependencies = ["android-aarch64", "android-arm7", "android-x86_64"]
+# dependencies = ["android-aarch64", "android-arm7"]
+# dependencies = ["android-aarch64", "android-x86_64"]
+# dependencies = ["android-x86_64"]
+dependencies = ["android-aarch64"]
+
+[tasks.test-ignored]
+args = ["test", "--release", "--", "--ignored"]
+command = "cargo"
+
+[tasks.build-ios]
+command = "cargo"
+args = [
+  "build",
+  "--release",
+  "--target",
+  "aarch64-apple-ios",
+  "--features=ios"
+]
