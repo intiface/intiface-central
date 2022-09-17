@@ -352,10 +352,10 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
-  intiface_engine_flutter:
+  intiface_engine_flutter_plugin:
     dependency: "direct main"
     description:
-      path: "../intiface-engine-flutter"
+      path: "../intiface_engine_flutter_plugin"
       relative: true
     source: path
     version: "0.0.1"

@@ -6,15 +6,15 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <intiface_engine_flutter/intiface_engine_flutter.h>
+#include <intiface_engine_flutter_plugin/intiface_engine_flutter_plugin.h>
 #include <network_info_plus_windows/network_info_plus_windows_plugin.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
 #include <screen_retriever/screen_retriever_plugin.h>
 #include <window_manager/window_manager_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  IntifaceEngineFlutterRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("IntifaceEngineFlutter"));
+  IntifaceEngineFlutterPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("IntifaceEngineFlutterPlugin"));
   NetworkInfoPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("NetworkInfoPlusWindowsPlugin"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(

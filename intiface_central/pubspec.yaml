@@ -27,8 +27,8 @@ dependencies:
   flutter_markdown: ^0.6.10+5
   loggy: ^2.0.1+1
   flutter_loggy: ^2.0.1
-  intiface_engine_flutter:
-    path: ../intiface-engine-flutter/
+  intiface_engine_flutter_plugin:
+    path: ../intiface_engine_flutter_plugin/
 
 dev_dependencies:
   flutter_test:

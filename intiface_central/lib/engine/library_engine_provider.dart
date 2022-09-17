@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:intiface_central/engine/engine_provider.dart';
-import 'package:intiface_engine_flutter/intiface_engine_flutter.dart';
-import 'dart:io';
+import 'package:intiface_engine_flutter_plugin/intiface_engine_flutter_plugin.dart';
 import 'package:loggy/loggy.dart';
 
 class LibraryEngineProvider implements EngineProvider {
