@@ -36,3 +36,6 @@ openssl-sys = {version = "0.9.75", features=["vendored"]}
 
 [lib]
 crate-type = ["staticlib", "cdylib"]
+
+[build-dependencies]
+flutter_rust_bridge_codegen = "1.45.0"
