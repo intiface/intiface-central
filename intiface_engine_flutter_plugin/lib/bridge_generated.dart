@@ -14,10 +14,6 @@ abstract class IntifaceEngineFlutterBridge {
   Stream<String> runEngine({required EngineOptionsExternal args, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kRunEngineConstMeta;
-
-  Future<void> stopEngine({dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kStopEngineConstMeta;
 }
 
 class EngineOptionsExternal {
@@ -100,21 +96,6 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
         debugName: "run_engine",
         argNames: ["args"],
       );
-
-  Future<void> stopEngine({dynamic hint}) =>
-      _platform.executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => _platform.inner.wire_stop_engine(port_),
-        parseSuccessData: _wire2api_unit,
-        constMeta: kStopEngineConstMeta,
-        argValues: [],
-        hint: hint,
-      ));
-
-  FlutterRustBridgeTaskConstMeta get kStopEngineConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "stop_engine",
-        argNames: [],
-      );
 }
 
 // Section: api2wire
@@ -151,10 +132,6 @@ int _wire2api_u8(dynamic raw) {
 
 Uint8List _wire2api_uint_8_list(dynamic raw) {
   return raw as Uint8List;
-}
-
-void _wire2api_unit(dynamic raw) {
-  return;
 }
 
 class IntifaceEngineFlutterBridgePlatform
@@ -294,20 +271,6 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
   late final _wire_run_engine = _wire_run_enginePtr.asFunction<
       void Function(int, ffi.Pointer<wire_EngineOptionsExternal>)>();
 
-  void wire_stop_engine(
-    int port_,
-  ) {
-    return _wire_stop_engine(
-      port_,
-    );
-  }
-
-  late final _wire_stop_enginePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_stop_engine');
-  late final _wire_stop_engine =
-      _wire_stop_enginePtr.asFunction<void Function(int)>();
-
   ffi.Pointer<wire_EngineOptionsExternal>
       new_box_autoadd_engine_options_external_0() {
     return _new_box_autoadd_engine_options_external_0();
@@ -363,22 +326,6 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'free_WireSyncReturnStruct');
   late final _free_WireSyncReturnStruct = _free_WireSyncReturnStructPtr
       .asFunction<void Function(WireSyncReturnStruct)>();
-
-  int JNI_OnLoad(
-    int vm,
-    ffi.Pointer<ffi.Void> _res,
-  ) {
-    return _JNI_OnLoad(
-      vm,
-      _res,
-    );
-  }
-
-  late final _JNI_OnLoadPtr = _lookup<
-          ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Void>)>>(
-      'JNI_OnLoad');
-  late final _JNI_OnLoad =
-      _JNI_OnLoadPtr.asFunction<int Function(int, ffi.Pointer<ffi.Void>)>();
 }
 
 class wire_uint_8_list extends ffi.Struct {
