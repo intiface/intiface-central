@@ -1,6 +1,6 @@
 use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend,
-  mobile_init::{self, RUNTIME, JAVAVM},
+  mobile_init::{self, RUNTIME},
 };
 use std::sync::Arc;
 use anyhow::Result;

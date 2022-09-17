@@ -5,6 +5,7 @@ pub enum Error {
   #[error("Btleplug error: {0}")]
   Btleplug(#[from] btleplug::Error),
 
+  #[cfg(target_os = "android")]
   #[error("JNI {0}")]
   Jni(#[from] jni::errors::Error),
 

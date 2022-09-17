@@ -92,6 +92,7 @@ fn setup_class_loader(env: &JNIEnv) -> Result<(), Error> {
     .map_err(|_| Error::ClassLoader)
 }
 
+#[cfg(target_os = "android")]
 #[no_mangle]
 pub extern "C" fn JNI_OnLoad(vm: jni::JavaVM, _res: *const std::os::raw::c_void) -> jni::sys::jint {
   let env = vm.get_env().unwrap();
