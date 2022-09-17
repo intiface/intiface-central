@@ -5,7 +5,6 @@ use crate::{
 use std::sync::Arc;
 use anyhow::Result;
 use flutter_rust_bridge::{frb, StreamSink};
-use tokio::runtime::Runtime;
 
 pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine};
 

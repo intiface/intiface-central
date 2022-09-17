@@ -2,7 +2,6 @@ mod bridge_generated; /* AUTO INJECTED BY flutter_rust_bridge. This line may not
 /// command line interface for intiface/buttplug.
 ///
 
-#[macro_use]
 extern crate log;
 
 mod api;

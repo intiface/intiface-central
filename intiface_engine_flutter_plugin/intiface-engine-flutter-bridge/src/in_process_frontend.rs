@@ -1,7 +1,6 @@
 use flutter_rust_bridge::StreamSink;
 use intiface_engine::{Frontend, EngineMessage, IntifaceError};
 use async_trait::async_trait;
-use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct FlutterIntifaceEngineFrontend {
