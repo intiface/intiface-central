@@ -6,6 +6,7 @@ import 'package:intiface_central/configuration/intiface_configuration_provider_s
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:intiface_central/engine/library_engine_provider.dart';
 import 'package:intiface_central/engine/process_engine_provider.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 import 'package:intiface_central/util/intiface_util.dart';
@@ -46,6 +47,7 @@ void main() async {
   // You can request multiple permissions at once.
   if (Platform.isAndroid || Platform.isIOS) {
     await [
+      Permission.location,
       Permission.bluetooth,
       Permission.bluetoothConnect,
       Permission.bluetoothScan,
@@ -58,7 +60,12 @@ void main() async {
   var configRepo = IntifaceConfigurationRepository(prefs);
 
   // Bring up our process provider, which pretty much the whole app will be listening to.
-  var engineRepo = EngineRepository(ProcessEngineProvider(), configRepo);
+  var engineRepo;
+  if (isDesktop()) {
+    engineRepo = EngineRepository(ProcessEngineProvider(), configRepo);
+  } else {
+    engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
+  }
 
   engineRepo.messageStream.forEach((message) {
     if (message.engineLog != null) {

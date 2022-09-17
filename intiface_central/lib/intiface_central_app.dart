@@ -57,8 +57,10 @@ class IntifaceCentralPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-            mainAxisSize: MainAxisSize.max, children: [const ControlWidget(), const Divider(height: 2), BodyWidget()]));
+    return SafeArea(
+        child: Scaffold(
+            body: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [const ControlWidget(), const Divider(height: 2), BodyWidget()])));
   }
 }

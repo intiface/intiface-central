@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  intiface_engine_flutter
   network_info_plus_windows
   permission_handler_windows
   screen_retriever
