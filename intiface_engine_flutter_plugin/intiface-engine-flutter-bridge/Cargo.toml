@@ -10,7 +10,7 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = { path = "../../intiface-cli-rs" }
+intiface-engine = { path = "../../../intiface-cli-rs" }
 flutter_rust_bridge = "1"
 log = "0.4.17"
 lazy_static = "1.4.0"
@@ -31,6 +31,7 @@ async-trait = "0.1.57"
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 jni = "0.19.0"
 jni-utils = "0.1.0"
+openssl-sys = {version = "0.9.75", features=["vendored"]}
 
 
 [lib]
