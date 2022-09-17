@@ -1,5 +1,5 @@
 name: intiface_engine_flutter_plugin
-description: A new Flutter plugin project.
+description: Flutter plugin for briding to the Rust Intiface Engine library.
 version: 0.0.1
 
 environment:

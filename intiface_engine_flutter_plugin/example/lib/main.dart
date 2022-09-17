@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:logger/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:intiface_engine_flutter/intiface_engine_flutter.dart';
+import 'package:intiface_engine_flutter_plugin/intiface_engine_flutter_plugin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

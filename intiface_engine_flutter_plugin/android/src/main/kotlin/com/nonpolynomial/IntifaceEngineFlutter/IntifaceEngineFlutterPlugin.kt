@@ -10,7 +10,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /** ButtplugPlugin */
-class IntifaceEngineFlutter: FlutterPlugin, MethodCallHandler {
+class IntifaceEngineFlutterPlugin: FlutterPlugin, MethodCallHandler {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -18,15 +18,13 @@ class IntifaceEngineFlutter: FlutterPlugin, MethodCallHandler {
   private lateinit var channel : MethodChannel
 
   init {
-    //Log.w("ButtplugPlugin", "LOADING JNI UTILS");
-    //System.loadLibrary("jni_utils");
-    Log.w("IntifaceEngineFlutter", "LOADING INTIFACE CLI");
+    Log.w("IntifaceEngineFlutterPlugin", "LOADING INTIFACE CLI");
     System.loadLibrary("intiface_engine_flutter_bridge");
-    Log.w("IntifaceEngineFlutter", "DONE");
+    Log.w("IntifaceEngineFlutterPlugin", "DONE");
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "IntifaceEngineFlutter")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "IntifaceEngineFlutterPlugin")
     channel.setMethodCallHandler(this)
   }
 

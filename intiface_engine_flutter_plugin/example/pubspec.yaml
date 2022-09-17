@@ -19,7 +19,7 @@ dependencies:
     sdk: flutter
 
   logger: ^1.1.0
-  intiface_engine_flutter:
+  intiface_engine_flutter_plugin:
     # When depending on this package from a real application you should use:
     #   btleplugtest: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
