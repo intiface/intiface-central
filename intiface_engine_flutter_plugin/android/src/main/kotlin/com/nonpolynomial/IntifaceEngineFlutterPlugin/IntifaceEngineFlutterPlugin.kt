@@ -1,4 +1,4 @@
-package com.nonpolynomial.IntifaceEngineFlutter
+package com.nonpolynomial.IntifaceEngineFlutterPlugin
 
 import androidx.annotation.NonNull
 import android.util.Log;
