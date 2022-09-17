@@ -11,32 +11,20 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 /** ButtplugPlugin */
 class IntifaceEngineFlutterPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
 
   init {
-    Log.w("IntifaceEngineFlutterPlugin", "LOADING INTIFACE CLI");
     System.loadLibrary("intiface_engine_flutter_bridge");
-    Log.w("IntifaceEngineFlutterPlugin", "DONE");
   }
 
+  // All we need this class to do is initialize, to load our library. After that we'll never make
+  // any calls on it, so there's no reason to set up a MethodHandler.
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "IntifaceEngineFlutterPlugin")
-    channel.setMethodCallHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
-    }
+    result.notImplemented()
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
   }
 }
