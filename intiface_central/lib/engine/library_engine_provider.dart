@@ -49,8 +49,10 @@ class LibraryEngineProvider implements EngineProvider {
   Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo}) async {
     var engineOptions = await _buildArguments(configRepo);
     _sink = api.runEngine(args: engineOptions);
+    logInfo("Engine started");
     _sink!.forEach((element) {
       try {
+        print(element);
         _processMessageStream.add(element);
       } catch (e) {
         logError("Error adding message to stream: $e");
@@ -61,7 +63,8 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    throw "Unimplemented";
+    api.stopEngine();
+    logInfo("Engine stopped");
   }
 
   @override

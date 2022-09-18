@@ -7,11 +7,8 @@ import 'package:intiface_central/util/intiface_util.dart';
 class ControlWidget extends StatelessWidget {
   const ControlWidget({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var clientName = "No Client Connected"; //_clientName ?? "No Client Connected";
-
     var engineControlBloc = BlocProvider.of<EngineControlBloc>(context);
 
     return BlocBuilder(
@@ -26,6 +23,8 @@ class ControlWidget extends StatelessWidget {
           } else if (state is ClientDisconnectedState) {
             statusMessage = "Server running, no client connected";
             statusIcon = Icons.phone_disabled;
+            // Once we're in this state the engine is started.
+            buttonAction = () => engineControlBloc.add(EngineControlEventStop());
           } else if (state is EngineStartedState) {
             statusMessage = "Server starting up";
             statusIcon = Icons.block;
@@ -36,6 +35,7 @@ class ControlWidget extends StatelessWidget {
             statusIcon = Icons.block;
             buttonAction = () => engineControlBloc.add(EngineControlEventStart());
           }
+          print("ENGINE STATE: $state");
           return Row(children: [
             IconButton(
                 iconSize: 90,

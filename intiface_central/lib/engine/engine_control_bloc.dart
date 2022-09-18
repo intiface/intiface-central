@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:loggy/loggy.dart';
 
 abstract class EngineControlState {}
 
@@ -73,12 +74,15 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           _devices.remove(message.deviceDisconnected!.index);
           return DeviceDisconnectedState(message.deviceDisconnected!.index);
         }
+        if (message.engineStopped != null) {
+          return EngineStoppedState();
+        }
         return state;
       });
     });
     on<EngineControlEventStop>((event, emit) async {
       await _repo.stop();
-      emit(EngineStoppedState());
+      return emit(EngineStoppedState());
     });
   }
 

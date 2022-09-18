@@ -4,9 +4,16 @@ use crate::{
 };
 use std::sync::Arc;
 use anyhow::Result;
+use tokio::{
+  select,
+  sync::Notify
+};
 use flutter_rust_bridge::{frb, StreamSink};
+use once_cell::sync::OnceCell;
 
 pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine};
+
+pub static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 
 #[frb(mirror(EngineOptionsExternal))]
 pub struct _EngineOptionsExternal {
@@ -37,15 +44,28 @@ pub struct _EngineOptionsExternal {
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
-  //let sink = library_stream_sink.get().expect("Should've set library sink already");
-  mobile_init::create_runtime(sink.clone()).expect("Runtime should work");
+  if RUNTIME.get().is_none() {
+    mobile_init::create_runtime(sink.clone()).expect("Runtime should work");
+  }
+  if ENGINE_NOTIFIER.get().is_none() {
+    ENGINE_NOTIFIER.set(Arc::new(Notify::new()));
+  }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
   let frontend = FlutterIntifaceEngineFrontend::new(sink.clone());
-  let engine = IntifaceEngine::default();
+  let engine = Arc::new(IntifaceEngine::default());
+  let engine_clone = engine.clone();
+  let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
+  let options = args.into();
   runtime.spawn(async move {
-    engine.run(&args.into(), Some(Arc::new(frontend))).await;
+    engine.run(&options, Some(Arc::new(frontend))).await;
+  });
+  runtime.spawn(async move {
+    notify.notified().await;
+    engine_clone.stop();
   });
   Ok(())
 }
 
-pub fn stop_engine() {}
+pub fn stop_engine() {
+  ENGINE_NOTIFIER.get().expect("Should be set").notify_waiters();
+}

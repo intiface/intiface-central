@@ -27,11 +27,11 @@ class EngineRepository {
   }
 
   Future<void> start() async {
-    return await _provider.start(processPath: IntifacePaths.engineFile.toString(), configRepo: _configRepo);
+    await _provider.start(processPath: IntifacePaths.engineFile.toString(), configRepo: _configRepo);
   }
 
   Future<void> stop() async {
-    return await _provider.stop();
+    await _provider.stop();
   }
 
   Stream<EngineMessage> get messageStream => _engineMessageStream.stream;
