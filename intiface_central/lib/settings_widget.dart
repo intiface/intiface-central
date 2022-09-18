@@ -84,7 +84,11 @@ class SettingWidget extends StatelessWidget {
                                   decoration: const InputDecoration(hintText: "Text Field in Dialog"),
                                 ),
                               ));
-                    })
+                    }),
+                SettingsTile.switchTile(
+                    initialValue: cubit.websocketServerAllInterfaces,
+                    onToggle: (value) => cubit.websocketServerAllInterfaces = value,
+                    title: const Text("Listen on all network interfaces.")),
               ]),
               SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings)
             ])));

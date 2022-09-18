@@ -66,6 +66,11 @@ class UseLovenseSerialDongle extends IntifaceConfigurationState {
   UseLovenseSerialDongle(this.value);
 }
 
+class WebsocketServerAllInterfaces extends IntifaceConfigurationState {
+  final bool value;
+  WebsocketServerAllInterfaces(this.value);
+}
+
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
   IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
@@ -176,6 +181,15 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   bool get useLovenseSerialDongle {
     return _repo.useLovenseSerialDongle;
+  }
+
+  set websocketServerAllInterfaces(bool value) {
+    _repo.websocketServerAllInterfaces = value;
+    emit(WebsocketServerAllInterfaces(value));
+  }
+
+  bool get websocketServerAllInterfaces {
+    return _repo.websocketServerAllInterfaces;
   }
 }
 

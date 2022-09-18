@@ -10,7 +10,8 @@ class IntifaceConfigurationRepository {
     // Check all of our values to make sure they exist. If not, set defaults, based on platform if needed.
     serverName = provider.getString("serverName") ?? "Intiface Server";
     serverMaxPingTime = provider.getInt("maxPingTime") ?? 0;
-    websocketServerAllInterfaces = provider.getBool("websocketServerAllInterfaces") ?? false;
+    // This should automatically be true on phones, otherwise people are going to be VERY confused.
+    websocketServerAllInterfaces = provider.getBool("websocketServerAllInterfaces") ?? isMobile();
     websocketServerPort = provider.getInt("websocketServerPort") ?? 12345;
     serverLogLevel = provider.getString("serverLogLevel") ?? "info";
     usePrereleaseEngine = provider.getBool("usePrereleaseEngine") ?? false;
@@ -26,18 +27,18 @@ class IntifaceConfigurationRepository {
     useLightTheme = provider.getBool("useLightTheme") ?? true;
 
     // True on all platforms
-    withBluetoothLE = provider.getBool("withBluetoothLE") ?? true;
+    useBluetoothLE = provider.getBool("useBluetoothLE") ?? true;
 
     // Only works on Windows
-    withXInput = provider.getBool("withXInput") ?? Platform.isWindows;
+    useXInput = provider.getBool("useXInput") ?? Platform.isWindows;
 
     // Always default off, require user to turn them on.
-    withLovenseConnectService = provider.getBool("withLovenseConnectService") ?? false;
-    withDeviceWebsocketServer = provider.getBool("withDeviceWebsocketServer") ?? false;
-    withSerialPort = provider.getBool("withSerialPort") ?? false;
-    withHID = provider.getBool("withHID") ?? false;
-    withLovenseHIDDongle = provider.getBool("withLovenseHIDDongle") ?? false;
-    withLovenseSerialDongle = provider.getBool("withLovenseSerialDongle") ?? false;
+    useLovenseConnectService = provider.getBool("useLovenseConnectService") ?? false;
+    useDeviceWebsocketServer = provider.getBool("useDeviceWebsocketServer") ?? false;
+    useSerialPort = provider.getBool("useSerialPort") ?? false;
+    useHID = provider.getBool("useHID") ?? false;
+    useLovenseHIDDongle = provider.getBool("useLovenseHIDDongle") ?? false;
+    useLovenseSerialDongle = provider.getBool("useLovenseSerialDongle") ?? false;
   }
   bool get useSideNavigationBar => provider.getBool("useSideNavigationBar")!;
   set useSideNavigationBar(bool value) => provider.setBool("useSideNavigationBar", value);
@@ -61,22 +62,22 @@ class IntifaceConfigurationRepository {
   set hasUsableEngineExecutable(bool value) => provider.setBool("hasUsableEngineExecutable", value);
   bool get startServerOnStartup => provider.getBool("startServerOnStartup")!;
   set startServerOnStartup(bool value) => provider.setBool("startServerOnStartup", value);
-  bool get withBluetoothLE => provider.getBool("withBluetoothLE")!;
-  set withBluetoothLE(bool value) => provider.setBool("withBluetoothLE", value);
-  bool get withSerialPort => provider.getBool("withSerialPort")!;
-  set withSerialPort(bool value) => provider.setBool("withSerialPort", value);
-  bool get withHID => provider.getBool("withHID")!;
-  set withHID(bool value) => provider.setBool("withHID", value);
-  bool get withLovenseHIDDongle => provider.getBool("withLovenseHIDDongle")!;
-  set withLovenseHIDDongle(bool value) => provider.setBool("withLovenseHIDDongle", value);
-  bool get withLovenseSerialDongle => provider.getBool("withLovenseSerialDongle")!;
-  set withLovenseSerialDongle(bool value) => provider.setBool("withLovenseSerialDongle", value);
-  bool get withLovenseConnectService => provider.getBool("withLovenseConnectService")!;
-  set withLovenseConnectService(bool value) => provider.setBool("withLovenseConnectService", value);
-  bool get withXInput => provider.getBool("withXInput")!;
-  set withXInput(bool value) => provider.setBool("withXInput", value);
-  bool get withDeviceWebsocketServer => provider.getBool("withDeviceWebsocketServer")!;
-  set withDeviceWebsocketServer(bool value) => provider.setBool("withDeviceWebsocketServer", value);
+  bool get useBluetoothLE => provider.getBool("useBluetoothLE")!;
+  set useBluetoothLE(bool value) => provider.setBool("useBluetoothLE", value);
+  bool get useSerialPort => provider.getBool("useSerialPort")!;
+  set useSerialPort(bool value) => provider.setBool("useSerialPort", value);
+  bool get useHID => provider.getBool("useHID")!;
+  set useHID(bool value) => provider.setBool("useHID", value);
+  bool get useLovenseHIDDongle => provider.getBool("useLovenseHIDDongle")!;
+  set useLovenseHIDDongle(bool value) => provider.setBool("useLovenseHIDDongle", value);
+  bool get useLovenseSerialDongle => provider.getBool("useLovenseSerialDongle")!;
+  set useLovenseSerialDongle(bool value) => provider.setBool("useLovenseSerialDongle", value);
+  bool get useLovenseConnectService => provider.getBool("useLovenseConnectService")!;
+  set useLovenseConnectService(bool value) => provider.setBool("useLovenseConnectService", value);
+  bool get useXInput => provider.getBool("useXInput")!;
+  set useXInput(bool value) => provider.setBool("useXInput", value);
+  bool get useDeviceWebsocketServer => provider.getBool("useDeviceWebsocketServer")!;
+  set useDeviceWebsocketServer(bool value) => provider.setBool("useDeviceWebsocketServer", value);
   bool get crashReporting => provider.getBool("crashReporting")!;
   set crashReporting(bool value) => provider.setBool("crashReporting", value);
   bool get showNotifications => provider.getBool("showNotifications")!;
