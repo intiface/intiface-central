@@ -2,22 +2,14 @@
 // This means our providers ONLY handle start/stop/basic stream comms with our provider types, and the repository
 // operates as a stream transformer.
 
+import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+
 abstract class EngineProcessMessage {}
 
 abstract class EngineProvider {
-  Future<void> start(EngineProviderStartParameters parameters);
+  Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo});
   Future<void> stop();
   Stream<String> get engineRawMessageStream;
-}
-
-class EngineProviderStartParameters {
-  final String? _processPath;
-  final List<String> _engineArguments;
-
-  EngineProviderStartParameters(this._processPath, this._engineArguments);
-
-  String? get processPath => _processPath;
-  List<String> get engineArguments => _engineArguments;
 }
 
 class EngineProviderStartException implements Exception {

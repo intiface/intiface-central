@@ -107,75 +107,75 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   }
 
   set useBluetoothLE(bool value) {
-    _repo.withBluetoothLE = value;
+    _repo.useBluetoothLE = value;
     emit(UseBluetoothLE(value));
   }
 
   bool get useBluetoothLE {
-    return _repo.withBluetoothLE;
+    return _repo.useBluetoothLE;
   }
 
   set useXInput(bool value) {
-    _repo.withXInput = value;
+    _repo.useXInput = value;
     emit(UseXInput(value));
   }
 
   bool get useXInput {
-    return _repo.withXInput;
+    return _repo.useXInput;
   }
 
   set useLovenseConnectService(bool value) {
-    _repo.withLovenseConnectService = value;
+    _repo.useLovenseConnectService = value;
     emit(UseLovenseConnectService(value));
   }
 
   bool get useLovenseConnectService {
-    return _repo.withLovenseConnectService;
+    return _repo.useLovenseConnectService;
   }
 
   set useDeviceWebsocketServer(bool value) {
-    _repo.withDeviceWebsocketServer = value;
+    _repo.useDeviceWebsocketServer = value;
     emit(UseDeviceWebsocketServer(value));
   }
 
   bool get useDeviceWebsocketServer {
-    return _repo.withDeviceWebsocketServer;
+    return _repo.useDeviceWebsocketServer;
   }
 
   set useSerialPort(bool value) {
-    _repo.withSerialPort = value;
+    _repo.useSerialPort = value;
     emit(UseSerialPort(value));
   }
 
   bool get useSerialPort {
-    return _repo.withSerialPort;
+    return _repo.useSerialPort;
   }
 
   set useHID(bool value) {
-    _repo.withHID = value;
+    _repo.useHID = value;
     emit(UseHID(value));
   }
 
   bool get useHID {
-    return _repo.withHID;
+    return _repo.useHID;
   }
 
   set useLovenseHIDDongle(bool value) {
-    _repo.withLovenseHIDDongle = value;
+    _repo.useLovenseHIDDongle = value;
     emit(UseLovenseHIDDongle(value));
   }
 
   bool get useLovenseHIDDongle {
-    return _repo.withLovenseHIDDongle;
+    return _repo.useLovenseHIDDongle;
   }
 
   set useLovenseSerialDongle(bool value) {
-    _repo.withLovenseSerialDongle = value;
+    _repo.useLovenseSerialDongle = value;
     emit(UseLovenseSerialDongle(value));
   }
 
   bool get useLovenseSerialDongle {
-    return _repo.withLovenseSerialDongle;
+    return _repo.useLovenseSerialDongle;
   }
 }
 
@@ -196,14 +196,14 @@ enum IntifaceConfigurationStatus {
   showExtendedUI,
   allowRawMessages,
   unreadNews,
-  withBluetoothLE,
-  withXInput,
-  withLovenseConnectService,
-  withDeviceWebsocketServer,
-  withSerialPort,
-  withHID,
-  withLovenseHIDDongle,
-  withLovenseSerialDongle,
+  useBluetoothLE,
+  useXInput,
+  useLovenseConnectService,
+  useDeviceWebsocketServer,
+  useSerialPort,
+  useHID,
+  useLovenseHIDDongle,
+  useLovenseSerialDongle,
   ;
 }
 
@@ -214,7 +214,7 @@ class IntifaceConfigurationState extends Equatable {
 
   final IntifaceConfigurationStatus status;
 
-  IntifaceConfigurationState copyWith({
+  IntifaceConfigurationState copyuse({
     IntifaceConfigurationStatus? status,
   }) {
     return IntifaceConfigurationState(
