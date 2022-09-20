@@ -26,7 +26,7 @@ class BodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var destinations = [
       NavigationDestination((state) => state is NavigationStateNews, (NavigationCubit cubit) => cubit.goNews(),
-          Icons.newspaper_outlined, Icons.newspaper, 'News', () => const NewsWidget()),
+          Icons.newspaper_outlined, Icons.newspaper, 'News', () => NewsWidget()),
       NavigationDestination((state) => state is NavigationStateDevices, (NavigationCubit cubit) => cubit.goDevices(),
           Icons.vibration_outlined, Icons.vibration, 'Devices', () => const DeviceWidget()),
       NavigationDestination((state) => state is NavigationStateSettings, (NavigationCubit cubit) => cubit.goSettings(),
@@ -34,7 +34,7 @@ class BodyWidget extends StatelessWidget {
       NavigationDestination((state) => state is NavigationStateLogs, (NavigationCubit cubit) => cubit.goLogs(),
           Icons.text_snippet_outlined, Icons.text_snippet, 'Log', () => const LogWidget()),
       NavigationDestination((state) => state is NavigationStateAbout, (NavigationCubit cubit) => cubit.goAbout(),
-          Icons.help_outlined, Icons.help, 'About', () => const NewsWidget()),
+          Icons.help_outlined, Icons.help, 'About', () => NewsWidget()),
     ];
 
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
