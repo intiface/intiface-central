@@ -30,5 +30,3 @@ flutter:
         pluginClass: IntifaceEngineFlutterPlugin
       ios:
         pluginClass: IntifaceEngineFlutterPlugin
-      windows:
-        pluginClass: IntifaceEngineFlutterPlugin
