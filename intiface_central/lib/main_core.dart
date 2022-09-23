@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
+import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/intiface_central_app.dart';
@@ -39,5 +40,7 @@ Future<void> mainCore(IntifaceConfigurationRepository configRepo, EngineReposito
     }
   });
 
-  runApp(IntifaceCentralApp(engineRepo: engineRepo, configRepo: configRepo));
+  var assetCubit = await AssetCubit.create();
+
+  runApp(IntifaceCentralApp(engineRepo: engineRepo, configRepo: configRepo, assetCubit: assetCubit));
 }

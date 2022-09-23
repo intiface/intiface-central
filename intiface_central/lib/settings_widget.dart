@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -49,6 +50,18 @@ class SettingWidget extends StatelessWidget {
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
         builder: (context, state) => Expanded(
                 child: SettingsList(platform: DevicePlatform.windows, sections: [
+              SettingsSection(tiles: [
+                SettingsTile.navigation(
+                    title: const Text("About"),
+                    onPressed: (context) {
+                      BlocProvider.of<NavigationCubit>(context).goAbout();
+                    }),
+                SettingsTile.navigation(
+                    title: const Text("Help"),
+                    onPressed: (context) {
+                      BlocProvider.of<NavigationCubit>(context).goHelp();
+                    }),
+              ]),
               SettingsSection(title: const Text("Updates"), tiles: [
                 CustomSettingsTile(child: TextButton(onPressed: () => {}, child: const Text("Check For Updates")))
               ]),

@@ -28,6 +28,7 @@ dependencies:
   loggy: ^2.0.1+1
   flutter_loggy: ^2.0.1
   github: ^9.4.0
+  markdown: ^6.0.1
   intiface_engine_flutter_plugin:
     path: ../intiface_engine_flutter_plugin/
 
@@ -40,3 +41,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/

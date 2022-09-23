@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/body_widget.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
@@ -10,12 +11,17 @@ import 'package:intiface_central/navigation_cubit.dart';
 
 class IntifaceCentralApp extends StatelessWidget {
   const IntifaceCentralApp(
-      {super.key, required IntifaceConfigurationRepository configRepo, required EngineRepository engineRepo})
+      {super.key,
+      required IntifaceConfigurationRepository configRepo,
+      required EngineRepository engineRepo,
+      required AssetCubit assetCubit})
       : _configRepo = configRepo,
-        _engineRepo = engineRepo;
+        _engineRepo = engineRepo,
+        _assetCubit = assetCubit;
 
   final IntifaceConfigurationRepository _configRepo;
   final EngineRepository _engineRepo;
+  final AssetCubit _assetCubit;
 
   // This widget is the root of your application.
   @override
@@ -23,6 +29,7 @@ class IntifaceCentralApp extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider(create: (context) => EngineControlBloc(_engineRepo)),
       BlocProvider(create: (context) => NavigationCubit()),
+      BlocProvider(create: (context) => _assetCubit),
       BlocProvider(create: (context) => IntifaceConfigurationCubit(_configRepo))
     ], child: const IntifaceCentralView());
   }

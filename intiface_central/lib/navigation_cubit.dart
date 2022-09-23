@@ -12,6 +12,8 @@ class NavigationStateNews extends NavigationState {}
 
 class NavigationStateAbout extends NavigationState {}
 
+class NavigationStateHelp extends NavigationState {}
+
 class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationStateNews());
 
@@ -33,5 +35,9 @@ class NavigationCubit extends Cubit<NavigationState> {
 
   void goAbout() {
     emit(NavigationStateAbout());
+  }
+
+  void goHelp() {
+    emit(NavigationStateHelp());
   }
 }
