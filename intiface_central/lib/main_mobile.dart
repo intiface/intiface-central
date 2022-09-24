@@ -9,12 +9,12 @@ import 'package:permission_handler/permission_handler.dart';
 
 // We don't want to link against the bridge plugin on desktop, so we have to provide our own main for each platform.
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
   var configRepo = IntifaceConfigurationRepository(prefs);
   var configCubit = IntifaceConfigurationCubit(configRepo);
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   await [
     Permission.location,

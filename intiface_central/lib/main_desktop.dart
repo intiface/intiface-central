@@ -25,12 +25,12 @@ void windowDisplayModeResize(bool useCompactDisplay) {
 
 // We don't want to link against the bridge plugin on desktop, so we have to provide our own main for each platform.
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
   var configRepo = IntifaceConfigurationRepository(prefs);
   var configCubit = IntifaceConfigurationCubit(configRepo);
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   // Must add this line.
   await windowManager.ensureInitialized();
