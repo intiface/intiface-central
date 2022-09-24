@@ -3,23 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/body_widget.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/control_widget.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/navigation_cubit.dart';
+import 'package:intiface_central/util/intiface_util.dart';
 
 class IntifaceCentralApp extends StatelessWidget {
   const IntifaceCentralApp(
       {super.key,
-      required IntifaceConfigurationRepository configRepo,
+      required IntifaceConfigurationCubit configCubit,
       required EngineRepository engineRepo,
       required AssetCubit assetCubit})
-      : _configRepo = configRepo,
+      : _configCubit = configCubit,
         _engineRepo = engineRepo,
         _assetCubit = assetCubit;
 
-  final IntifaceConfigurationRepository _configRepo;
+  final IntifaceConfigurationCubit _configCubit;
   final EngineRepository _engineRepo;
   final AssetCubit _assetCubit;
 
@@ -30,7 +30,7 @@ class IntifaceCentralApp extends StatelessWidget {
       BlocProvider(create: (context) => EngineControlBloc(_engineRepo)),
       BlocProvider(create: (context) => NavigationCubit()),
       BlocProvider(create: (context) => _assetCubit),
-      BlocProvider(create: (context) => IntifaceConfigurationCubit(_configRepo))
+      BlocProvider(create: (context) => _configCubit)
     ], child: const IntifaceCentralView());
   }
 }
@@ -45,14 +45,8 @@ class IntifaceCentralView extends StatelessWidget {
         builder: (context, state) => MaterialApp(
             title: 'Intiface Central',
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              brightness: Brightness.light,
-              primarySwatch: Colors.blue,
-            ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-              primarySwatch: Colors.blue,
-            ),
+            theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue, useMaterial3: true),
+            darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue, useMaterial3: true),
             themeMode:
                 BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark,
             home: const IntifaceCentralPage()));
@@ -65,9 +59,36 @@ class IntifaceCentralPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            body: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [const ControlWidget(), const Divider(height: 2), BodyWidget()])));
+        child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+            buildWhen: (previous, current) => current is UseCompactDisplay,
+            builder: (context, state) {
+              var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
+              List<Widget> widgets = [const ControlWidget()];
+              if (isDesktop()) {
+                widgets.addAll([
+                  const Divider(height: 2),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: IconButton(
+                              onPressed: () {
+                                BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay =
+                                    !useCompactDisplay;
+                              },
+                              icon: useCompactDisplay
+                                  ? const Icon(Icons.arrow_drop_down)
+                                  : const Icon(Icons.arrow_drop_up)))
+                    ],
+                  )
+                ]);
+                if (!useCompactDisplay) {
+                  widgets.addAll(const [Divider(height: 2), BodyWidget()]);
+                }
+              } else {
+                // Always render body on mobile.
+                widgets.addAll(const [Divider(height: 2), BodyWidget()]);
+              }
+              return Scaffold(body: Column(mainAxisSize: MainAxisSize.max, children: widgets));
+            }));
   }
 }

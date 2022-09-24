@@ -7,6 +7,13 @@ class IntifaceConfigurationRepository {
   IntifaceConfigurationProvider provider;
 
   IntifaceConfigurationRepository(this.provider) {
+    // Our constructor runs through all of our known configuration values, either setting them to what they already are,
+    // or providing them with default values.
+
+    // Window settings for desktop. Will be ignored on mobile.
+
+    useCompactDisplay = provider.getBool("useCompactDisplay") ?? isDesktop();
+
     // Check all of our values to make sure they exist. If not, set defaults, based on platform if needed.
     serverName = provider.getString("serverName") ?? "Intiface Server";
     serverMaxPingTime = provider.getInt("maxPingTime") ?? 0;
@@ -40,6 +47,10 @@ class IntifaceConfigurationRepository {
     useLovenseHIDDongle = provider.getBool("useLovenseHIDDongle") ?? false;
     useLovenseSerialDongle = provider.getBool("useLovenseSerialDongle") ?? false;
   }
+
+  bool get useCompactDisplay => provider.getBool("useCompactDisplay")!;
+  set useCompactDisplay(bool value) => provider.setBool("useCompactDisplay", value);
+
   bool get useSideNavigationBar => provider.getBool("useSideNavigationBar")!;
   set useSideNavigationBar(bool value) => provider.setBool("useSideNavigationBar", value);
   bool get useLightTheme => provider.getBool("useLightTheme")!;

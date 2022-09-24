@@ -71,6 +71,11 @@ class WebsocketServerAllInterfaces extends IntifaceConfigurationState {
   WebsocketServerAllInterfaces(this.value);
 }
 
+class UseCompactDisplay extends IntifaceConfigurationState {
+  final bool value;
+  UseCompactDisplay(this.value);
+}
+
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
   IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
@@ -191,52 +196,13 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get websocketServerAllInterfaces {
     return _repo.websocketServerAllInterfaces;
   }
-}
 
-/*
-enum IntifaceConfigurationStatus {
-  none,
-  serverName,
-  serverMaxPingTime,
-  websocketServerAllInterfaces,
-  websocketServerPort,
-  serverLogLevel,
-  usePrereleaseEngine,
-  checkForUpdateOnStart,
-  startServerOnStartup,
-  crashReporting,
-  showNotifications,
-  hasRunFirstUse,
-  showExtendedUI,
-  allowRawMessages,
-  unreadNews,
-  useBluetoothLE,
-  useXInput,
-  useLovenseConnectService,
-  useDeviceWebsocketServer,
-  useSerialPort,
-  useHID,
-  useLovenseHIDDongle,
-  useLovenseSerialDongle,
-  ;
-}
-
-class IntifaceConfigurationState extends Equatable {
-  const IntifaceConfigurationState({
-    this.status = IntifaceConfigurationStatus.none,
-  });
-
-  final IntifaceConfigurationStatus status;
-
-  IntifaceConfigurationState copyuse({
-    IntifaceConfigurationStatus? status,
-  }) {
-    return IntifaceConfigurationState(
-      status: status ?? this.status,
-    );
+  set useCompactDisplay(bool value) {
+    _repo.useCompactDisplay = value;
+    emit(UseCompactDisplay(value));
   }
 
-  @override
-  List<Object?> get props => [status];
+  bool get useCompactDisplay {
+    return _repo.useCompactDisplay;
+  }
 }
-*/

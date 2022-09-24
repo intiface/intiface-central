@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:intiface_central/asset_cubit.dart';
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
-Future<void> mainCore(IntifaceConfigurationRepository configRepo, EngineRepository engineRepo) async {
+Future<void> mainCore(IntifaceConfigurationCubit configCubit, EngineRepository engineRepo) async {
   Loggy.initLoggy(
     logPrinter: StreamPrinter(
       const PrettyDeveloperPrinter(),
@@ -42,5 +42,5 @@ Future<void> mainCore(IntifaceConfigurationRepository configRepo, EngineReposito
 
   var assetCubit = await AssetCubit.create();
 
-  runApp(IntifaceCentralApp(engineRepo: engineRepo, configRepo: configRepo, assetCubit: assetCubit));
+  runApp(IntifaceCentralApp(engineRepo: engineRepo, configCubit: configCubit, assetCubit: assetCubit));
 }

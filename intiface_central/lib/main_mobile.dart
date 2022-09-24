@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
@@ -11,6 +12,7 @@ void main() async {
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
   var configRepo = IntifaceConfigurationRepository(prefs);
+  var configCubit = IntifaceConfigurationCubit(configRepo);
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -22,5 +24,5 @@ void main() async {
     Permission.locationWhenInUse,
   ].request();
 
-  await mainCore(configRepo, EngineRepository(LibraryEngineProvider(), configRepo));
+  await mainCore(configCubit, EngineRepository(LibraryEngineProvider(), configRepo));
 }
