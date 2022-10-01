@@ -7,6 +7,7 @@ import 'package:intiface_central/control_widget.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/navigation_cubit.dart';
+import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class IntifaceCentralApp extends StatelessWidget {
@@ -14,14 +15,17 @@ class IntifaceCentralApp extends StatelessWidget {
       {super.key,
       required IntifaceConfigurationCubit configCubit,
       required EngineRepository engineRepo,
-      required AssetCubit assetCubit})
+      required AssetCubit assetCubit,
+      required NetworkInfoCubit networkCubit})
       : _configCubit = configCubit,
         _engineRepo = engineRepo,
-        _assetCubit = assetCubit;
+        _assetCubit = assetCubit,
+        _networkCubit = networkCubit;
 
   final IntifaceConfigurationCubit _configCubit;
   final EngineRepository _engineRepo;
   final AssetCubit _assetCubit;
+  final NetworkInfoCubit _networkCubit;
 
   // This widget is the root of your application.
   @override
@@ -30,7 +34,8 @@ class IntifaceCentralApp extends StatelessWidget {
       BlocProvider(create: (context) => EngineControlBloc(_engineRepo)),
       BlocProvider(create: (context) => NavigationCubit()),
       BlocProvider(create: (context) => _assetCubit),
-      BlocProvider(create: (context) => _configCubit)
+      BlocProvider(create: (context) => _configCubit),
+      BlocProvider(create: (context) => _networkCubit)
     ], child: const IntifaceCentralView());
   }
 }

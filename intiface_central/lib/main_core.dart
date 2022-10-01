@@ -4,6 +4,7 @@ import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/intiface_central_app.dart';
+import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
@@ -20,6 +21,8 @@ Future<void> mainCore(IntifaceConfigurationCubit configCubit, EngineRepository e
   logInfo("Intiface Central Starting...");
 
   await IntifacePaths.init();
+
+  var networkCubit = await NetworkInfoCubit.create();
 
   engineRepo.messageStream.forEach((message) {
     if (message.engineLog != null) {
@@ -42,5 +45,6 @@ Future<void> mainCore(IntifaceConfigurationCubit configCubit, EngineRepository e
 
   var assetCubit = await AssetCubit.create();
 
-  runApp(IntifaceCentralApp(engineRepo: engineRepo, configCubit: configCubit, assetCubit: assetCubit));
+  runApp(IntifaceCentralApp(
+      engineRepo: engineRepo, configCubit: configCubit, assetCubit: assetCubit, networkCubit: networkCubit));
 }
