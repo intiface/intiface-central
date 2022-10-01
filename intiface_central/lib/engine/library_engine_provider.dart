@@ -69,7 +69,7 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   void send(String msg) {
-    //_stream!.sink.add(msg);
+    api.send(msgJson: msg);
   }
 
   @override
