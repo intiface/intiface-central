@@ -6,14 +6,18 @@ use std::sync::Arc;
 use anyhow::Result;
 use tokio::{
   select,
-  sync::Notify
+  sync::{Notify, broadcast}
 };
 use flutter_rust_bridge::{frb, StreamSink};
 use once_cell::sync::OnceCell;
+use lazy_static::lazy_static;
 
-pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine};
+pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
 
-pub static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
+static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
+lazy_static! {
+  static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> = Arc::new(broadcast::channel(255).0);
+}
 
 #[frb(mirror(EngineOptionsExternal))]
 pub struct _EngineOptionsExternal {
@@ -51,7 +55,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     ENGINE_NOTIFIER.set(Arc::new(Notify::new()));
   }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
-  let frontend = FlutterIntifaceEngineFrontend::new(sink.clone());
+  let frontend = FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone());
   let engine = Arc::new(IntifaceEngine::default());
   let engine_clone = engine.clone();
   let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
