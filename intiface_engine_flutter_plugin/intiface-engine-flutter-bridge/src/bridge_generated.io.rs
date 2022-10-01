@@ -7,6 +7,11 @@ pub extern "C" fn wire_run_engine(port_: i64, args: *mut wire_EngineOptionsExter
 }
 
 #[no_mangle]
+pub extern "C" fn wire_send(port_: i64, msg_json: *mut wire_uint_8_list) {
+  wire_send_impl(port_, msg_json)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_stop_engine(port_: i64) {
   wire_stop_engine_impl(port_)
 }

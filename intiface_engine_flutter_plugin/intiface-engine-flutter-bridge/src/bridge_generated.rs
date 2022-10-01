@@ -35,6 +35,19 @@ fn wire_run_engine_impl(
     },
   )
 }
+fn wire_send_impl(port_: MessagePort, msg_json: impl Wire2Api<String> + UnwindSafe) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+    WrapInfo {
+      debug_name: "send",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_msg_json = msg_json.wire2api();
+      move |task_callback| Ok(send(api_msg_json))
+    },
+  )
+}
 fn wire_stop_engine_impl(port_: MessagePort) {
   FLUTTER_RUST_BRIDGE_HANDLER.wrap(
     WrapInfo {

@@ -70,6 +70,11 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   Ok(())
 }
 
+pub fn send(msg_json: String) {
+  let msg: IntifaceMessage = serde_json::from_str(&msg_json).unwrap();  
+  ENGINE_BROADCASTER.send(msg).unwrap();
+}
+
 pub fn stop_engine() {
   ENGINE_NOTIFIER.get().expect("Should be set").notify_waiters();
 }
