@@ -9,7 +9,7 @@ import 'package:loggy/loggy.dart';
 
 class LibraryEngineProvider implements EngineProvider {
   final StreamController<String> _processMessageStream = StreamController();
-  Stream<String>? _sink;
+  Stream<String>? _stream;
 
   Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository configRepo) async {
     String? deviceConfigFile;
@@ -48,9 +48,9 @@ class LibraryEngineProvider implements EngineProvider {
   @override
   Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo}) async {
     var engineOptions = await _buildArguments(configRepo);
-    _sink = api.runEngine(args: engineOptions);
+    _stream = api.runEngine(args: engineOptions);
     logInfo("Engine started");
-    _sink!.forEach((element) {
+    _stream!.forEach((element) {
       try {
         print(element);
         _processMessageStream.add(element);
@@ -65,6 +65,11 @@ class LibraryEngineProvider implements EngineProvider {
   Future<void> stop() async {
     api.stopEngine();
     logInfo("Engine stopped");
+  }
+
+  @override
+  void send(String msg) {
+    //_stream!.sink.add(msg);
   }
 
   @override

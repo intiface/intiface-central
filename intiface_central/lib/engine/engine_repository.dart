@@ -34,5 +34,9 @@ class EngineRepository {
     await _provider.stop();
   }
 
+  void send(String msg) {
+    _provider.send(msg);
+  }
+
   Stream<EngineMessage> get messageStream => _engineMessageStream.stream;
 }

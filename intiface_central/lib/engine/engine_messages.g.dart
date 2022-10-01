@@ -6,10 +6,48 @@ part of 'engine_messages.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MessageVersion _$MessageVersionFromJson(Map<String, dynamic> json) =>
-    MessageVersion()..version = json['version'] as int;
+RequestEngineVersion _$RequestEngineVersionFromJson(
+        Map<String, dynamic> json) =>
+    RequestEngineVersion()..expectedVersion = json['expected_version'] as int;
 
-Map<String, dynamic> _$MessageVersionToJson(MessageVersion instance) =>
+Map<String, dynamic> _$RequestEngineVersionToJson(
+        RequestEngineVersion instance) =>
+    <String, dynamic>{
+      'expected_version': instance.expectedVersion,
+    };
+
+Stop _$StopFromJson(Map<String, dynamic> json) => Stop();
+
+Map<String, dynamic> _$StopToJson(Stop instance) => <String, dynamic>{};
+
+IntifaceMessage _$IntifaceMessageFromJson(Map<String, dynamic> json) =>
+    IntifaceMessage()
+      ..requestEngineVersion = json['RequestEngineVersion'] == null
+          ? null
+          : RequestEngineVersion.fromJson(
+              json['RequestEngineVersion'] as Map<String, dynamic>)
+      ..stop = json['Stop'] == null
+          ? null
+          : Stop.fromJson(json['Stop'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$IntifaceMessageToJson(IntifaceMessage instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('RequestEngineVersion', instance.requestEngineVersion?.toJson());
+  writeNotNull('Stop', instance.stop?.toJson());
+  return val;
+}
+
+EngineVersion _$EngineVersionFromJson(Map<String, dynamic> json) =>
+    EngineVersion()..version = json['version'] as String;
+
+Map<String, dynamic> _$EngineVersionToJson(EngineVersion instance) =>
     <String, dynamic>{
       'version': instance.version,
     };
@@ -149,7 +187,7 @@ EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
     EngineMessage()
       ..messageVersion = json['MessageVersion'] == null
           ? null
-          : MessageVersion.fromJson(
+          : EngineVersion.fromJson(
               json['MessageVersion'] as Map<String, dynamic>)
       ..engineLog = json['EngineLog'] == null
           ? null

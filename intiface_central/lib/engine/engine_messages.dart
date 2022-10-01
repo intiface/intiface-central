@@ -5,10 +5,38 @@ import 'package:json_annotation/json_annotation.dart';
 part 'engine_messages.g.dart';
 
 @JsonSerializable()
-class MessageVersion {
-  int version = -1;
-  factory MessageVersion.fromJson(Map<String, dynamic> json) => _$MessageVersionFromJson(json);
-  MessageVersion();
+class RequestEngineVersion {
+  @JsonKey(name: "expected_version")
+  int expectedVersion = 1;
+  Map<String, dynamic> toJson() => _$RequestEngineVersionToJson(this);
+  factory RequestEngineVersion.fromJson(Map<String, dynamic> json) => _$RequestEngineVersionFromJson(json);
+  RequestEngineVersion();
+}
+
+@JsonSerializable()
+class Stop {
+  Map<String, dynamic> toJson() => _$StopToJson(this);
+  factory Stop.fromJson(Map<String, dynamic> json) => _$StopFromJson(json);
+  Stop();
+}
+
+@JsonSerializable(fieldRename: FieldRename.pascal, includeIfNull: false, explicitToJson: true)
+class IntifaceMessage {
+  RequestEngineVersion? requestEngineVersion;
+  Stop? stop;
+
+  factory IntifaceMessage.fromJson(Map<String, dynamic> json) => _$IntifaceMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IntifaceMessageToJson(this);
+
+  IntifaceMessage();
+}
+
+@JsonSerializable()
+class EngineVersion {
+  String version = "";
+  factory EngineVersion.fromJson(Map<String, dynamic> json) => _$EngineVersionFromJson(json);
+  EngineVersion();
 }
 
 @JsonSerializable()
@@ -114,7 +142,7 @@ class ClientRejected {
 
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class EngineMessage {
-  MessageVersion? messageVersion;
+  EngineVersion? messageVersion;
   EngineLog? engineLog;
   EngineStarted? engineStarted;
   EngineError? engineError;

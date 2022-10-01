@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
@@ -96,6 +98,7 @@ class ProcessEngineProvider implements EngineProvider {
     );
     _ipcChannel!.stream.forEach((element) {
       try {
+        print(element);
         _processMessageStream.add(element);
       } catch (e) {
         logError("Error adding message to stream: $e");
@@ -105,9 +108,16 @@ class ProcessEngineProvider implements EngineProvider {
   }
 
   @override
+  void send(String msg) {
+    _ipcChannel!.sink.add(msg);
+  }
+
+  @override
   Future<void> stop() async {
     if (_serverProcess != null && _ipcChannel != null) {
-      _ipcChannel!.sink.close();
+      var msg = IntifaceMessage();
+      msg.stop = Stop();
+      send(jsonEncode(msg));
       await _serverProcess!.exitCode;
       _ipcChannel = null;
       _serverProcess = null;

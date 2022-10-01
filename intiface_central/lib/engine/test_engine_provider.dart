@@ -13,5 +13,8 @@ class TestEngineProvider implements EngineProvider {
   }
 
   @override
+  void send(String msg) {}
+
+  @override
   Stream<String> get engineRawMessageStream => throw "Unimplemented";
 }
