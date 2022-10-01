@@ -16,28 +16,28 @@ class ProcessEngineProvider implements EngineProvider {
   List<String> _buildCLIArgs(IntifaceConfigurationRepository options, int frontendPort) {
     List<String> arguments = [];
 
-    arguments.addAll(["--server_name", options.serverName]);
-    arguments.addAll(["--frontend_websocket_port", frontendPort.toString()]);
+    arguments.addAll(["--server-name", options.serverName]);
+    arguments.addAll(["--frontend-websocket-port", frontendPort.toString()]);
     if (IntifacePaths.deviceConfigFile.existsSync()) {
-      arguments.addAll(["--device_config_file", IntifacePaths.deviceConfigFile.path]);
+      arguments.addAll(["--device-config-file", IntifacePaths.deviceConfigFile.path]);
     }
     if (IntifacePaths.userDeviceConfigFile.existsSync()) {
-      arguments.addAll(["--user_device_config_file", IntifacePaths.userDeviceConfigFile.path]);
+      arguments.addAll(["--user-device-config-file", IntifacePaths.userDeviceConfigFile.path]);
     }
     if (options.websocketServerAllInterfaces) {
-      arguments.add("--websocket_use_all_interfaces");
+      arguments.add("--websocket-use-all-interfaces");
     }
-    arguments.addAll(["--websocket_port", options.websocketServerPort.toString()]);
+    arguments.addAll(["--websocket-port", options.websocketServerPort.toString()]);
     arguments.addAll(["--log", "debug"]);
     if (options.serverMaxPingTime > 0) {
-      arguments.addAll(["--max_ping_time", options.serverMaxPingTime.toString()]);
+      arguments.addAll(["--max-ping-time", options.serverMaxPingTime.toString()]);
     }
 
     if (options.crashReporting) {
-      arguments.add("--crash_reporting");
+      arguments.add("--crash-reporting");
     }
     if (options.allowRawMessages) {
-      arguments.add("--allow_raw");
+      arguments.add("--allow-raw");
     }
     if (options.useBluetoothLE) {
       arguments.add("--use-bluetooth-le");
@@ -78,13 +78,19 @@ class ProcessEngineProvider implements EngineProvider {
     var rng = Random();
     // Just make port randomly between 10000-60000;
     var frontendPort = rng.nextInt(50000) + 10000;
+    //var frontendPort = 51865;
+
     var engineArguments = _buildCLIArgs(configRepo, frontendPort);
 
     logInfo("Starting $engineArguments");
+
+    // TODO Replace with actual process location
+
     //_serverProcess = await Process.start(parameters.processPath!, parameters.engineArguments);
-    _serverProcess =
-        await Process.start("C:\\Users\\qdot\\code\\intiface-cli-rs\\target\\debug\\intiface-cli.exe", engineArguments);
+    _serverProcess = await Process.start(
+        "C:\\Users\\qdot\\code\\intiface-engine\\target\\debug\\intiface_engine.exe", engineArguments);
     // Wait for the process to bring up its server before trying to connect.
+    // TODO This is assuming our server is local, which may not be the case?
     _ipcChannel = WebSocketChannel.connect(
       Uri.parse('ws://127.0.0.1:$frontendPort'),
     );
