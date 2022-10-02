@@ -5,8 +5,9 @@ import 'package:intiface_central/configuration/intiface_configuration_cubit.dart
 import 'package:intiface_central/device_widget.dart';
 import 'package:intiface_central/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
-import 'package:intiface_central/news_widget.dart';
+import 'package:intiface_central/markdown_widget.dart';
 import 'package:intiface_central/settings_widget.dart';
+import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
@@ -35,7 +36,9 @@ class BodyWidget extends StatelessWidget {
           Icons.newspaper_outlined,
           Icons.newspaper,
           'News',
-          () => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false),
+          () => BlocBuilder<UpdateBloc, UpdateState>(
+              buildWhen: (previous, current) => current is NewsUpdateRetrieved,
+              builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
           true),
       NavigationDestination((state) => state is NavigationStateDevices, (NavigationCubit cubit) => cubit.goDevices(),
           Icons.vibration_outlined, Icons.vibration, 'Devices', () => const DeviceWidget(), true),

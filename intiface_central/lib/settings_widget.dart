@@ -4,6 +4,7 @@ import 'package:intiface_central/configuration/intiface_configuration_cubit.dart
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:intiface_central/update/update_bloc.dart';
 
 class SettingWidget extends StatelessWidget {
   const SettingWidget({super.key});
@@ -32,7 +33,10 @@ class SettingWidget extends StatelessWidget {
 
       tiles.addAll([
         SettingsSection(title: const Text("Updates"), tiles: [
-          CustomSettingsTile(child: TextButton(onPressed: () => {}, child: const Text("Check For Updates")))
+          CustomSettingsTile(
+              child: TextButton(
+                  onPressed: () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()),
+                  child: const Text("Check For Updates")))
         ]),
         SettingsSection(title: const Text("App Settings"), tiles: [
           SettingsTile.switchTile(

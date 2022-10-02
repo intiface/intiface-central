@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/intiface_central_app.dart';
+import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
+import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/update/update_repository.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
@@ -45,6 +50,25 @@ Future<void> mainCore(IntifaceConfigurationCubit configCubit, EngineRepository e
 
   var assetCubit = await AssetCubit.create();
 
-  runApp(IntifaceCentralApp(
-      engineRepo: engineRepo, configCubit: configCubit, assetCubit: assetCubit, networkCubit: networkCubit));
+  // Set up Update/Configuration Pipe/Cubit.
+  var updateBloc = UpdateBloc(UpdateRepository(configCubit.currentNewsVersion, configCubit.currentDeviceConfigVersion));
+
+  updateBloc.stream.forEach((state) async {
+    if (state is NewsUpdateRetrieved) {
+      configCubit.currentNewsVersion = state.version;
+      await assetCubit.update();
+    }
+    if (state is DeviceConfigUpdateRetrieved) {
+      configCubit.currentDeviceConfigVersion = state.version;
+    }
+  });
+
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(create: (context) => EngineControlBloc(engineRepo)),
+    BlocProvider(create: (context) => NavigationCubit()),
+    BlocProvider(create: (context) => updateBloc),
+    BlocProvider(create: (context) => assetCubit),
+    BlocProvider(create: (context) => configCubit),
+    BlocProvider(create: (context) => networkCubit),
+  ], child: const IntifaceCentralView()));
 }

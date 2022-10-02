@@ -46,7 +46,17 @@ class IntifaceConfigurationRepository {
     useHID = provider.getBool("useHID") ?? false;
     useLovenseHIDDongle = provider.getBool("useLovenseHIDDongle") ?? false;
     useLovenseSerialDongle = provider.getBool("useLovenseSerialDongle") ?? false;
+
+    // Update settings
+    currentNewsVersion = provider.getString("currentNewsVersion") ?? "";
+    currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "";
   }
+
+  String get currentNewsVersion => provider.getString("currentNewsVersion")!;
+  set currentNewsVersion(String value) => provider.setString("currentNewsVersion", value);
+
+  String get currentDeviceConfigVersion => provider.getString("currentDeviceConfigVersion")!;
+  set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
 
   bool get useCompactDisplay => provider.getBool("useCompactDisplay")!;
   set useCompactDisplay(bool value) => provider.setBool("useCompactDisplay", value);

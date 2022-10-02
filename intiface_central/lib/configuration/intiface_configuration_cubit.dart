@@ -76,6 +76,16 @@ class UseCompactDisplay extends IntifaceConfigurationState {
   UseCompactDisplay(this.value);
 }
 
+class CurrentNewsVersion extends IntifaceConfigurationState {
+  final String value;
+  CurrentNewsVersion(this.value);
+}
+
+class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
+  final String value;
+  CurrentDeviceConfigVersion(this.value);
+}
+
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
   IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
@@ -204,5 +214,23 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   bool get useCompactDisplay {
     return _repo.useCompactDisplay;
+  }
+
+  set currentNewsVersion(String value) {
+    _repo.currentNewsVersion = value;
+    emit(CurrentNewsVersion(value));
+  }
+
+  String get currentNewsVersion {
+    return _repo.currentNewsVersion;
+  }
+
+  set currentDeviceConfigVersion(String value) {
+    _repo.currentDeviceConfigVersion = value;
+    emit(CurrentDeviceConfigVersion(value));
+  }
+
+  String get currentDeviceConfigVersion {
+    return _repo.currentDeviceConfigVersion;
   }
 }
