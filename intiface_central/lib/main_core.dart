@@ -13,10 +13,28 @@ import 'package:intiface_central/update/update_repository.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
-Future<void> mainCore(IntifaceConfigurationCubit configCubit, EngineRepository engineRepo) async {
+// From https://github.com/infinum/floggy/issues/50
+class MultiPrinter extends LoggyPrinter {
+  const MultiPrinter();
+
+  final LoggyPrinter devPrinter = const PrettyDeveloperPrinter();
+  final LoggyPrinter consolePrinter = const PrettyPrinter();
+  //final LoggyPrinter filePrinter;
+
+  @override
+  void onLog(LogRecord record) {
+    //filePrinter.onLog(record);
+    devPrinter.onLog(record);
+
+    if (!kReleaseMode) {
+      consolePrinter.onLog(record);
+    }
+  }
+}
+
   Loggy.initLoggy(
     logPrinter: StreamPrinter(
-      const PrettyDeveloperPrinter(),
+      const MultiPrinter(),
     ),
     logOptions: const LogOptions(
       LogLevel.all,
