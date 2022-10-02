@@ -10,7 +10,9 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = { path = "../../../intiface-cli-rs" }
+# Make sure we don't build with default_features on, as it is assumed intiface-engine will normally
+# build the desktop executable, which has DCMs that don't work on mobile.
+intiface-engine = { version = "1.0.0", default_features = false, features=["crash_reporting"] }
 flutter_rust_bridge = "1"
 log = "0.4.17"
 lazy_static = "1.4.0"
