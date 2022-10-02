@@ -13,31 +13,44 @@ const String intifaceEngineDirectoryName = 'engine';
 const String intifaceEngineFilename = 'intiface-cli.exe';
 
 class IntifacePaths {
-  static Directory? _configPath;
-  static Directory? _logPath;
-  static File? _deviceConfigFile;
-  static File? _userDeviceConfigFile;
-  static Directory? _enginePath;
-  static File? _engineFile;
-  static Directory? _newsPath;
-  static File? _newsFile;
-  static Directory get configPath => IntifacePaths._configPath!;
-  static Directory get logPath => IntifacePaths._logPath!;
-  static File get deviceConfigFile => IntifacePaths._deviceConfigFile!;
-  static File get userDeviceConfigFile => IntifacePaths._userDeviceConfigFile!;
-  static Directory get enginePath => IntifacePaths._enginePath!;
-  static File get engineFile => IntifacePaths._engineFile!;
-  static Directory get newsPath => IntifacePaths._newsPath!;
-  static File get newsFile => IntifacePaths._newsFile!;
+  static late Directory _configPath;
+  static late Directory _logPath;
+  static late File _deviceConfigFile;
+  static late File _userDeviceConfigFile;
+  static late Directory _enginePath;
+  static late File _engineFile;
+  static late Directory _newsPath;
+  static late File _newsFile;
+  static Directory get configPath => IntifacePaths._configPath;
+  static Directory get logPath => IntifacePaths._logPath;
+  static File get deviceConfigFile => IntifacePaths._deviceConfigFile;
+  static File get userDeviceConfigFile => IntifacePaths._userDeviceConfigFile;
+  static Directory get enginePath => IntifacePaths._enginePath;
+  static File get engineFile => IntifacePaths._engineFile;
+  static Directory get newsPath => IntifacePaths._newsPath;
+  static File get newsFile => IntifacePaths._newsFile;
   static Future<void> init() async {
+    (await getApplicationSupportDirectory()).create(recursive: true);
+
     var docsDir = (await getApplicationSupportDirectory()).path;
+
     IntifacePaths._configPath = Directory(p.join(docsDir, intifaceConfigDirectoryName));
+    await IntifacePaths._configPath.create(recursive: true);
+
     IntifacePaths._logPath = Directory(p.join(docsDir, intifaceLoggingDirectoryName));
+    await IntifacePaths._logPath.create(recursive: true);
+
     IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath!.path, deviceConfigFilename));
     IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath!.path, userDeviceConfigFilename));
+
     IntifacePaths._enginePath = Directory(p.join(docsDir, intifaceEngineDirectoryName));
+    await IntifacePaths._enginePath.create(recursive: true);
+
     IntifacePaths._engineFile = File(p.join(IntifacePaths._enginePath!.path, intifaceEngineFilename));
+
     IntifacePaths._newsPath = Directory(p.join(docsDir, intifaceNewsDirectoryName));
+    await IntifacePaths._newsPath.create(recursive: true);
+
     IntifacePaths._newsFile = File(p.join(IntifacePaths._newsPath!.path, intifaceNewsFilename));
   }
 }
