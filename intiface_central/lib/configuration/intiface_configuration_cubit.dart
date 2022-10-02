@@ -86,6 +86,11 @@ class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
   CurrentDeviceConfigVersion(this.value);
 }
 
+class CurrentEngineVersion extends IntifaceConfigurationState {
+  final String value;
+  CurrentEngineVersion(this.value);
+}
+
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
   IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
@@ -232,5 +237,14 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   String get currentDeviceConfigVersion {
     return _repo.currentDeviceConfigVersion;
+  }
+
+  set currentEngineVersion(String value) {
+    _repo.currentEngineVersion = value;
+    emit(CurrentEngineVersion(value));
+  }
+
+  String get currentEngineVersion {
+    return _repo.currentEngineVersion;
   }
 }

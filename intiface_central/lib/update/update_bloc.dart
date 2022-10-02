@@ -25,6 +25,22 @@ class DeviceConfigUpdateRetrieved extends UpdateState {
   String get version => _version;
 }
 
+class IncompatibleIntifaceEngineUpdate extends UpdateState {
+  final String _version;
+
+  IncompatibleIntifaceEngineUpdate(this._version);
+
+  String get version => _version;
+}
+
+class IntifaceEngineUpdateRetrieved extends UpdateState {
+  final String _version;
+
+  IntifaceEngineUpdateRetrieved(this._version);
+
+  String get version => _version;
+}
+
 abstract class UpdateEvent {}
 
 class RunUpdate extends UpdateEvent {}

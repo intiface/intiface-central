@@ -50,6 +50,7 @@ class IntifaceConfigurationRepository {
     // Update settings
     currentNewsVersion = provider.getString("currentNewsVersion") ?? "";
     currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "";
+    currentEngineVersion = provider.getString("currentEngineVersion") ?? "0.0.0";
   }
 
   String get currentNewsVersion => provider.getString("currentNewsVersion")!;
@@ -111,4 +112,6 @@ class IntifaceConfigurationRepository {
   set allowRawMessages(bool value) => provider.setBool("allowRawMessages", value);
   bool get unreadNews => provider.getBool("unreadNews")!;
   set unreadNews(bool value) => provider.setBool("unreadNews", value);
+  String get currentEngineVersion => provider.getString("currentEngineVersion")!;
+  set currentEngineVersion(String value) => provider.setString("currentEngineVersion", value);
 }

@@ -1,3 +1,4 @@
+import 'package:intiface_central/update/github_update_provider.dart';
 import 'package:intiface_central/update/http_update_provider.dart';
 import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/update/update_provider.dart';
@@ -23,8 +24,9 @@ class UpdateRepository {
         if (state != null) {
           events.add(state);
         }
-      } catch (e) {
+      } catch (e, stack) {
         logError("Error updating: $e");
+        logInfo(stack);
       }
     }
     return events;

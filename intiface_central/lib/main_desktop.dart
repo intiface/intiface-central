@@ -7,6 +7,10 @@ import 'package:intiface_central/configuration/intiface_configuration_repository
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/engine/process_engine_provider.dart';
 import 'package:intiface_central/main_core.dart';
+import 'package:intiface_central/update/github_update_provider.dart';
+import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/update/update_repository.dart';
+import 'package:intiface_central/util/intiface_util.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter/foundation.dart';
 
@@ -26,6 +30,7 @@ void windowDisplayModeResize(bool useCompactDisplay) {
 // We don't want to link against the bridge plugin on desktop, so we have to provide our own main for each platform.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await IntifacePaths.init();
 
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
@@ -56,5 +61,9 @@ void main() async {
 
   windowDisplayModeResize(configRepo.useCompactDisplay);
 
-  await mainCore(configCubit, EngineRepository(ProcessEngineProvider(), configRepo));
+  // Set up Update/Configuration Pipe/Cubit.
+  var updateRepo = UpdateRepository(configCubit.currentNewsVersion, configCubit.currentDeviceConfigVersion);
+  updateRepo.addProvider(IntifaceEngineUpdater(configCubit.currentEngineVersion));
+
+  await mainCore(configCubit, updateRepo, EngineRepository(ProcessEngineProvider(), configRepo));
 }

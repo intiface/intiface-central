@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
@@ -32,6 +33,8 @@ class MultiPrinter extends LoggyPrinter {
   }
 }
 
+Future<void> mainCore(
+    IntifaceConfigurationCubit configCubit, UpdateRepository updateRepo, EngineRepository engineRepo) async {
   Loggy.initLoggy(
     logPrinter: StreamPrinter(
       const MultiPrinter(),
@@ -42,8 +45,6 @@ class MultiPrinter extends LoggyPrinter {
     ),
   );
   logInfo("Intiface Central Starting...");
-
-  await IntifacePaths.init();
 
   var networkCubit = await NetworkInfoCubit.create();
 
@@ -68,8 +69,7 @@ class MultiPrinter extends LoggyPrinter {
 
   var assetCubit = await AssetCubit.create();
 
-  // Set up Update/Configuration Pipe/Cubit.
-  var updateBloc = UpdateBloc(UpdateRepository(configCubit.currentNewsVersion, configCubit.currentDeviceConfigVersion));
+  var updateBloc = UpdateBloc(updateRepo);
 
   updateBloc.stream.forEach((state) async {
     if (state is NewsUpdateRetrieved) {
@@ -78,6 +78,14 @@ class MultiPrinter extends LoggyPrinter {
     }
     if (state is DeviceConfigUpdateRetrieved) {
       configCubit.currentDeviceConfigVersion = state.version;
+    }
+    // While this should probably live in the main Desktop code, we can put this here because it won't bring in any new
+    // dependencies. It'll just update settings for things that only the desktop bloc can access, like intiface engine
+    // updates.
+    if (isDesktop()) {
+      if (state is IntifaceEngineUpdateRetrieved) {
+        configCubit.currentEngineVersion = state.version;
+      }
     }
   });
 
