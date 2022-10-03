@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/device_configuration/device_configuration.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/intiface_central_app.dart';
@@ -13,6 +14,7 @@ import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/update/update_repository.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 // From https://github.com/infinum/floggy/issues/50
 class MultiPrinter extends LoggyPrinter {
@@ -46,6 +48,12 @@ Future<void> mainCore(
   );
   logInfo("Intiface Central Starting...");
 
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  configCubit.currentAppVersion = packageInfo.version;
+
+  var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
+  configCubit.currentDeviceConfigVersion = deviceConfigVersion;
+
   var networkCubit = await NetworkInfoCubit.create();
 
   engineRepo.messageStream.forEach((message) {
@@ -73,11 +81,14 @@ Future<void> mainCore(
 
   updateBloc.stream.forEach((state) async {
     if (state is NewsUpdateRetrieved) {
-      configCubit.currentNewsVersion = state.version;
+      configCubit.currentNewsEtag = state.version;
       await assetCubit.update();
     }
     if (state is DeviceConfigUpdateRetrieved) {
-      configCubit.currentDeviceConfigVersion = state.version;
+      configCubit.currentDeviceConfigEtag = state.version;
+      // Load the file and pull internal version while we're at it.
+      var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
+      configCubit.currentDeviceConfigVersion = deviceConfigVersion;
     }
     // While this should probably live in the main Desktop code, we can put this here because it won't bring in any new
     // dependencies. It'll just update settings for things that only the desktop bloc can access, like intiface engine

@@ -32,6 +32,7 @@ dependencies:
   version: ^3.0.2
   archive: ^3.3.1
   http: ^0.13.5
+  package_info_plus: ^1.4.3+1
   intiface_engine_flutter_plugin:
     path: ../intiface_engine_flutter_plugin/
 

@@ -59,7 +59,7 @@ void main() async {
   windowDisplayModeResize(configRepo.useCompactDisplay);
 
   // Set up Update/Configuration Pipe/Cubit.
-  var updateRepo = UpdateRepository(configCubit.currentNewsVersion, configCubit.currentDeviceConfigVersion);
+  var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
   updateRepo.addProvider(IntifaceEngineUpdater(configCubit.currentEngineVersion));
 
   await mainCore(configCubit, updateRepo, EngineRepository(ProcessEngineProvider(), configRepo));

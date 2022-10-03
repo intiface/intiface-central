@@ -1,3 +1,4 @@
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider.dart';
 import 'dart:io';
 
@@ -48,16 +49,18 @@ class IntifaceConfigurationRepository {
     useLovenseSerialDongle = provider.getBool("useLovenseSerialDongle") ?? false;
 
     // Update settings
-    currentNewsVersion = provider.getString("currentNewsVersion") ?? "";
-    currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "";
+    currentNewsEtag = provider.getString("currentNewsEtag") ?? "";
+    currentDeviceConfigEtag = provider.getString("currentDeviceConfigEtag") ?? "";
     currentEngineVersion = provider.getString("currentEngineVersion") ?? "0.0.0";
+    currentAppVersion = provider.getString("currentAppVersion") ?? "0";
+    currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "0.0";
   }
 
-  String get currentNewsVersion => provider.getString("currentNewsVersion")!;
-  set currentNewsVersion(String value) => provider.setString("currentNewsVersion", value);
+  String get currentNewsEtag => provider.getString("currentNewsEtag")!;
+  set currentNewsEtag(String value) => provider.setString("currentNewsEtag", value);
 
-  String get currentDeviceConfigVersion => provider.getString("currentDeviceConfigVersion")!;
-  set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
+  String get currentDeviceConfigEtag => provider.getString("currentDeviceConfigEtag")!;
+  set currentDeviceConfigEtag(String value) => provider.setString("currentDeviceConfigEtag", value);
 
   bool get useCompactDisplay => provider.getBool("useCompactDisplay")!;
   set useCompactDisplay(bool value) => provider.setBool("useCompactDisplay", value);
@@ -114,4 +117,8 @@ class IntifaceConfigurationRepository {
   set unreadNews(bool value) => provider.setBool("unreadNews", value);
   String get currentEngineVersion => provider.getString("currentEngineVersion")!;
   set currentEngineVersion(String value) => provider.setString("currentEngineVersion", value);
+  String get currentAppVersion => provider.getString("currentAppVersion")!;
+  set currentAppVersion(String value) => provider.setString("currentAppVersion", value);
+  String get currentDeviceConfigVersion => provider.getString("currentDeviceConfigVersion")!;
+  set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
 }

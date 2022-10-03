@@ -75,19 +75,24 @@ class UseCompactDisplay extends IntifaceConfigurationState {
   UseCompactDisplay(this.value);
 }
 
-class CurrentNewsVersion extends IntifaceConfigurationState {
+class CurrentNewsEtag extends IntifaceConfigurationState {
   final String value;
-  CurrentNewsVersion(this.value);
+  CurrentNewsEtag(this.value);
 }
 
-class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
+class CurrentDeviceConfigEtag extends IntifaceConfigurationState {
   final String value;
-  CurrentDeviceConfigVersion(this.value);
+  CurrentDeviceConfigEtag(this.value);
 }
 
 class CurrentEngineVersion extends IntifaceConfigurationState {
   final String value;
   CurrentEngineVersion(this.value);
+}
+
+class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
+  final String value;
+  CurrentDeviceConfigVersion(this.value);
 }
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -220,22 +225,22 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     return _repo.useCompactDisplay;
   }
 
-  set currentNewsVersion(String value) {
-    _repo.currentNewsVersion = value;
-    emit(CurrentNewsVersion(value));
+  set currentNewsEtag(String value) {
+    _repo.currentNewsEtag = value;
+    emit(CurrentNewsEtag(value));
   }
 
-  String get currentNewsVersion {
-    return _repo.currentNewsVersion;
+  String get currentNewsEtag {
+    return _repo.currentNewsEtag;
   }
 
-  set currentDeviceConfigVersion(String value) {
-    _repo.currentDeviceConfigVersion = value;
-    emit(CurrentDeviceConfigVersion(value));
+  set currentDeviceConfigEtag(String value) {
+    _repo.currentDeviceConfigEtag = value;
+    emit(CurrentDeviceConfigEtag(value));
   }
 
-  String get currentDeviceConfigVersion {
-    return _repo.currentDeviceConfigVersion;
+  String get currentDeviceConfigEtag {
+    return _repo.currentDeviceConfigEtag;
   }
 
   set currentEngineVersion(String value) {
@@ -245,5 +250,23 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   String get currentEngineVersion {
     return _repo.currentEngineVersion;
+  }
+
+  set currentAppVersion(String value) {
+    _repo.currentAppVersion = value;
+    // Nothing to emit here, this will never change *while* we're running.
+  }
+
+  String get currentAppVersion {
+    return _repo.currentAppVersion;
+  }
+
+  set currentDeviceConfigVersion(String value) {
+    _repo.currentDeviceConfigVersion = value;
+    emit(CurrentDeviceConfigVersion(value));
+  }
+
+  String get currentDeviceConfigVersion {
+    return _repo.currentDeviceConfigVersion;
   }
 }

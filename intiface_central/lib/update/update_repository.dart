@@ -8,7 +8,7 @@ class UpdateRepository {
 
   UpdateRepository(String newsVersion, String deviceConfigVersion) {
     _providers.add(NewsUpdateProvider(newsVersion));
-    //_providers.add(DeviceConfigUpdateProvider(deviceConfigVersion));
+    _providers.add(DeviceConfigUpdateProvider(deviceConfigVersion));
   }
 
   void addProvider(UpdateProvider provider) {

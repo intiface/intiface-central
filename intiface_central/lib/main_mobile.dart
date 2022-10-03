@@ -27,7 +27,7 @@ void main() async {
     Permission.locationWhenInUse,
   ].request();
 
-  var updateRepo = UpdateRepository(configCubit.currentNewsVersion, configCubit.currentDeviceConfigVersion);
+  var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
 
   await mainCore(configCubit, updateRepo, EngineRepository(LibraryEngineProvider(), configRepo));
 }

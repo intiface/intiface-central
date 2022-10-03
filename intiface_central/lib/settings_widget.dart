@@ -32,11 +32,14 @@ class SettingWidget extends StatelessWidget {
       }
 
       tiles.addAll([
-        SettingsSection(title: const Text("Updates"), tiles: [
+        SettingsSection(title: const Text("Versions and Updates"), tiles: [
           CustomSettingsTile(
               child: TextButton(
                   onPressed: () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()),
-                  child: const Text("Check For Updates")))
+                  child: const Text("Check For Updates"))),
+          CustomSettingsTile(child: Text("App Version: ${cubit.currentAppVersion}")),
+          CustomSettingsTile(child: Text("Engine Version: ${cubit.currentEngineVersion}")),
+          CustomSettingsTile(child: Text("Device Config Version: ${cubit.currentDeviceConfigVersion}")),
         ]),
         SettingsSection(title: const Text("App Settings"), tiles: [
           SettingsTile.switchTile(
