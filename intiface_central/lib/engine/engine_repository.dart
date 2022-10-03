@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
-import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
 class EngineRepository {
@@ -27,7 +26,7 @@ class EngineRepository {
   }
 
   Future<void> start() async {
-    await _provider.start(processPath: IntifacePaths.engineFile.toString(), configRepo: _configRepo);
+    await _provider.start(configRepo: _configRepo);
   }
 
   Future<void> stop() async {

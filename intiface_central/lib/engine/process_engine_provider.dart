@@ -69,14 +69,18 @@ class ProcessEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo}) async {
+  Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
     // If the process is already up, return success.
     if (_ipcChannel != null || _serverProcess != null) {
       return;
     }
-    if (processPath == null || processPath.isEmpty) {
-      throw const EngineProviderStartException("Process path cannot be null/empty for ProcessEngineProvider");
+    var processFile = IntifacePaths.engineFile;
+    if (!await processFile.exists()) {
+      var path = processFile.path;
+      logError("Cannot find engine file at $path");
+      throw EngineProviderStartException("Process cannot be started, engine file not found at $path");
     }
+
     var rng = Random();
     // Just make port randomly between 10000-60000;
     var frontendPort = rng.nextInt(50000) + 10000;
@@ -86,7 +90,7 @@ class ProcessEngineProvider implements EngineProvider {
 
     logInfo("Starting $engineArguments");
 
-    _serverProcess = await Process.start(processPath, engineArguments);
+    _serverProcess = await Process.start(processFile.path, engineArguments);
     //_serverProcess = await Process.start(
     //    "C:\\Users\\qdot\\code\\intiface-engine\\target\\debug\\intiface_engine.exe", engineArguments);
     // Wait for the process to bring up its server before trying to connect.

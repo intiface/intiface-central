@@ -10,7 +10,7 @@ const String intifaceConfigDirectoryName = 'config';
 const String intifaceLoggingDirectoryName = 'logs';
 const String intifaceNewsDirectoryName = 'news';
 const String intifaceEngineDirectoryName = 'engine';
-const String intifaceEngineFilename = 'intiface-cli.exe';
+const String intifaceEngineFilename = 'intiface-engine';
 
 class IntifacePaths {
   static late Directory _configPath;
@@ -46,7 +46,8 @@ class IntifacePaths {
     IntifacePaths._enginePath = Directory(p.join(docsDir, intifaceEngineDirectoryName));
     await IntifacePaths._enginePath.create(recursive: true);
 
-    IntifacePaths._engineFile = File(p.join(IntifacePaths._enginePath.path, intifaceEngineFilename));
+    IntifacePaths._engineFile = File(p.join(
+        IntifacePaths._enginePath.path, Platform.isWindows ? "$intifaceEngineFilename.exe" : intifaceEngineFilename));
 
     IntifacePaths._newsPath = Directory(p.join(docsDir, intifaceNewsDirectoryName));
     await IntifacePaths._newsPath.create(recursive: true);

@@ -3,7 +3,7 @@ import 'package:intiface_central/engine/engine_provider.dart';
 
 class TestEngineProvider implements EngineProvider {
   @override
-  Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo}) async {
+  Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
     throw "Unimplemented";
   }
 

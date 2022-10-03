@@ -7,7 +7,7 @@ import 'package:intiface_central/configuration/intiface_configuration_repository
 abstract class EngineProcessMessage {}
 
 abstract class EngineProvider {
-  Future<void> start({String? processPath, required IntifaceConfigurationRepository configRepo});
+  Future<void> start({required IntifaceConfigurationRepository configRepo});
   Future<void> stop();
   void send(String msg);
   Stream<String> get engineRawMessageStream;
