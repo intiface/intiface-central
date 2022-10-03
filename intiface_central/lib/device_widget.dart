@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
@@ -21,7 +20,7 @@ class DeviceWidget extends StatelessWidget {
               headerBuilder: ((context, isExpanded) => ListTile(
                     title: Text(element.name),
                   )),
-              body: ListTile(title: Text("Device")),
+              body: const ListTile(title: Text("Device")),
               canTapOnHeader: true,
               isExpanded: false,
             );

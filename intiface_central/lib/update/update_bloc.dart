@@ -46,7 +46,7 @@ abstract class UpdateEvent {}
 class RunUpdate extends UpdateEvent {}
 
 class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
-  UpdateRepository _repo;
+  final UpdateRepository _repo;
 
   UpdateBloc(this._repo) : super(UpdaterInitialized()) {
     on<RunUpdate>(((event, emit) async {

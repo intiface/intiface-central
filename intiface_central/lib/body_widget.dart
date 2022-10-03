@@ -8,7 +8,6 @@ import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/markdown_widget.dart';
 import 'package:intiface_central/settings_widget.dart';
 import 'package:intiface_central/update/update_bloc.dart';
-import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
   final bool Function(NavigationState state) stateCheck;

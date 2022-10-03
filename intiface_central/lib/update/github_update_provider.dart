@@ -5,12 +5,11 @@ import 'package:intiface_central/update/update_provider.dart';
 import 'package:github/github.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:version/version.dart';
 import 'package:archive/archive_io.dart' as archive;
 import 'package:http/http.dart';
 
-const ENGINE_VERSION = 1;
+const maxEngineVersion = 1;
 
 abstract class GithubUpdater implements UpdateProvider {
   final String _githubUsername;
@@ -51,7 +50,7 @@ class IntifaceEngineUpdater extends GithubUpdater {
     // Strip the "v" off the front.
     var strippedVersion = latestVersion.substring(1);
     var repoVersion = Version.parse(strippedVersion);
-    if (_engineVersion.major == 0 || (repoVersion.major == ENGINE_VERSION && repoVersion > _engineVersion)) {
+    if (_engineVersion.major == 0 || (repoVersion.major == maxEngineVersion && repoVersion > _engineVersion)) {
       logInfo("Engine update required.");
       // Pull the file to a temp dir
       GitHub github = GitHub(auth: findAuthenticationFromEnvironment());
@@ -82,7 +81,7 @@ class IntifaceEngineUpdater extends GithubUpdater {
       _engineVersion = repoVersion;
       logInfo("Engine downloaded");
       return IntifaceEngineUpdateRetrieved(strippedVersion);
-    } else if (repoVersion.major > ENGINE_VERSION) {
+    } else if (repoVersion.major > maxEngineVersion) {
       logError(
           "Intiface Engine has a major version update ($strippedVersion) and requires a new version of Intiface Central. Please update Intiface Central.");
       return IncompatibleIntifaceEngineUpdate(strippedVersion);

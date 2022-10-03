@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 
 class IntifaceConfigurationState {}

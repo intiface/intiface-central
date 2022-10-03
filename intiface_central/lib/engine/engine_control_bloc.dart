@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
@@ -60,16 +61,16 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       await _repo.start();
       emit(ClientDisconnectedState());
       return emit.forEach(stream, onData: (EngineMessage message) {
-        print("Got message $message");
+        if (!kReleaseMode) logDebug("Got message $message");
         if (message.engineStarted != null) {
           // Query for message version.
-          print("Got engine started, ending message version request");
+          logDebug("Got engine started, ending message version request");
           var msg = IntifaceMessage();
           msg.requestEngineVersion = RequestEngineVersion();
           _repo.send(jsonEncode(msg));
         }
         if (message.messageVersion != null) {
-          print("Got message version return");
+          logDebug("Got message version return");
         }
         if (message.clientConnected != null) {
           return ClientConnectedState(message.clientConnected!.clientName);

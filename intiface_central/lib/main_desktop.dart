@@ -1,6 +1,4 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
@@ -8,7 +6,6 @@ import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/engine/process_engine_provider.dart';
 import 'package:intiface_central/main_core.dart';
 import 'package:intiface_central/update/github_update_provider.dart';
-import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/update/update_repository.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:window_manager/window_manager.dart';

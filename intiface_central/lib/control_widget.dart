@@ -4,7 +4,6 @@ import 'package:intiface_central/configuration/intiface_configuration_cubit.dart
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 
 class ControlWidget extends StatelessWidget {
   const ControlWidget({super.key});
@@ -12,7 +11,6 @@ class ControlWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var engineControlBloc = BlocProvider.of<EngineControlBloc>(context);
-    var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var navCubit = BlocProvider.of<NavigationCubit>(context);
 
     return BlocBuilder(

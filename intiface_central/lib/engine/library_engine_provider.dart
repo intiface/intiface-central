@@ -52,7 +52,6 @@ class LibraryEngineProvider implements EngineProvider {
     logInfo("Engine started");
     _stream!.forEach((element) {
       try {
-        print(element);
         _processMessageStream.add(element);
       } catch (e) {
         logError("Error adding message to stream: $e");

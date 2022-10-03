@@ -40,18 +40,18 @@ class IntifacePaths {
     IntifacePaths._logPath = Directory(p.join(docsDir, intifaceLoggingDirectoryName));
     await IntifacePaths._logPath.create(recursive: true);
 
-    IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath!.path, deviceConfigFilename));
-    IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath!.path, userDeviceConfigFilename));
+    IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath.path, deviceConfigFilename));
+    IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath.path, userDeviceConfigFilename));
 
     IntifacePaths._enginePath = Directory(p.join(docsDir, intifaceEngineDirectoryName));
     await IntifacePaths._enginePath.create(recursive: true);
 
-    IntifacePaths._engineFile = File(p.join(IntifacePaths._enginePath!.path, intifaceEngineFilename));
+    IntifacePaths._engineFile = File(p.join(IntifacePaths._enginePath.path, intifaceEngineFilename));
 
     IntifacePaths._newsPath = Directory(p.join(docsDir, intifaceNewsDirectoryName));
     await IntifacePaths._newsPath.create(recursive: true);
 
-    IntifacePaths._newsFile = File(p.join(IntifacePaths._newsPath!.path, intifaceNewsFilename));
+    IntifacePaths._newsFile = File(p.join(IntifacePaths._newsPath.path, intifaceNewsFilename));
   }
 }
 

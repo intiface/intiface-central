@@ -9,7 +9,7 @@ class NetworkUp extends NetworkInfoState {
 }
 
 class NetworkInfoCubit extends Cubit<NetworkInfoState> {
-  String? _ip;
+  final String? _ip;
 
   NetworkInfoCubit(this._ip) : super(NetworkUp(_ip));
 

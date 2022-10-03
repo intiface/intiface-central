@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:logger/logger.dart';
-import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intiface_engine_flutter_plugin/intiface_engine_flutter_plugin.dart';
 
@@ -13,15 +10,13 @@ void main() async {
   final logger = Logger();
 
   // You can request multiple permissions at once.
-  Map<Permission, PermissionStatus> statuses = await [
+  await [
     Permission.location,
     Permission.bluetooth,
     Permission.bluetoothScan,
     Permission.bluetoothConnect,
     Permission.locationWhenInUse,
   ].request();
-  //final init = api.setLibrarySink();
-  //init.listen((s) => logger.i(s));
 
   var args = EngineOptionsExternal(
       serverName: "Flutter Server",

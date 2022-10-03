@@ -74,7 +74,7 @@ class ProcessEngineProvider implements EngineProvider {
     if (_ipcChannel != null || _serverProcess != null) {
       return;
     }
-    if (processPath == null || processPath!.isEmpty) {
+    if (processPath == null || processPath.isEmpty) {
       throw const EngineProviderStartException("Process path cannot be null/empty for ProcessEngineProvider");
     }
     var rng = Random();
@@ -86,11 +86,9 @@ class ProcessEngineProvider implements EngineProvider {
 
     logInfo("Starting $engineArguments");
 
-    // TODO Replace with actual process location
-
-    //_serverProcess = await Process.start(parameters.processPath!, parameters.engineArguments);
-    _serverProcess = await Process.start(
-        "C:\\Users\\qdot\\code\\intiface-engine\\target\\debug\\intiface_engine.exe", engineArguments);
+    _serverProcess = await Process.start(processPath, engineArguments);
+    //_serverProcess = await Process.start(
+    //    "C:\\Users\\qdot\\code\\intiface-engine\\target\\debug\\intiface_engine.exe", engineArguments);
     // Wait for the process to bring up its server before trying to connect.
     // TODO This is assuming our server is local, which may not be the case?
     _ipcChannel = WebSocketChannel.connect(
@@ -98,7 +96,6 @@ class ProcessEngineProvider implements EngineProvider {
     );
     _ipcChannel!.stream.forEach((element) {
       try {
-        print(element);
         _processMessageStream.add(element);
       } catch (e) {
         logError("Error adding message to stream: $e");
