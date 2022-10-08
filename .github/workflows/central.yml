@@ -28,6 +28,7 @@ jobs:
           Set-Content $pfxPath -Value $encodedBytes -AsByteStream;
           Write-Output "::set-output name=PFX_PATH::$pfxPath";
       - name: Build signed MSIX
+        shell: pwsh
         env:
           PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
         working-directory: ./intiface_central
