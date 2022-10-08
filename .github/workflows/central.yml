@@ -16,6 +16,24 @@ jobs:
       - run: flutter build windows -t ./lib/main_desktop.dart --release
         name: flutter build
         working-directory: ./intiface_central
+      - name: Restore signing pfx
+        id: create-pfx
+        shell: pwsh
+        working-directory: ./intiface_central
+        env:
+          PFX_CONTENT: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_CERT }} 
+        run: |
+          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
+          $encodedBytes = [System.Convert]::FromBase64String($env:PFX_CONTENT); 
+          Set-Content $pfxPath -Value $encodedBytes -AsByteStream;
+          Write-Output "::set-output name=PFX_PATH::$pfxPath";
+      - name: Build signed MSIX
+        env:
+          PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
+        working-directory: ./intiface_central
+        run: |
+          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
+          flutter pub run msix:create -c $pfxPath -p $env:PFX_KEY
   linux:
     runs-on: ubuntu-latest
     steps:
