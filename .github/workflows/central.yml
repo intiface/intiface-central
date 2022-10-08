@@ -13,7 +13,7 @@ jobs:
       - run: flutter config --enable-windows-desktop
         name: flutter config
         working-directory: ./intiface_central
-      - run: flutter build windows  
+      - run: flutter build windows -t .\lib\main_desktop.dart --release
         name: flutter build
         working-directory: ./intiface_central
   linux:
@@ -29,7 +29,7 @@ jobs:
       - run: flutter config --enable-linux-desktop
         name: flutter config
         working-directory: ./intiface_central
-      - run: flutter build linux
+      - run: flutter build linux -t .\lib\main_desktop.dart --release
         name: flutter build
         working-directory: ./intiface_central
   macos:
@@ -43,6 +43,6 @@ jobs:
       - run: flutter config --enable-macos-desktop
         name: flutter config
         working-directory: ./intiface_central
-      - run: flutter build macos
+      - run: flutter build macos -t .\lib\main_desktop.dart --release
         name: flutter build
         working-directory: ./intiface_central
