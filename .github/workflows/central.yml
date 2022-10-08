@@ -34,7 +34,7 @@ jobs:
         working-directory: ./intiface_central
         run: |
           $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
-          flutter pub run msix:create -c $pfxPath -p $env:PFX_KEY
+          flutter pub run msix:create -c $pfxPath -p "$env:PFX_KEY"
   linux:
     runs-on: ubuntu-latest
     steps:
