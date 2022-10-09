@@ -27,7 +27,7 @@ jobs:
           $encodedBytes = [System.Convert]::FromBase64String($env:PFX_CONTENT); 
           Set-Content $pfxPath -Value $encodedBytes -AsByteStream;
           Write-Output "::set-output name=PFX_PATH::$pfxPath";
-      - name: Build signed MSIX
+      - name: Build MSIX
         shell: pwsh
         env:
           PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
