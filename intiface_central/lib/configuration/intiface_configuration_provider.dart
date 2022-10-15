@@ -5,4 +5,5 @@ abstract class IntifaceConfigurationProvider {
   void setBool(String key, bool value);
   void setString(String key, String value);
   void setInt(String key, int value);
+  Future<bool> reset();
 }

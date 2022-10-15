@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:intiface_central/update/update_bloc.dart';
 
@@ -117,6 +119,68 @@ class SettingWidget extends StatelessWidget {
       }
 
       tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
+
+      tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
+        CustomSettingsTile(
+            child: TextButton(
+          child: const Text("Reset Application Configuration"),
+          onPressed: () {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Reset Configuration'),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: const <Widget>[
+                        Text(
+                            'This will erase all configuration and downloaded engine/config files. It is recommended to stop and restart the application after this step.'),
+                        Text('Would you like to continue?'),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Ok'),
+                      onPressed: () async {
+                        logWarning("Running configuration reset");
+                        // This is gross and a bug, but until we can check context mounting across asyncs in Flutter
+                        // 3.4+, we're stuck.
+                        var navigator = Navigator.of(context);
+
+                        // Delete all file assets
+                        if (await IntifacePaths.engineFile.exists()) {
+                          await IntifacePaths.engineFile.delete();
+                        }
+                        if (await IntifacePaths.deviceConfigFile.exists()) {
+                          await IntifacePaths.deviceConfigFile.delete();
+                        }
+                        if (await IntifacePaths.newsFile.exists()) {
+                          await IntifacePaths.newsFile.delete();
+                        }
+                        if (await IntifacePaths.userDeviceConfigFile.exists()) {
+                          await IntifacePaths.userDeviceConfigFile.delete();
+                        }
+                        // Reset our configuration
+                        await cubit.reset();
+                        logWarning("Configuration reset finished");
+                        navigator.pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ))
+      ]));
       return Expanded(child: SettingsList(sections: tiles));
     });
   }

@@ -12,6 +12,11 @@ class IntifaceConfigurationProviderSharedPreferences extends IntifaceConfigurati
   }
 
   @override
+  Future<bool> reset() async {
+    return await _prefs.clear();
+  }
+
+  @override
   bool? getBool(String name) {
     return _prefs.getBool(name);
   }

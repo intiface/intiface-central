@@ -8,7 +8,11 @@ class IntifaceConfigurationRepository {
   IntifaceConfigurationProvider provider;
 
   IntifaceConfigurationRepository(this.provider) {
-    // Our constructor runs through all of our known configuration values, either setting them to what they already are,
+    _init();
+  }
+
+  void _init() {
+// Our initializer runs through all of our known configuration values, either setting them to what they already are,
     // or providing them with default values.
 
     // Window settings for desktop. Will be ignored on mobile.
@@ -54,6 +58,12 @@ class IntifaceConfigurationRepository {
     currentEngineVersion = provider.getString("currentEngineVersion") ?? "0.0.0";
     currentAppVersion = provider.getString("currentAppVersion") ?? "0";
     currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "0.0";
+  }
+
+  Future<bool> reset() async {
+    var result = await provider.reset();
+    _init();
+    return result;
   }
 
   String get currentNewsEtag => provider.getString("currentNewsEtag")!;

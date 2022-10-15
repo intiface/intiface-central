@@ -95,6 +95,8 @@ class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
   CurrentDeviceConfigVersion(this.value);
 }
 
+class ConfigurationReset extends IntifaceConfigurationState {}
+
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final IntifaceConfigurationRepository _repo;
   IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
@@ -268,5 +270,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   String get currentDeviceConfigVersion {
     return _repo.currentDeviceConfigVersion;
+  }
+
+  Future<bool> reset() async {
+    var result = await _repo.reset();
+    emit(ConfigurationReset());
+    return result;
   }
 }
