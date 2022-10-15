@@ -54,33 +54,41 @@ class ControlWidget extends StatelessWidget {
                   builder: (context, state) => Text(
                       "Server Address: ${configCubit.websocketServerAllInterfaces ? networkCubit.ip : "localhost"}:12345")),
             ])),
-            Tooltip(message: statusMessage, child: Icon(statusIcon, size: 70)),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
+                Visibility(
+                  visible: false,
+                  child: IconButton(
                     iconSize: 25,
                     onPressed: () => navCubit.goLogs(),
                     icon: const Icon(Icons.warning),
                     tooltip: "No new errors",
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints()),
-                IconButton(
-                    iconSize: 25,
-                    onPressed: () => navCubit.goSettings(),
-                    icon: const Icon(Icons.update),
-                    tooltip: "No new updates",
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints()),
-                IconButton(
-                    iconSize: 25,
-                    onPressed: () => navCubit.goNews(),
-                    icon: const Icon(Icons.newspaper),
-                    tooltip: "No new news",
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints()),
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+                Visibility(
+                    visible: false,
+                    child: IconButton(
+                        iconSize: 25,
+                        onPressed: () => navCubit.goSettings(),
+                        icon: const Icon(Icons.update),
+                        tooltip: "No new updates",
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints())),
+                Visibility(
+                    visible: false,
+                    child: IconButton(
+                        iconSize: 25,
+                        onPressed: () => navCubit.goNews(),
+                        icon: const Icon(Icons.newspaper),
+                        tooltip: "No new news",
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints())),
               ],
-            )
+            ),
+            Tooltip(message: statusMessage, child: Icon(statusIcon, size: 70)),
           ]);
         });
   }
