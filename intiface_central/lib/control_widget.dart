@@ -20,6 +20,7 @@ class ControlWidget extends StatelessWidget {
           var statusIcon = Icons.question_mark;
           var networkCubit = BlocProvider.of<NetworkInfoCubit>(context);
           var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+          final ColorScheme colors = Theme.of(context).colorScheme;
           void Function()? buttonAction = () => engineControlBloc.add(EngineControlEventStop());
           if (state is ClientConnectedState) {
             statusMessage = state.clientName;
@@ -40,11 +41,21 @@ class ControlWidget extends StatelessWidget {
             buttonAction = () => engineControlBloc.add(EngineControlEventStart());
           }
           return Row(children: [
-            IconButton(
-                iconSize: 90,
-                onPressed: buttonAction,
-                tooltip: state is EngineStoppedState ? "Start Server" : "Stop Server",
-                icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop)),
+            Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: IconButton(
+                    style: IconButton.styleFrom(
+                      foregroundColor: colors.onPrimary,
+                      backgroundColor: colors.primary,
+                      disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
+                      hoverColor: colors.onPrimary.withOpacity(0.08),
+                      focusColor: colors.onPrimary.withOpacity(0.12),
+                      highlightColor: colors.onPrimary.withOpacity(0.12),
+                    ),
+                    iconSize: 90,
+                    onPressed: buttonAction,
+                    tooltip: state is EngineStoppedState ? "Start Server" : "Stop Server",
+                    icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop))),
             Expanded(
                 child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(state is ClientConnectedState ? "${state.clientName} Connected" : "No Client Connected"),

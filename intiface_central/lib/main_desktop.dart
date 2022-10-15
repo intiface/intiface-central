@@ -12,7 +12,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:flutter/foundation.dart';
 
 void windowDisplayModeResize(bool useCompactDisplay) {
-  const compactSize = Size(500, 165);
+  const compactSize = Size(500, 175);
   if (useCompactDisplay) {
     windowManager.setMinimumSize(compactSize);
     windowManager.setMaximumSize(compactSize);
