@@ -16,5 +16,10 @@ class TestEngineProvider implements EngineProvider {
   void send(String msg) {}
 
   @override
+  Future<bool> engineExists() async {
+    return true;
+  }
+
+  @override
   Stream<String> get engineRawMessageStream => throw "Unimplemented";
 }

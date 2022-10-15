@@ -9,6 +9,8 @@ abstract class EngineProcessMessage {}
 abstract class EngineProvider {
   Future<void> start({required IntifaceConfigurationRepository configRepo});
   Future<void> stop();
+  Future<bool> engineExists();
+
   void send(String msg);
   Stream<String> get engineRawMessageStream;
 }
