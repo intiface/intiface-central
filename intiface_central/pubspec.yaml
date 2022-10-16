@@ -44,6 +44,7 @@ dev_dependencies:
   build_runner: ^2.2.0
   flutter_lints: ^2.0.0
   msix: ^2.8.18
+  flutter_launcher_icons: ^0.10.0
 
 flutter:
   uses-material-design: true
@@ -52,4 +53,22 @@ flutter:
 
 msix_config:
   display_name: Intiface Central
+  logo_path: "assets/icons/intiface_central_icon.png"
   install_certificate: false
+  capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/intiface_central_icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: false  
+  windows:
+    generate: true
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+  linux:
+    generate: true
