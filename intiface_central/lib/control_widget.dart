@@ -108,12 +108,12 @@ class ControlWidget extends StatelessWidget {
                         ),
                       ),
                       Visibility(
-                          visible: false,
+                          visible: configCubit.currentAppVersion != configCubit.latestAppVersion,
                           child: IconButton(
                               iconSize: 25,
                               onPressed: () => navCubit.goSettings(),
-                              icon: const Icon(Icons.update),
-                              tooltip: "No new updates",
+                              icon: const Icon(Icons.update, color: Colors.green),
+                              tooltip: "Updates Available",
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints())),
                       Visibility(

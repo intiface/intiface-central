@@ -1,18 +1,22 @@
-import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider.dart';
 import 'dart:io';
 
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class IntifaceConfigurationRepository {
   IntifaceConfigurationProvider provider;
 
-  IntifaceConfigurationRepository(this.provider) {
-    _init();
+  IntifaceConfigurationRepository._(this.provider);
+
+  static Future<IntifaceConfigurationRepository> create(IntifaceConfigurationProvider provider) async {
+    var repo = IntifaceConfigurationRepository._(provider);
+    await repo._init();
+    return repo;
   }
 
-  void _init() {
-// Our initializer runs through all of our known configuration values, either setting them to what they already are,
+  Future<void> _init() async {
+    // Our initializer runs through all of our known configuration values, either setting them to what they already are,
     // or providing them with default values.
 
     // Window settings for desktop. Will be ignored on mobile.
@@ -56,13 +60,16 @@ class IntifaceConfigurationRepository {
     currentNewsEtag = provider.getString("currentNewsEtag") ?? "";
     currentDeviceConfigEtag = provider.getString("currentDeviceConfigEtag") ?? "";
     currentEngineVersion = provider.getString("currentEngineVersion") ?? "0.0.0";
-    currentAppVersion = provider.getString("currentAppVersion") ?? "0";
     currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "0.0";
+
+    var packageInfo = await PackageInfo.fromPlatform();
+    currentAppVersion = packageInfo.version;
+    latestAppVersion = provider.getString("latestAppVersion") ?? currentAppVersion;
   }
 
   Future<bool> reset() async {
     var result = await provider.reset();
-    _init();
+    await _init();
     return result;
   }
 
@@ -129,6 +136,8 @@ class IntifaceConfigurationRepository {
   set currentEngineVersion(String value) => provider.setString("currentEngineVersion", value);
   String get currentAppVersion => provider.getString("currentAppVersion")!;
   set currentAppVersion(String value) => provider.setString("currentAppVersion", value);
+  String get latestAppVersion => provider.getString("latestAppVersion")!;
+  set latestAppVersion(String value) => provider.setString("latestAppVersion", value);
   String get currentDeviceConfigVersion => provider.getString("currentDeviceConfigVersion")!;
   set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
 }

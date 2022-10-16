@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/navigation_cubit.dart';
@@ -7,6 +6,7 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:intiface_central/update/update_bloc.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingWidget extends StatelessWidget {
   const SettingWidget({super.key});
@@ -33,16 +33,32 @@ class SettingWidget extends StatelessWidget {
         ]));
       }
 
+      var versionTiles = [
+        CustomSettingsTile(
+            child: TextButton(
+                onPressed: () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()),
+                child: const Text("Check For Updates"))),
+        CustomSettingsTile(child: Text("App Version: ${cubit.currentAppVersion}")),
+      ];
+      if (isDesktop() && cubit.currentAppVersion != cubit.latestAppVersion) {
+        versionTiles.add(CustomSettingsTile(
+            child: TextButton(
+                onPressed: () async {
+                  const url = "https://github.com/intiface/intiface-central/releases";
+                  if (await canLaunchUrlString(url)) {
+                    await launchUrlString(url);
+                  }
+                },
+                child: const Text(
+                    "New version of Intiface Central Desktop is available, click here to go to releases site."))));
+      }
+      versionTiles.addAll([
+        CustomSettingsTile(child: Text("Engine Version: ${cubit.currentEngineVersion}")),
+        CustomSettingsTile(child: Text("Device Config Version: ${cubit.currentDeviceConfigVersion}")),
+      ]);
+
       tiles.addAll([
-        SettingsSection(title: const Text("Versions and Updates"), tiles: [
-          CustomSettingsTile(
-              child: TextButton(
-                  onPressed: () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()),
-                  child: const Text("Check For Updates"))),
-          CustomSettingsTile(child: Text("App Version: ${cubit.currentAppVersion}")),
-          CustomSettingsTile(child: Text("Engine Version: ${cubit.currentEngineVersion}")),
-          CustomSettingsTile(child: Text("Device Config Version: ${cubit.currentDeviceConfigVersion}")),
-        ]),
+        SettingsSection(title: const Text("Versions and Updates"), tiles: versionTiles),
         SettingsSection(title: const Text("App Settings"), tiles: [
           SettingsTile.switchTile(
               initialValue: cubit.useLightTheme,

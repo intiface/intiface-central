@@ -16,7 +16,7 @@ void main() async {
 
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
-  var configRepo = IntifaceConfigurationRepository(prefs);
+  var configRepo = await IntifaceConfigurationRepository.create(prefs);
   var configCubit = IntifaceConfigurationCubit(configRepo);
 
   await [

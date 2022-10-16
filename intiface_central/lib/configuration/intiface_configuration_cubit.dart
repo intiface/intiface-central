@@ -95,6 +95,11 @@ class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
   CurrentDeviceConfigVersion(this.value);
 }
 
+class LatestAppVersion extends IntifaceConfigurationState {
+  final String version;
+  LatestAppVersion(this.version);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -261,6 +266,15 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   String get currentAppVersion {
     return _repo.currentAppVersion;
+  }
+
+  set latestAppVersion(String value) {
+    _repo.latestAppVersion = value;
+    emit(LatestAppVersion(value));
+  }
+
+  String get latestAppVersion {
+    return _repo.latestAppVersion;
   }
 
   set currentDeviceConfigVersion(String value) {

@@ -92,10 +92,26 @@ class IntifaceEngineUpdater extends GithubUpdater {
 }
 
 class IntifaceCentralDesktopUpdater extends GithubUpdater {
-  IntifaceCentralDesktopUpdater() : super("intiface", "intiface-central");
+  late final Version _appVersion;
+  IntifaceCentralDesktopUpdater(String appVersion) : super("intiface", "intiface-central") {
+    _appVersion = Version.parse(appVersion);
+  }
 
   @override
   Future<UpdateState?> update() async {
+    logInfo("Checking for engine update");
+    var latestVersion = await checkForUpdate();
+    if (latestVersion == null) {
+      logError("Cannot retreive latest engine version");
+      return null;
+    }
+    // Strip the "v" off the front.
+    var strippedVersion = latestVersion.substring(1);
+    var repoVersion = Version.parse(strippedVersion);
+
+    if (repoVersion != _appVersion) {
+      return IntifaceCentralUpdateAvailable(repoVersion.toString());
+    }
     return null;
   }
 }

@@ -41,6 +41,14 @@ class IntifaceEngineUpdateRetrieved extends UpdateState {
   String get version => _version;
 }
 
+class IntifaceCentralUpdateAvailable extends UpdateState {
+  final String _version;
+
+  IntifaceCentralUpdateAvailable(this._version);
+
+  String get version => _version;
+}
+
 abstract class UpdateEvent {}
 
 class RunUpdate extends UpdateEvent {}

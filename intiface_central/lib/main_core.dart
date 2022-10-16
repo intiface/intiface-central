@@ -97,6 +97,9 @@ Future<void> mainCore(
       if (state is IntifaceEngineUpdateRetrieved) {
         configCubit.currentEngineVersion = state.version;
       }
+      if (state is IntifaceCentralUpdateAvailable) {
+        configCubit.latestAppVersion = state.version;
+      }
     }
   });
 

@@ -35,6 +35,7 @@ dependencies:
   package_info_plus: ^1.4.3+1
   intiface_engine_flutter_plugin:
     path: ../intiface_engine_flutter_plugin/
+  url_launcher: ^6.1.6
 
 dev_dependencies:
   flutter_test:

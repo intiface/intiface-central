@@ -31,7 +31,7 @@ void main() async {
 
   // Bring up our settings repo.
   var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
-  var configRepo = IntifaceConfigurationRepository(prefs);
+  var configRepo = await IntifaceConfigurationRepository.create(prefs);
   var configCubit = IntifaceConfigurationCubit(configRepo);
 
   // Must add this line.
@@ -61,6 +61,7 @@ void main() async {
   // Set up Update/Configuration Pipe/Cubit.
   var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
   updateRepo.addProvider(IntifaceEngineUpdater(configCubit.currentEngineVersion));
+  updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
 
   await mainCore(configCubit, updateRepo, EngineRepository(ProcessEngineProvider(), configRepo));
 }
