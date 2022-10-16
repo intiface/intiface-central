@@ -218,7 +218,13 @@ class SettingWidget extends StatelessWidget {
                   child: const Text("Reset Application Configuration"),
                 ))
               ]));
-              return Expanded(child: SettingsList(sections: tiles));
+              List<Widget> widgets = [Expanded(child: SettingsList(sections: tiles))];
+              if (engineState is! EngineStoppedState) {
+                widgets.add(const Text("Some settings may be unavailable while server is running.",
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
+              }
+
+              return Expanded(child: Column(children: widgets));
             }));
   }
 }
