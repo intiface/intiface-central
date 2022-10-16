@@ -61,7 +61,6 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       await _repo.start();
       emit(ClientDisconnectedState());
       return emit.forEach(stream, onData: (EngineMessage message) {
-        if (!kReleaseMode) logDebug("Got message $message");
         if (message.engineStarted != null) {
           // Query for message version.
           logDebug("Got engine started, ending message version request");
