@@ -49,8 +49,8 @@ class SettingWidget extends StatelessWidget {
                     await launchUrlString(url);
                   }
                 },
-                child: const Text(
-                    "New version of Intiface Central Desktop is available, click here to go to releases site."))));
+                child: Text(
+                    "New Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to go to releases site."))));
       }
       versionTiles.addAll([
         CustomSettingsTile(child: Text("Engine Version: ${cubit.currentEngineVersion}")),

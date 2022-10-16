@@ -109,9 +109,6 @@ class IntifaceCentralDesktopUpdater extends GithubUpdater {
     var strippedVersion = latestVersion.substring(1);
     var repoVersion = Version.parse(strippedVersion);
 
-    if (repoVersion != _appVersion) {
-      return IntifaceCentralUpdateAvailable(repoVersion.toString());
-    }
-    return null;
+    return IntifaceCentralUpdateAvailable(repoVersion.toString());
   }
 }
