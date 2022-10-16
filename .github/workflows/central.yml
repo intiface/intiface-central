@@ -35,6 +35,12 @@ jobs:
         run: |
           $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
           flutter pub run msix:create -c $pfxPath -p "$env:PFX_KEY"
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-msix
+          path: |
+            intiface_central/build/windows/runner/Release/*.msix
   linux:
     runs-on: ubuntu-latest
     steps:
