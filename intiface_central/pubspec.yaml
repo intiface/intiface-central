@@ -52,5 +52,4 @@ flutter:
 
 msix_config:
   display_name: Intiface Central
-  msix_version: 1.0.0.0
   install_certificate: false
