@@ -68,6 +68,10 @@ class SettingWidget extends StatelessWidget {
               initialValue: cubit.useSideNavigationBar,
               onToggle: (value) => cubit.useSideNavigationBar = value,
               title: const Text("Side Navigation Bar")),
+          SettingsTile.switchTile(
+              initialValue: cubit.checkForUpdateOnStart,
+              onToggle: (value) => cubit.checkForUpdateOnStart = value,
+              title: const Text("Check For Updates when Intiface Central Launches")),
         ]),
         SettingsSection(title: const Text("Server Settings"), tiles: [
           SettingsTile.switchTile(

@@ -103,6 +103,10 @@ Future<void> mainCore(
     }
   });
 
+  if (configCubit.checkForUpdateOnStart) {
+    updateBloc.add(RunUpdate());
+  }
+
   runApp(MultiBlocProvider(providers: [
     BlocProvider(create: (context) => EngineControlBloc(engineRepo)),
     BlocProvider(create: (context) => NavigationCubit()),

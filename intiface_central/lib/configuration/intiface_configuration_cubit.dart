@@ -100,6 +100,11 @@ class LatestAppVersion extends IntifaceConfigurationState {
   LatestAppVersion(this.version);
 }
 
+class CheckForUpdateOnStart extends IntifaceConfigurationState {
+  final bool value;
+  CheckForUpdateOnStart(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -290,5 +295,14 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     var result = await _repo.reset();
     emit(ConfigurationReset());
     return result;
+  }
+
+  set checkForUpdateOnStart(bool value) {
+    _repo.checkForUpdateOnStart = value;
+    emit(CheckForUpdateOnStart(value));
+  }
+
+  bool get checkForUpdateOnStart {
+    return _repo.checkForUpdateOnStart;
   }
 }
