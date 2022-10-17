@@ -44,7 +44,11 @@ dev_dependencies:
   build_runner: ^2.2.0
   flutter_lints: ^2.0.0
   msix: ^2.8.18
-  flutter_launcher_icons: ^0.10.0
+  # Use github version until 0.11 is out on pub
+  flutter_launcher_icons:
+    git:
+      url: https://github.com/fluttercommunity/flutter_launcher_icons
+      ref: master
 
 flutter:
   uses-material-design: true
