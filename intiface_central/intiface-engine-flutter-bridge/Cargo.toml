@@ -1,5 +1,5 @@
 [package]
-name = "intiface-engine-flutter-bridge"
+name = "intiface_engine_flutter_bridge"
 version = "0.0.1"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
@@ -34,7 +34,6 @@ async-trait = "0.1.57"
 jni = "0.19.0"
 jni-utils = "0.1.0"
 openssl-sys = {version = "0.9.75", features=["vendored"]}
-
 
 [lib]
 crate-type = ["staticlib", "cdylib"]

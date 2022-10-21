@@ -1,3 +1,4 @@
+/*
 use lib_flutter_rust_bridge_codegen::{
   config_parse, frb_codegen, get_symbols_if_no_duplicates, RawOpts,
 };
@@ -18,7 +19,7 @@ fn main() {
   //
   // Until then we're stuck running codegen by hand because codegen brings in EVERYTHING it can find
   // in the crate and reexports all pub symbols, which means we get JNI calls in the iOS code.
-/*
+
   let target_os = env::var("CARGO_CFG_TARGET_OS").expect("CARGO_CFG_TARGET_OS should be set by cargo");
 
   // Tell Cargo that if the input Rust code changes, to rerun this build script.
@@ -56,5 +57,7 @@ fn main() {
   for config in configs.iter() {
       frb_codegen(config, &all_symbols).unwrap();
   }
-  */
-}
+
+}  */
+
+fn main() {}

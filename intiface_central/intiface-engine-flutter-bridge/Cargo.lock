@@ -1320,7 +1320,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "intiface-engine-flutter-bridge"
+name = "intiface_engine_flutter_bridge"
 version = "0.0.1"
 dependencies = [
  "anyhow",
