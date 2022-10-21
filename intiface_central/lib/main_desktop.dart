@@ -3,7 +3,8 @@ import 'package:intiface_central/configuration/intiface_configuration_cubit.dart
 import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
-import 'package:intiface_central/engine/process_engine_provider.dart';
+import 'package:intiface_central/engine/library_engine_provider.dart';
+//import 'package:intiface_central/engine/process_engine_provider.dart';
 import 'package:intiface_central/main_core.dart';
 import 'package:intiface_central/update/github_update_provider.dart';
 import 'package:intiface_central/update/update_repository.dart';
@@ -63,5 +64,6 @@ void main() async {
   updateRepo.addProvider(IntifaceEngineUpdater(configCubit.currentEngineVersion));
   updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
 
-  await mainCore(configCubit, updateRepo, EngineRepository(ProcessEngineProvider(), configRepo));
+  //await mainCore(configCubit, updateRepo, EngineRepository(ProcessEngineProvider(), configRepo));
+  await mainCore(configCubit, updateRepo, EngineRepository(LibraryEngineProvider(), configRepo));
 }

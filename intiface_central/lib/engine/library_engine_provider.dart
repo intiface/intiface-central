@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import "../ffi.dart";
 
 import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
-import 'package:intiface_engine_flutter_plugin/intiface_engine_flutter_plugin.dart';
 import 'package:loggy/loggy.dart';
 
 class LibraryEngineProvider implements EngineProvider {
