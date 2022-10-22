@@ -6,7 +6,7 @@ import 'bridge_generated.dart';
 export 'bridge_generated.dart';
 import 'dart:io' as io;
 
-const _base = 'native';
+const _base = 'intiface_engine_flutter_bridge';
 
 // On MacOS, the dynamic library is not bundled with the binary,
 // but rather directly **linked** against the binary.
@@ -14,7 +14,7 @@ const _base = 'native';
 final _dylib = io.Platform.isWindows
     ? '$_base.dll'
     : io.Platform.isLinux
-        ? 'native/target/debug/lib$_base.so'
+        ? 'intiface_engine_flutter_bridge/target/debug/lib$_base.so'
         : 'lib$_base.so';
 
 // The late modifier delays initializing the value until it is actually needed,
