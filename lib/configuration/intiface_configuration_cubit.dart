@@ -70,6 +70,11 @@ class WebsocketServerAllInterfaces extends IntifaceConfigurationState {
   WebsocketServerAllInterfaces(this.value);
 }
 
+class WebsocketServerPort extends IntifaceConfigurationState {
+  final int value;
+  WebsocketServerPort(this.value);
+}
+
 class UseCompactDisplay extends IntifaceConfigurationState {
   final bool value;
   UseCompactDisplay(this.value);
@@ -226,6 +231,15 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   bool get websocketServerAllInterfaces {
     return _repo.websocketServerAllInterfaces;
+  }
+
+  set websocketServerPort(int value) {
+    _repo.websocketServerPort = value;
+    emit(WebsocketServerPort(value));
+  }
+
+  int get websocketServerPort {
+    return _repo.websocketServerPort;
   }
 
   set useCompactDisplay(bool value) {

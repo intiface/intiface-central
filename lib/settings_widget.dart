@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
@@ -91,14 +92,38 @@ class SettingWidget extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                                  title: const Text('TextField in Dialog'),
+                                  title: const Text('Server Name'),
                                   content: TextField(
                                     controller: TextEditingController(text: cubit.serverName),
                                     onSubmitted: (value) {
                                       cubit.serverName = value;
                                       Navigator.pop(context);
                                     },
-                                    decoration: const InputDecoration(hintText: "Text Field in Dialog"),
+                                    decoration: const InputDecoration(hintText: "Server Name Entry"),
+                                  ),
+                                ));
+                      }),
+                  SettingsTile.navigation(
+                      enabled: engineState is EngineStoppedState,
+                      title: const Text("Server Port"),
+                      value: Text(cubit.websocketServerPort.toString()),
+                      onPressed: (context) {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: const Text('Server Port'),
+                                  content: TextField(
+                                    keyboardType: TextInputType.number,
+                                    controller: TextEditingController(text: cubit.websocketServerPort.toString()),
+                                    inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                                    onSubmitted: (value) {
+                                      var newPort = int.tryParse(value);
+                                      if (newPort != null && newPort > 1024 && newPort < 65536) {
+                                        cubit.websocketServerPort = newPort;
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                    decoration: const InputDecoration(hintText: "Server Port Entry"),
                                   ),
                                 ));
                       }),
