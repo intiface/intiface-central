@@ -1,9 +1,16 @@
-# Intiface Central Monorepo
+# intiface_central
 
-The Intiface Central Monorepo consists of two projects
+Intiface Central
 
-- The Intiface Engine Flutter Plugin, which provides the Rust/Dart bridge between the library
-  version of Intiface Engine and Flutter. This is only used for the iOS/Android projects.
-- The Intiface Central Flutter project, which is the actual app.
+## Getting Started
 
-For building on mobile, please check the plugin and main project. For Desktop, only the main project is needed.
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
