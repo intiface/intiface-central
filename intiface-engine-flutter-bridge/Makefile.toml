@@ -19,7 +19,7 @@ args = [
   "--target",
   "${ANDROID_TARGET}",
   "-o",
-  "../android/src/main/jniLibs/",
+  "../android/app/src/main/jniLibs/",
   "build",
   "--release",
 ]
