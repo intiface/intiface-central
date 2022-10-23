@@ -4,17 +4,36 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
+import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/device_configuration/device_configuration.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:intiface_central/engine/library_engine_provider.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
+import 'package:intiface_central/update/github_update_provider.dart';
 import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/update/update_repository.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:window_manager/window_manager.dart';
+
+void windowDisplayModeResize(bool useCompactDisplay) {
+  const compactSize = Size(500, 175);
+  if (useCompactDisplay) {
+    windowManager.setMinimumSize(compactSize);
+    windowManager.setMaximumSize(compactSize);
+    windowManager.setSize(compactSize);
+  } else {
+    windowManager.setMinimumSize(const Size(800, 600));
+    windowManager.setMaximumSize(const Size(10000, 10000));
+    windowManager.setSize(const Size(800, 600));
+  }
+}
 
 // From https://github.com/infinum/floggy/issues/50
 class MultiPrinter extends LoggyPrinter {
@@ -35,8 +54,57 @@ class MultiPrinter extends LoggyPrinter {
   }
 }
 
-Future<void> mainCore(
-    IntifaceConfigurationCubit configCubit, UpdateRepository updateRepo, EngineRepository engineRepo) async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await IntifacePaths.init();
+
+  // Bring up our settings repo.
+  var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
+  var configRepo = await IntifaceConfigurationRepository.create(prefs);
+  var configCubit = IntifaceConfigurationCubit(configRepo);
+  // Set up Update/Configuration Pipe/Cubit.
+  var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
+  var engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
+
+  if (isDesktop()) {
+    // Must add this line before we work with the manager.
+    await windowManager.ensureInitialized();
+
+    const String windowTitle = kDebugMode ? "Intiface Central DEBUG" : "Intiface Central";
+
+    WindowOptions windowOptions = const WindowOptions(
+      //center: true,
+      title: windowTitle,
+      //backgroundColor: Colors.transparent,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+
+    configCubit.stream.listen((event) {
+      if (event is! UseCompactDisplay) {
+        return;
+      }
+      windowDisplayModeResize(event.value);
+    });
+
+    windowDisplayModeResize(configRepo.useCompactDisplay);
+
+    // Only add app update checks on desktop, mobile apps will use stores.
+    updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
+  }
+
+  if (isMobile()) {
+    await [
+      Permission.location,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+      Permission.locationWhenInUse,
+    ].request();
+  }
+
   Loggy.initLoggy(
     logPrinter: StreamPrinter(
       const MultiPrinter(),
