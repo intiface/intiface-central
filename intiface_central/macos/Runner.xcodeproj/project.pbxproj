@@ -26,6 +26,9 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		4282773F290498D600870167 /* intiface_engine_flutter_bridge.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */; };
+		42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42827740290498DC00870167 /* CoreBluetooth.framework */; };
+		4282774329049A0600870167 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 4282774229049A0100870167 /* bridge_generated.h */; };
 		44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423AB11368150DFF42A5D089 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +39,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 33CC111A2044C6BA0003C045;
 			remoteInfo = FLX;
+		};
+		42827739290498A200870167 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA608063A6AA60A9C18B421C;
+			remoteInfo = "intiface_engine_flutter_bridge-staticlib";
+		};
+		4282773B290498A200870167 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA606D7ECEF230764F8FA018;
+			remoteInfo = "intiface_engine_flutter_bridge-cdylib";
+		};
+		4282773D290498C600870167 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA606D7ECEF2496B82146997;
+			remoteInfo = "intiface_engine_flutter_bridge-cdylib";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -69,6 +93,9 @@
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		423AB11368150DFF42A5D089 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = intiface_engine_flutter_bridge.xcodeproj; path = "../../intiface-engine-flutter-bridge/intiface_engine_flutter_bridge.xcodeproj"; sourceTree = "<group>"; };
+		42827740290498DC00870167 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		4282774229049A0100870167 /* bridge_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge_generated.h; sourceTree = "<group>"; };
 		44F317B819D4051D6EA424E9 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -80,6 +107,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */,
+				4282773F290498D600870167 /* intiface_engine_flutter_bridge.dylib in Frameworks */,
 				44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,6 +171,8 @@
 		33FAB671232836740065AC1E /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				4282774229049A0100870167 /* bridge_generated.h */,
+				42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */,
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
@@ -159,13 +190,22 @@
 				44F317B819D4051D6EA424E9 /* Pods-Runner.release.xcconfig */,
 				BA22D8CE960456C4C0FBDE8C /* Pods-Runner.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		42827735290498A200870167 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4282773A290498A200870167 /* libintiface_engine_flutter_bridge_static.a */,
+				4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		D73912EC22F37F3D000D13A0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				42827740290498DC00870167 /* CoreBluetooth.framework */,
 				423AB11368150DFF42A5D089 /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -189,6 +229,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4282773E290498C600870167 /* PBXTargetDependency */,
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
 			);
 			name = Runner;
@@ -233,6 +274,12 @@
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 42827735290498A200870167 /* Products */;
+					ProjectRef = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				33CC10EC2044A3C60003C045 /* Runner */,
@@ -241,11 +288,29 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		4282773A290498A200870167 /* libintiface_engine_flutter_bridge_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libintiface_engine_flutter_bridge_static.a;
+			remoteRef = 42827739290498A200870167 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = intiface_engine_flutter_bridge.dylib;
+			remoteRef = 4282773B290498A200870167 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		33CC10EB2044A3C60003C045 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4282774329049A0600870167 /* bridge_generated.h in Resources */,
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 			);
@@ -351,6 +416,11 @@
 			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
+		4282773E290498C600870167 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "intiface_engine_flutter_bridge-cdylib";
+			targetProxy = 4282773D290498C600870167 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -427,6 +497,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profile;
@@ -553,6 +624,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -573,6 +645,7 @@
 					"@executable_path/../Frameworks",
 				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
