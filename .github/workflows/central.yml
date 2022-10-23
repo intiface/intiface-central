@@ -12,14 +12,11 @@ jobs:
           channel: 'beta'
       - run: flutter config --enable-windows-desktop
         name: flutter config
-        working-directory: ./intiface_central
       - run: flutter build windows -t ./lib/main_desktop.dart --release
         name: flutter build
-        working-directory: ./intiface_central
       - name: Restore signing pfx
         id: create-pfx
         shell: pwsh
-        working-directory: ./intiface_central
         env:
           PFX_CONTENT: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_CERT }} 
         run: |
@@ -53,10 +50,8 @@ jobs:
          sudo apt-get install -y ninja-build libgtk-3-dev
       - run: flutter config --enable-linux-desktop
         name: flutter config
-        working-directory: ./intiface_central
       - run: flutter build linux -t ./lib/main_desktop.dart --release
         name: flutter build
-        working-directory: ./intiface_central
   macos:
     runs-on: macos-latest
     steps:
@@ -67,7 +62,5 @@ jobs:
           architecture: x64
       - run: flutter config --enable-macos-desktop
         name: flutter config
-        working-directory: ./intiface_central
       - run: flutter build macos -t ./lib/main_desktop.dart --release
         name: flutter build
-        working-directory: ./intiface_central
