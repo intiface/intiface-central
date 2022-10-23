@@ -1,6 +1,10 @@
 name: Intiface Central Build
 
-on: push
+# Only build on master pushes for now, otherwise we'll eat CI.
+on: 
+  push:
+    branches:
+      - master
 
 jobs:
   windows:
