@@ -27,10 +27,10 @@ class IntifaceCentralDesktopUpdater extends GithubUpdater {
 
   @override
   Future<UpdateState?> update() async {
-    logInfo("Checking for engine update");
+    logInfo("Checking for application update");
     var latestVersion = await checkForUpdate();
     if (latestVersion == null) {
-      logError("Cannot retreive latest engine version");
+      logError("Cannot retreive latest application version");
       return null;
     }
     // Strip the "v" off the front.
