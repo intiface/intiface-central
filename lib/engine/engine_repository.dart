@@ -37,9 +37,5 @@ class EngineRepository {
     _provider.send(msg);
   }
 
-  Future<bool> engineExists() async {
-    return await _provider.engineExists();
-  }
-
   Stream<EngineMessage> get messageStream => _engineMessageStream.stream;
 }

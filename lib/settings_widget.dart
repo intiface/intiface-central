@@ -58,7 +58,6 @@ class SettingWidget extends StatelessWidget {
                             "New Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to go to releases site."))));
               }
               versionTiles.addAll([
-                CustomSettingsTile(child: Text("Engine Version: ${cubit.currentEngineVersion}")),
                 CustomSettingsTile(child: Text("Device Config Version: ${cubit.currentDeviceConfigVersion}")),
               ]);
 
@@ -185,9 +184,6 @@ class SettingWidget extends StatelessWidget {
                                       var navigator = Navigator.of(context);
 
                                       // Delete all file assets
-                                      if (await IntifacePaths.engineFile.exists()) {
-                                        await IntifacePaths.engineFile.delete();
-                                      }
                                       if (await IntifacePaths.deviceConfigFile.exists()) {
                                         await IntifacePaths.deviceConfigFile.delete();
                                       }

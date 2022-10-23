@@ -49,7 +49,7 @@ class ControlWidget extends StatelessWidget {
 
                 IconButton controlButton;
 
-                if (isDesktop() && !IntifacePaths.engineFile.existsSync()) {
+                if (isDesktop() && configCubit.useProcessEngine && !IntifacePaths.engineFile.existsSync()) {
                   controlButton = IconButton(
                       style: IconButton.styleFrom(
                         foregroundColor: colors.onPrimary,

@@ -69,11 +69,6 @@ class ProcessEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<bool> engineExists() async {
-    return await IntifacePaths.engineFile.exists();
-  }
-
-  @override
   Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
     // If the process is already up, return success.
     if (_ipcChannel != null || _serverProcess != null) {

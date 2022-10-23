@@ -85,11 +85,6 @@ class CurrentDeviceConfigEtag extends IntifaceConfigurationState {
   CurrentDeviceConfigEtag(this.value);
 }
 
-class CurrentEngineVersion extends IntifaceConfigurationState {
-  final String value;
-  CurrentEngineVersion(this.value);
-}
-
 class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
   final String value;
   CurrentDeviceConfigVersion(this.value);
@@ -103,6 +98,11 @@ class LatestAppVersion extends IntifaceConfigurationState {
 class CheckForUpdateOnStart extends IntifaceConfigurationState {
   final bool value;
   CheckForUpdateOnStart(this.value);
+}
+
+class UseProcessEngine extends IntifaceConfigurationState {
+  final bool value;
+  UseProcessEngine(this.value);
 }
 
 class ConfigurationReset extends IntifaceConfigurationState {}
@@ -255,15 +255,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     return _repo.currentDeviceConfigEtag;
   }
 
-  set currentEngineVersion(String value) {
-    _repo.currentEngineVersion = value;
-    emit(CurrentEngineVersion(value));
-  }
-
-  String get currentEngineVersion {
-    return _repo.currentEngineVersion;
-  }
-
   set currentAppVersion(String value) {
     _repo.currentAppVersion = value;
     // Nothing to emit here, this will never change *while* we're running.
@@ -304,5 +295,14 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   bool get checkForUpdateOnStart {
     return _repo.checkForUpdateOnStart;
+  }
+
+  set useProcessEngine(bool value) {
+    _repo.useProcessEngine = value;
+    emit(UseProcessEngine(value));
+  }
+
+  bool get useProcessEngine {
+    return _repo.useProcessEngine;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider.dart';
 import 'dart:io';
 
@@ -30,7 +31,6 @@ class IntifaceConfigurationRepository {
     websocketServerAllInterfaces = provider.getBool("websocketServerAllInterfaces") ?? isMobile();
     websocketServerPort = provider.getInt("websocketServerPort") ?? 12345;
     serverLogLevel = provider.getString("serverLogLevel") ?? "info";
-    usePrereleaseEngine = provider.getBool("usePrereleaseEngine") ?? false;
     checkForUpdateOnStart = provider.getBool("checkForUpdateOnStart") ?? true;
     startServerOnStartup = provider.getBool("startServerOnStartup") ?? false;
     crashReporting = provider.getBool("crashReporting") ?? true;
@@ -59,12 +59,13 @@ class IntifaceConfigurationRepository {
     // Update settings
     currentNewsEtag = provider.getString("currentNewsEtag") ?? "";
     currentDeviceConfigEtag = provider.getString("currentDeviceConfigEtag") ?? "";
-    currentEngineVersion = provider.getString("currentEngineVersion") ?? "0.0.0";
     currentDeviceConfigVersion = provider.getString("currentDeviceConfigVersion") ?? "0.0";
 
     var packageInfo = await PackageInfo.fromPlatform();
     currentAppVersion = packageInfo.version;
     latestAppVersion = provider.getString("latestAppVersion") ?? currentAppVersion;
+
+    useProcessEngine = kDebugMode ? (provider.getBool("useProcessEngine") ?? false) : false;
   }
 
   Future<bool> reset() async {
@@ -96,8 +97,6 @@ class IntifaceConfigurationRepository {
   set websocketServerPort(int value) => provider.setInt("websocketServerPort", value);
   String get serverLogLevel => provider.getString("serverLogLevel")!;
   set serverLogLevel(String value) => provider.setString("serverLogLevel", value);
-  bool get usePrereleaseEngine => provider.getBool("usePrereleaseEngine")!;
-  set usePrereleaseEngine(bool value) => provider.setBool("usePrereleaseEngine", value);
   bool get checkForUpdateOnStart => provider.getBool("checkForUpdateOnStart")!;
   set checkForUpdateOnStart(bool value) => provider.setBool("checkForUpdateOnStart", value);
   bool get hasUsableEngineExecutable => provider.getBool("hasUsableEngineExecutable")!;
@@ -132,12 +131,12 @@ class IntifaceConfigurationRepository {
   set allowRawMessages(bool value) => provider.setBool("allowRawMessages", value);
   bool get unreadNews => provider.getBool("unreadNews")!;
   set unreadNews(bool value) => provider.setBool("unreadNews", value);
-  String get currentEngineVersion => provider.getString("currentEngineVersion")!;
-  set currentEngineVersion(String value) => provider.setString("currentEngineVersion", value);
   String get currentAppVersion => provider.getString("currentAppVersion")!;
   set currentAppVersion(String value) => provider.setString("currentAppVersion", value);
   String get latestAppVersion => provider.getString("latestAppVersion")!;
   set latestAppVersion(String value) => provider.setString("latestAppVersion", value);
   String get currentDeviceConfigVersion => provider.getString("currentDeviceConfigVersion")!;
   set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
+  bool get useProcessEngine => provider.getBool("useProcessEngine")!;
+  set useProcessEngine(bool value) => provider.setBool("useProcessEngine", value);
 }

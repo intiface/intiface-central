@@ -158,13 +158,7 @@ void main() async {
       var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
       configCubit.currentDeviceConfigVersion = deviceConfigVersion;
     }
-    // While this should probably live in the main Desktop code, we can put this here because it won't bring in any new
-    // dependencies. It'll just update settings for things that only the desktop bloc can access, like intiface engine
-    // updates.
     if (isDesktop()) {
-      if (state is IntifaceEngineUpdateRetrieved) {
-        configCubit.currentEngineVersion = state.version;
-      }
       if (state is IntifaceCentralUpdateAvailable) {
         configCubit.latestAppVersion = state.version;
       }

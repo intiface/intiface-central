@@ -61,11 +61,6 @@ class LibraryEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<bool> engineExists() async {
-    return true;
-  }
-
-  @override
   Future<void> stop() async {
     api.stopEngine();
     logInfo("Engine stopped");
