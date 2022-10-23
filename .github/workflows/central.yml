@@ -28,7 +28,6 @@ jobs:
         shell: pwsh
         env:
           PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
-        working-directory: ./intiface_central
         run: |
           $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
           flutter pub run msix:create -c $pfxPath -p "$env:PFX_KEY"
@@ -37,7 +36,7 @@ jobs:
         with:
           name: windows-msix
           path: |
-            intiface_central/build/windows/runner/Release/*.msix
+            build/windows/runner/Release/*.msix
   linux:
     runs-on: ubuntu-latest
     steps:
