@@ -1,363 +1,325 @@
 // !$*UTF8*$!
 {
-    /* generated with cargo-xcode 1.4.3 */
-    archiveVersion = 1;
-    classes = {
-    };
-    objectVersion = 53;
-    objects = {
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 53;
+	objects = {
+
 /* Begin PBXBuildFile section */
-        
-                CA6018997969661687120351 /* Cargo.toml in Sources */ = {
-                    isa = PBXBuildFile;
-                    fileRef = CA60C12281193EF4668187A5 /* Cargo.toml */;
-                    settings = {
-                        COMPILER_FLAGS = "--lib"; /* == OTHER_INPUT_FILE_FLAGS */
-                    };
-                };
-                
-                CA6018997969496B82146997 /* Cargo.toml in Sources */ = {
-                    isa = PBXBuildFile;
-                    fileRef = CA60C12281193EF4668187A5 /* Cargo.toml */;
-                    settings = {
-                        COMPILER_FLAGS = "--lib"; /* == OTHER_INPUT_FILE_FLAGS */
-                    };
-                };
-                
+		CA60E6B489BD3D022F44E751 /* Cargo.toml in Sources */ = {isa = PBXBuildFile; fileRef = CA600D620DE13EF4668187A5 /* Cargo.toml */; settings = {COMPILER_FLAGS = "--lib"; }; };
+		CA60E6B489BD5D1998A4805E /* Cargo.toml in Sources */ = {isa = PBXBuildFile; fileRef = CA600D620DE13EF4668187A5 /* Cargo.toml */; settings = {COMPILER_FLAGS = "--lib"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-        CA60C1228119AC6C1400ACA8 /* PBXBuildRule */ = {
-            isa = PBXBuildRule;
-            compilerSpec = com.apple.compilers.proxy.script;
-            dependencyFile = "$(DERIVED_FILE_DIR)/$(CARGO_XCODE_TARGET_ARCH)-$(EXECUTABLE_NAME).d";
-            filePatterns = "*/Cargo.toml"; /* must contain asterisk */
-            fileType = pattern.proxy;
-            inputFiles = ();
-            isEditable = 0;
-            name = "Cargo project build";
-            outputFiles = (
-                "$(OBJECT_FILE_DIR)/$(CARGO_XCODE_TARGET_ARCH)-$(EXECUTABLE_NAME)",
-            );
-            script = "# generated with cargo-xcode 1.4.3\n\nset -eu; export PATH=$PATH:~/.cargo/bin:/usr/local/bin;\nif [ \"${IS_MACCATALYST-NO}\" = YES ]; then\n    CARGO_XCODE_TARGET_TRIPLE=\"${CARGO_XCODE_TARGET_ARCH}-apple-ios-macabi\"\nelse\n    CARGO_XCODE_TARGET_TRIPLE=\"${CARGO_XCODE_TARGET_ARCH}-apple-${CARGO_XCODE_TARGET_OS}\"\nfi\nif [ \"$CARGO_XCODE_TARGET_OS\" != \"darwin\" ]; then\n    PATH=\"${PATH/\\/Contents\\/Developer\\/Toolchains\\/XcodeDefault.xctoolchain\\/usr\\/bin:/xcode-provided-ld-cant-link-lSystem-for-the-host-build-script:}\"\nfi\nPATH=\"$PATH:/opt/homebrew/bin\" # Rust projects often depend on extra tools like nasm, which Xcode lacks\nif [ \"$CARGO_XCODE_BUILD_MODE\" == release ]; then\n    OTHER_INPUT_FILE_FLAGS=\"${OTHER_INPUT_FILE_FLAGS} --release\"\nfi\nif command -v rustup &> /dev/null; then\n    if ! rustup target list --installed | egrep -q \"${CARGO_XCODE_TARGET_TRIPLE}\"; then\n        echo \"warning: this build requires rustup toolchain for $CARGO_XCODE_TARGET_TRIPLE, but it isn\'t installed\"\n        rustup target add \"${CARGO_XCODE_TARGET_TRIPLE}\" || echo >&2 \"warning: can\'t install $CARGO_XCODE_TARGET_TRIPLE\"\n    fi\nfi\nif [ \"$ACTION\" = clean ]; then\n ( set -x; cargo clean --manifest-path=\"$SCRIPT_INPUT_FILE\" ${OTHER_INPUT_FILE_FLAGS} --target=\"${CARGO_XCODE_TARGET_TRIPLE}\"; );\nelse\n ( set -x; cargo build --manifest-path=\"$SCRIPT_INPUT_FILE\" --features=\"${CARGO_XCODE_FEATURES:-}\" ${OTHER_INPUT_FILE_FLAGS} --target=\"${CARGO_XCODE_TARGET_TRIPLE}\"; );\nfi\n# it\'s too hard to explain Cargo\'s actual exe path to Xcode build graph, so hardlink to a known-good path instead\nBUILT_SRC=\"${CARGO_TARGET_DIR}/${CARGO_XCODE_TARGET_TRIPLE}/${CARGO_XCODE_BUILD_MODE}/${CARGO_XCODE_CARGO_FILE_NAME}\"\nln -f -- \"$BUILT_SRC\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# xcode generates dep file, but for its own path, so append our rename to it\nDEP_FILE_SRC=\"${CARGO_TARGET_DIR}/${CARGO_XCODE_TARGET_TRIPLE}/${CARGO_XCODE_BUILD_MODE}/${CARGO_XCODE_CARGO_DEP_FILE_NAME}\"\nif [ -f \"$DEP_FILE_SRC\" ]; then\n    DEP_FILE_DST=\"${DERIVED_FILE_DIR}/${CARGO_XCODE_TARGET_ARCH}-${EXECUTABLE_NAME}.d\"\n    cp -f \"$DEP_FILE_SRC\" \"$DEP_FILE_DST\"\n    echo >> \"$DEP_FILE_DST\" \"$SCRIPT_OUTPUT_FILE_0: $BUILT_SRC\"\nfi\n\n# lipo script needs to know all the platform-specific files that have been built\n# archs is in the file name, so that paths don\'t stay around after archs change\n# must match input for LipoScript\nFILE_LIST=\"${DERIVED_FILE_DIR}/${ARCHS}-${EXECUTABLE_NAME}.xcfilelist\"\ntouch \"$FILE_LIST\"\nif ! egrep -q \"$SCRIPT_OUTPUT_FILE_0\" \"$FILE_LIST\" ; then\n    echo >> \"$FILE_LIST\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
-        };
+		CA600D620DE1AC6C1400ACA8 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			dependencyFile = "$(DERIVED_FILE_DIR)/$(CARGO_XCODE_TARGET_ARCH)-$(EXECUTABLE_NAME).d";
+			filePatterns = "*/Cargo.toml";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 0;
+			name = "Cargo project build";
+			outputFiles = (
+				"$(OBJECT_FILE_DIR)/$(CARGO_XCODE_TARGET_ARCH)-$(EXECUTABLE_NAME)",
+			);
+			script = "# generated with cargo-xcode 1.5.0\n\nset -eu; export PATH=\"$PATH:$HOME/.cargo/bin:/usr/local/bin\";\nif [ \"${IS_MACCATALYST-NO}\" = YES ]; then\n    CARGO_XCODE_TARGET_TRIPLE=\"${CARGO_XCODE_TARGET_ARCH}-apple-ios-macabi\"\nelse\n    CARGO_XCODE_TARGET_TRIPLE=\"${CARGO_XCODE_TARGET_ARCH}-apple-${CARGO_XCODE_TARGET_OS}\"\nfi\nif [ \"$CARGO_XCODE_TARGET_OS\" != \"darwin\" ]; then\n    PATH=\"${PATH/\\/Contents\\/Developer\\/Toolchains\\/XcodeDefault.xctoolchain\\/usr\\/bin:/xcode-provided-ld-cant-link-lSystem-for-the-host-build-script:}\"\nfi\nPATH=\"$PATH:/opt/homebrew/bin\" # Rust projects often depend on extra tools like nasm, which Xcode lacks\nif [ \"$CARGO_XCODE_BUILD_MODE\" == release ]; then\n    OTHER_INPUT_FILE_FLAGS=\"${OTHER_INPUT_FILE_FLAGS} --release\"\nfi\nif command -v rustup &> /dev/null; then\n    if ! rustup target list --installed | egrep -q \"${CARGO_XCODE_TARGET_TRIPLE}\"; then\n        echo \"warning: this build requires rustup toolchain for $CARGO_XCODE_TARGET_TRIPLE, but it isn't installed\"\n        rustup target add \"${CARGO_XCODE_TARGET_TRIPLE}\" || echo >&2 \"warning: can't install $CARGO_XCODE_TARGET_TRIPLE\"\n    fi\nfi\nif [ \"$ACTION\" = clean ]; then\n ( set -x; cargo clean --manifest-path=\"$SCRIPT_INPUT_FILE\" ${OTHER_INPUT_FILE_FLAGS} --target=\"${CARGO_XCODE_TARGET_TRIPLE}\"; );\nelse\n ( set -x; cargo build --manifest-path=\"$SCRIPT_INPUT_FILE\" --features=\"${CARGO_XCODE_FEATURES:-}\" ${OTHER_INPUT_FILE_FLAGS} --target=\"${CARGO_XCODE_TARGET_TRIPLE}\"; );\nfi\n# it's too hard to explain Cargo's actual exe path to Xcode build graph, so hardlink to a known-good path instead\nBUILT_SRC=\"${CARGO_TARGET_DIR}/${CARGO_XCODE_TARGET_TRIPLE}/${CARGO_XCODE_BUILD_MODE}/${CARGO_XCODE_CARGO_FILE_NAME}\"\nln -f -- \"$BUILT_SRC\" \"$SCRIPT_OUTPUT_FILE_0\"\n\n# xcode generates dep file, but for its own path, so append our rename to it\nDEP_FILE_SRC=\"${CARGO_TARGET_DIR}/${CARGO_XCODE_TARGET_TRIPLE}/${CARGO_XCODE_BUILD_MODE}/${CARGO_XCODE_CARGO_DEP_FILE_NAME}\"\nif [ -f \"$DEP_FILE_SRC\" ]; then\n    DEP_FILE_DST=\"${DERIVED_FILE_DIR}/${CARGO_XCODE_TARGET_ARCH}-${EXECUTABLE_NAME}.d\"\n    cp -f \"$DEP_FILE_SRC\" \"$DEP_FILE_DST\"\n    echo >> \"$DEP_FILE_DST\" \"$SCRIPT_OUTPUT_FILE_0: $BUILT_SRC\"\nfi\n\n# lipo script needs to know all the platform-specific files that have been built\n# archs is in the file name, so that paths don't stay around after archs change\n# must match input for LipoScript\nFILE_LIST=\"${DERIVED_FILE_DIR}/${ARCHS}-${EXECUTABLE_NAME}.xcfilelist\"\ntouch \"$FILE_LIST\"\nif ! egrep -q \"$SCRIPT_OUTPUT_FILE_0\" \"$FILE_LIST\" ; then\n    echo >> \"$FILE_LIST\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
+		};
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
-        
-        CA608063A6AA60A9C18B421C /* staticlib */ = {
-            isa = PBXFileReference;
-            explicitFileType = "archive.ar";
-            includeInIndex = 0;
-            name = "libintiface_engine_flutter_bridge_static.a";
-            sourceTree = TARGET_BUILD_DIR;
-        };
-        CA606D7ECEF230764F8FA018 /* cdylib */ = {
-            isa = PBXFileReference;
-            explicitFileType = "compiled.mach-o.dylib";
-            includeInIndex = 0;
-            name = "intiface_engine_flutter_bridge.dylib";
-            sourceTree = TARGET_BUILD_DIR;
-        };
-                CA60C12281193EF4668187A5 /* Cargo.toml */ = {
-                    isa = PBXFileReference;
-                    lastKnownFileType = text;
-                    fileEncoding = 4;
-                    name = "Cargo.toml";
-                    path = "Cargo.toml";
-                    sourceTree = "<group>";
-            };
-                    /* Rust needs libresolv */
-                    ADDEDBA66A6E1 = {
-                        isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition";
-                        name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT;
-                    };
-                
+		ADDEDBA66A6E1 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		CA600D620DE13EF4668187A5 /* Cargo.toml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
+		CA607850757230764F8FA018 /* libintiface_engine_flutter_bridge.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libintiface_engine_flutter_bridge.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA607A61E59860A9C18B421C /* libintiface_engine_flutter_bridge_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libintiface_engine_flutter_bridge_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-        CA60C122811998AF0B5890DB /* Frameworks */ = {
-            isa = PBXGroup;
-            children = (
-                ADDEDBA66A6E2,
-
-            );
-            name = Frameworks;
-            sourceTree = "<group>";
-        };
-
-        
-                ADDEDBA66A6E2 /* Required for static linking */ = {
-                    isa = PBXGroup;
-                    children = (
-                        ADDEDBA66A6E1
-                    );
-                    name = "Required for static linking";
-                    sourceTree = "<group>";
-                };
-
-        CA60C122811922869D176AE5 /* Products */ = {
-            isa = PBXGroup;
-            children = (
-                CA608063A6AA60A9C18B421C,
-CA606D7ECEF230764F8FA018,
-
-            );
-            name = Products;
-            sourceTree = "<group>";
-        };
-
-        CA60C1228119D65BC3C892A8 /* Main */ = {
-            isa = PBXGroup;
-            children = (
-                CA60C12281193EF4668187A5,
-CA60C122811922869D176AE5,
-CA60C122811998AF0B5890DB,
-
-            );
-            sourceTree = "<group>";
-        };
-
+		ADDEDBA66A6E2 /* Required for static linking */ = {
+			isa = PBXGroup;
+			children = (
+				ADDEDBA66A6E1 /* libresolv.tbd */,
+			);
+			name = "Required for static linking";
+			sourceTree = "<group>";
+		};
+		CA600D620DE122869D176AE5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA607A61E59860A9C18B421C /* libintiface_engine_flutter_bridge_static.a */,
+				CA607850757230764F8FA018 /* libintiface_engine_flutter_bridge.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA600D620DE198AF0B5890DB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ADDEDBA66A6E2 /* Required for static linking */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CA600D620DE1D65BC3C892A8 = {
+			isa = PBXGroup;
+			children = (
+				CA600D620DE13EF4668187A5 /* Cargo.toml */,
+				CA600D620DE122869D176AE5 /* Products */,
+				CA600D620DE198AF0B5890DB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-        CA608063A6AA661687120351 /* intiface_engine_flutter_bridge-staticlib */ = {
-            isa = PBXNativeTarget;
-            buildConfigurationList = CA6027A67E3C661687120351;
-            buildPhases = (
-                CA60BECA99BC661687120351 /* Sources */,
-                CA60C1228119AF6EBB7F357C /* Universal Binary lipo */,
-            );
-            buildRules = (
-                CA60C1228119AC6C1400ACA8 /* PBXBuildRule */,
-            );
-            dependencies = (
-            );
-            name = "intiface_engine_flutter_bridge-staticlib";
-            productName = "libintiface_engine_flutter_bridge_static.a";
-            productReference = CA608063A6AA60A9C18B421C;
-            productType = "com.apple.product-type.library.static";
-        };
-        CA606D7ECEF2496B82146997 /* intiface_engine_flutter_bridge-cdylib */ = {
-            isa = PBXNativeTarget;
-            buildConfigurationList = CA6027A67E3C496B82146997;
-            buildPhases = (
-                CA60BECA99BC496B82146997 /* Sources */,
-                CA60C1228119AF6EBB7F357C /* Universal Binary lipo */,
-            );
-            buildRules = (
-                CA60C1228119AC6C1400ACA8 /* PBXBuildRule */,
-            );
-            dependencies = (
-            );
-            name = "intiface_engine_flutter_bridge-cdylib";
-            productName = "intiface_engine_flutter_bridge.dylib";
-            productReference = CA606D7ECEF230764F8FA018;
-            productType = "com.apple.product-type.library.dynamic";
-        };
-        
+		CA60785075725D1998A4805E /* intiface_engine_flutter_bridge-cdylib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA60DD7C59735D1998A4805E /* Build configuration list for PBXNativeTarget "intiface_engine_flutter_bridge-cdylib" */;
+			buildPhases = (
+				CA607F220AD05D1998A4805E /* Sources */,
+				CA600D620DE1AF6EBB7F357C /* Universal Binary lipo */,
+			);
+			buildRules = (
+				CA600D620DE1AC6C1400ACA8 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "intiface_engine_flutter_bridge-cdylib";
+			productName = intiface_engine_flutter_bridge.dylib;
+			productReference = CA607850757230764F8FA018 /* libintiface_engine_flutter_bridge.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		CA607A61E5983D022F44E751 /* intiface_engine_flutter_bridge-staticlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA60DD7C59733D022F44E751 /* Build configuration list for PBXNativeTarget "intiface_engine_flutter_bridge-staticlib" */;
+			buildPhases = (
+				CA607F220AD03D022F44E751 /* Sources */,
+				CA600D620DE1AF6EBB7F357C /* Universal Binary lipo */,
+			);
+			buildRules = (
+				CA600D620DE1AC6C1400ACA8 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "intiface_engine_flutter_bridge-staticlib";
+			productName = libintiface_engine_flutter_bridge_static.a;
+			productReference = CA607A61E59860A9C18B421C /* libintiface_engine_flutter_bridge_static.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
-        CA60BECA99BC661687120351 = {
-                    isa = PBXSourcesBuildPhase;
-                    buildActionMask = 2147483647;
-                    files = (
-                        CA6018997969661687120351
-                    );
-                    runOnlyForDeploymentPostprocessing = 0;
-                };
-                
-        CA6027A67E3C661687120351 /* staticlib */ = {
-            isa = XCConfigurationList;
-            buildConfigurations = (
-                CA60708A7FE5661687120351 /* Release */,
-                CA602ABF40BC661687120351 /* Debug */,
-            );
-            defaultConfigurationIsVisible = 0;
-            defaultConfigurationName = Release;
-        };
-            CA60708A7FE5661687120351 /* staticlib */ = {
-                isa = XCBuildConfiguration;
-                buildSettings = {
-                    PRODUCT_NAME = "intiface_engine_flutter_bridge_static";
-                    "CARGO_XCODE_CARGO_FILE_NAME" = "libintiface_engine_flutter_bridge.a";
-                    "CARGO_XCODE_CARGO_DEP_FILE_NAME" = "libintiface_engine_flutter_bridge.d";
-                    SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
-                    SKIP_INSTALL = YES;
-                INSTALL_GROUP = "";
-                INSTALL_MODE_FLAG = "";
-                INSTALL_OWNER = "";
-                };
-                name = Release;
-            };
-            CA602ABF40BC661687120351 /* staticlib */ = {
-                isa = XCBuildConfiguration;
-                buildSettings = {
-                    PRODUCT_NAME = "intiface_engine_flutter_bridge_static";
-                    "CARGO_XCODE_CARGO_FILE_NAME" = "libintiface_engine_flutter_bridge.a";
-                    "CARGO_XCODE_CARGO_DEP_FILE_NAME" = "libintiface_engine_flutter_bridge.d";
-                    SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
-                    SKIP_INSTALL = YES;
-                INSTALL_GROUP = "";
-                INSTALL_MODE_FLAG = "";
-                INSTALL_OWNER = "";
-                };
-                name = Debug;
-            };CA60BECA99BC496B82146997 = {
-                    isa = PBXSourcesBuildPhase;
-                    buildActionMask = 2147483647;
-                    files = (
-                        CA6018997969496B82146997
-                    );
-                    runOnlyForDeploymentPostprocessing = 0;
-                };
-                
-        CA6027A67E3C496B82146997 /* cdylib */ = {
-            isa = XCConfigurationList;
-            buildConfigurations = (
-                CA60708A7FE5496B82146997 /* Release */,
-                CA602ABF40BC496B82146997 /* Debug */,
-            );
-            defaultConfigurationIsVisible = 0;
-            defaultConfigurationName = Release;
-        };
-            CA60708A7FE5496B82146997 /* cdylib */ = {
-                isa = XCBuildConfiguration;
-                buildSettings = {
-                    PRODUCT_NAME = "intiface_engine_flutter_bridge";
-                    "CARGO_XCODE_CARGO_FILE_NAME" = "libintiface_engine_flutter_bridge.dylib";
-                    "CARGO_XCODE_CARGO_DEP_FILE_NAME" = "libintiface_engine_flutter_bridge.d";
-                    SUPPORTED_PLATFORMS = "macosx";
-                    
-                };
-                name = Release;
-            };
-            CA602ABF40BC496B82146997 /* cdylib */ = {
-                isa = XCBuildConfiguration;
-                buildSettings = {
-                    PRODUCT_NAME = "intiface_engine_flutter_bridge";
-                    "CARGO_XCODE_CARGO_FILE_NAME" = "libintiface_engine_flutter_bridge.dylib";
-                    "CARGO_XCODE_CARGO_DEP_FILE_NAME" = "libintiface_engine_flutter_bridge.d";
-                    SUPPORTED_PLATFORMS = "macosx";
-                    
-                };
-                name = Debug;
-            };
+/* Begin PBXProject section */
+		CA600D620DE1E04653AD465F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1300;
+				TargetAttributes = {
+					CA60785075725D1998A4805E = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					CA607A61E5983D022F44E751 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CA600D620DE180E02D6C7F57 /* Build configuration list for PBXProject "intiface_engine_flutter_bridge" */;
+			compatibilityVersion = "Xcode 11.4";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CA600D620DE1D65BC3C892A8;
+			productRefGroup = CA600D620DE122869D176AE5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CA607A61E5983D022F44E751 /* intiface_engine_flutter_bridge-staticlib */,
+				CA60785075725D1998A4805E /* intiface_engine_flutter_bridge-cdylib */,
+			);
+		};
+/* End PBXProject section */
 
-        CA60C1228119AF6EBB7F357C /* LipoScript */ = {
-            name = "Universal Binary lipo";
-            isa = PBXShellScriptBuildPhase;
-            buildActionMask = 2147483647;
-            files = ();
-            inputFileListPaths = ();
-            inputPaths = (
-                "$(DERIVED_FILE_DIR)/$(ARCHS)-$(EXECUTABLE_NAME).xcfilelist",
-            );
-            outputFileListPaths = ();
-            outputPaths = (
-                "$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)"
-            );
-            runOnlyForDeploymentPostprocessing = 0;
-            shellPath = /bin/sh;
-            shellScript = "# generated with cargo-xcode 1.4.3\nset -eux; cat \"$DERIVED_FILE_DIR/$ARCHS-$EXECUTABLE_NAME.xcfilelist\" | tr '\\n' '\\0' | xargs -0 lipo -create -output \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
-        };
+/* Begin PBXShellScriptBuildPhase section */
+		CA600D620DE1AF6EBB7F357C /* Universal Binary lipo */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(DERIVED_FILE_DIR)/$(ARCHS)-$(EXECUTABLE_NAME).xcfilelist",
+			);
+			name = "Universal Binary lipo";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# generated with cargo-xcode 1.5.0\n\n            set -eux; cat \"$DERIVED_FILE_DIR/$ARCHS-$EXECUTABLE_NAME.xcfilelist\" | tr '\\n' '\\0' | xargs -0 lipo -create -output \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n            if [ ${LD_DYLIB_INSTALL_NAME:+1} ]; then\n                install_name_tool -id \"$LD_DYLIB_INSTALL_NAME\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n            fi\n        \n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
-        CA60C122811980E02D6C7F57 = {
-            isa = XCConfigurationList;
-            buildConfigurations = (
-                CA60802052D93CC16B37690B /* Release */,
-                CA60802052D9228BE02872F8 /* Debug */,
-            );
-            defaultConfigurationIsVisible = 0;
-            defaultConfigurationName = Release;
-        };
+/* Begin PBXSourcesBuildPhase section */
+		CA607F220AD03D022F44E751 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA60E6B489BD3D022F44E751 /* Cargo.toml in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CA607F220AD05D1998A4805E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA60E6B489BD5D1998A4805E /* Cargo.toml in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
 
-        CA60802052D93CC16B37690B = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                
-            ALWAYS_SEARCH_USER_PATHS = NO;
-            SUPPORTS_MACCATALYST = YES;
-            CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target"; /* for cargo */
-            CARGO_XCODE_FEATURES = ""; /* configure yourself */
-            "CARGO_XCODE_TARGET_ARCH[arch=arm64*]" = "aarch64";
-            "CARGO_XCODE_TARGET_ARCH[arch=x86_64*]" = "x86_64"; /* catalyst adds h suffix */
-            "CARGO_XCODE_TARGET_ARCH[arch=i386]" = "i686";
-            "CARGO_XCODE_TARGET_OS[sdk=macosx*]" = "darwin";
-            "CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
-            "CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = "ios";
-            "CARGO_XCODE_TARGET_OS[sdk=iphoneos*]" = "ios";
-            "CARGO_XCODE_TARGET_OS[sdk=appletvsimulator*]" = "tvos";
-            "CARGO_XCODE_TARGET_OS[sdk=appletvos*]" = "tvos";
-            PRODUCT_NAME = "intiface_engine_flutter_bridge";
-            SDKROOT = macosx;
-        
-                "CARGO_XCODE_BUILD_MODE" = "release"; /* for xcode scripts */
-            };
-            name = Release;
-        };
+/* Begin XCBuildConfiguration section */
+		CA607AFA7596228BE02872F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
+				CARGO_XCODE_BUILD_MODE = debug;
+				CARGO_XCODE_FEATURES = "";
+				"CARGO_XCODE_TARGET_ARCH[arch=arm64*]" = aarch64;
+				"CARGO_XCODE_TARGET_ARCH[arch=i386]" = i686;
+				"CARGO_XCODE_TARGET_ARCH[arch=x86_64*]" = x86_64;
+				"CARGO_XCODE_TARGET_OS[sdk=appletvos*]" = tvos;
+				"CARGO_XCODE_TARGET_OS[sdk=appletvsimulator*]" = tvos;
+				"CARGO_XCODE_TARGET_OS[sdk=iphoneos*]" = ios;
+				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
+				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
+				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
+				CURRENT_PROJECT_VERSION = 0.0;
+				MARKETING_VERSION = 0.0.1;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = intiface_engine_flutter_bridge;
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = YES;
+			};
+			name = Debug;
+		};
+		CA607AFA75963CC16B37690B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
+				CARGO_XCODE_BUILD_MODE = release;
+				CARGO_XCODE_FEATURES = "";
+				"CARGO_XCODE_TARGET_ARCH[arch=arm64*]" = aarch64;
+				"CARGO_XCODE_TARGET_ARCH[arch=i386]" = i686;
+				"CARGO_XCODE_TARGET_ARCH[arch=x86_64*]" = x86_64;
+				"CARGO_XCODE_TARGET_OS[sdk=appletvos*]" = tvos;
+				"CARGO_XCODE_TARGET_OS[sdk=appletvsimulator*]" = tvos;
+				"CARGO_XCODE_TARGET_OS[sdk=iphoneos*]" = ios;
+				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
+				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
+				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
+				CURRENT_PROJECT_VERSION = 0.0;
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_NAME = intiface_engine_flutter_bridge;
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = YES;
+			};
+			name = Release;
+		};
+		CA60B433FF473D022F44E751 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
+				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.a;
+				INSTALL_GROUP = "";
+				INSTALL_MODE_FLAG = "";
+				INSTALL_OWNER = "";
+				PRODUCT_NAME = intiface_engine_flutter_bridge_static;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+			};
+			name = Release;
+		};
+		CA60B433FF475D1998A4805E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
+				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.dylib;
+				DYLIB_COMPATIBILITY_VERSION = 0;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				PRODUCT_NAME = libintiface_engine_flutter_bridge;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Release;
+		};
+		CA60EBA2060F3D022F44E751 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
+				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.a;
+				INSTALL_GROUP = "";
+				INSTALL_MODE_FLAG = "";
+				INSTALL_OWNER = "";
+				PRODUCT_NAME = intiface_engine_flutter_bridge_static;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+			};
+			name = Debug;
+		};
+		CA60EBA2060F5D1998A4805E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
+				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.dylib;
+				DYLIB_COMPATIBILITY_VERSION = 0;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				PRODUCT_NAME = libintiface_engine_flutter_bridge;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
 
-        CA60802052D9228BE02872F8 = {
-            isa = XCBuildConfiguration;
-            buildSettings = {
-                
-            ALWAYS_SEARCH_USER_PATHS = NO;
-            SUPPORTS_MACCATALYST = YES;
-            CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target"; /* for cargo */
-            CARGO_XCODE_FEATURES = ""; /* configure yourself */
-            "CARGO_XCODE_TARGET_ARCH[arch=arm64*]" = "aarch64";
-            "CARGO_XCODE_TARGET_ARCH[arch=x86_64*]" = "x86_64"; /* catalyst adds h suffix */
-            "CARGO_XCODE_TARGET_ARCH[arch=i386]" = "i686";
-            "CARGO_XCODE_TARGET_OS[sdk=macosx*]" = "darwin";
-            "CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
-            "CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = "ios";
-            "CARGO_XCODE_TARGET_OS[sdk=iphoneos*]" = "ios";
-            "CARGO_XCODE_TARGET_OS[sdk=appletvsimulator*]" = "tvos";
-            "CARGO_XCODE_TARGET_OS[sdk=appletvos*]" = "tvos";
-            PRODUCT_NAME = "intiface_engine_flutter_bridge";
-            SDKROOT = macosx;
-        
-                "CARGO_XCODE_BUILD_MODE" = "debug"; /* for xcode scripts */
-                ONLY_ACTIVE_ARCH = YES;
-            };
-            name = Debug;
-        };
-
-        CA60C1228119E04653AD465F = {
-            isa = PBXProject;
-            attributes = {
-                LastUpgradeCheck = 1300;
-                TargetAttributes = {
-                    CA608063A6AA661687120351 = {
-                        CreatedOnToolsVersion = 9.2;
-                        ProvisioningStyle = Automatic;
-                    };
-                    CA606D7ECEF2496B82146997 = {
-                        CreatedOnToolsVersion = 9.2;
-                        ProvisioningStyle = Automatic;
-                    };
-                                    };
-            };
-            buildConfigurationList = CA60C122811980E02D6C7F57;
-            compatibilityVersion = "Xcode 11.4";
-             developmentRegion = en;
-            hasScannedForEncodings = 0;
-            knownRegions = (
-                    en,
-                    Base,
-            );
-            mainGroup = CA60C1228119D65BC3C892A8;
-            productRefGroup = CA60C122811922869D176AE5 /* Products */;
-            projectDirPath = "";
-            projectRoot = "";
-            targets = (
-                CA608063A6AA661687120351,
-CA606D7ECEF2496B82146997,
-
-            );
-        };
-
-    };
-    rootObject = CA60C1228119E04653AD465F;
+/* Begin XCConfigurationList section */
+		CA600D620DE180E02D6C7F57 /* Build configuration list for PBXProject "intiface_engine_flutter_bridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA607AFA75963CC16B37690B /* Release */,
+				CA607AFA7596228BE02872F8 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CA60DD7C59733D022F44E751 /* Build configuration list for PBXNativeTarget "intiface_engine_flutter_bridge-staticlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA60B433FF473D022F44E751 /* Release */,
+				CA60EBA2060F3D022F44E751 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CA60DD7C59735D1998A4805E /* Build configuration list for PBXNativeTarget "intiface_engine_flutter_bridge-cdylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA60B433FF475D1998A4805E /* Release */,
+				CA60EBA2060F5D1998A4805E /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CA600D620DE1E04653AD465F /* Project object */;
 }
-    

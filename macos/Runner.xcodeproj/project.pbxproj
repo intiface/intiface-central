@@ -26,9 +26,10 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		4282773F290498D600870167 /* intiface_engine_flutter_bridge.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */; };
 		42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42827740290498DC00870167 /* CoreBluetooth.framework */; };
 		4282774329049A0600870167 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 4282774229049A0100870167 /* bridge_generated.h */; };
+		4282776729060EF300870167 /* libintiface_engine_flutter_bridge.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */; };
+		4282776C29060F8100870167 /* libintiface_engine_flutter_bridge.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423AB11368150DFF42A5D089 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,7 +55,7 @@
 			remoteGlobalIDString = CA606D7ECEF230764F8FA018;
 			remoteInfo = "intiface_engine_flutter_bridge-cdylib";
 		};
-		4282773D290498C600870167 /* PBXContainerItemProxy */ = {
+		4282776829060EFB00870167 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
 			proxyType = 1;
@@ -68,10 +69,21 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolderSpec = 16;
 			files = (
 			);
 			name = "Bundle Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4282775A2905248800870167 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4282776C29060F8100870167 /* libintiface_engine_flutter_bridge.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -107,8 +119,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4282776729060EF300870167 /* libintiface_engine_flutter_bridge.dylib in Frameworks */,
 				42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */,
-				4282773F290498D600870167 /* intiface_engine_flutter_bridge.dylib in Frameworks */,
 				44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -197,7 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				4282773A290498A200870167 /* libintiface_engine_flutter_bridge_static.a */,
-				4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */,
+				4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -221,15 +233,17 @@
 				19874E16C4BA1B3329C067D6 /* [CP] Check Pods Manifest.lock */,
 				33CC10E92044A3C60003C045 /* Sources */,
 				33CC10EA2044A3C60003C045 /* Frameworks */,
+				428277702906193500870167 /* ShellScript */,
 				33CC10EB2044A3C60003C045 /* Resources */,
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* ShellScript */,
 				71B6CB89048E3E43DCB341CF /* [CP] Embed Pods Frameworks */,
+				4282775A2905248800870167 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4282773E290498C600870167 /* PBXTargetDependency */,
+				4282776929060EFB00870167 /* PBXTargetDependency */,
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
 			);
 			name = Runner;
@@ -296,10 +310,10 @@
 			remoteRef = 42827739290498A200870167 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4282773C290498A200870167 /* intiface_engine_flutter_bridge.dylib */ = {
+		4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = intiface_engine_flutter_bridge.dylib;
+			path = libintiface_engine_flutter_bridge.dylib;
 			remoteRef = 4282773B290498A200870167 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -378,6 +392,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
 		};
+		428277702906193500870167 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 $PROJECT_DIR/copy_dylibs.py\n";
+		};
 		71B6CB89048E3E43DCB341CF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -416,10 +447,10 @@
 			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
-		4282773E290498C600870167 /* PBXTargetDependency */ = {
+		4282776929060EFB00870167 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "intiface_engine_flutter_bridge-cdylib";
-			targetProxy = 4282773D290498C600870167 /* PBXContainerItemProxy */;
+			targetProxy = 4282776829060EFB00870167 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -491,6 +522,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -618,6 +650,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/DebugProfile.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -639,6 +672,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Release.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
