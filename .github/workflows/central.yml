@@ -55,15 +55,15 @@ jobs:
         name: flutter config
       - run: flutter build linux --release
         name: flutter build
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          architecture: x64
-      - run: flutter config --enable-macos-desktop
-        name: flutter config
-      - run: flutter build macos --release
-        name: flutter build
+#  macos:
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#          architecture: x64
+#      - run: flutter config --enable-macos-desktop
+#        name: flutter config
+#      - run: flutter build macos --release
+#        name: flutter build
