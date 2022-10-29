@@ -1,3 +1,10 @@
+# 0.0.3
+
+## Bugfixes
+
+- Links now clickable in News panel
+- macOS has sandbox activated again
+
 # 0.0.2 (Desktop) - 2022/10/23
 
 ## Features
@@ -11,7 +18,7 @@
     app any time Buttplug updates.
 - Ability to set Websocket server port.
 
-# Bugfixes
+## Bugfixes
 
 - Fixed issue with Android dead code elimination removing btleplug symbols in release
 - Settings changes now only allowed when server not running
