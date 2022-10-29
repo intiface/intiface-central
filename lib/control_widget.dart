@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
+import 'package:intiface_central/error_notifier_cubit.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/update/update_bloc.dart';
@@ -96,17 +97,22 @@ class ControlWidget extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Visibility(
-                        visible: false,
-                        child: IconButton(
-                          iconSize: 25,
-                          onPressed: () => navCubit.goLogs(),
-                          icon: const Icon(Icons.warning),
-                          tooltip: "No new errors",
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ),
+                      BlocBuilder(
+                          bloc: BlocProvider.of<ErrorNotifierCubit>(context),
+                          builder: (context, ErrorNotifierState state) {
+                            return Visibility(
+                              visible: state is ErrorNotifierTriggerState ? true : false,
+                              child: IconButton(
+                                iconSize: 25,
+                                onPressed: () => navCubit.goLogs(),
+                                color: Colors.red,
+                                icon: const Icon(Icons.warning),
+                                tooltip: "Errors Occured",
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            );
+                          }),
                       Visibility(
                           visible: configCubit.currentAppVersion != configCubit.latestAppVersion,
                           child: IconButton(
@@ -122,7 +128,7 @@ class ControlWidget extends StatelessWidget {
                               iconSize: 25,
                               onPressed: () => navCubit.goNews(),
                               icon: const Icon(Icons.newspaper),
-                              tooltip: "No new news",
+                              tooltip: "New News Available",
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints())),
                     ],

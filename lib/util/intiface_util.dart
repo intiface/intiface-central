@@ -1,6 +1,7 @@
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 const String userDeviceConfigFilename = 'buttplug-user-device-config.json';
 const String deviceConfigFilename = 'buttplug-device-config.json';
@@ -15,6 +16,7 @@ const String intifaceEngineFilename = 'intiface-engine';
 class IntifacePaths {
   static late Directory _configPath;
   static late Directory _logPath;
+  static late File _logFile;
   static late File _deviceConfigFile;
   static late File _userDeviceConfigFile;
   static late Directory _enginePath;
@@ -23,6 +25,7 @@ class IntifacePaths {
   static late File _newsFile;
   static Directory get configPath => IntifacePaths._configPath;
   static Directory get logPath => IntifacePaths._logPath;
+  static File get logFile => IntifacePaths._logFile;
   static File get deviceConfigFile => IntifacePaths._deviceConfigFile;
   static File get userDeviceConfigFile => IntifacePaths._userDeviceConfigFile;
   static Directory get enginePath => IntifacePaths._enginePath;
@@ -39,6 +42,26 @@ class IntifacePaths {
 
     IntifacePaths._logPath = Directory(p.join(docsDir, intifaceLoggingDirectoryName));
     await IntifacePaths._logPath.create(recursive: true);
+
+    // Take care of eliminating old log files here. Since we store date/time in their name, we can just use that.
+    var logFiles = IntifacePaths.logPath.listSync(followLinks: false, recursive: false);
+    // Only keep last 5 log files.
+    if (logFiles.length >= 5) {
+      FileSystemEntity oldestFile = logFiles[0];
+      for (var file in logFiles) {
+        if (oldestFile.path.compareTo(file.path) > 0) {
+          oldestFile = file;
+        }
+      }
+      await oldestFile.delete();
+    }
+
+    final formatter = NumberFormat("00");
+    final now = DateTime.now();
+    var logFilename =
+        "intiface-central-${now.year}-${formatter.format(now.month)}-${formatter.format(now.day)}-${formatter.format(now.hour)}-${formatter.format(now.minute)}-${formatter.format(now.second)}.log";
+    IntifacePaths._logFile = File(p.join(IntifacePaths._logPath.path, logFilename));
+    await IntifacePaths._logFile.create();
 
     IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath.path, deviceConfigFilename));
     IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath.path, userDeviceConfigFilename));

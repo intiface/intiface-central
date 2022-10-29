@@ -10,7 +10,9 @@ import 'package:intiface_central/device_configuration/device_configuration.dart'
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/engine/library_engine_provider.dart';
+import 'package:intiface_central/error_notifier_cubit.dart';
 import 'package:intiface_central/intiface_central_app.dart';
+import 'package:intiface_central/logging/logging.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/update/github_update_provider.dart';
@@ -32,25 +34,6 @@ void windowDisplayModeResize(bool useCompactDisplay) {
     windowManager.setMinimumSize(const Size(800, 600));
     windowManager.setMaximumSize(const Size(10000, 10000));
     windowManager.setSize(const Size(800, 600));
-  }
-}
-
-// From https://github.com/infinum/floggy/issues/50
-class MultiPrinter extends LoggyPrinter {
-  const MultiPrinter();
-
-  final LoggyPrinter devPrinter = const PrettyDeveloperPrinter();
-  final LoggyPrinter consolePrinter = const PrettyPrinter();
-  //final LoggyPrinter filePrinter;
-
-  @override
-  void onLog(LogRecord record) {
-    //filePrinter.onLog(record);
-    devPrinter.onLog(record);
-
-    if (!kReleaseMode) {
-      consolePrinter.onLog(record);
-    }
   }
 }
 
@@ -105,15 +88,16 @@ void main() async {
     ].request();
   }
 
-  Loggy.initLoggy(
-    logPrinter: StreamPrinter(
-      const MultiPrinter(),
-    ),
-    logOptions: const LogOptions(
-      LogLevel.all,
-      stackTraceLevel: LogLevel.error,
-    ),
-  );
+  var errorNotifier = ErrorNotifier();
+  // Logging setup needs to happen after we've done initial setup.
+  initLogging(errorNotifier);
+
+  var errorNotifierCubit = ErrorNotifierCubit();
+
+  errorNotifier.stream.listen((record) {
+    errorNotifierCubit.emitError(record);
+  });
+
   logInfo("Intiface Central Starting...");
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -176,5 +160,6 @@ void main() async {
     BlocProvider(create: (context) => assetCubit),
     BlocProvider(create: (context) => configCubit),
     BlocProvider(create: (context) => networkCubit),
+    BlocProvider(create: (context) => errorNotifierCubit),
   ], child: const IntifaceCentralView()));
 }

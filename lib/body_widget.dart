@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/device_widget.dart';
-import 'package:intiface_central/log_widget.dart';
+import 'package:intiface_central/error_notifier_cubit.dart';
+import 'package:intiface_central/logging/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/markdown_widget.dart';
 import 'package:intiface_central/settings_widget.dart';
@@ -25,10 +26,11 @@ class NavigationDestination {
 class BodyWidget extends StatelessWidget {
   const BodyWidget({super.key});
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMenu(BuildContext context, NavigationState state) {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+    var errorNotifierCubit = BlocProvider.of<ErrorNotifierCubit>(context);
     var assets = BlocProvider.of<AssetCubit>(context);
+
     var destinations = [
       NavigationDestination(
           (state) => state is NavigationStateNews,
@@ -51,7 +53,8 @@ class BodyWidget extends StatelessWidget {
       NavigationDestination(
           (state) => state is NavigationStateLogs,
           (NavigationCubit cubit) => cubit.goLogs(),
-          const Icon(Icons.text_snippet_outlined),
+          Icon(Icons.text_snippet_outlined,
+              color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : IconTheme.of(context).color),
           const Icon(Icons.text_snippet),
           'Log',
           () => const LogWidget(),
@@ -91,60 +94,67 @@ class BodyWidget extends StatelessWidget {
           false),
     ];
 
+    var navCubit = BlocProvider.of<NavigationCubit>(context);
+    var selectedIndex = 0;
+    for (var element in destinations) {
+      if (element.stateCheck(state)) {
+        break;
+      }
+      selectedIndex += 1;
+    }
+    if (selectedIndex >= destinations.length) {
+      selectedIndex = 0;
+    }
+
+    if (configCubit.useSideNavigationBar) {
+      return Expanded(
+          child: Row(children: <Widget>[
+        NavigationRail(
+            selectedIndex: selectedIndex,
+            groupAlignment: -1.0,
+            onDestinationSelected: (int index) {
+              destinations[index].navigate(navCubit);
+            },
+            labelType: NavigationRailLabelType.all,
+            destinations:
+                destinations.map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title))).toList()),
+        Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
+      ]));
+    }
+    // Weird special case time! If we're showing the bottom bar nav, and we're in one of the widgets that
+    // isn't shown there, assume we're actually in the settings widget.
+    var visualSelectedIndex = selectedIndex;
+
+    if (!destinations[selectedIndex].showInMobileRail) {
+      visualSelectedIndex = destinations.where((element) => element.showInMobileRail).length - 1;
+    }
+
+    return Expanded(
+        child: Column(children: <Widget>[
+      Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
+      BottomNavigationBar(
+          currentIndex: visualSelectedIndex,
+          onTap: (int index) {
+            destinations[index].navigate(navCubit);
+          },
+          type: BottomNavigationBarType.fixed,
+          items: destinations
+              .where((element) => element.showInMobileRail)
+              .map((dest) => BottomNavigationBarItem(icon: dest.icon, activeIcon: dest.selectedIcon, label: dest.title))
+              .toList())
+    ]));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // This is so gross and should be handled as a stream. :c
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
         buildWhen: (previous, current) => current is UseSideNavigationBar,
-        builder: (context, state) => BlocBuilder<NavigationCubit, NavigationState>(builder: (context, state) {
-              var navCubit = BlocProvider.of<NavigationCubit>(context);
-              var selectedIndex = 0;
-              for (var element in destinations) {
-                if (element.stateCheck(state)) {
-                  break;
-                }
-                selectedIndex += 1;
-              }
-              if (selectedIndex >= destinations.length) {
-                selectedIndex = 0;
-              }
-
-              if (configCubit.useSideNavigationBar) {
-                return Expanded(
-                    child: Row(children: <Widget>[
-                  NavigationRail(
-                      selectedIndex: selectedIndex,
-                      groupAlignment: -1.0,
-                      onDestinationSelected: (int index) {
-                        destinations[index].navigate(navCubit);
-                      },
-                      labelType: NavigationRailLabelType.all,
-                      destinations: destinations
-                          .map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title)))
-                          .toList()),
-                  Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
-                ]));
-              }
-              // Weird special case time! If we're showing the bottom bar nav, and we're in one of the widgets that
-              // isn't shown there, assume we're actually in the settings widget.
-              var visualSelectedIndex = selectedIndex;
-
-              if (!destinations[selectedIndex].showInMobileRail) {
-                visualSelectedIndex = destinations.where((element) => element.showInMobileRail).length - 1;
-              }
-
-              return Expanded(
-                  child: Column(children: <Widget>[
-                Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
-                BottomNavigationBar(
-                    currentIndex: visualSelectedIndex,
-                    onTap: (int index) {
-                      destinations[index].navigate(navCubit);
-                    },
-                    type: BottomNavigationBarType.fixed,
-                    items: destinations
-                        .where((element) => element.showInMobileRail)
-                        .map((dest) =>
-                            BottomNavigationBarItem(icon: dest.icon, activeIcon: dest.selectedIcon, label: dest.title))
-                        .toList())
-              ]));
+        builder: (context, configState) =>
+            BlocBuilder<NavigationCubit, NavigationState>(builder: (context, navigationState) {
+              return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(builder: (context, errorState) {
+                return _buildMenu(context, navigationState);
+              });
             }));
   }
 }
