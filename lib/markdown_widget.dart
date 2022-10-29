@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher_string.dart';
 
 class MarkdownWidget extends StatelessWidget {
   final String _markdownContent;
@@ -18,6 +19,11 @@ class MarkdownWidget extends StatelessWidget {
         child: Markdown(
             selectable: true,
             data: _markdownContent,
+            onTapLink: (text, url, title) async {
+              if (url != null && await canLaunchUrlString(url)) {
+                launchUrlString(url);
+              }
+            },
             extensionSet: md.ExtensionSet(
               md.ExtensionSet.gitHubFlavored.blockSyntaxes,
               [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
