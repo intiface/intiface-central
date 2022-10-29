@@ -55,8 +55,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Must specify each directory explicitly, this is not a recursive include.
   assets:
     - assets/
+    - assets/icons/
 
 msix_config:
   display_name: Intiface Central

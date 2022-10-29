@@ -181,10 +181,14 @@ class IntifaceCentralApp extends StatelessWidget {
                 if (snapshot.hasData) {
                   return snapshot.data!;
                 }
-                return MaterialApp(
+                return const MaterialApp(
                     title: 'Intiface Central',
                     debugShowCheckedModeBanner: false,
-                    home: Row(children: const [Expanded(child: Text("Waiting"))]));
+                    home: Scaffold(
+                      body: Center(
+                        child: Image(image: AssetImage('assets/icons/intiface_central_icon.png')),
+                      ),
+                    ));
               });
         }));
   }
