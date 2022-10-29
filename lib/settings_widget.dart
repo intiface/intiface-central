@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/app_reset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/navigation_cubit.dart';
@@ -207,7 +208,7 @@ class SettingWidget extends StatelessWidget {
                                       // This is gross and a bug, but until we can check context mounting across asyncs in Flutter
                                       // 3.4+, we're stuck.
                                       var navigator = Navigator.of(context);
-
+                                      var resetCubit = BlocProvider.of<AppResetCubit>(context);
                                       // Delete all file assets
                                       if (await IntifacePaths.deviceConfigFile.exists()) {
                                         await IntifacePaths.deviceConfigFile.delete();
@@ -222,6 +223,7 @@ class SettingWidget extends StatelessWidget {
                                       await cubit.reset();
                                       logWarning("Configuration reset finished");
                                       navigator.pop();
+                                      resetCubit.reset();
                                     },
                                   ),
                                   TextButton(
