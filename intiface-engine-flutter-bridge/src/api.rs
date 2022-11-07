@@ -57,7 +57,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     mobile_init::create_runtime(sink.clone()).expect("Runtime should work, otherwise we can't function.");
   }
   if ENGINE_NOTIFIER.get().is_none() {
-    ENGINE_NOTIFIER.set(Arc::new(Notify::new()));
+    ENGINE_NOTIFIER.set(Arc::new(Notify::new())).expect("We already checked creation so this shouldn't fail");
   }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
   let frontend = FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone());
