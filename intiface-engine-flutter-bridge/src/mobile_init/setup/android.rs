@@ -4,7 +4,6 @@ use jni::{AttachGuard, JNIEnv, JavaVM};
 use once_cell::sync::OnceCell;
 use std::cell::RefCell;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::thread;
 use tokio::runtime::Runtime;
 
 use crate::mobile_init::Error;
