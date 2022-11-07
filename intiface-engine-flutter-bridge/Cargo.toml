@@ -17,7 +17,7 @@ flutter_rust_bridge = "1"
 log = "0.4.17"
 lazy_static = "1.4.0"
 once_cell = "1.14.0"
-tokio = "1.21.0"
+tokio = { version = "1.21.0", features = ["rt-multi-thread", "tracing"] }
 anyhow = "1.0.64"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
@@ -27,6 +27,9 @@ getset = "0.1.2"
 serde = "1.0.144"
 serde_json = "1.0.85"
 async-trait = "0.1.57"
+futures = "0.3.25"
+tracing = "0.1.37"
+tracing-futures = "0.2.5"
 
 [target.'cfg(target_os = "android")'.dependencies]
 # THESE VERSIONS ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
