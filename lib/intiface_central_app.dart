@@ -113,18 +113,20 @@ class IntifaceCentralApp extends StatelessWidget {
 
     var networkCubit = await NetworkInfoCubit.create();
 
-    engineRepo.messageStream.forEach((message) {
-      if (message.engineLog != null) {
+
+    engineControlBloc.stream.forEach((state) async {
+      if (state is ServerLogMessageState) {
         // TODO Turn level into an enum
-        var level = message.engineLog!.message!.level;
+        var message = state.message.message!;
+        var level = message.level;
         if (level == "DEBUG") {
-          logDebug(message.engineLog!.message!.fields["message"]);
+          logDebug(message.fields["message"]);
         } else if (level == "INFO") {
-          logInfo(message.engineLog!.message!.fields["message"]);
+          logInfo(message.fields["message"]);
         } else if (level == "ERROR") {
-          logError(message.engineLog!.message!.fields["message"]);
+          logError(message.fields["message"]);
         } else if (level == "WARN") {
-          logWarning(message.engineLog!.message!.fields["message"]);
+          logWarning(message.fields["message"]);
         } else if (level == "TRACE") {
           // TODO Implement trace logging level for loggy
           //log(message.engineLog!.message!.fields["message"]);

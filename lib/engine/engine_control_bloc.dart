@@ -34,6 +34,12 @@ class DeviceDisconnectedState extends EngineControlState {
   DeviceDisconnectedState(this.index);
 }
 
+
+class ServerLogMessageState extends EngineControlState {
+  final EngineLog message;
+  ServerLogMessageState(this.message);
+}
+
 class EngineError extends EngineControlState {}
 
 class EngineControlEvent {}

@@ -17,6 +17,7 @@ class SettingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EngineControlBloc, EngineControlState>(
+        buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
         builder: (context, engineState) =>
             BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(builder: (context, state) {
               var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
