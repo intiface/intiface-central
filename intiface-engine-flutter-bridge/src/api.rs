@@ -2,7 +2,7 @@ use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend,
   mobile_init::{self, RUNTIME},
 };
-use std::sync::Arc;
+use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 use anyhow::Result;
 use tokio::{
   select,
@@ -16,6 +16,7 @@ pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, 
 
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
+  static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> = Arc::new(broadcast::channel(255).0);
 }
 
@@ -48,8 +49,10 @@ pub struct _EngineOptionsExternal {
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
-  if RUNTIME.get().is_none() {
-    mobile_init::create_runtime(sink.clone()).expect("Runtime should work");
+  if RUN_STATUS.load(Ordering::SeqCst) {
+    return Err(anyhow::Error::msg("Server already running!"));
+  }
+  RUN_STATUS.store(true, Ordering::SeqCst);
   }
   if ENGINE_NOTIFIER.get().is_none() {
     ENGINE_NOTIFIER.set(Arc::new(Notify::new()));
@@ -64,9 +67,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     engine.run(&options, Some(Arc::new(frontend))).await;
   });
   runtime.spawn(async move {
-    notify.notified().await;
-    engine_clone.stop();
-  });
+    RUN_STATUS.store(false, Ordering::SeqCst);
   Ok(())
 }
 
