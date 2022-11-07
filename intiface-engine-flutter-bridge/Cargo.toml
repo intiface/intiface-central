@@ -12,7 +12,8 @@ exclude = [".vscode/**"]
 [dependencies]
 # Make sure we don't build with default_features on, as it is assumed intiface-engine will normally
 # build the desktop executable, which has DCMs that don't work on mobile.
-intiface-engine = { version = "1.0.2", default_features = false, features=["crash_reporting"] }
+intiface-engine = { version = "1.0.3", default_features = false, features=["crash_reporting"] }
+# intiface-engine = { path = "../../intiface-engine", default_features = false, features=["crash_reporting"] }
 flutter_rust_bridge = "1"
 log = "0.4.17"
 lazy_static = "1.4.0"
@@ -21,7 +22,8 @@ tokio = { version = "1.21.0", features = ["rt-multi-thread", "tracing"] }
 anyhow = "1.0.64"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
-btleplug = "0.10.2"
+# btleplug = { path = "../../btleplug" }
+btleplug = "0.10.3"
 thiserror = "1.0.31"
 getset = "0.1.2"
 serde = "1.0.144"

@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface Central
 
 publish_to: 'none'
-version: 0.0.2
+version: 0.0.3
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
@@ -37,6 +37,8 @@ dependencies:
   package_info_plus: ^1.4.3+1
   url_launcher: ^6.1.6
   intl: ^0.17.0
+  buttplug:
+    path: "../buttplug-dart"
 
 dev_dependencies:
   flutter_test:

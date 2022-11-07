@@ -1,9 +1,22 @@
 # 0.0.3
 
+## Features
+
+- Device Panel has beginnings of device controls
+- Re-enable macOS Sandbox
+- Add link handling in news display
+- Log to files (limited to last 5 sessions)
+- App reset works completely within the app (needed for iOS)
+- Error notifications now show up in icon color and compact display
+- App splash screen
+
 ## Bugfixes
 
 - Links now clickable in News panel
 - macOS has sandbox activated again
+- Add guard to make sure multiple servers can't run at once
+- Reset server on start when in Debug (for GUI reloading)
+- Consolidate bridge tasks but make sure they don't stall
 
 # 0.0.2 (Desktop) - 2022/10/23
 
