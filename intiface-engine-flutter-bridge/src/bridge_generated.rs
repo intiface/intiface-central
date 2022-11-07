@@ -58,6 +58,22 @@ fn wire_stop_engine_impl(port_: MessagePort) {
     move || move |task_callback| Ok(stop_engine()),
   )
 }
+fn wire_send_backend_server_message_impl(
+  port_: MessagePort,
+  msg: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+    WrapInfo {
+      debug_name: "send_backend_server_message",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_msg = msg.wire2api();
+      move |task_callback| Ok(send_backend_server_message(api_msg))
+    },
+  )
+}
 // Section: wrapper structs
 
 // Section: static checks

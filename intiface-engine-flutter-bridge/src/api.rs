@@ -4,6 +4,7 @@ use crate::{
 };
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 use anyhow::Result;
+use futures::{StreamExt, pin_mut};
 use tokio::{
   select,
   sync::{Notify, broadcast}
@@ -11,6 +12,7 @@ use tokio::{
 use flutter_rust_bridge::{frb, StreamSink};
 use once_cell::sync::OnceCell;
 use lazy_static::lazy_static;
+use tracing_futures::Instrument;
 
 pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
 
@@ -18,6 +20,7 @@ static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
   static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> = Arc::new(broadcast::channel(255).0);
+  static ref BACKDOOR_INCOMING_BROADCASTER: Arc<broadcast::Sender<String>> = Arc::new(broadcast::channel(255).0);
 }
 
 #[frb(mirror(EngineOptionsExternal))]
@@ -61,10 +64,67 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
   let frontend = FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone());
+  let frontend_waiter = frontend.notify_on_creation();
   let engine = Arc::new(IntifaceEngine::default());
   let engine_clone = engine.clone();
   let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
+  let notify_clone = notify.clone();
   let options = args.into();
+
+  let mut backdoor_incoming = BACKDOOR_INCOMING_BROADCASTER.subscribe();
+  let outgoing_sink = sink.clone();
+  // Start our backdoor task first
+  runtime.spawn(async move {  
+    // Once we finish our waiter, continue. If we cancel the server run before then, just kill the
+    // task.
+    info!("Entering backdoor waiter task");
+    select! {
+      _ = frontend_waiter => {}
+      _ = notify_clone.notified() => {
+        return;
+      }
+    };
+    // At this point we know we'll have a server.
+    let backdoor_server = if let Some(backdoor_server) = engine_clone.backdoor_server() {
+      backdoor_server
+    } else {
+      // If we somehow *don't* have a server here, something has gone very wrong. Just die.
+      return;
+    };
+    let backdoor_server_stream = backdoor_server.event_stream();
+    pin_mut!(backdoor_server_stream);
+    loop {
+      select! {
+        msg = backdoor_incoming.recv() => {
+          match msg {
+            Ok(msg) => {
+              let runtime = RUNTIME.get().expect("Runtime not initialized");
+              let sink = outgoing_sink.clone();
+              let backdoor_server_clone = backdoor_server.clone();
+              runtime.spawn(async move {
+                sink.add(backdoor_server_clone.parse_message(&msg).await);
+              });
+            }
+            Err(_) => break
+          }
+        },
+        outgoing = backdoor_server_stream.next() => {
+          match outgoing {
+            Some(msg) => { sink.add(msg); }
+            None => break
+          }          
+        },
+        _ = notify_clone.notified() => break
+      }
+    }
+    info!("Exiting backdoor waiter task");
+  }.instrument(info_span!("IC Backdoor server task")));
+
+  // Our notifier needs to run in a task by itself, because we don't want our engine future to get
+  // cancelled, so we can't select between it and the notifier. It needs to shutdown gracefully.
+  let engine_clone = engine.clone();
+
+
   runtime.spawn(async move {
     info!("Entering main engine waiter task");
     // These futures need to run in parallel, but the frontend will always notify before the engine
@@ -92,10 +152,20 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
 }
 
 pub fn send(msg_json: String) {
-  let msg: IntifaceMessage = serde_json::from_str(&msg_json).unwrap();  
-  ENGINE_BROADCASTER.send(msg).unwrap();
+  let msg: IntifaceMessage = serde_json::from_str(&msg_json).unwrap();
+  if ENGINE_BROADCASTER.receiver_count() > 0 {
+    ENGINE_BROADCASTER.send(msg).expect("This should be infallible since we already checked for receivers");
+  }
 }
 
 pub fn stop_engine() {
-  ENGINE_NOTIFIER.get().expect("Should be set").notify_waiters();
+  if let Some(notifier) = ENGINE_NOTIFIER.get() {
+    notifier.notify_waiters();
+  }
+}
+
+pub fn send_backend_server_message(msg: String) {
+  if BACKDOOR_INCOMING_BROADCASTER.receiver_count() > 0 {
+    BACKDOOR_INCOMING_BROADCASTER.send(msg).expect("This should be infallible since we already checked for receivers");
+  }
 }

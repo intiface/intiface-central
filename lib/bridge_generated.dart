@@ -22,6 +22,10 @@ abstract class IntifaceEngineFlutterBridge {
   Future<void> stopEngine({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kStopEngineConstMeta;
+
+  Future<void> sendBackendServerMessage({required String msg, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSendBackendServerMessageConstMeta;
 }
 
 class EngineOptionsExternal {
@@ -134,6 +138,22 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "stop_engine",
         argNames: [],
+      );
+
+  Future<void> sendBackendServerMessage({required String msg, dynamic hint}) =>
+      _platform.executeNormal(FlutterRustBridgeTask(
+        callFfi: (port_) => _platform.inner.wire_send_backend_server_message(
+            port_, _platform.api2wire_String(msg)),
+        parseSuccessData: _wire2api_unit,
+        constMeta: kSendBackendServerMessageConstMeta,
+        argValues: [msg],
+        hint: hint,
+      ));
+
+  FlutterRustBridgeTaskConstMeta get kSendBackendServerMessageConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "send_backend_server_message",
+        argNames: ["msg"],
       );
 }
 
@@ -344,6 +364,24 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'wire_stop_engine');
   late final _wire_stop_engine =
       _wire_stop_enginePtr.asFunction<void Function(int)>();
+
+  void wire_send_backend_server_message(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> msg,
+  ) {
+    return _wire_send_backend_server_message(
+      port_,
+      msg,
+    );
+  }
+
+  late final _wire_send_backend_server_messagePtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_send_backend_server_message');
+  late final _wire_send_backend_server_message =
+      _wire_send_backend_server_messagePtr
+          .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_EngineOptionsExternal>
       new_box_autoadd_engine_options_external_0() {

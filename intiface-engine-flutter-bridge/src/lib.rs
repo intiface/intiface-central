@@ -3,6 +3,8 @@ mod bridge_generated; /* AUTO INJECTED BY flutter_rust_bridge. This line may not
 ///
 
 extern crate log;
+#[macro_use]
+extern crate tracing;
 
 mod api;
 mod mobile_init;

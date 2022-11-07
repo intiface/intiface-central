@@ -16,6 +16,11 @@ pub extern "C" fn wire_stop_engine(port_: i64) {
   wire_stop_engine_impl(port_)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_send_backend_server_message(port_: i64, msg: *mut wire_uint_8_list) {
+  wire_send_backend_server_message_impl(port_, msg)
+}
+
 // Section: allocate functions
 
 #[no_mangle]
