@@ -85,11 +85,9 @@ class IntifaceCentralApp extends StatelessWidget {
 
     if (isMobile()) {
       await [
-        Permission.location,
         Permission.bluetooth,
         Permission.bluetoothConnect,
         Permission.bluetoothScan,
-        Permission.locationWhenInUse,
       ].request();
     }
 
