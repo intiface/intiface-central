@@ -22,8 +22,11 @@ class ControlWidget extends StatelessWidget {
         builder: (context, updateState) {
           return BlocBuilder(
               bloc: engineControlBloc,
-              buildWhen: (previous, current) =>
-                  current is! ServerLogMessageState && current is! ButtplugServerMessageState,
+              buildWhen: (EngineControlState previous, EngineControlState current) =>
+                  current is EngineStartedState ||
+                  current is EngineStoppedState ||
+                  current is ClientConnectedState ||
+                  current is ClientDisconnectedState,
               builder: (context, EngineControlState state) {
                 var statusMessage = "Unknown Status";
                 var statusIcon = Icons.question_mark;
