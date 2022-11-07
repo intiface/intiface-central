@@ -10,6 +10,12 @@ class DeviceControllerEngineStartedEvent extends DeviceControllerEvent {}
 
 class DeviceControllerEngineStoppedEvent extends DeviceControllerEvent {}
 
+class DeviceControllerDeviceAddedEvent extends DeviceControllerEvent {
+  final ButtplugClientDevice device;
+
+  DeviceControllerDeviceAddedEvent(this.device);
+}
+
 class DeviceControllerStartScanningEvent extends DeviceControllerEvent {}
 
 class DeviceControllerStopScanningEvent extends DeviceControllerEvent {}
@@ -18,13 +24,17 @@ class DeviceControllerState {}
 
 class DeviceControllerInitialState extends DeviceControllerState {}
 
-class DeviceControllerDeviceOnlineState extends DeviceControllerState {}
+class DeviceControllerDeviceOnlineState extends DeviceControllerState {
+  final ButtplugClientDevice device;
+
+  DeviceControllerDeviceOnlineState(this.device);
+}
 
 class DeviceControllerDeviceOfflineState extends DeviceControllerState {}
 
 class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerState> {
   ButtplugClient? _internalClient;
-  final List<dynamic> _onlineDevices = [];
+  final List<ButtplugClientDevice> _onlineDevices = [];
   final List<dynamic> _offlineDevices = [];
   final Stream<EngineControlState> _outputStream;
   final SendFunc _sendFunc;
@@ -40,10 +50,14 @@ class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerS
       client.eventStream.listen((event) {
         if (event is DeviceAddedEvent) {
           logInfo("Device connected: ${event.device.deviceName}");
+          _onlineDevices.add(event.device);
+          add(DeviceControllerDeviceAddedEvent(event.device));
         }
       });
       _internalClient = client;
     });
+
+    on<DeviceControllerDeviceAddedEvent>(((event, emit) => emit(DeviceControllerDeviceOnlineState(event.device))));
 
     on<DeviceControllerEngineStoppedEvent>((event, emit) {
       // Stop our internal buttplug client.
@@ -69,6 +83,6 @@ class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerS
     }));
   }
 
-  List<dynamic> get onlineDevices => _onlineDevices;
+  List<ButtplugClientDevice> get onlineDevices => _onlineDevices;
   List<dynamic> get offlineDevices => _offlineDevices;
 }

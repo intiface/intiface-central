@@ -13,44 +13,55 @@ class DeviceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EngineControlBloc, EngineControlState>(
-      buildWhen: (previous, current) =>
-          current is DeviceConnectedState ||
-          current is DeviceDisconnectedState ||
-          current is ClientDisconnectedState ||
-          current is EngineStoppedState,
-      builder: ((context, state) {
-        var engineBloc = BlocProvider.of<EngineControlBloc>(context);
-        var deviceBloc = BlocProvider.of<DeviceControllerBloc>(context);
-        return Expanded(
-            child: Column(children: [
-          Row(
-            children: [
-              TextButton(
-                  onPressed: () {
-                    deviceBloc.add(DeviceControllerStartScanningEvent());
-                  },
-                  child: const Text("Start Scanning")),
-              TextButton(
-                  onPressed: () {
-                    deviceBloc.add(DeviceControllerStopScanningEvent());
-                  },
-                  child: const Text("Stop Scanning"))
-            ],
-          ),
-          ExpansionPanelList(
-            children: engineBloc.devices.map((element) {
-              return ExpansionPanel(
-                headerBuilder: ((context, isExpanded) => ListTile(
-                      title: Text(element.name),
-                    )),
-                body: const ListTile(title: Text("Device")),
-                canTapOnHeader: true,
-                isExpanded: false,
-              );
-            }).toList(),
-          )
-        ]));
-      }),
-    );
+        buildWhen: (previous, current) =>
+            current is DeviceConnectedState ||
+            current is DeviceDisconnectedState ||
+            current is ClientDisconnectedState ||
+            current is EngineStoppedState,
+        builder: (context, state) {
+          var deviceBloc = BlocProvider.of<DeviceControllerBloc>(context);
+          return Expanded(
+              child: Column(children: [
+            Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      deviceBloc.add(DeviceControllerStartScanningEvent());
+                    },
+                    child: const Text("Start Scanning")),
+                TextButton(
+                    onPressed: () {
+                      deviceBloc.add(DeviceControllerStopScanningEvent());
+                    },
+                    child: const Text("Stop Scanning"))
+              ],
+            ),
+            BlocBuilder<DeviceControllerBloc, DeviceControllerState>(
+                buildWhen: (previous, DeviceControllerState current) =>
+                    current is DeviceControllerDeviceOnlineState || current is DeviceControllerDeviceOfflineState,
+                builder: (context, state) => ExpansionPanelList(
+                      children: deviceBloc.onlineDevices.map((element) {
+                        return ExpansionPanel(
+                          headerBuilder: ((context, isExpanded) => ListTile(
+                                title: Text(element.deviceName),
+                              )),
+                          body: Column(children: [
+                            const ListTile(title: Text("Device")),
+                            Slider(
+                              value: 0,
+                              divisions: element.messageAttributes.scalarCmd![0].stepCount,
+                              onChanged: ((value) {}),
+                              onChangeEnd: (value) async {
+                                await element.vibrate(ButtplugDeviceCommand.setAll(VibrateComponents(value)));
+                              },
+                            )
+                          ]),
+                          canTapOnHeader: true,
+                          isExpanded: true,
+                        );
+                      }).toList(),
+                    ))
+          ]));
+        });
   }
 }
