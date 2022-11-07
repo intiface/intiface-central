@@ -123,6 +123,13 @@ EngineStarted _$EngineStartedFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$EngineStartedToJson(EngineStarted instance) =>
     <String, dynamic>{};
 
+EngineServerCreated _$EngineServerCreatedFromJson(Map<String, dynamic> json) =>
+    EngineServerCreated();
+
+Map<String, dynamic> _$EngineServerCreatedToJson(
+        EngineServerCreated instance) =>
+    <String, dynamic>{};
+
 EngineError _$EngineErrorFromJson(Map<String, dynamic> json) =>
     EngineError()..error = json['error'] as String;
 
@@ -196,6 +203,10 @@ EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
           ? null
           : EngineStarted.fromJson(
               json['EngineStarted'] as Map<String, dynamic>)
+      ..engineServerCreated = json['EngineServerCreated'] == null
+          ? null
+          : EngineServerCreated.fromJson(
+              json['EngineServerCreated'] as Map<String, dynamic>)
       ..engineError = json['EngineError'] == null
           ? null
           : EngineError.fromJson(json['EngineError'] as Map<String, dynamic>)
@@ -229,6 +240,7 @@ Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
       'MessageVersion': instance.messageVersion,
       'EngineLog': instance.engineLog,
       'EngineStarted': instance.engineStarted,
+      'EngineServerCreated': instance.engineServerCreated,
       'EngineError': instance.engineError,
       'EngineStopped': instance.engineStopped,
       'ClientConnected': instance.clientConnected,

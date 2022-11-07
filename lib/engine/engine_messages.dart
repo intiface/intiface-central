@@ -89,6 +89,12 @@ class EngineStarted {
 }
 
 @JsonSerializable()
+class EngineServerCreated {
+  factory EngineServerCreated.fromJson(Map<String, dynamic> json) => _$EngineServerCreatedFromJson(json);
+  EngineServerCreated();
+}
+
+@JsonSerializable()
 class EngineError {
   String error = "";
   factory EngineError.fromJson(Map<String, dynamic> json) => _$EngineErrorFromJson(json);
@@ -145,6 +151,7 @@ class EngineMessage {
   EngineVersion? messageVersion;
   EngineLog? engineLog;
   EngineStarted? engineStarted;
+  EngineServerCreated? engineServerCreated;
   EngineError? engineError;
   EngineStopped? engineStopped;
   ClientConnected? clientConnected;
