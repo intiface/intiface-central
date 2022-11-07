@@ -109,9 +109,15 @@ class ProcessEngineProvider implements EngineProvider {
   }
 
   @override
+  void cycleStream() {}
+
+  @override
   void send(String msg) {
     _ipcChannel!.sink.add(msg);
   }
+
+  @override
+  void sendBackdoorMessage(String msg) {}
 
   @override
   Future<void> stop() async {

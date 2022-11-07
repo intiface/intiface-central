@@ -13,7 +13,13 @@ class TestEngineProvider implements EngineProvider {
   }
 
   @override
+  void cycleStream() {}
+
+  @override
   void send(String msg) {}
+
+  @override
+  void sendBackdoorMessage(String msg) {}
 
   @override
   Stream<String> get engineRawMessageStream => throw "Unimplemented";

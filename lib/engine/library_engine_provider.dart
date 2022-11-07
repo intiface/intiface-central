@@ -8,7 +8,7 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
 class LibraryEngineProvider implements EngineProvider {
-  final StreamController<String> _processMessageStream = StreamController();
+  StreamController<String> _processMessageStream = StreamController();
   Stream<String>? _stream;
 
   Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository configRepo) async {
@@ -61,6 +61,12 @@ class LibraryEngineProvider implements EngineProvider {
   }
 
   @override
+  void cycleStream() {
+    _processMessageStream.close();
+    _processMessageStream = StreamController();
+  }
+
+  @override
   Future<void> stop() async {
     api.stopEngine();
     logInfo("Engine stopped");
@@ -69,6 +75,12 @@ class LibraryEngineProvider implements EngineProvider {
   @override
   void send(String msg) {
     api.send(msgJson: msg);
+  }
+
+  @override
+  void sendBackdoorMessage(String msg) {
+    logInfo("Outgoing: $msg");
+    api.sendBackendServerMessage(msg: msg);
   }
 
   @override

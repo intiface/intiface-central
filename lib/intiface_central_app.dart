@@ -6,6 +6,7 @@ import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/body_widget.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/control_widget.dart';
+import 'package:intiface_central/device/device_controller_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/navigation_cubit.dart';
@@ -95,7 +96,7 @@ class IntifaceCentralApp extends StatelessWidget {
     var errorNotifier = ErrorNotifier();
     // Logging setup needs to happen after we've done initial setup.
     initLogging(errorNotifier);
-    logInfo!("Running main builder");
+    logInfo("Running main builder");
 
     var errorNotifierCubit = ErrorNotifierCubit();
 
@@ -113,6 +114,14 @@ class IntifaceCentralApp extends StatelessWidget {
 
     var networkCubit = await NetworkInfoCubit.create();
 
+    var engineControlBloc = EngineControlBloc(engineRepo);
+
+    var deviceControlBloc = DeviceControllerBloc(engineControlBloc.stream, engineControlBloc.add);
+
+    if (kDebugMode) {
+      // Make sure the engine is stopped, just in case we've reloaded.
+      engineControlBloc.add(EngineControlEventStop());
+    }
 
     engineControlBloc.stream.forEach((state) async {
       if (state is ServerLogMessageState) {
@@ -131,6 +140,12 @@ class IntifaceCentralApp extends StatelessWidget {
           // TODO Implement trace logging level for loggy
           //log(message.engineLog!.message!.fields["message"]);
         }
+      }
+      if (state is EngineServerCreatedState) {
+        deviceControlBloc.add(DeviceControllerEngineStartedEvent());
+      }
+      if (state is EngineStoppedState) {
+        deviceControlBloc.add(DeviceControllerEngineStoppedEvent());
       }
     });
 
@@ -161,7 +176,8 @@ class IntifaceCentralApp extends StatelessWidget {
     }
 
     return MultiBlocProvider(providers: [
-      BlocProvider(create: (context) => EngineControlBloc(engineRepo)),
+      BlocProvider(create: (context) => engineControlBloc),
+      BlocProvider(create: (context) => deviceControlBloc),
       BlocProvider(create: (context) => NavigationCubit()),
       BlocProvider(create: (context) => updateBloc),
       BlocProvider(create: (context) => assetCubit),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart';
+import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
@@ -9,6 +9,8 @@ import 'package:loggy/loggy.dart';
 abstract class EngineControlState {}
 
 class EngineStartedState extends EngineControlState {}
+
+class EngineServerCreatedState extends EngineControlState {}
 
 class EngineStoppedState extends EngineControlState {}
 
@@ -34,6 +36,10 @@ class DeviceDisconnectedState extends EngineControlState {
   DeviceDisconnectedState(this.index);
 }
 
+class ButtplugServerMessageState extends EngineControlState {
+  final ButtplugServerMessage message;
+  ButtplugServerMessageState(this.message);
+}
 
 class ServerLogMessageState extends EngineControlState {
   final EngineLog message;
@@ -47,6 +53,11 @@ class EngineControlEvent {}
 class EngineControlEventStart extends EngineControlEvent {}
 
 class EngineControlEventStop extends EngineControlEvent {}
+
+class EngineControlEventBackdoorMessage extends EngineControlEvent {
+  final String message;
+  EngineControlEventBackdoorMessage(this.message);
+}
 
 class EngineDevice {
   final int index;
@@ -62,42 +73,58 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
-      var stream = _repo.messageStream;
-      emit(EngineStartedState());
       await _repo.start();
+      emit(EngineStartedState());
       emit(ClientDisconnectedState());
-      return emit.forEach(stream, onData: (EngineMessage message) {
-        if (message.engineStarted != null) {
-          // Query for message version.
-          logDebug("Got engine started, ending message version request");
-          var msg = IntifaceMessage();
-          msg.requestEngineVersion = RequestEngineVersion();
-          _repo.send(jsonEncode(msg));
-        }
-        if (message.messageVersion != null) {
-          logDebug("Got message version return");
-        }
-        if (message.clientConnected != null) {
-          return ClientConnectedState(message.clientConnected!.clientName);
-        }
-        if (message.clientDisconnected != null) {
-          return ClientDisconnectedState();
-        }
-        if (message.deviceConnected != null) {
-          var deviceInfo = message.deviceConnected!;
-          _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.address);
-          return DeviceConnectedState(
-              deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.address, "lovense");
-        }
-        if (message.deviceDisconnected != null) {
-          _devices.remove(message.deviceDisconnected!.index);
-          return DeviceDisconnectedState(message.deviceDisconnected!.index);
-        }
-        if (message.engineStopped != null) {
-          return EngineStoppedState();
+      return emit.forEach(_repo.messageStream, onData: (EngineOutput message) {
+        if (message.engineMessage != null) {
+          var engineMessage = message.engineMessage!;
+          if (engineMessage.engineStarted != null) {
+            // Query for message version.
+            logDebug("Got engine started, ending message version request");
+            var msg = IntifaceMessage();
+            msg.requestEngineVersion = RequestEngineVersion();
+            _repo.send(jsonEncode(msg));
+            return state;
+          }
+          if (engineMessage.engineServerCreated != null) {
+            return EngineServerCreatedState();
+          }
+          if (engineMessage.engineLog != null) {
+            return ServerLogMessageState(engineMessage.engineLog!);
+          }
+          if (engineMessage.messageVersion != null) {
+            logDebug("Got message version return");
+            return state;
+          }
+          if (engineMessage.clientConnected != null) {
+            return ClientConnectedState(engineMessage.clientConnected!.clientName);
+          }
+          if (engineMessage.clientDisconnected != null) {
+            return ClientDisconnectedState();
+          }
+          if (engineMessage.deviceConnected != null) {
+            var deviceInfo = engineMessage.deviceConnected!;
+            _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.address);
+            return DeviceConnectedState(
+                deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.address, "lovense");
+          }
+          if (engineMessage.deviceDisconnected != null) {
+            _devices.remove(engineMessage.deviceDisconnected!.index);
+            return DeviceDisconnectedState(engineMessage.deviceDisconnected!.index);
+          }
+          if (engineMessage.engineStopped != null) {
+            logInfo("Received EngineStopped message");
+            return EngineStoppedState();
+          }
+        } else if (message.buttplugServerMessage != null) {
+          return ButtplugServerMessageState(message.buttplugServerMessage!);
         }
         return state;
       });
+    });
+    on<EngineControlEventBackdoorMessage>((event, emit) async {
+      _repo.sendBackdoorMessage(event.message);
     });
     on<EngineControlEventStop>((event, emit) async {
       await _repo.stop();
@@ -106,6 +133,4 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   }
 
   List<EngineDevice> get devices => _devices.values.toList();
-
-  // TODO How to we detect/emit if the external process crashed on desktop?
 }
