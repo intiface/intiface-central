@@ -53,6 +53,8 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     return Err(anyhow::Error::msg("Server already running!"));
   }
   RUN_STATUS.store(true, Ordering::SeqCst);
+  if RUNTIME.get().is_none() {    
+    mobile_init::create_runtime(sink.clone()).expect("Runtime should work, otherwise we can't function.");
   }
   if ENGINE_NOTIFIER.get().is_none() {
     ENGINE_NOTIFIER.set(Arc::new(Notify::new()));
