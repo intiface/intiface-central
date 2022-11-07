@@ -64,10 +64,28 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
   let options = args.into();
   runtime.spawn(async move {
-    engine.run(&options, Some(Arc::new(frontend))).await;
-  });
-  runtime.spawn(async move {
+    info!("Entering main engine waiter task");
+    // These futures need to run in parallel, but the frontend will always notify before the engine
+    // comes down, and we want the engine to run to completion after stop is called, so we can't
+    // call this in a select, as the engine future will be truncated. So, join it is.
+    //
+    // If the engine somehow exits first, make sure we still leave by triggering our notifier
+    // anyways.
+    let notify_clone = notify.clone();
+    futures::join!(
+      async move {
+        if let Err(e) = engine.run(&options, Some(Arc::new(frontend))).await {
+          error!("Error running engine: {:?}", e);
+        }
+        notify_clone.notify_waiters();
+      }, 
+      async move {
+        notify.notified().await;
+        engine_clone.stop();
+      });
     RUN_STATUS.store(false, Ordering::SeqCst);
+    info!("Exiting main engine waiter task");
+  }.instrument(info_span!("IC main engine task")));
   Ok(())
 }
 
