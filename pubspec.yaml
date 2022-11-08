@@ -66,7 +66,7 @@ msix_config:
   display_name: Intiface Central
   logo_path: ./assets/icons/intiface_central_icon.png
   install_certificate: false
-  msix_version: 0.0.2.0
+  msix_version: 0.0.3.0
   capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
 
 flutter_icons:
