@@ -4,43 +4,43 @@ import 'package:intiface_central/device/backdoor_connector.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:loggy/loggy.dart';
 
-class DeviceControllerEvent {}
+class DeviceManagerEvent {}
 
-class DeviceControllerEngineStartedEvent extends DeviceControllerEvent {}
+class DeviceManagerEngineStartedEvent extends DeviceManagerEvent {}
 
-class DeviceControllerEngineStoppedEvent extends DeviceControllerEvent {}
+class DeviceManagerEngineStoppedEvent extends DeviceManagerEvent {}
 
-class DeviceControllerDeviceAddedEvent extends DeviceControllerEvent {
+class DeviceManagerDeviceAddedEvent extends DeviceManagerEvent {
   final ButtplugClientDevice device;
 
-  DeviceControllerDeviceAddedEvent(this.device);
+  DeviceManagerDeviceAddedEvent(this.device);
 }
 
-class DeviceControllerStartScanningEvent extends DeviceControllerEvent {}
+class DeviceManagerStartScanningEvent extends DeviceManagerEvent {}
 
-class DeviceControllerStopScanningEvent extends DeviceControllerEvent {}
+class DeviceManagerStopScanningEvent extends DeviceManagerEvent {}
 
-class DeviceControllerState {}
+class DeviceManagerState {}
 
-class DeviceControllerInitialState extends DeviceControllerState {}
+class DeviceManagerInitialState extends DeviceManagerState {}
 
-class DeviceControllerDeviceOnlineState extends DeviceControllerState {
+class DeviceManagerDeviceOnlineState extends DeviceManagerState {
   final ButtplugClientDevice device;
 
-  DeviceControllerDeviceOnlineState(this.device);
+  DeviceManagerDeviceOnlineState(this.device);
 }
 
-class DeviceControllerDeviceOfflineState extends DeviceControllerState {}
+class DeviceManagerDeviceOfflineState extends DeviceManagerState {}
 
-class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerState> {
+class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
   ButtplugClient? _internalClient;
   final List<ButtplugClientDevice> _onlineDevices = [];
   final List<dynamic> _offlineDevices = [];
   final Stream<EngineControlState> _outputStream;
   final SendFunc _sendFunc;
 
-  DeviceControllerBloc(this._outputStream, this._sendFunc) : super(DeviceControllerInitialState()) {
-    on<DeviceControllerEngineStartedEvent>((event, emit) async {
+  DeviceManagerBloc(this._outputStream, this._sendFunc) : super(DeviceManagerInitialState()) {
+    on<DeviceManagerEngineStartedEvent>((event, emit) async {
       // Start our internal buttplug client.
       var connector = ButtplugBackdoorClientConnector(_outputStream, _sendFunc);
       var client = ButtplugClient("Backdoor Client");
@@ -51,15 +51,15 @@ class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerS
         if (event is DeviceAddedEvent) {
           logInfo("Device connected: ${event.device.deviceName}");
           _onlineDevices.add(event.device);
-          add(DeviceControllerDeviceAddedEvent(event.device));
+          add(DeviceManagerDeviceAddedEvent(event.device));
         }
       });
       _internalClient = client;
     });
 
-    on<DeviceControllerDeviceAddedEvent>(((event, emit) => emit(DeviceControllerDeviceOnlineState(event.device))));
+    on<DeviceManagerDeviceAddedEvent>(((event, emit) => emit(DeviceManagerDeviceOnlineState(event.device))));
 
-    on<DeviceControllerEngineStoppedEvent>((event, emit) {
+    on<DeviceManagerEngineStoppedEvent>((event, emit) {
       // Stop our internal buttplug client.
       if (_internalClient != null) {
         _internalClient!.disconnect();
@@ -68,14 +68,14 @@ class DeviceControllerBloc extends Bloc<DeviceControllerEvent, DeviceControllerS
       // Move all devices to offline.
     });
 
-    on<DeviceControllerStartScanningEvent>(((event, emit) async {
+    on<DeviceManagerStartScanningEvent>(((event, emit) async {
       if (_internalClient == null) {
         return;
       }
       await _internalClient!.startScanning();
     }));
 
-    on<DeviceControllerStopScanningEvent>(((event, emit) async {
+    on<DeviceManagerStopScanningEvent>(((event, emit) async {
       if (_internalClient == null) {
         return;
       }

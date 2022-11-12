@@ -6,7 +6,7 @@ import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/body_widget.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/control_widget.dart';
-import 'package:intiface_central/device/device_controller_bloc.dart';
+import 'package:intiface_central/device/device_manager_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/navigation_cubit.dart';
@@ -114,7 +114,7 @@ class IntifaceCentralApp extends StatelessWidget {
 
     var engineControlBloc = EngineControlBloc(engineRepo);
 
-    var deviceControlBloc = DeviceControllerBloc(engineControlBloc.stream, engineControlBloc.add);
+    var deviceControlBloc = DeviceManagerBloc(engineControlBloc.stream, engineControlBloc.add);
 
     if (kDebugMode) {
       // Make sure the engine is stopped, just in case we've reloaded.
@@ -140,10 +140,10 @@ class IntifaceCentralApp extends StatelessWidget {
         }
       }
       if (state is EngineServerCreatedState) {
-        deviceControlBloc.add(DeviceControllerEngineStartedEvent());
+        deviceControlBloc.add(DeviceManagerEngineStartedEvent());
       }
       if (state is EngineStoppedState) {
-        deviceControlBloc.add(DeviceControllerEngineStoppedEvent());
+        deviceControlBloc.add(DeviceManagerEngineStoppedEvent());
       }
     });
 

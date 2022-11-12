@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:buttplug/buttplug.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/device/device_controller_bloc.dart';
+import 'package:intiface_central/device/device_manager_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:loggy/loggy.dart';
 
@@ -19,26 +19,26 @@ class DeviceWidget extends StatelessWidget {
             current is ClientDisconnectedState ||
             current is EngineStoppedState,
         builder: (context, state) {
-          var deviceBloc = BlocProvider.of<DeviceControllerBloc>(context);
+          var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
           return Expanded(
               child: Column(children: [
             Row(
               children: [
                 TextButton(
                     onPressed: () {
-                      deviceBloc.add(DeviceControllerStartScanningEvent());
+                      deviceBloc.add(DeviceManagerStartScanningEvent());
                     },
                     child: const Text("Start Scanning")),
                 TextButton(
                     onPressed: () {
-                      deviceBloc.add(DeviceControllerStopScanningEvent());
+                      deviceBloc.add(DeviceManagerStopScanningEvent());
                     },
                     child: const Text("Stop Scanning"))
               ],
             ),
-            BlocBuilder<DeviceControllerBloc, DeviceControllerState>(
-                buildWhen: (previous, DeviceControllerState current) =>
-                    current is DeviceControllerDeviceOnlineState || current is DeviceControllerDeviceOfflineState,
+            BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
+                buildWhen: (previous, DeviceManagerState current) =>
+                    current is DeviceManagerDeviceOnlineState || current is DeviceManagerDeviceOfflineState,
                 builder: (context, state) => ExpansionPanelList(
                       children: deviceBloc.onlineDevices.map((element) {
                         return ExpansionPanel(
