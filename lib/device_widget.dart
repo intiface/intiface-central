@@ -62,20 +62,45 @@ class DeviceWidget extends StatelessWidget {
                                     body: ListView(
                                         shrinkWrap: true,
                                         children: element.actuators.map((actuator) {
-                                          return ListView(shrinkWrap: true, children: [
-                                            ListTile(title: Text("Vibrator: ${actuator.descriptor}")),
-                                            BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
-                                                bloc: actuator,
-                                                buildWhen: (previous, current) => current is DeviceActuatorStateUpdate,
-                                                builder: (context, state) => Slider(
-                                                      max: actuator.stepCount.toDouble(),
-                                                      value: actuator.currentValue.floorToDouble(),
-                                                      divisions: actuator.stepCount,
-                                                      onChanged: ((value) async {
-                                                        actuator.vibrate(value);
-                                                      }),
-                                                    ))
-                                          ]);
+                                          /*                                          if (actuator.actuatorType == ActuatorType.Vibrate) {
+                                            return ListView(shrinkWrap: true, children: [
+                                              ListTile(title: Text("Vibrator: ${actuator.descriptor}")),
+                                              BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
+                                                  bloc: actuator,
+                                                  buildWhen: (previous, current) =>
+                                                      current is DeviceActuatorStateUpdate,
+                                                  builder: (context, state) => Slider(
+                                                        max: actuator.stepCount.toDouble(),
+                                                        value: actuator.currentValue.floorToDouble(),
+                                                        divisions: actuator.stepCount,
+                                                        onChanged: ((value) async {
+                                                          actuator.vibrate(value);
+                                                        }),
+                                                      ))
+                                            ]);
+                                          } else */
+                                          if (actuator.actuatorType != null) {
+                                            return ListView(shrinkWrap: true, children: [
+                                              ListTile(
+                                                title: Text("${actuator.actuatorType}"),
+                                                subtitle: Text(
+                                                    "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
+                                              ),
+                                              BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
+                                                  bloc: actuator,
+                                                  buildWhen: (previous, current) =>
+                                                      current is DeviceActuatorStateUpdate,
+                                                  builder: (context, state) => Slider(
+                                                        max: actuator.stepCount.toDouble(),
+                                                        value: actuator.currentValue.floorToDouble(),
+                                                        divisions: actuator.stepCount,
+                                                        onChanged: ((value) async {
+                                                          actuator.scalar(value);
+                                                        }),
+                                                      ))
+                                            ]);
+                                          }
+                                          return ListTile(title: Text("Unknown"));
                                         }).toList()),
                                     canTapOnHeader: true,
                                     isExpanded: true,
