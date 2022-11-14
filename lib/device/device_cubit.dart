@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/device/device_actuator_cubit.dart';
+import 'package:intiface_central/device/device_sensor_cubit.dart';
 
 class DeviceState {}
 
@@ -15,6 +16,7 @@ class DeviceStateOffline extends DeviceState {}
 class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? _clientDevice;
   List<DeviceActuatorCubit> _actuators = [];
+  List<DeviceSensorBloc> _sensors = [];
   // DeviceConfiguration _deviceConfiguration;
 
   DeviceCubit(this._clientDevice) : super(DeviceStateInitial()) {
@@ -27,7 +29,28 @@ class DeviceCubit extends Cubit<DeviceState> {
       int i = 0;
       for (var attr in _clientDevice!.messageAttributes.scalarCmd!) {
         _actuators
-            .add(DeviceActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i, attr.actuatorType));
+            .add(ScalarActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i, attr.actuatorType));
+        ++i;
+      }
+    }
+    if (_clientDevice!.messageAttributes.rotateCmd != null) {
+      int i = 0;
+      for (var attr in _clientDevice!.messageAttributes.rotateCmd!) {
+        _actuators.add(RotateActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i));
+        ++i;
+      }
+    }
+    if (_clientDevice!.messageAttributes.linearCmd != null) {
+      var i = 0;
+      for (var attr in _clientDevice!.messageAttributes.linearCmd!) {
+        _actuators.add(LinearActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i));
+        ++i;
+      }
+    }
+    if (_clientDevice!.messageAttributes.sensorReadCmd != null) {
+      var i = 0;
+      for (var attr in _clientDevice!.messageAttributes.sensorReadCmd!) {
+        _sensors.add(SensorReadBloc(_clientDevice!, attr.featureDescriptor, attr.sensorRange, i, attr.sensorType));
         ++i;
       }
     }
@@ -42,4 +65,5 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   ButtplugClientDevice? get device => _clientDevice;
   List<DeviceActuatorCubit> get actuators => _actuators;
+  List<DeviceSensorBloc> get sensors => _sensors;
 }

@@ -38,6 +38,7 @@ dependencies:
   url_launcher: ^6.1.6
   intl: ^0.17.0
   easy_debounce: ^2.0.2+1
+  percent_indicator: ^4.2.2
   buttplug:
     path: "../buttplug-dart"
 
