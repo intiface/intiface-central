@@ -114,7 +114,10 @@ class DeviceWidget extends StatelessWidget {
                                     onChanged: ((value) async {
                                       actuator.duration(value);
                                     }),
-                                  )
+                                  ),
+                                  TextButton(
+                                      child: const Text("Toggle Oscillation"),
+                                      onPressed: () => actuator.toggleRunning())
                                 ]);
                               })
                         ]);

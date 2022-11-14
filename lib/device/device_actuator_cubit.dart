@@ -58,6 +58,7 @@ class LinearActuatorCubit extends DeviceActuatorCubit {
   double _currentMin = 0;
   late double _currentMax;
   double _currentDuration = 3000;
+  bool _running = false;
 
   LinearActuatorCubit(ButtplugClientDevice device, String descriptor, int stepCount, int index)
       : super(device, descriptor, stepCount, index) {
@@ -87,6 +88,34 @@ class LinearActuatorCubit extends DeviceActuatorCubit {
     */
   }
 
+  Future<void> runOscillation() async {
+    bool toMin = false;
+    while (_running) {
+      var cmd;
+      if (toMin) {
+        cmd = LinearCommand.setMap(
+            {_index: LinearComponent(currentMin / stepCount.toDouble(), _currentDuration.toInt())});
+        toMin = false;
+      } else {
+        cmd = LinearCommand.setMap(
+            {_index: LinearComponent(currentMax / stepCount.toDouble(), _currentDuration.toInt())});
+        toMin = true;
+      }
+      await _device.linear(cmd);
+      await Future.delayed(Duration(milliseconds: _currentDuration.toInt()));
+    }
+  }
+
+  void toggleRunning() {
+    if (_running) {
+      _running = false;
+    } else {
+      _running = true;
+      runOscillation();
+    }
+  }
+
+  bool get running => _running;
   double get currentMin => _currentMin;
   double get currentMax => _currentMax;
   double get currentDuration => _currentDuration;
