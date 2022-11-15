@@ -43,8 +43,13 @@ class DeviceManagerDeviceOfflineState extends DeviceManagerState {
   DeviceManagerDeviceOfflineState(this.device);
 }
 
+class DeviceManagerStartScanningState extends DeviceManagerState {}
+
+class DeviceManagerStopScanningState extends DeviceManagerState {}
+
 class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
   ButtplugClient? _internalClient;
+  bool _scanning = false;
   final List<DeviceCubit> _devices = [];
   final Stream<EngineControlState> _outputStream;
   final SendFunc _sendFunc;
@@ -93,6 +98,7 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
         _internalClient!.disconnect();
         _internalClient = null;
       }
+      _scanning = false;
       // Move all devices to offline.
       _devices.clear();
     });
@@ -101,16 +107,21 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
       if (_internalClient == null) {
         return;
       }
+      _scanning = true;
       await _internalClient!.startScanning();
+      emit(DeviceManagerStartScanningState());
     }));
 
     on<DeviceManagerStopScanningEvent>(((event, emit) async {
       if (_internalClient == null) {
         return;
       }
+      _scanning = false;
       await _internalClient!.stopScanning();
+      emit(DeviceManagerStopScanningState());
     }));
   }
 
   List<DeviceCubit> get devices => _devices;
+  bool get scanning => _scanning;
 }
