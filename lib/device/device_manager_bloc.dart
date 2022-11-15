@@ -18,9 +18,9 @@ class DeviceManagerDeviceAddedEvent extends DeviceManagerEvent {
 }
 
 class DeviceManagerDeviceRemovedEvent extends DeviceManagerEvent {
-  final int index;
+  final ButtplugClientDevice device;
 
-  DeviceManagerDeviceRemovedEvent(this.index);
+  DeviceManagerDeviceRemovedEvent(this.device);
 }
 
 class DeviceManagerStartScanningEvent extends DeviceManagerEvent {}
@@ -60,8 +60,11 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
       client.eventStream.listen((event) {
         if (event is DeviceAddedEvent) {
           logInfo("Device connected: ${event.device.name}");
-          _devices.add(DeviceCubit(event.device));
           add(DeviceManagerDeviceAddedEvent(event.device));
+        }
+        if (event is DeviceRemovedEvent) {
+          logInfo("Device disconnected: ${event.device.name}");
+          add(DeviceManagerDeviceRemovedEvent(event.device));
         }
       });
       _internalClient = client;
@@ -69,14 +72,14 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
 
     on<DeviceManagerDeviceAddedEvent>((event, emit) {
       var deviceBloc = DeviceCubit(event.device);
-      _devices.remove(deviceBloc);
+      _devices.add(deviceBloc);
       emit(DeviceManagerDeviceOnlineState(deviceBloc));
     });
 
     on<DeviceManagerDeviceRemovedEvent>(((event, emit) {
       try {
         // This will throw if it doesn't find anything.
-        var deviceBloc = _devices.firstWhere((deviceBloc) => deviceBloc.device?.index == event.index);
+        var deviceBloc = _devices.firstWhere((deviceBloc) => deviceBloc.device?.index == event.device.index);
         _devices.remove(deviceBloc);
         emit(DeviceManagerDeviceOfflineState(deviceBloc));
       } catch (e) {
@@ -91,6 +94,7 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
         _internalClient = null;
       }
       // Move all devices to offline.
+      _devices.clear();
     });
 
     on<DeviceManagerStartScanningEvent>(((event, emit) async {
