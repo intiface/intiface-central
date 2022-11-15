@@ -159,7 +159,7 @@ class SettingWidget extends StatelessWidget {
                   SettingsTile.switchTile(
                       enabled: engineState is EngineStoppedState,
                       initialValue: cubit.useLovenseConnectService,
-                      onToggle: (value) => cubit.startServerOnStartup = value,
+                      onToggle: (value) => cubit.useLovenseConnectService = value,
                       title: const Text("Lovense Connect Service")),
                   SettingsTile.switchTile(
                       enabled: engineState is EngineStoppedState,
