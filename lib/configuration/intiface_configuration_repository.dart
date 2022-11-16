@@ -20,9 +20,8 @@ class IntifaceConfigurationRepository {
     // Our initializer runs through all of our known configuration values, either setting them to what they already are,
     // or providing them with default values.
 
-    // Window settings for desktop. Will be ignored on mobile.
-
-    useCompactDisplay = provider.getBool("useCompactDisplay") ?? isDesktop();
+    // Window settings for desktop. Will be ignored on mobile. Default to expanded.
+    useCompactDisplay = provider.getBool("useCompactDisplay") ?? false;
 
     // Check all of our values to make sure they exist. If not, set defaults, based on platform if needed.
     serverName = provider.getString("serverName") ?? "Intiface Server";
