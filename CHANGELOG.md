@@ -1,3 +1,18 @@
+# 0.0.4
+
+## Features
+
+- Device panel implementation
+  - Can connect to and test device movements.
+  - Allows for reading of sensors (subscribing coming later)
+  - Can be used while clients are connected, or if clients are not connected.
+
+## Bugfixes
+
+- Fixed Lovense Connect settings
+- Fixed Android App Permissions
+- Default to expanded UI on Desktop
+
 # 0.0.3
 
 ## Features
