@@ -22,30 +22,28 @@ class DeviceWidget extends StatelessWidget {
         builder: (context, engineState) {
           var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
           return Expanded(
-              child: ListView(children: [
+              child: Column(children: [
+            Row(
+              children: [
+                !deviceBloc.scanning
+                    ? TextButton(
+                        onPressed: engineState is! EngineStoppedState
+                            ? () {
+                                deviceBloc.add(DeviceManagerStartScanningEvent());
+                              }
+                            : null,
+                        child: const Text("Start Scanning"))
+                    : TextButton(
+                        onPressed: engineState is! EngineStoppedState
+                            ? () {
+                                deviceBloc.add(DeviceManagerStopScanningEvent());
+                              }
+                            : null,
+                        child: const Text("Stop Scanning"))
+              ],
+            ),
             BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
-              List<Widget> onlineDeviceWidgets = [
-                Row(
-                  children: [
-                    !deviceBloc.scanning
-                        ? TextButton(
-                            onPressed: engineState is! EngineStoppedState
-                                ? () {
-                                    deviceBloc.add(DeviceManagerStartScanningEvent());
-                                  }
-                                : null,
-                            child: const Text("Start Scanning"))
-                        : TextButton(
-                            onPressed: engineState is! EngineStoppedState
-                                ? () {
-                                    deviceBloc.add(DeviceManagerStopScanningEvent());
-                                  }
-                                : null,
-                            child: const Text("Stop Scanning"))
-                  ],
-                ),
-                const ListTile(title: Text("Devices"))
-              ];
+              List<Widget> onlineDeviceWidgets = [const ListTile(title: Text("Devices"))];
 
               deviceBloc.devices.forEach((element) {
                 // Since the device is still online, we know we can get the ClientDevice out of it.
@@ -99,7 +97,7 @@ class DeviceWidget extends StatelessWidget {
                           bloc: actuator,
                           buildWhen: (previous, current) => current is DeviceActuatorStateUpdate,
                           builder: (context, state) {
-                            return ListView(shrinkWrap: true, children: [
+                            return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                               RangeSlider(
                                 max: actuator.stepCount.toDouble(),
                                 values: RangeValues(actuator.currentMin, actuator.currentMax),
@@ -157,20 +155,20 @@ class DeviceWidget extends StatelessWidget {
                   }
                 });
                 onlineDeviceWidgets.add(Card(
-                    child: ListView(shrinkWrap: true, children: [
+                    child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                   ListTile(
                     title: Text(device.name),
                   ),
-                  ListView(shrinkWrap: true, children: actuatorList)
+                  ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: actuatorList)
                 ])));
               });
 
-              return Column(children: [
-                Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    child: ListView(shrinkWrap: true, children: onlineDeviceWidgets))
-              ]);
+              return Expanded(
+                  child: SingleChildScrollView(
+                      child: ListView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: onlineDeviceWidgets)));
             })
           ]));
         });
