@@ -107,8 +107,7 @@ class BodyWidget extends StatelessWidget {
     }
 
     if (configCubit.useSideNavigationBar) {
-      return Expanded(
-          child: Row(children: <Widget>[
+      return Row(children: <Widget>[
         NavigationRail(
             selectedIndex: selectedIndex,
             groupAlignment: -1.0,
@@ -119,7 +118,7 @@ class BodyWidget extends StatelessWidget {
             destinations:
                 destinations.map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title))).toList()),
         Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
-      ]));
+      ]);
     }
     // Weird special case time! If we're showing the bottom bar nav, and we're in one of the widgets that
     // isn't shown there, assume we're actually in the settings widget.
@@ -129,8 +128,7 @@ class BodyWidget extends StatelessWidget {
       visualSelectedIndex = destinations.where((element) => element.showInMobileRail).length - 1;
     }
 
-    return Expanded(
-        child: Column(children: <Widget>[
+    return Column(children: <Widget>[
       Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
       BottomNavigationBar(
           currentIndex: visualSelectedIndex,
@@ -142,7 +140,7 @@ class BodyWidget extends StatelessWidget {
               .where((element) => element.showInMobileRail)
               .map((dest) => BottomNavigationBarItem(icon: dest.icon, activeIcon: dest.selectedIcon, label: dest.title))
               .toList())
-    ]));
+    ]);
   }
 
   @override
