@@ -258,12 +258,9 @@ class IntifaceCentralPage extends StatelessWidget {
                     ],
                   )
                 ]);
-                if (!useCompactDisplay) {
-                  widgets.addAll(const [Divider(height: 2), BodyWidget()]);
-                }
-              } else {
-                // Always render body on mobile.
-                widgets.addAll(const [Divider(height: 2), BodyWidget()]);
+              }
+              if (!isDesktop() || !useCompactDisplay) {
+                widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
               }
               return Scaffold(body: Column(mainAxisSize: MainAxisSize.max, children: widgets));
             }));
