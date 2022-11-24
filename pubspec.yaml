@@ -1,5 +1,5 @@
 name: intiface_central
-description: Intiface Central
+description: Intiface® Central
 
 publish_to: 'none'
 version: 0.0.4
@@ -65,7 +65,8 @@ flutter:
     - assets/icons/
 
 msix_config:
-  display_name: Intiface Central
+  display_name: Intiface® Central
+  publisher_display_name: Nonpolynomial Labs, LLC
   logo_path: ./assets/icons/intiface_central_icon.png
   install_certificate: false
   msix_version: 0.0.4.0

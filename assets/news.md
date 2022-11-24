@@ -1,3 +1,3 @@
-# Intiface News for New Installs
+# Intiface® News for New Installs
 
-Hello, and welcome to Intiface Central! If you're seeing this message, it means you've either not yet requested an updated from our servers, or have opt'd out of updates completely. If you'd like to get the latest updates on Buttplug, Intiface, and the related apps, then run a news or full system update and that will be shown here. Otherwise, feel free to ignore this panel, and you can turn it off in the settings UI completely! 
+Hello, and welcome to Intiface® Central! If you're seeing this message, it means you've either not yet requested an updated from our servers, or have opt'd out of updates completely. If you'd like to get the latest updates on Buttplug, Intiface, and the related apps, then run a news or full system update and that will be shown here. Otherwise, feel free to ignore this panel, and you can turn it off in the settings UI completely! 

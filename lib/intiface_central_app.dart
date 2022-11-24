@@ -58,7 +58,7 @@ class IntifaceCentralApp extends StatelessWidget {
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
-      const String windowTitle = kDebugMode ? "Intiface Central DEBUG" : "Intiface Central";
+      const String windowTitle = kDebugMode ? "Intiface® Central DEBUG" : "Intiface® Central";
 
       WindowOptions windowOptions = const WindowOptions(
         //center: true,
