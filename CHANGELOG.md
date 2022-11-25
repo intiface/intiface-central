@@ -1,4 +1,18 @@
-# 0.0.4
+# v1 (All Platforms) - 2022/11/24
+
+## Features
+
+- Added basic help/about panel content
+- Updated to Intiface Engine v1.0.4
+  - Includes Buttplug v6.2.1, w/ Lovense Flexer support, Lovense Connect fixes
+
+## Bugfixes
+
+- Fixed device panel scrolling on mobile
+- Removed "Start Server on Startup" option until we've shipped a few versions and have a fallback
+  for the server possibly crashing on startup.
+
+# v0.0.4 (Desktop/Android) - 2022/11/15
 
 ## Features
 
@@ -13,7 +27,7 @@
 - Fixed Android App Permissions
 - Default to expanded UI on Desktop
 
-# 0.0.3
+# 0.0.3 (Desktop Only) - 2022/11/06
 
 ## Features
 

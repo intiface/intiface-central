@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface® Central
 
 publish_to: 'none'
-version: 0.0.4
+version: 1.0.0
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
@@ -65,7 +65,7 @@ msix_config:
   publisher_display_name: Nonpolynomial Labs, LLC
   logo_path: ./assets/icons/intiface_central_icon.png
   install_certificate: false
-  msix_version: 0.0.4.0
+  msix_version: 1.0.0.0
   capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
 
 flutter_icons:

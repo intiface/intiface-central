@@ -1,6 +1,6 @@
 # Intiface® Central
 
-Version v1.0.0
+Version v1
 
 Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022
 
