@@ -1,3 +1,14 @@
+# v2 - 2022/11/26
+
+## Bugfixes
+
+- Remove some spammy log messages
+- Server should run StopAllDevices before exiting
+- Update to Buttplug v6.2.2
+  - Fix issues with only Bluetooth DCMs working
+  - Fix issues with XInput devices panicking
+  - Fix issues with Lovense Dongle devices panicking
+
 # v1 (All Platforms) - 2022/11/24
 
 ## Features
