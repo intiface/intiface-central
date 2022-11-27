@@ -34,7 +34,7 @@ class LibraryEngineProvider implements EngineProvider {
         allowRawMessages: configRepo.allowRawMessages,
         logLevel: "DEBUG".toString(),
         useBluetoothLe: configRepo.useBluetoothLE,
-        useSerialPort: isDesktop() ? configRepo.useBluetoothLE : false,
+        useSerialPort: isDesktop() ? configRepo.useSerialPort : false,
         useHid: isDesktop() ? configRepo.useHID : false,
         useLovenseDongleSerial: isDesktop() ? configRepo.useLovenseSerialDongle : false,
         useLovenseDongleHid: isDesktop() ? configRepo.useLovenseHIDDongle : false,
@@ -79,7 +79,7 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   void sendBackdoorMessage(String msg) {
-    logInfo("Outgoing: $msg");
+    //logInfo("Outgoing: $msg");
     api.sendBackendServerMessage(msg: msg);
   }
 
