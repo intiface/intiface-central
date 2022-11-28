@@ -48,7 +48,11 @@ void store_dart_post_cobject(DartPostCObjectFnType ptr);
 
 void wire_run_engine(int64_t port_, struct wire_EngineOptionsExternal *args);
 
+void wire_send(int64_t port_, struct wire_uint_8_list *msg_json);
+
 void wire_stop_engine(int64_t port_);
+
+void wire_send_backend_server_message(int64_t port_, struct wire_uint_8_list *msg);
 
 struct wire_EngineOptionsExternal *new_box_autoadd_engine_options_external_0(void);
 
@@ -61,7 +65,9 @@ void free_WireSyncReturnStruct(struct WireSyncReturnStruct val);
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) wire_run_engine);
+    dummy_var ^= ((int64_t) (void*) wire_send);
     dummy_var ^= ((int64_t) (void*) wire_stop_engine);
+    dummy_var ^= ((int64_t) (void*) wire_send_backend_server_message);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_engine_options_external_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_u16_0);
     dummy_var ^= ((int64_t) (void*) new_uint_8_list_0);
