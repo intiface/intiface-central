@@ -2,7 +2,6 @@
 
 [![Patreon donate button](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/qdot)
 [![Github donate button](https://img.shields.io/badge/github-donate-ff69b4.svg)](https://www.github.com/sponsors/qdot)
-[![Discourse Forum](https://img.shields.io/badge/discourse-forum-blue.svg)](https://metafetish.club)
 [![Discord](https://img.shields.io/discord/353303527587708932.svg?logo=discord)](https://discord.buttplug.io)
 [![Twitter](https://img.shields.io/twitter/follow/buttplugio.svg?style=social&logo=twitter)](https://twitter.com/buttplugio)
 
@@ -14,9 +13,9 @@ For developers, it allows their application to connect to and control sex toys, 
 
 ## Ok But Where's the Source Code?
 
-Intiface Central is currently in Alpha release, getting it to some basic stability before moving to beta/full release. Since the codebase is in Flutter and shared between Desktop/Mobile, we're in a bit of a difficult position in that pre-releasing mobile code has, in the past, resulted in versions of applications appearing on app stores before the actual application was released.
+Since the codebase is in Flutter and shared between Desktop/Mobile, we're in a bit of a difficult position in that pre-releasing mobile code has, in the past, resulted in versions of applications appearing on app stores before the actual application was released.
 
-Rest assured that the full codebase will be open sourced as soon as it's ready in a few weeks, but for now, this repo will be used to house issues and distribute alpha releases.
+Rest assured that the full codebase will be open sourced as soon as we get into all of the relevant app stores (apps are in review now), but for now, this repo will be used to house issues and distribute alpha releases.
 
 ## How to Get Support
 
