@@ -1,8 +1,8 @@
 use crate::mobile_init::Error;
-use std::sync::atomic::{AtomicUsize, Ordering};
-use once_cell::sync::OnceCell;
-use tokio::runtime::Runtime;
 use flutter_rust_bridge::StreamSink;
+use once_cell::sync::OnceCell;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use tokio::runtime::Runtime;
 
 pub static RUNTIME: OnceCell<Runtime> = OnceCell::new();
 

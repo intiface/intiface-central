@@ -28,12 +28,11 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
         static ATOMIC_ID: AtomicUsize = AtomicUsize::new(0);
         let id = ATOMIC_ID.fetch_add(1, Ordering::SeqCst);
         format!("intiface-thread-{}", id)
-      })  
+      })
       .on_thread_stop(move || {
         JNI_ENV.with(|f| *f.borrow_mut() = None);
       })
       .on_thread_start(move || {
-
         // We now need to call the following code block via JNI calls. God help us.
         //
         //  java.lang.Thread.currentThread().setContextClassLoader(
