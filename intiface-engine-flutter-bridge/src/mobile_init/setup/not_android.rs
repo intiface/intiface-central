@@ -13,7 +13,7 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
       .thread_name_fn(|| {
         static ATOMIC_ID: AtomicUsize = AtomicUsize::new(0);
         let id = ATOMIC_ID.fetch_add(1, Ordering::SeqCst);
-        format!("intiface-thread-{}", id)
+        format!("intiface-thread-{id}")
       })
       .on_thread_start(|| {})
       .build()
