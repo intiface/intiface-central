@@ -1,3 +1,26 @@
+# v2.1.0 - 2022/12/19
+
+## Features
+
+- Update to Intiface Enging 1.1.0/Buttplug v6.3.0
+  - Added Device Support
+    - MetaXSire (all products)
+    - Lovense Gemini, Gravity, Flexer
+    - Roselex (all products)
+    - Hismith Widolo devices
+    - TryFun Yuan series devices
+  - Add support for the Kiiroo Pearl 2.1 Sensors and Battery Level
+
+## Bugfixes
+
+- Buttplug v6.3.0 bugfixes
+  - Buttplug #532: Simplify Generic Command Manager Match-all Processing
+    - Fixes issues with Satisfyer/WeVibe/Magic Motion for applications with high thruput
+  - Fix issues with Lovense vibration command formation between single/multi vibrator devices
+  - Fix issue with the Vorze Cyclone SA not being addressed correctly
+  - Fix Hgod protocol update loop
+  - Fix deserialization of multi-type battery field in Lovense Connect service
+
 # v2 - 2022/11/26
 
 ## Bugfixes
