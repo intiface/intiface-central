@@ -31,7 +31,6 @@ lazy_static! {
 #[frb(mirror(EngineOptionsExternal))]
 pub struct _EngineOptionsExternal {
   pub sentry_api_key: Option<String>,
-  pub ipc_pipe_name: Option<String>,
   pub device_config_json: Option<String>,
   pub user_device_config_json: Option<String>,
   pub server_name: String,

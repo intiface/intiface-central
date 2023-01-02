@@ -42,6 +42,8 @@ pub extern "C" fn new_uint_8_list_0(len: i32) -> *mut wire_uint_8_list {
   support::new_leak_box_ptr(ans)
 }
 
+// Section: related functions
+
 // Section: impl Wire2Api
 
 impl Wire2Api<String> for *mut wire_uint_8_list {
@@ -62,7 +64,6 @@ impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
   fn wire2api(self) -> EngineOptionsExternal {
     EngineOptionsExternal {
       sentry_api_key: self.sentry_api_key.wire2api(),
-      ipc_pipe_name: self.ipc_pipe_name.wire2api(),
       device_config_json: self.device_config_json.wire2api(),
       user_device_config_json: self.user_device_config_json.wire2api(),
       server_name: self.server_name.wire2api(),
@@ -103,7 +104,6 @@ impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
 #[derive(Clone)]
 pub struct wire_EngineOptionsExternal {
   sentry_api_key: *mut wire_uint_8_list,
-  ipc_pipe_name: *mut wire_uint_8_list,
   device_config_json: *mut wire_uint_8_list,
   user_device_config_json: *mut wire_uint_8_list,
   server_name: *mut wire_uint_8_list,
@@ -151,7 +151,6 @@ impl NewWithNullPtr for wire_EngineOptionsExternal {
   fn new_with_null_ptr() -> Self {
     Self {
       sentry_api_key: core::ptr::null_mut(),
-      ipc_pipe_name: core::ptr::null_mut(),
       device_config_json: core::ptr::null_mut(),
       user_device_config_json: core::ptr::null_mut(),
       server_name: core::ptr::null_mut(),
@@ -181,8 +180,8 @@ impl NewWithNullPtr for wire_EngineOptionsExternal {
 // Section: sync execution mode utility
 
 #[no_mangle]
-pub extern "C" fn free_WireSyncReturnStruct(val: support::WireSyncReturnStruct) {
+pub extern "C" fn free_WireSyncReturn(ptr: support::WireSyncReturn) {
   unsafe {
-    let _ = support::vec_from_leak_ptr(val.ptr, val.len);
-  }
+    let _ = support::box_from_leak_ptr(ptr);
+  };
 }
