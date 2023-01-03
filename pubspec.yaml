@@ -12,8 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   json_annotation: ^4.6.0
-  flutter_local_notifications: ^11.0.0
-  flutter_rust_bridge: ^1.49.0
+  flutter_local_notifications: ^13.0.0
+  flutter_rust_bridge: ^1.59.0
   plugin_platform_interface: ^2.1.2  
   freezed_annotation: ^2.1.0
   ffi: ^2.0.1
@@ -21,7 +21,7 @@ dependencies:
   path: ^1.8.1
   window_manager: ^0.2.5
   web_socket_channel: ^2.2.0
-  network_info_plus: ^2.1.4+1
+  network_info_plus: ^3.0.1
   permission_handler: ^10.0.0
   bloc: ^8.1.0
   flutter_bloc: ^8.1.1
@@ -34,9 +34,9 @@ dependencies:
   github: ^9.4.0
   markdown: ^6.0.1
   version: ^3.0.2
-  package_info_plus: ^1.4.3+1
+  package_info_plus: ^3.0.2
   url_launcher: ^6.1.6
-  intl: ^0.17.0
+  intl: ^0.18.0
   easy_debounce: ^2.0.2+1
   percent_indicator: ^4.2.2
   buttplug:
@@ -48,9 +48,9 @@ dev_dependencies:
   json_serializable: ^6.3.1
   build_runner: ^2.2.0
   flutter_lints: ^2.0.0
-  msix: ^2.8.18
+  msix: ^3.7.0
   freezed: ^2.1.0+1
-  ffigen: ^6.1.2  
+  ffigen: ^7.2.4  
   flutter_launcher_icons: ^0.11.0
 
 flutter:
