@@ -1,8 +1,19 @@
+# v2.2.0 - 2023/01/02
+
+## Features
+
+- Update to Intifice Engine 1.2.0/Buttplug v7.0.0
+  - Added Device Support
+    - GBalls v3
+    - The Cowgirl/The Unicorn
+  - Bugfixes for user config loading
+  - Bugfixes for Svakom Iker
+
 # v2.1.0 - 2022/12/19
 
 ## Features
 
-- Update to Intiface Enging 1.1.0/Buttplug v6.3.0
+- Update to Intiface Engine 1.1.0/Buttplug v6.3.0
   - Added Device Support
     - MetaXSire (all products)
     - Lovense Gemini, Gravity, Flexer
