@@ -14,7 +14,7 @@ const _base = 'intiface_engine_flutter_bridge';
 final _dylib = io.Platform.isWindows
     ? '$_base.dll'
     : io.Platform.isLinux
-        ? 'intiface_engine_flutter_bridge/target/debug/lib$_base.so'
+        ? 'lib/lib$_base.so'
         : 'lib$_base.so';
 
 // The late modifier delays initializing the value until it is actually needed,
