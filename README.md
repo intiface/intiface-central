@@ -20,6 +20,30 @@ Support is currently available via:
 - Posting issues to this github repo, assuming you have a github account
 - On [our discord server](https://discord.buttplug.io)
 
+## Contributing
+
+If you have issues or feature requests, please feel free to [file an
+issue](https://github.com/buttplugio/buttplug-rs/issues).
+
+We are not looking for code contributions or pull requests at this time, and will not accept pull
+requests that do not have a matching issue where the matter was previously discussed. Pull requests
+should only be submitted after talking to [qdot](https://github.com/qdot) via issues (or on [our
+forums](https://discuss.buttplug.io), [discord](https://discord.buttplug.io) or [twitter
+DMs](https://twitter.com/buttplugio) if you would like to stay anonymous and out of recorded info on
+the repo) before submitting PRs. Random PRs without matching issues and discussion are likely to be
+closed without merging. and receiving approval to develop code based on an issue. Any random or
+non-issue pull requests will most likely be closed without merging.
+
+In accordance with the licensing and management of open source projects created by Nonpolynomial
+Labs, all contributors must sign a CLA.
+
+If you'd like to contribute in a non-technical way, we need money to keep up with supporting the
+latest and greatest hardware. We have multiple ways to donate!
+
+- [Patreon](https://patreon.com/qdot)
+- [Github Sponsors](https://github.com/sponsors/qdot)
+- [Ko-Fi](https://ko-fi.com/qdot76367)
+
 ## License
 
 Intiface® is a registered trademark of Nonpolynomial Labs, LLC.
