@@ -33,4 +33,4 @@ Text of the GPL3 License is included in [LICENSE.md](LICENSE.md).
 
 The Intiface Engine Flutter Bridge component is covered under a BSD 3-Clause License.
 
-Text of the BSD 3-Clause License is included in [that component's LICENSE.md](intiface_engine_flutter_bridge/LICENSE.md)
+Text of the BSD 3-Clause License is included in [that component's LICENSE.md](intiface-engine-flutter-bridge/LICENSE.md)
