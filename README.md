@@ -23,7 +23,8 @@ Support is currently available via:
 ## Contributing
 
 If you have issues or feature requests, please feel free to [file an
-issue](https://github.com/buttplugio/buttplug-rs/issues).
+issue](https://github.com/intiface/intiface-central/issues) or [let us know on our
+forums](https://discuss.buttplug.io).
 
 We are not looking for code contributions or pull requests at this time, and will not accept pull
 requests that do not have a matching issue where the matter was previously discussed. Pull requests
