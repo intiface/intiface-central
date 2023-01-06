@@ -40,6 +40,7 @@ dependencies:
   easy_debounce: ^2.0.2+1
   percent_indicator: ^4.2.2
   buttplug: ^0.0.2
+  flutter_foreground_task: ^3.10.0
 
 dev_dependencies:
   flutter_test:

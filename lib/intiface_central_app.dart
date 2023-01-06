@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:intiface_central/app_reset_cubit.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/body_widget.dart';
@@ -9,6 +10,7 @@ import 'package:intiface_central/control_widget.dart';
 import 'package:intiface_central/device/device_manager_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:intiface_central/engine/foreground_task_library_engine_provider.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
@@ -52,6 +54,7 @@ class IntifaceCentralApp extends StatelessWidget {
     var configCubit = IntifaceConfigurationCubit(configRepo);
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
+    //var engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
     var engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
 
     if (isDesktop()) {
@@ -89,6 +92,33 @@ class IntifaceCentralApp extends StatelessWidget {
         Permission.bluetoothConnect,
         Permission.bluetoothScan,
       ].request();
+
+      FlutterForegroundTask.init(
+        androidNotificationOptions: AndroidNotificationOptions(
+          channelId: 'notification_channel_id',
+          channelName: 'Intiface Engine Notification',
+          channelDescription: 'This notification appears when the foreground service is running.',
+          channelImportance: NotificationChannelImportance.LOW,
+          priority: NotificationPriority.LOW,
+          iconData: const NotificationIconData(
+            resType: ResourceType.mipmap,
+            resPrefix: ResourcePrefix.ic,
+            name: 'launcher',
+          ),
+          buttons: [
+            const NotificationButton(id: 'sendButton', text: 'Send'),
+            const NotificationButton(id: 'testButton', text: 'Test'),
+          ],
+        ),
+        iosNotificationOptions: const IOSNotificationOptions(),
+        foregroundTaskOptions: const ForegroundTaskOptions(
+          interval: 1000,
+          isOnceEvent: false,
+          autoRunOnBoot: false,
+          allowWakeLock: true,
+          allowWifiLock: true,
+        ),
+      );
     }
 
     var errorNotifier = ErrorNotifier();
