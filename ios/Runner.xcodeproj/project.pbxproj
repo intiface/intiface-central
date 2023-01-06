@@ -38,7 +38,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 428277462904CEE900870167 /* intiface_engine_flutter_bridge.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = CA608063A6AA661687120351;
+			remoteGlobalIDString = CA607A61E5983D022F44E751;
 			remoteInfo = "intiface_engine_flutter_bridge-staticlib";
 		};
 /* End PBXContainerItemProxy section */
@@ -97,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				4282774C2904CEE900870167 /* libintiface_engine_flutter_bridge_static.a */,
-				4282774E2904CEE900870167 /* intiface_engine_flutter_bridge.dylib */,
+				4282774E2904CEE900870167 /* libintiface_engine_flutter_bridge.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,10 +241,10 @@
 			remoteRef = 4282774B2904CEE900870167 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4282774E2904CEE900870167 /* intiface_engine_flutter_bridge.dylib */ = {
+		4282774E2904CEE900870167 /* libintiface_engine_flutter_bridge.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = intiface_engine_flutter_bridge.dylib;
+			path = libintiface_engine_flutter_bridge.dylib;
 			remoteRef = 4282774D2904CEE900870167 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -419,6 +419,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				STRIP_STYLE = "non-global";
 				SUPPORTED_PLATFORMS = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -432,6 +433,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -497,6 +499,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -545,6 +548,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				STRIP_STYLE = "non-global";
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -560,6 +564,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -582,6 +587,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
