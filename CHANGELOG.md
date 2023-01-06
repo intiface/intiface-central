@@ -1,3 +1,10 @@
+# v2.2.1 - 2023/01/05
+
+## Bugfixes
+
+- Fixed iOS symbol stripping being too overzealous and stripping rust symbols.
+- Fixed Version updater showing updates available for Mobile builds.
+
 # v2.2.0 - 2023/01/02
 
 ## Features
