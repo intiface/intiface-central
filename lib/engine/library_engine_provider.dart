@@ -48,6 +48,7 @@ class LibraryEngineProvider implements EngineProvider {
   @override
   Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
     var engineOptions = await _buildArguments(configRepo);
+    logInfo("Starting library internal engine with the following arguments: $engineOptions");
     _stream = api.runEngine(args: engineOptions);
     logInfo("Engine started");
     _stream!.forEach((element) {

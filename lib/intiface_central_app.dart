@@ -104,6 +104,10 @@ class IntifaceCentralApp extends StatelessWidget {
 
     logInfo("Intiface Central Starting...");
 
+    if (kDebugMode) {
+      logWarning("Intiface currently running in DEBUG MODE.");
+    }
+
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     configCubit.currentAppVersion = packageInfo.version;
 

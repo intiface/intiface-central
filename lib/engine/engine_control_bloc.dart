@@ -73,6 +73,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
+      logInfo("Trying to start engine...");
       await _repo.start();
       emit(EngineStartedState());
       emit(ClientDisconnectedState());
