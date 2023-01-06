@@ -119,7 +119,7 @@ class ControlWidget extends StatelessWidget {
                             );
                           }),
                       Visibility(
-                          visible: configCubit.currentAppVersion != configCubit.latestAppVersion,
+                          visible: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion,
                           child: IconButton(
                               iconSize: 25,
                               onPressed: () => navCubit.goSettings(),

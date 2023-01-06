@@ -9,6 +9,7 @@ import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/markdown_widget.dart';
 import 'package:intiface_central/settings_widget.dart';
 import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
   final bool Function(NavigationState state) stateCheck;
@@ -63,11 +64,11 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateSettings,
           (NavigationCubit cubit) => cubit.goSettings(),
           Icon(Icons.settings_outlined,
-              color: configCubit.currentAppVersion != configCubit.latestAppVersion
+              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
                   ? Colors.green
                   : IconTheme.of(context).color),
           Icon(Icons.settings,
-              color: configCubit.currentAppVersion != configCubit.latestAppVersion
+              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
                   ? Colors.green
                   : IconTheme.of(context).color),
           'Settings',
