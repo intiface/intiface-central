@@ -59,7 +59,11 @@ impl Wire2Api<EngineOptionsExternal> for *mut wire_EngineOptionsExternal {
     Wire2Api::<EngineOptionsExternal>::wire2api(*wrap).into()
   }
 }
-
+impl Wire2Api<u16> for *mut u16 {
+  fn wire2api(self) -> u16 {
+    unsafe { *support::box_from_leak_ptr(self) }
+  }
+}
 impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
   fn wire2api(self) -> EngineOptionsExternal {
     EngineOptionsExternal {
