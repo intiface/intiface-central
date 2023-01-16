@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface® Central
 
 publish_to: 'none'
-version: 2.2.1
+version: 2.2.2
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
@@ -66,7 +66,7 @@ msix_config:
   publisher: CN=F86D9362-B08B-4275-8DB7-9799BD6BB826
   logo_path: ./assets/icons/intiface_central_icon.png
   install_certificate: false
-  msix_version: 2.2.1.0
+  msix_version: 2.2.2.0
   capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
 
 flutter_icons:

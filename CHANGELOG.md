@@ -1,11 +1,18 @@
-# v2.2.1 - 2023/01/05
+# v2.2.2 - 2023/01/16 (All platforms)
+
+## Features
+
+- Update to Intiface Engine v1.2.1/Buttplug v7.0.1
+  - Mostly hardware protocol updates and bug fixes, see Buttplug v7.0.1 CHANGELOG for more info.
+
+# v2.2.1 - 2023/01/05 (iOS)
 
 ## Bugfixes
 
 - Fixed iOS symbol stripping being too overzealous and stripping rust symbols.
 - Fixed Version updater showing updates available for Mobile builds.
 
-# v2.2.0 - 2023/01/02
+# v2.2.0 - 2023/01/02 (Desktop)
 
 ## Features
 
@@ -16,7 +23,7 @@
   - Bugfixes for user config loading
   - Bugfixes for Svakom Iker
 
-# v2.1.0 - 2022/12/19
+# v2.1.0 - 2022/12/19 (Desktop)
 
 ## Features
 
@@ -39,7 +46,7 @@
   - Fix Hgod protocol update loop
   - Fix deserialization of multi-type battery field in Lovense Connect service
 
-# v2 - 2022/11/26
+# v2 - 2022/11/26 (Desktop/iOS)
 
 ## Bugfixes
 
@@ -51,7 +58,7 @@
   - Fix issues with Lovense Dongle devices panicking
   - Fix error message that's not actually an error on iOS/macOS
 
-# v1 (All Platforms) - 2022/11/24
+# v1 - 2022/11/24 (All Platforms) 
 
 ## Features
 
@@ -65,7 +72,7 @@
 - Removed "Start Server on Startup" option until we've shipped a few versions and have a fallback
   for the server possibly crashing on startup.
 
-# v0.0.4 (Desktop/Android) - 2022/11/15
+# v0.0.4 - 2022/11/15 (Desktop/Android)
 
 ## Features
 
@@ -80,7 +87,7 @@
 - Fixed Android App Permissions
 - Default to expanded UI on Desktop
 
-# 0.0.3 (Desktop Only) - 2022/11/06
+# 0.0.3 - 2022/11/06 (Desktop)
 
 ## Features
 
@@ -100,7 +107,7 @@
 - Reset server on start when in Debug (for GUI reloading)
 - Consolidate bridge tasks but make sure they don't stall
 
-# 0.0.2 (Desktop) - 2022/10/23
+# 0.0.2 - 2022/10/23 (Desktop)
 
 ## Features
 
@@ -118,7 +125,7 @@
 - Fixed issue with Android dead code elimination removing btleplug symbols in release
 - Settings changes now only allowed when server not running
 
-# 0.0.1 (Desktop) - 2022/10/15
+# 0.0.1 - 2022/10/15 (Desktop)
 
 ## Features
 
@@ -132,7 +139,7 @@
 - Start/Stop server button now actually looks like a button
 - Intiface Central Desktop now checks for engine existence, warns if it doesn't exist
 
-# 0.0.0 (Desktop, Android) - 2022/10/02
+# 0.0.0 - 2022/10/02 (Desktop/Android)
 
 ## Features
 
