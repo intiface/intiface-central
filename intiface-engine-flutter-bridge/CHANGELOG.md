@@ -1,3 +1,9 @@
+# 1.0.1 (2023/01/16)
+
+## Features
+
+- Update to Intiface Engine 1.2.1/Buttplug 7.0.1
+
 # 1.0.0 (2022/12/19)
 
 ## Features
