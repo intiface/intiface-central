@@ -54,8 +54,8 @@ class IntifaceCentralApp extends StatelessWidget {
     var configCubit = IntifaceConfigurationCubit(configRepo);
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
-    //var engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
-    var engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
+    var engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
+    //var engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
 
     if (isDesktop()) {
       // Must add this line before we work with the manager.
