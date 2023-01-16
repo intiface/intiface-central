@@ -39,8 +39,7 @@ dependencies:
   intl: ^0.18.0
   easy_debounce: ^2.0.2+1
   percent_indicator: ^4.2.2
-  buttplug:
-    path: "../buttplug_dart"
+  buttplug: ^0.0.2
 
 dev_dependencies:
   flutter_test:
