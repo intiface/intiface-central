@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  json_annotation: ^4.6.0
+  json_annotation: ^4.8.0
   flutter_local_notifications: ^13.0.0
   flutter_rust_bridge: ^1.59.0
   plugin_platform_interface: ^2.1.2  
@@ -45,7 +45,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.3.1
+  json_serializable: ^6.6.0
   build_runner: ^2.3.0
   flutter_lints: ^2.0.0
   msix: ^3.7.0
