@@ -87,7 +87,9 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       // task.
       info!("Entering backdoor waiter task");
       select! {
-        _ = frontend_waiter => {}
+        _ = frontend_waiter => {
+          // This firing means the frontend is set up, and we just want to continue to creating our backdoor server.
+        }
         _ = notify_clone.notified() => {
           return;
         }
