@@ -21,7 +21,7 @@ class SettingWidget extends StatelessWidget {
         builder: (context, engineState) =>
             BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(builder: (context, state) {
               var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-
+              var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
               List<AbstractSettingsSection> tiles = [];
 
               if (!cubit.useSideNavigationBar) {
@@ -42,9 +42,8 @@ class SettingWidget extends StatelessWidget {
               var versionTiles = [
                 CustomSettingsTile(
                     child: TextButton(
-                        onPressed: engineState is EngineStoppedState
-                            ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
-                            : null,
+                        onPressed:
+                            !engineIsRunning ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()) : null,
                         child: const Text("Check For Updates"))),
                 CustomSettingsTile(child: Text("App Version: ${cubit.currentAppVersion}")),
               ];
@@ -85,13 +84,13 @@ class SettingWidget extends StatelessWidget {
                   // gracefully.
                   /*
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.startServerOnStartup,
                       onToggle: (value) => cubit.startServerOnStartup = value,
                       title: const Text("Start Server when Intiface Central Launches")),
                       */
                   SettingsTile.navigation(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       title: const Text("Server Name"),
                       value: Text(cubit.serverName),
                       onPressed: (context) {
@@ -110,7 +109,7 @@ class SettingWidget extends StatelessWidget {
                                 ));
                       }),
                   SettingsTile.navigation(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       title: const Text("Server Port"),
                       value: Text(cubit.websocketServerPort.toString()),
                       onPressed: (context) {
@@ -134,7 +133,7 @@ class SettingWidget extends StatelessWidget {
                                 ));
                       }),
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.websocketServerAllInterfaces,
                       onToggle: (value) => cubit.websocketServerAllInterfaces = value,
                       title: const Text("Listen on all network interfaces.")),
@@ -143,12 +142,12 @@ class SettingWidget extends StatelessWidget {
 
               var deviceSettings = [
                 SettingsTile.switchTile(
-                    enabled: engineState is EngineStoppedState,
+                    enabled: !engineIsRunning,
                     initialValue: cubit.useBluetoothLE,
                     onToggle: (value) => cubit.useBluetoothLE = value,
                     title: const Text("Bluetooth LE")),
                 SettingsTile.switchTile(
-                    enabled: engineState is EngineStoppedState,
+                    enabled: !engineIsRunning,
                     initialValue: cubit.useDeviceWebsocketServer,
                     onToggle: (value) => cubit.useDeviceWebsocketServer = value,
                     title: const Text("Device Websocket Server"))
@@ -156,27 +155,27 @@ class SettingWidget extends StatelessWidget {
               if (isDesktop()) {
                 deviceSettings.addAll([
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.useXInput,
                       onToggle: (value) => cubit.useXInput = value,
                       title: const Text("XInput (Windows Only)")),
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.useLovenseConnectService,
                       onToggle: (value) => cubit.useLovenseConnectService = value,
                       title: const Text("Lovense Connect Service")),
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.useLovenseHIDDongle,
                       onToggle: (value) => cubit.useLovenseHIDDongle = value,
                       title: const Text("Lovense HID Dongle")),
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.useLovenseSerialDongle,
                       onToggle: (value) => cubit.useLovenseSerialDongle = value,
                       title: const Text("Lovense Serial Dongle")),
                   SettingsTile.switchTile(
-                      enabled: engineState is EngineStoppedState,
+                      enabled: !engineIsRunning,
                       initialValue: cubit.useSerialPort,
                       onToggle: (value) => cubit.useSerialPort = value,
                       title: const Text("Serial Port")),
@@ -188,7 +187,7 @@ class SettingWidget extends StatelessWidget {
               tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
                 CustomSettingsTile(
                     child: TextButton(
-                  onPressed: engineState is EngineStoppedState
+                  onPressed: !engineIsRunning
                       ? () {
                           showDialog<void>(
                             context: context,
@@ -247,7 +246,7 @@ class SettingWidget extends StatelessWidget {
                 ))
               ]));
               List<Widget> widgets = [Expanded(child: SettingsList(sections: tiles))];
-              if (engineState is! EngineStoppedState) {
+              if (engineIsRunning) {
                 widgets.add(const Text("Some settings may be unavailable while server is running.",
                     style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
               }

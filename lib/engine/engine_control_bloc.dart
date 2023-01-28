@@ -75,11 +75,21 @@ class EngineDevice {
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   final EngineRepository _repo;
   final Map<int, EngineDevice> _devices = {};
+  bool _isRunning = false;
+
+  // HACK We have the engine control bloc representing too many things right now, as it handles both the engine control
+  // and messages about the engine sessions. This should be divided out into a EngineControlBloc that handles engine
+  // started/stopped/etc, and an EngineSessionBloc that handles events while the engine is running. However, that's a
+  // good bit of refactoring and I just want to get foregrounding out, so for now we're doing this the gross way.
+  bool get isRunning {
+    return _isRunning;
+  }
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
       logInfo("Trying to start engine...");
       await _repo.start();
+      _isRunning = true;
       emit(EngineStartedState());
       emit(ClientDisconnectedState());
       return emit.forEach(_repo.messageStream, onData: (EngineOutput message) {
@@ -124,6 +134,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           }
           if (engineMessage.engineStopped != null) {
             logInfo("Received EngineStopped message");
+            _isRunning = false;
             return EngineStoppedState();
           }
         } else if (message.buttplugServerMessage != null) {
@@ -137,7 +148,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
     });
     on<EngineControlEventStop>((event, emit) async {
       await _repo.stop();
-      return emit(EngineStoppedState());
+      //return emit(EngineStoppedState());
     });
   }
 
