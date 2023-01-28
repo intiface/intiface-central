@@ -12,6 +12,7 @@ abstract class EngineProvider {
   void cycleStream();
 
   void onEngineStart();
+  void onEngineStop();
 
   void send(String msg);
   void sendBackdoorMessage(String msg);

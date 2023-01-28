@@ -88,5 +88,8 @@ class LibraryEngineProvider implements EngineProvider {
   void onEngineStart() {}
 
   @override
+  void onEngineStop() {}
+
+  @override
   Stream<String> get engineRawMessageStream => _processMessageStream.stream;
 }

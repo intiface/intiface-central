@@ -186,10 +186,16 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   }
 
   @override
+  void onEngineStop() {
+    _serverSendPort = null;
+    _backdoorSendPort = null;
+  }
+
+  @override
   Future<void> stop() async {
     //api.stopEngine();
     await FlutterForegroundTask.stopService();
-    logInfo("Engine stopped");
+    logInfo("Engine stop request sent");
   }
 
   @override

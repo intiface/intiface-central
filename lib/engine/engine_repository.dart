@@ -43,6 +43,9 @@ class EngineRepository {
         if (message.engineStarted != null) {
           _provider.onEngineStart();
         }
+        if (message.engineStopped != null) {
+          _provider.onEngineStop();
+        }
       } catch (e) {
         try {
           var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);

@@ -25,5 +25,8 @@ class TestEngineProvider implements EngineProvider {
   void onEngineStart() {}
 
   @override
+  void onEngineStop() {}
+
+  @override
   Stream<String> get engineRawMessageStream => throw "Unimplemented";
 }
