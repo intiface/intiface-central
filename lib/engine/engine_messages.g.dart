@@ -190,6 +190,19 @@ Map<String, dynamic> _$ClientRejectedToJson(ClientRejected instance) =>
       'reason': instance.reason,
     };
 
+EngineProviderLog _$EngineProviderLogFromJson(Map<String, dynamic> json) =>
+    EngineProviderLog()
+      ..timestamp = json['timestamp'] as String
+      ..level = json['level'] as String
+      ..message = json['message'] as String;
+
+Map<String, dynamic> _$EngineProviderLogToJson(EngineProviderLog instance) =>
+    <String, dynamic>{
+      'timestamp': instance.timestamp,
+      'level': instance.level,
+      'message': instance.message,
+    };
+
 EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
     EngineMessage()
       ..messageVersion = json['MessageVersion'] == null
@@ -233,7 +246,11 @@ EngineMessage _$EngineMessageFromJson(Map<String, dynamic> json) =>
       ..clientRejected = json['ClientRejected'] == null
           ? null
           : ClientRejected.fromJson(
-              json['ClientRejected'] as Map<String, dynamic>);
+              json['ClientRejected'] as Map<String, dynamic>)
+      ..engineProviderLog = json['EngineProviderLog'] == null
+          ? null
+          : EngineProviderLog.fromJson(
+              json['EngineProviderLog'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
     <String, dynamic>{
@@ -248,4 +265,5 @@ Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
       'DeviceConnected': instance.deviceConnected,
       'DeviceDisconnected': instance.deviceDisconnected,
       'ClientRejected': instance.clientRejected,
+      'EngineProviderLog': instance.engineProviderLog,
     };

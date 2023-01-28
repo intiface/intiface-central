@@ -173,6 +173,23 @@ class IntifaceCentralApp extends StatelessWidget {
           //log(message.engineLog!.message!.fields["message"]);
         }
       }
+      if (state is ProviderLogMessageState) {
+        // TODO Turn level into an enum
+        var message = state.message.message;
+        var level = state.message.level;
+        if (level == "DEBUG") {
+          logDebug(message);
+        } else if (level == "INFO") {
+          logInfo(message);
+        } else if (level == "ERROR") {
+          logError(message);
+        } else if (level == "WARN") {
+          logWarning(message);
+        } else if (level == "TRACE") {
+          // TODO Implement trace logging level for loggy
+          //log(message.engineLog!.message!.fields["message"]);
+        }
+      }
       if (state is EngineServerCreatedState) {
         deviceControlBloc.add(DeviceManagerEngineStartedEvent());
       }

@@ -146,6 +146,17 @@ class ClientRejected {
   ClientRejected();
 }
 
+@JsonSerializable()
+class EngineProviderLog {
+  String timestamp = "";
+  String level = "";
+  String message = "";
+  // Unlike all the other engine messages, this actually needs to encode too since we're using this internally.
+  Map<String, dynamic> toJson() => _$EngineProviderLogToJson(this);
+  factory EngineProviderLog.fromJson(Map<String, dynamic> json) => _$EngineProviderLogFromJson(json);
+  EngineProviderLog();
+}
+
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class EngineMessage {
   EngineVersion? messageVersion;
@@ -159,6 +170,7 @@ class EngineMessage {
   DeviceConnected? deviceConnected;
   DeviceDisconnected? deviceDisconnected;
   ClientRejected? clientRejected;
+  EngineProviderLog? engineProviderLog;
 
   factory EngineMessage.fromJson(Map<String, dynamic> json) => _$EngineMessageFromJson(json);
 

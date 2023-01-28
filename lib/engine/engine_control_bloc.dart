@@ -46,6 +46,11 @@ class ServerLogMessageState extends EngineControlState {
   ServerLogMessageState(this.message);
 }
 
+class ProviderLogMessageState extends EngineControlState {
+  final EngineProviderLog message;
+  ProviderLogMessageState(this.message);
+}
+
 class EngineError extends EngineControlState {}
 
 class EngineControlEvent {}
@@ -93,6 +98,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           }
           if (engineMessage.engineLog != null) {
             return ServerLogMessageState(engineMessage.engineLog!);
+          }
+          if (engineMessage.engineProviderLog != null) {
+            return ProviderLogMessageState(engineMessage.engineProviderLog!);
           }
           if (engineMessage.messageVersion != null) {
             logDebug("Got message version return");
