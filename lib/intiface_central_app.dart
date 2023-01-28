@@ -54,10 +54,10 @@ class IntifaceCentralApp extends StatelessWidget {
     var configCubit = IntifaceConfigurationCubit(configRepo);
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
-    var engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
-    //var engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
+    EngineRepository engineRepo;
 
     if (isDesktop()) {
+      engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
@@ -84,9 +84,8 @@ class IntifaceCentralApp extends StatelessWidget {
 
       // Only add app update checks on desktop, mobile apps will use stores.
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
-    }
-
-    if (isMobile()) {
+    } else {
+      engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
       await [
         Permission.bluetooth,
         Permission.bluetoothConnect,
