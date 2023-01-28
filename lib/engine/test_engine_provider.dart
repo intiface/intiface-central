@@ -22,5 +22,8 @@ class TestEngineProvider implements EngineProvider {
   void sendBackdoorMessage(String msg) {}
 
   @override
+  void onEngineStart() {}
+
+  @override
   Stream<String> get engineRawMessageStream => throw "Unimplemented";
 }

@@ -40,6 +40,9 @@ class EngineRepository {
         // If we've got valid JSON, see if it's an engine message or a server message.
         var message = EngineMessage.fromJson(jsonElement);
         _engineMessageStream.add(EngineOutput(message, null));
+        if (message.engineStarted != null) {
+          _provider.onEngineStart();
+        }
       } catch (e) {
         try {
           var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);

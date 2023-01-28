@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
@@ -12,6 +13,9 @@ import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+
+String _kMainBackdoorPortName = "intifaceCentralBackdoorMain";
+String _kMainServerPortName = "intifaceCentralServerMain";
 
 // The callback function should always be a top-level function.
 @pragma('vm:entry-point')
@@ -56,6 +60,8 @@ Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository co
 
 class IntifaceEngineTaskHandler extends TaskHandler {
   SendPort? _sendPort;
+  ReceivePort _serverMessageReceivePort;
+  ReceivePort _backdoorMessageReceivePort;
   Stream<String>? _stream;
 
   void _sendProviderLog(String level, String outgoingMessage) {
@@ -66,6 +72,16 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     var engineMessage = EngineMessage();
     engineMessage.engineProviderLog = message;
     _sendPort!.send(jsonEncode(engineMessage));
+  }
+
+  IntifaceEngineTaskHandler()
+      : _serverMessageReceivePort = ReceivePort(),
+        _backdoorMessageReceivePort = ReceivePort() {
+    // Once we've started everything up, register our receive port
+    final serverSendPort = _serverMessageReceivePort.sendPort;
+    final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
+    IsolateNameServer.registerPortWithName(serverSendPort, _kMainServerPortName);
+    IsolateNameServer.registerPortWithName(backdoorSendPort, _kMainBackdoorPortName);
   }
 
   @override
@@ -104,6 +120,12 @@ class IntifaceEngineTaskHandler extends TaskHandler {
         //stop();
       }
     });
+    _serverMessageReceivePort.forEach((element) async {
+      await api.send(msgJson: element);
+    });
+    _backdoorMessageReceivePort.forEach((element) async {
+      await api.sendBackendServerMessage(msg: element);
+    });
   }
 
   @override
@@ -114,9 +136,9 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    // You can use the clearAllData function to clear all the stored data.
     api.stopEngine();
-    await FlutterForegroundTask.clearAllData();
+    IsolateNameServer.removePortNameMapping(_kMainServerPortName);
+    IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
   }
 
   @override
@@ -143,6 +165,8 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   StreamController<String> _processMessageStream = StreamController();
   ReceivePort? _receivePort;
+  SendPort? _serverSendPort;
+  SendPort? _backdoorSendPort;
 
   @override
   Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
@@ -156,6 +180,12 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   }
 
   @override
+  void onEngineStart() {
+    _serverSendPort = IsolateNameServer.lookupPortByName(_kMainServerPortName);
+    _backdoorSendPort = IsolateNameServer.lookupPortByName(_kMainBackdoorPortName);
+  }
+
+  @override
   Future<void> stop() async {
     //api.stopEngine();
     await FlutterForegroundTask.stopService();
@@ -164,13 +194,14 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   void send(String msg) {
-    api.send(msgJson: msg);
+    _serverSendPort!.send(msg);
   }
 
   @override
   void sendBackdoorMessage(String msg) {
     //logInfo("Outgoing: $msg");
-    api.sendBackendServerMessage(msg: msg);
+    //api.sendBackendServerMessage(msg: msg);
+    _backdoorSendPort!.send(msg);
   }
 
   Future<bool> _startForegroundTask() async {

@@ -11,6 +11,8 @@ abstract class EngineProvider {
   Future<void> stop();
   void cycleStream();
 
+  void onEngineStart();
+
   void send(String msg);
   void sendBackdoorMessage(String msg);
   Stream<String> get engineRawMessageStream;
