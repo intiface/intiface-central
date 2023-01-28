@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
+import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
+import 'package:intiface_central/engine/engine_messages.dart';
 
 import "../ffi.dart";
 
@@ -17,44 +20,87 @@ void startCallback() {
   FlutterForegroundTask.setTaskHandler(IntifaceEngineTaskHandler());
 }
 
+Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository configRepo) async {
+  String? deviceConfigFile;
+  if (await IntifacePaths.deviceConfigFile.exists()) {
+    deviceConfigFile = await File(IntifacePaths.deviceConfigFile.path).readAsString();
+  }
+
+  String? userDeviceConfigFile;
+  if (await IntifacePaths.userDeviceConfigFile.exists()) {
+    userDeviceConfigFile = await File(IntifacePaths.userDeviceConfigFile.path).readAsString();
+  }
+
+  return EngineOptionsExternal(
+      serverName: configRepo.serverName,
+      deviceConfigJson: deviceConfigFile,
+      userDeviceConfigJson: userDeviceConfigFile,
+      crashReporting: configRepo.crashReporting,
+      websocketUseAllInterfaces: configRepo.websocketServerAllInterfaces,
+      websocketPort: configRepo.websocketServerPort,
+      frontendInProcessChannel: isMobile(),
+      maxPingTime: configRepo.serverMaxPingTime,
+      allowRawMessages: configRepo.allowRawMessages,
+      logLevel: "DEBUG".toString(),
+      useBluetoothLe: configRepo.useBluetoothLE,
+      useSerialPort: isDesktop() ? configRepo.useSerialPort : false,
+      useHid: isDesktop() ? configRepo.useHID : false,
+      useLovenseDongleSerial: isDesktop() ? configRepo.useLovenseSerialDongle : false,
+      useLovenseDongleHid: isDesktop() ? configRepo.useLovenseHIDDongle : false,
+      useXinput: isDesktop() ? configRepo.useXInput : false,
+      useLovenseConnect: isDesktop() ? configRepo.useLovenseConnectService : false,
+      useDeviceWebsocketServer: configRepo.useDeviceWebsocketServer,
+      crashMainThread: false,
+      crashTaskThread: false);
+}
+
 class IntifaceEngineTaskHandler extends TaskHandler {
   SendPort? _sendPort;
   Stream<String>? _stream;
 
+  void _sendProviderLog(String level, String outgoingMessage) {
+    var message = EngineProviderLog();
+    message.timestamp = DateTime.now().toString();
+    message.level = level;
+    message.message = outgoingMessage;
+    var engineMessage = EngineMessage();
+    engineMessage.engineProviderLog = message;
+    _sendPort!.send(jsonEncode(engineMessage));
+  }
+
   @override
   Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
     _sendPort = sendPort;
-    _sendPort!.send("Trying to start engine");
-    var engineOptions = EngineOptionsExternal(
-        serverName: "ForegroundServer",
-        deviceConfigJson: null,
-        userDeviceConfigJson: null,
-        crashReporting: false,
-        websocketUseAllInterfaces: true,
-        websocketPort: 12345,
-        frontendInProcessChannel: true,
-        maxPingTime: 0,
-        allowRawMessages: false,
-        logLevel: "DEBUG".toString(),
-        useBluetoothLe: true,
-        useSerialPort: false,
-        useHid: false,
-        useLovenseDongleSerial: false,
-        useLovenseDongleHid: false,
-        useXinput: false,
-        useLovenseConnect: false,
-        useDeviceWebsocketServer: false,
-        crashMainThread: false,
-        crashTaskThread: false);
-    _sendPort!.send("got arguments");
-    _sendPort!.send("Starting library internal engine with the following arguments: $engineOptions");
-    _stream = api.runEngine(args: engineOptions!);
-    _sendPort!.send("Engine started");
+    _sendProviderLog("Info", "Trying to start engine in foreground service.");
+
+    // Due to the way the foregrounding package we're using works, we can't store the options across the foregrounding
+    // process boundary. Trying to encode to/decode from JSON also isn't easily possible because EngineOptionsExternal
+    // is a FFI generated class. Therefore we just bring up what is considered to be a readonly version of our config
+    // repo in order to build the engine options, then we just drop it when done.
+    //
+    // Under the covers, flutter_foreground_task is just using SharedPreferences for its data commands anyways, so this
+    // is basically doing what it does, while not having to deal with shuffling things around.
+    _sendProviderLog("INFO", "Creating shared prefs");
+    var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
+    _sendProviderLog("INFO", "Creating config repo");
+    var configRepo = await IntifaceConfigurationRepository.create(prefs);
+    _sendProviderLog("INFO", "Building arguments");
+
+    // Since we're on another process we'll have to reinitialize our paths.
+    await IntifacePaths.init();
+
+    // Ok, NOW we can build our engine options.
+    var engineOptions = await _buildArguments(configRepo);
+    _sendProviderLog("INFO", "Starting engine");
+
+    _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
+    _stream = api.runEngine(args: engineOptions);
+    _sendProviderLog("INFO", "Engine started");
     _stream!.forEach((element) {
       try {
         _sendPort!.send(element);
       } catch (e) {
-        _sendPort!.send("Error adding message to stream: $e");
+        _sendProviderLog("ERROR", "Error adding message to stream: $e");
         //stop();
       }
     });
@@ -69,13 +115,14 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
     // You can use the clearAllData function to clear all the stored data.
+    api.stopEngine();
     await FlutterForegroundTask.clearAllData();
   }
 
   @override
   void onButtonPressed(String id) {
     // Called when the notification button on the Android platform is pressed.
-    _sendPort!.send('onButtonPressed >> $id');
+    _sendProviderLog("Info", 'onButtonPressed >> $id');
   }
 
   @override
@@ -89,7 +136,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     // it will usually be necessary to send a message through the send port to
     // signal it to restore state when the app is already started.
     FlutterForegroundTask.launchApp("/resume-route");
-    _sendPort?.send('onNotificationPressed');
+    _sendProviderLog("Info", 'onNotificationPressed');
   }
 }
 
@@ -97,44 +144,9 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   StreamController<String> _processMessageStream = StreamController();
   ReceivePort? _receivePort;
 
-  Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository configRepo) async {
-    String? deviceConfigFile;
-    if (await IntifacePaths.deviceConfigFile.exists()) {
-      deviceConfigFile = await File(IntifacePaths.deviceConfigFile.path).readAsString();
-    }
-
-    String? userDeviceConfigFile;
-    if (await IntifacePaths.userDeviceConfigFile.exists()) {
-      userDeviceConfigFile = await File(IntifacePaths.userDeviceConfigFile.path).readAsString();
-    }
-
-    return EngineOptionsExternal(
-        serverName: configRepo.serverName,
-        deviceConfigJson: deviceConfigFile,
-        userDeviceConfigJson: userDeviceConfigFile,
-        crashReporting: configRepo.crashReporting,
-        websocketUseAllInterfaces: configRepo.websocketServerAllInterfaces,
-        websocketPort: configRepo.websocketServerPort,
-        frontendInProcessChannel: isMobile(),
-        maxPingTime: configRepo.serverMaxPingTime,
-        allowRawMessages: configRepo.allowRawMessages,
-        logLevel: "DEBUG".toString(),
-        useBluetoothLe: configRepo.useBluetoothLE,
-        useSerialPort: isDesktop() ? configRepo.useSerialPort : false,
-        useHid: isDesktop() ? configRepo.useHID : false,
-        useLovenseDongleSerial: isDesktop() ? configRepo.useLovenseSerialDongle : false,
-        useLovenseDongleHid: isDesktop() ? configRepo.useLovenseHIDDongle : false,
-        useXinput: isDesktop() ? configRepo.useXInput : false,
-        useLovenseConnect: isDesktop() ? configRepo.useLovenseConnectService : false,
-        useDeviceWebsocketServer: configRepo.useDeviceWebsocketServer,
-        crashMainThread: false,
-        crashTaskThread: false);
-  }
-
   @override
   Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
-    var engineOptions = await _buildArguments(configRepo);
-    await _startForegroundTask(engineOptions);
+    await _startForegroundTask();
   }
 
   @override
@@ -145,7 +157,8 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    api.stopEngine();
+    //api.stopEngine();
+    await FlutterForegroundTask.stopService();
     logInfo("Engine stopped");
   }
 
@@ -160,7 +173,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     api.sendBackendServerMessage(msg: msg);
   }
 
-  Future<bool> _startForegroundTask(EngineOptionsExternal engineOptions) async {
+  Future<bool> _startForegroundTask() async {
     // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
     // onNotificationPressed function to be called.
     //
@@ -176,8 +189,6 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
         return false;
       }
     }
-
-    await FlutterForegroundTask.saveData(key: 'arguments', value: engineOptions);
 
     bool reqResult;
     if (await FlutterForegroundTask.isRunningService) {
@@ -212,12 +223,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
         if (message is DateTime) {
           logInfo('timestamp: ${message.toString()}');
         } else if (message is String) {
-          if (message == 'onNotificationPressed') {
-            //Navigator.of(context).pushNamed('/resume-route');
-          }
-        }
-        if (message is String) {
-          logError(message);
+          _processMessageStream.add(message);
         }
       });
 
