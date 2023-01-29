@@ -146,20 +146,6 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     // Called when the notification button on the Android platform is pressed.
     _sendProviderLog("Info", 'onButtonPressed >> $id');
   }
-
-  @override
-  void onNotificationPressed() {
-    // Called when the notification itself on the Android platform is pressed.
-    //
-    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
-    // this function to be called.
-
-    // Note that the app will only route to "/resume-route" when it is exited so
-    // it will usually be necessary to send a message through the send port to
-    // signal it to restore state when the app is already started.
-    FlutterForegroundTask.launchApp("/resume-route");
-    _sendProviderLog("Info", 'onNotificationPressed');
-  }
 }
 
 class ForegroundTaskLibraryEngineProvider implements EngineProvider {
@@ -211,22 +197,6 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   }
 
   Future<bool> _startForegroundTask() async {
-    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
-    // onNotificationPressed function to be called.
-    //
-    // When the notification is pressed while permission is denied,
-    // the onNotificationPressed function is not called and the app opens.
-    //
-    // If you do not use the onNotificationPressed or launchApp function,
-    // you do not need to write this code.
-    if (!await FlutterForegroundTask.canDrawOverlays) {
-      final isGranted = await FlutterForegroundTask.openSystemAlertWindowSettings();
-      if (!isGranted) {
-        logError('SYSTEM_ALERT_WINDOW permission denied!');
-        return false;
-      }
-    }
-
     bool reqResult;
     if (await FlutterForegroundTask.isRunningService) {
       reqResult = await FlutterForegroundTask.restartService();
