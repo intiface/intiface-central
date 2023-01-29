@@ -111,7 +111,7 @@ class IntifaceCentralApp extends StatelessWidget {
         androidNotificationOptions: AndroidNotificationOptions(
           channelId: 'notification_channel_id',
           channelName: 'Intiface Engine Notification',
-          channelDescription: 'This notification appears when the foreground service is running.',
+          channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
           channelImportance: NotificationChannelImportance.LOW,
           priority: NotificationPriority.LOW,
           iconData: const NotificationIconData(
@@ -120,8 +120,7 @@ class IntifaceCentralApp extends StatelessWidget {
             name: 'launcher',
           ),
           buttons: [
-            const NotificationButton(id: 'sendButton', text: 'Send'),
-            const NotificationButton(id: 'testButton', text: 'Test'),
+            const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
           ],
         ),
         iosNotificationOptions: const IOSNotificationOptions(),

@@ -143,8 +143,12 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
   @override
   void onButtonPressed(String id) {
-    // Called when the notification button on the Android platform is pressed.
-    _sendProviderLog("Info", 'onButtonPressed >> $id');
+    if (id == "stopServerButton") {
+      FlutterForegroundTask.stopService();
+    } else {
+      // Called when the notification button on the Android platform is pressed.
+      _sendProviderLog("ERROR", "Button id $id not recognized");
+    }
   }
 }
 
