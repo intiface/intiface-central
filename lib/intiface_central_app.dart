@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +29,7 @@ import 'package:intiface_central/update/update_repository.dart';
 import 'package:loggy/loggy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class IntifaceCentralApp extends StatelessWidget {
   const IntifaceCentralApp({super.key});
@@ -86,8 +89,20 @@ class IntifaceCentralApp extends StatelessWidget {
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
     } else {
       engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
+
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+      // For older android builds, ask for location perms.
+      if (Platform.isAndroid && androidInfo.version.sdkInt <= 30) {
+        await [
+          Permission.bluetooth,
+          Permission.location,
+          Permission.locationWhenInUse,
+          Permission.locationAlways,
+        ].request();
+      }
       await [
-        Permission.bluetooth,
         Permission.bluetoothConnect,
         Permission.bluetoothScan,
       ].request();

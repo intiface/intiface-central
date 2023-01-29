@@ -1,37 +1,31 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nonpolynomial.intiface_central">
-   <uses-permission android:name="android.permission.BLUETOOTH" />
-   <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-   <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
-   <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-   <uses-permission android:name="android.permission.INTERNET" />
-   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-   <uses-permission android:name="android.permission.WAKE_LOCK" />
-   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />   
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.nonpolynomial.intiface_central">
+    <!-- https://developer.android.com/guide/topics/connectivity/bluetooth/permissions -->
 
-   <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
 
-   <application
-        android:label="intiface_central"
-        android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" android:maxSdkVersion="30"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
+    <application android:label="intiface_central" android:name="${applicationName}" android:icon="@mipmap/launcher_icon">
+        <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
-            <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+            <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -39,9 +33,7 @@
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
+        <meta-data android:name="flutterEmbedding" android:value="2" />
         <!-- Foreground service handling -->
         <service android:name="com.pravera.flutter_foreground_task.service.ForegroundService" />
     </application>

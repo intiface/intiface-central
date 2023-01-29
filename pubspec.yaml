@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  device_info_plus: ^8.0.0
   cupertino_icons: ^1.0.2
   json_annotation: ^4.8.0
   flutter_local_notifications: ^13.0.0
