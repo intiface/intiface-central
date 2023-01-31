@@ -8,6 +8,8 @@ import 'package:loggy/loggy.dart';
 
 abstract class EngineControlState {}
 
+class EngineStartingState extends EngineControlState {}
+
 class EngineStartedState extends EngineControlState {}
 
 class EngineServerCreatedState extends EngineControlState {}
@@ -90,14 +92,15 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       logInfo("Trying to start engine...");
       await _repo.start();
       _isRunning = true;
-      emit(EngineStartedState());
-      emit(ClientDisconnectedState());
+      emit(EngineStartingState());
       return emit.forEach(_repo.messageStream, onData: (EngineOutput message) {
         if (message.engineMessage != null) {
           var engineMessage = message.engineMessage!;
           if (engineMessage.engineStarted != null) {
             // Query for message version.
-            logDebug("Got engine started, ending message version request");
+            logDebug("Got engine started, sending message version request");
+            emit(EngineStartedState());
+            emit(ClientDisconnectedState());
             var msg = IntifaceMessage();
             msg.requestEngineVersion = RequestEngineVersion();
             _repo.send(jsonEncode(msg));

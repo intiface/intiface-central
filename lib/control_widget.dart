@@ -23,6 +23,7 @@ class ControlWidget extends StatelessWidget {
           return BlocBuilder(
               bloc: engineControlBloc,
               buildWhen: (EngineControlState previous, EngineControlState current) =>
+                  current is EngineStartingState ||
                   current is EngineStartedState ||
                   current is EngineStoppedState ||
                   current is ClientConnectedState ||
@@ -43,14 +44,16 @@ class ControlWidget extends StatelessWidget {
                   // Once we're in this state the engine is started.
                   buttonAction = () => engineControlBloc.add(EngineControlEventStop());
                 } else if (state is EngineStartedState) {
-                  statusMessage = "Server starting up";
+                  statusMessage = "Server started";
                   statusIcon = Icons.block;
-                  // In the case of starting up,
-                  buttonAction = null;
+                  buttonAction = () => engineControlBloc.add(EngineControlEventStop());
                 } else if (state is EngineStoppedState) {
                   statusMessage = "Server not running";
                   statusIcon = Icons.block;
                   buttonAction = () => engineControlBloc.add(EngineControlEventStart());
+                } else if (state is EngineStartingState) {
+                  statusMessage = "Server starting";
+                  buttonAction = null;
                 }
 
                 IconButton controlButton;
