@@ -125,8 +125,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
           _serverExited.complete();
         }
       } catch (e) {
-        _sendProviderLog("ERROR", "Error adding message to stream: $e");
-        //stop();
+        // There's a chance the message may not decode it could possibly be from the backend server. So just no-op here.
       }
     });
     _serverMessageReceivePort.forEach((element) async {
