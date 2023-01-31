@@ -1,3 +1,9 @@
+# 1.0.2 (2023/01/30)
+
+## Bugfixes
+
+- Update to Intiface Engine 1.2.2, fixing EngineStopped message timing
+
 # 1.0.1 (2023/01/16)
 
 ## Features
