@@ -63,6 +63,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   ReceivePort _serverMessageReceivePort;
   ReceivePort _backdoorMessageReceivePort;
   Stream<String>? _stream;
+  final Completer<void> _serverExited = Completer();
 
   void _sendProviderLog(String level, String outgoingMessage) {
     var message = EngineProviderLog();
@@ -114,7 +115,15 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _sendProviderLog("INFO", "Engine started");
     _stream!.forEach((element) {
       try {
+        // Send first
         _sendPort!.send(element);
+        // Then check to see if this is a EngineStopped message.
+        // Try parsing the JSON first to make sure it's even valid JSON.
+        var jsonElement = jsonDecode(element);
+        var message = EngineMessage.fromJson(jsonElement);
+        if (message.engineStopped != null) {
+          _serverExited.complete();
+        }
       } catch (e) {
         _sendProviderLog("ERROR", "Error adding message to stream: $e");
         //stop();
@@ -136,7 +145,10 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    api.stopEngine();
+    _sendProviderLog("INFO", "Destroying foreground service.");
+    await api.stopEngine();
+    await _serverExited.future;
+    _sendProviderLog("INFO", "Foreground service destroyed.");
     IsolateNameServer.removePortNameMapping(_kMainServerPortName);
     IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
   }
