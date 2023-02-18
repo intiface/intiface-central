@@ -88,7 +88,9 @@ class IntifaceCentralApp extends StatelessWidget {
       // Only add app update checks on desktop, mobile apps will use stores.
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
     } else {
-      engineRepo = EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo);
+      engineRepo = configCubit.useForegroundProcess
+          ? EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo)
+          : EngineRepository(LibraryEngineProvider(), configRepo);
 
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -107,31 +109,33 @@ class IntifaceCentralApp extends StatelessWidget {
         Permission.bluetoothScan,
       ].request();
 
-      FlutterForegroundTask.init(
-        androidNotificationOptions: AndroidNotificationOptions(
-          channelId: 'notification_channel_id',
-          channelName: 'Intiface Engine Notification',
-          channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
-          channelImportance: NotificationChannelImportance.LOW,
-          priority: NotificationPriority.LOW,
-          iconData: const NotificationIconData(
-            resType: ResourceType.mipmap,
-            resPrefix: ResourcePrefix.ic,
-            name: 'launcher',
+      if (configCubit.useForegroundProcess) {
+        FlutterForegroundTask.init(
+          androidNotificationOptions: AndroidNotificationOptions(
+            channelId: 'notification_channel_id',
+            channelName: 'Intiface Engine Notification',
+            channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
+            channelImportance: NotificationChannelImportance.LOW,
+            priority: NotificationPriority.LOW,
+            iconData: const NotificationIconData(
+              resType: ResourceType.mipmap,
+              resPrefix: ResourcePrefix.ic,
+              name: 'launcher',
+            ),
+            buttons: [
+              const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
+            ],
           ),
-          buttons: [
-            const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
-          ],
-        ),
-        iosNotificationOptions: const IOSNotificationOptions(),
-        foregroundTaskOptions: const ForegroundTaskOptions(
-          interval: 1000,
-          isOnceEvent: false,
-          autoRunOnBoot: false,
-          allowWakeLock: true,
-          allowWifiLock: true,
-        ),
-      );
+          iosNotificationOptions: const IOSNotificationOptions(),
+          foregroundTaskOptions: const ForegroundTaskOptions(
+            interval: 1000,
+            isOnceEvent: false,
+            autoRunOnBoot: false,
+            allowWakeLock: true,
+            allowWifiLock: true,
+          ),
+        );
+      }
     }
 
     var errorNotifier = ErrorNotifier();

@@ -65,6 +65,7 @@ class IntifaceConfigurationRepository {
     latestAppVersion = provider.getString("latestAppVersion") ?? currentAppVersion;
 
     useProcessEngine = kDebugMode ? (provider.getBool("useProcessEngine") ?? false) : false;
+    useForegroundProcess = Platform.isAndroid ? (provider.getBool("useForegroundProcess") ?? false) : false;
   }
 
   Future<bool> reset() async {
@@ -138,4 +139,6 @@ class IntifaceConfigurationRepository {
   set currentDeviceConfigVersion(String value) => provider.setString("currentDeviceConfigVersion", value);
   bool get useProcessEngine => provider.getBool("useProcessEngine")!;
   set useProcessEngine(bool value) => provider.setBool("useProcessEngine", value);
+  bool get useForegroundProcess => provider.getBool("useForegroundProcess")!;
+  set useForegroundProcess(bool value) => provider.setBool("useForegroundProcess", value);
 }

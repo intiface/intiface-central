@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -183,6 +184,44 @@ class SettingWidget extends StatelessWidget {
               }
 
               tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
+
+              if (Platform.isAndroid) {
+                var mobileSettings = [
+                  SettingsTile.switchTile(
+                      enabled: !engineIsRunning,
+                      initialValue: cubit.useForegroundProcess,
+                      onToggle: (value) {
+                        cubit.useForegroundProcess = value;
+                        showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('App needs restart'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: const <Widget>[
+                                    Text(
+                                        'Changing to/from foregrounding requires an app restart. Please close and reopen the application to use foregrounding.'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Ok'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      title: const Text("Use Foreground Process"))
+                ];
+                tiles.add(SettingsSection(title: const Text("Mobile Settings"), tiles: mobileSettings));
+              }
 
               tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
                 CustomSettingsTile(

@@ -22,7 +22,7 @@ class EngineRepository {
   final IntifaceConfigurationRepository _configRepo;
   StreamController<EngineOutput> _engineMessageStream = StreamController.broadcast();
 
-  EngineRepository(this._provider, this._configRepo) {}
+  EngineRepository(this._provider, this._configRepo);
 
   Future<void> start() async {
     _engineMessageStream.close();

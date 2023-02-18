@@ -110,6 +110,11 @@ class UseProcessEngine extends IntifaceConfigurationState {
   UseProcessEngine(this.value);
 }
 
+class UseForegroundProcess extends IntifaceConfigurationState {
+  final bool value;
+  UseForegroundProcess(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -318,5 +323,14 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   bool get useProcessEngine {
     return _repo.useProcessEngine;
+  }
+
+  set useForegroundProcess(bool value) {
+    _repo.useForegroundProcess = value;
+    emit(UseForegroundProcess(value));
+  }
+
+  bool get useForegroundProcess {
+    return _repo.useForegroundProcess;
   }
 }
