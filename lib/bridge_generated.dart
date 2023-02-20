@@ -51,6 +51,7 @@ class EngineOptionsExternal {
   final int? deviceWebsocketServerPort;
   final bool crashMainThread;
   final bool crashTaskThread;
+  final String? websocketClientAddress;
 
   EngineOptionsExternal({
     this.sentryApiKey,
@@ -76,6 +77,7 @@ class EngineOptionsExternal {
     this.deviceWebsocketServerPort,
     required this.crashMainThread,
     required this.crashTaskThread,
+    this.websocketClientAddress,
   });
 }
 
@@ -287,6 +289,8 @@ class IntifaceEngineFlutterBridgePlatform
         api2wire_opt_box_autoadd_u16(apiObj.deviceWebsocketServerPort);
     wireObj.crash_main_thread = api2wire_bool(apiObj.crashMainThread);
     wireObj.crash_task_thread = api2wire_bool(apiObj.crashTaskThread);
+    wireObj.websocket_client_address =
+        api2wire_opt_String(apiObj.websocketClientAddress);
   }
 }
 
@@ -594,6 +598,8 @@ class wire_EngineOptionsExternal extends ffi.Struct {
 
   @ffi.Bool()
   external bool crash_task_thread;
+
+  external ffi.Pointer<wire_uint_8_list> websocket_client_address;
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<

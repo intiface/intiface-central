@@ -38,6 +38,7 @@ typedef struct wire_EngineOptionsExternal {
   uint16_t *device_websocket_server_port;
   bool crash_main_thread;
   bool crash_task_thread;
+  struct wire_uint_8_list *websocket_client_address;
 } wire_EngineOptionsExternal;
 
 typedef struct DartCObject *WireSyncReturn;
