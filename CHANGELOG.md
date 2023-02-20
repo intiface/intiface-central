@@ -1,3 +1,15 @@
+# v2.3.0 - 2023/02/19 (All Platforms)
+
+## Features
+
+- Update to Buttplug v7.0.2
+  - Hardware support updates for Kizuna, Svakom, Sakuraneko products
+- Add option for using foregrounding (Android only)
+
+## Bugfixes
+
+- Actually release the correct Linux version of the app this time. :|
+
 # v2.2.2 - 2023/01/16 (All platforms)
 
 ## Features
