@@ -3,6 +3,7 @@
 ## Features
 
 - Update to Intiface Engine 1.3.0, adding new Websocket Client connection option
+  - Engine v1.3.0 contains Buttplug v7.0.2, which also has some hardware protocol updates.
 
 # 1.0.2 (2023/01/30)
 
