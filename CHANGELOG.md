@@ -2,7 +2,11 @@
 
 ## Features
 
-- Update to Buttplug v7.0.2
+- Update to Flutter v3.7
+  - I guess we're changing colors now too since that changed the main theme color.
+- Update to Intiface Engine v1.3.0/Buttplug v7.0.2
+  - Fixes bug with unordered shutdown causing engine hangs
+  - Addition of Websocket Client Connector for Engine (no UI in Engine for this yet)
   - Hardware support updates for Kizuna, Svakom, Sakuraneko products
 - Add option for using foregrounding (Android only)
 
