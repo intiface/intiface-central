@@ -1,3 +1,9 @@
+# 1.0.3 (2023/02/19)
+
+## Features
+
+- Update to Intiface Engine 1.3.0, adding new Websocket Client connection option
+
 # 1.0.2 (2023/01/30)
 
 ## Bugfixes
