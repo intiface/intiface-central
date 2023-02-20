@@ -10,48 +10,48 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  device_info_plus: ^8.0.0
-  cupertino_icons: ^1.0.2
+  device_info_plus: ^8.1.0
+  cupertino_icons: ^1.0.5
   json_annotation: ^4.8.0
   flutter_local_notifications: ^13.0.0
-  flutter_rust_bridge: ^1.59.0
-  plugin_platform_interface: ^2.1.2  
-  freezed_annotation: ^2.1.0
+  flutter_rust_bridge: ^1.64.0
+  plugin_platform_interface: ^2.1.3
+  freezed_annotation: ^2.2.0
   ffi: ^2.0.1
-  path_provider: ^2.0.11
+  path_provider: ^2.0.12
   path: ^1.8.2
   window_manager: ^0.3.0
-  web_socket_channel: ^2.2.0
-  network_info_plus: ^3.0.1
-  permission_handler: ^10.0.0
-  bloc: ^8.1.0
-  flutter_bloc: ^8.1.1
+  web_socket_channel: ^2.3.0
+  network_info_plus: ^3.0.2
+  permission_handler: ^10.2.0
+  bloc: ^8.1.1
+  flutter_bloc: ^8.1.2
   equatable: ^2.0.5
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.0.17
   settings_ui: ^2.0.2
-  flutter_markdown: ^0.6.10+5
-  loggy: ^2.0.1+1
-  flutter_loggy: ^2.0.1
-  github: ^9.4.0
-  markdown: ^6.0.1
+  flutter_markdown: ^0.6.14
+  loggy: ^2.0.3
+  flutter_loggy: ^2.0.2
+  github: ^9.9.0
+  markdown: ^7.0.1
   version: ^3.0.2
-  package_info_plus: ^3.0.2
-  url_launcher: ^6.1.6
+  package_info_plus: ^3.0.3
+  url_launcher: ^6.1.9
   intl: ^0.18.0
-  easy_debounce: ^2.0.2+1
+  easy_debounce: ^2.0.3
   percent_indicator: ^4.2.2
   buttplug: ^0.0.2
-  flutter_foreground_task: ^3.10.0
+  flutter_foreground_task: ^4.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.6.0
-  build_runner: ^2.3.0
-  flutter_lints: ^2.0.0
-  msix: ^3.7.0
-  freezed: ^2.1.0+1
-  ffigen: ^7.2.4
+  json_serializable: ^6.6.1
+  build_runner: ^2.3.3
+  flutter_lints: ^2.0.1
+  #msix: ^3.8.1
+  freezed: ^2.3.2
+  ffigen: ^7.2.6
   flutter_launcher_icons: ^0.11.0
 
 flutter:
@@ -61,15 +61,15 @@ flutter:
     - assets/
     - assets/icons/
 
-msix_config:
-  display_name: Intiface® Central
-  publisher_display_name: Nonpolynomial Labs, LLC
-  identity_name: NonpolynomialLabsLLC.IntifaceCentral
-  publisher: CN=F86D9362-B08B-4275-8DB7-9799BD6BB826
-  logo_path: ./assets/icons/intiface_central_icon.png
-  install_certificate: false
-  msix_version: 2.2.2.0
-  capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
+#msix_config:
+#  display_name: Intiface® Central
+#  publisher_display_name: Nonpolynomial Labs, LLC
+#  identity_name: NonpolynomialLabsLLC.IntifaceCentral
+#  publisher: CN=F86D9362-B08B-4275-8DB7-9799BD6BB826
+#  logo_path: ./assets/icons/intiface_central_icon.png
+#  install_certificate: false
+#  msix_version: 2.3.0.0
+#  capabilities: internetClient, internetClientServer, privateNetworkClientServer, humaninterfacedevice, bluetooth, usb, serialcommunication
 
 flutter_icons:
   android: "launcher_icon"
