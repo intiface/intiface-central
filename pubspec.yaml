@@ -42,6 +42,7 @@ dependencies:
   percent_indicator: ^4.2.2
   buttplug: ^0.0.2
   flutter_foreground_task: ^4.1.0
+  tuple: ^2.0.1
 
 dev_dependencies:
   flutter_test:
