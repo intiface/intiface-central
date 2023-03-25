@@ -40,10 +40,10 @@ run_task = "android-ndk-build"
 
 [tasks.build-android]
 # dependencies = ["android-aarch64", "android-arm7", "android-x86_64"]
-# dependencies = ["android-aarch64", "android-arm7"]
+dependencies = ["android-aarch64", "android-arm7"]
 # dependencies = ["android-aarch64", "android-x86_64"]
 # dependencies = ["android-x86_64"]
-dependencies = ["android-aarch64"]
+# dependencies = ["android-aarch64"]
 
 [tasks.test-ignored]
 args = ["test", "--release", "--", "--ignored"]
