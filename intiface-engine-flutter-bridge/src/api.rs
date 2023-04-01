@@ -149,7 +149,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       let notify_clone = notify.clone();
       futures::join!(
         async move {
-          if let Err(e) = engine.run(&options, Some(Arc::new(frontend))).await {
+          if let Err(e) = engine.run(&options, Some(Arc::new(frontend)), false).await {
             error!("Error running engine: {:?}", e);
           }
           notify_clone.notify_waiters();
