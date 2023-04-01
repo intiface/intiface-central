@@ -10,6 +10,7 @@ import 'package:intiface_central/body_widget.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/control_widget.dart';
 import 'package:intiface_central/device/device_manager_bloc.dart';
+import 'package:intiface_central/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/engine/foreground_task_library_engine_provider.dart';
@@ -161,6 +162,8 @@ class IntifaceCentralApp extends StatelessWidget {
     var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
+    var userConfigCubit = UserDeviceConfigurationCubit(IntifacePaths.userDeviceConfigFile);
+
     var networkCubit = await NetworkInfoCubit.create();
 
     var engineControlBloc = EngineControlBloc(engineRepo);
@@ -213,6 +216,10 @@ class IntifaceCentralApp extends StatelessWidget {
       if (state is EngineStoppedState) {
         deviceControlBloc.add(DeviceManagerEngineStoppedEvent());
       }
+      if (state is DeviceConnectedState) {
+        logInfo("Updating device index to ${state.index}");
+        userConfigCubit.updateDeviceIndex(state.identifier, state.index);
+      }
     });
 
     var assetCubit = await AssetCubit.create();
@@ -250,6 +257,7 @@ class IntifaceCentralApp extends StatelessWidget {
       BlocProvider(create: (context) => configCubit),
       BlocProvider(create: (context) => networkCubit),
       BlocProvider(create: (context) => errorNotifierCubit),
+      BlocProvider(create: (context) => userConfigCubit),
     ], child: const IntifaceCentralView());
   }
 

@@ -34,6 +34,19 @@ Map<String, dynamic> _$UserDeviceConfigurationFileToJson(
       'user-configs': instance.userConfigs,
     };
 
+UserConfigPair _$UserConfigPairFromJson(Map<String, dynamic> json) =>
+    UserConfigPair(
+      UserConfigDeviceIdentifier.fromJson(
+          json['identifier'] as Map<String, dynamic>),
+      UserConfig.fromJson(json['config'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$UserConfigPairToJson(UserConfigPair instance) =>
+    <String, dynamic>{
+      'identifier': instance.identifier,
+      'config': instance.config,
+    };
+
 UserDeviceConfigurationFileContent _$UserDeviceConfigurationFileContentFromJson(
         Map<String, dynamic> json) =>
     UserDeviceConfigurationFileContent()
@@ -42,16 +55,14 @@ UserDeviceConfigurationFileContent _$UserDeviceConfigurationFileContentFromJson(
             k, UserProtocolDefinition.fromJson(e as Map<String, dynamic>)),
       )
       ..devices = (json['devices'] as List<dynamic>)
-          .map((e) => UserConfigDeviceConverter.instance.fromJson(e as List))
+          .map((e) => UserConfigPair.fromJson(e as Map<String, dynamic>))
           .toList();
 
 Map<String, dynamic> _$UserDeviceConfigurationFileContentToJson(
         UserDeviceConfigurationFileContent instance) =>
     <String, dynamic>{
       'specifiers': instance.specifiers,
-      'devices': instance.devices
-          .map(UserConfigDeviceConverter.instance.toJson)
-          .toList(),
+      'devices': instance.devices,
     };
 
 WebsocketProtocolDefinition _$WebsocketProtocolDefinitionFromJson(
@@ -78,21 +89,30 @@ Map<String, dynamic> _$UserProtocolDefinitionToJson(
       'websocket': instance.websocket,
     };
 
-ServerDeviceIdentifier _$ServerDeviceIdentifierFromJson(
+UserConfigDeviceIdentifier _$UserConfigDeviceIdentifierFromJson(
         Map<String, dynamic> json) =>
-    ServerDeviceIdentifier(
+    UserConfigDeviceIdentifier(
       json['address'] as String,
       json['protocol'] as String,
-      json['identifier'] as String,
+      json['identifier'] as String?,
     );
 
-Map<String, dynamic> _$ServerDeviceIdentifierToJson(
-        ServerDeviceIdentifier instance) =>
-    <String, dynamic>{
-      'address': instance.address,
-      'protocol': instance.protocol,
-      'identifier': instance.identifier,
-    };
+Map<String, dynamic> _$UserConfigDeviceIdentifierToJson(
+    UserConfigDeviceIdentifier instance) {
+  final val = <String, dynamic>{
+    'address': instance.address,
+    'protocol': instance.protocol,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('identifier', instance.identifier);
+  return val;
+}
 
 UserConfig _$UserConfigFromJson(Map<String, dynamic> json) => UserConfig()
   ..displayName = json['displayName'] as String?
@@ -104,14 +124,22 @@ UserConfig _$UserConfigFromJson(Map<String, dynamic> json) => UserConfig()
       : ServerGenericDeviceMessageAttributes.fromJson(
           json['messageAttributes'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$UserConfigToJson(UserConfig instance) =>
-    <String, dynamic>{
-      'displayName': instance.displayName,
-      'allow': instance.allow,
-      'deny': instance.deny,
-      'index': instance.index,
-      'messageAttributes': instance.messageAttributes,
-    };
+Map<String, dynamic> _$UserConfigToJson(UserConfig instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('displayName', instance.displayName);
+  writeNotNull('allow', instance.allow);
+  writeNotNull('deny', instance.deny);
+  writeNotNull('index', instance.index);
+  writeNotNull('messageAttributes', instance.messageAttributes);
+  return val;
+}
 
 ServerGenericDeviceMessageAttributes
     _$ServerGenericDeviceMessageAttributesFromJson(Map<String, dynamic> json) =>

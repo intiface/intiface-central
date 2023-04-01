@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
+import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
@@ -26,11 +27,10 @@ class ClientDisconnectedState extends EngineControlState {}
 class DeviceConnectedState extends EngineControlState {
   final String name;
   final String? displayName;
-  final String address;
-  final String protocol;
   final int index;
+  final UserConfigDeviceIdentifier identifier;
 
-  DeviceConnectedState(this.name, this.displayName, this.index, this.address, this.protocol);
+  DeviceConnectedState(this.name, this.displayName, this.index, this.identifier);
 }
 
 class DeviceDisconnectedState extends EngineControlState {
@@ -69,9 +69,9 @@ class EngineControlEventBackdoorMessage extends EngineControlEvent {
 class EngineDevice {
   final int index;
   final String name;
-  final String address;
+  final UserConfigDeviceIdentifier identifier;
 
-  const EngineDevice(this.index, this.name, this.address);
+  const EngineDevice(this.index, this.name, this.identifier);
 }
 
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
@@ -127,9 +127,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           }
           if (engineMessage.deviceConnected != null) {
             var deviceInfo = engineMessage.deviceConnected!;
-            _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.address);
+            _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier);
             return DeviceConnectedState(
-                deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.address, "lovense");
+                deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.identifier);
           }
           if (engineMessage.deviceDisconnected != null) {
             _devices.remove(engineMessage.deviceDisconnected!.index);

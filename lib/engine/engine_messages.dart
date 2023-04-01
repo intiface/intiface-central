@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'engine_messages.g.dart';
@@ -125,11 +126,11 @@ class ClientDisconnected {
 class DeviceConnected {
   final String name;
   final int index;
-  final String address;
+  final UserConfigDeviceIdentifier identifier;
   @JsonKey(name: "display_name", defaultValue: null)
   final String? displayName;
   factory DeviceConnected.fromJson(Map<String, dynamic> json) => _$DeviceConnectedFromJson(json);
-  DeviceConnected({required this.name, required this.index, required this.address, this.displayName});
+  DeviceConnected({required this.name, required this.index, required this.identifier, this.displayName});
 }
 
 @JsonSerializable()

@@ -162,7 +162,8 @@ DeviceConnected _$DeviceConnectedFromJson(Map<String, dynamic> json) =>
     DeviceConnected(
       name: json['name'] as String,
       index: json['index'] as int,
-      address: json['address'] as String,
+      identifier: UserConfigDeviceIdentifier.fromJson(
+          json['identifier'] as Map<String, dynamic>),
       displayName: json['display_name'] as String?,
     );
 
@@ -170,7 +171,7 @@ Map<String, dynamic> _$DeviceConnectedToJson(DeviceConnected instance) =>
     <String, dynamic>{
       'name': instance.name,
       'index': instance.index,
-      'address': instance.address,
+      'identifier': instance.identifier,
       'display_name': instance.displayName,
     };
 

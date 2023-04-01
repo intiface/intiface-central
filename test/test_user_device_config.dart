@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intiface_central/configuration/user_device_configuration_file.dart';
+import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
 
 void checkConfigFile(UserDeviceConfigurationFile configFile) {
   expect(configFile.version.major, 2);
   expect(configFile.version.minor, 6);
   expect(configFile.userConfigs.specifiers["lovense"]!.websocket.names.contains("LVSDevice"), isTrue);
-  ServerDeviceIdentifier ident = const ServerDeviceIdentifier("8A3D9FAC2A45", "lovense", "Z");
+  UserConfigDeviceIdentifier ident = const UserConfigDeviceIdentifier("8A3D9FAC2A45", "lovense", "Z");
   expect(configFile.userConfigs.deviceMap.length, 1);
   expect(configFile.userConfigs.deviceMap.keys.contains(ident), isTrue);
   expect(configFile.userConfigs.deviceMap[ident]!.displayName, "Test Device");
@@ -56,7 +56,7 @@ void main() {
     configFile.version.minor = 6;
     configFile.userConfigs.specifiers["lovense"] = UserProtocolDefinition();
     configFile.userConfigs.specifiers["lovense"]!.websocket.names.add("LVSDevice");
-    ServerDeviceIdentifier ident = const ServerDeviceIdentifier("8A3D9FAC2A45", "lovense", "Z");
+    UserConfigDeviceIdentifier ident = const UserConfigDeviceIdentifier("8A3D9FAC2A45", "lovense", "Z");
     UserConfig config = UserConfig();
     config.displayName = "Test Device";
     config.index = 1;

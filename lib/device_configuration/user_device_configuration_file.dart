@@ -1,6 +1,4 @@
 // Device Utility Classes
-import 'dart:developer';
-
 import 'package:buttplug/buttplug.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -29,47 +27,27 @@ class UserDeviceConfigurationFile {
   UserDeviceConfigurationFile();
 }
 
-class UserConfigDevice extends Tuple2<ServerDeviceIdentifier, UserConfig> {
-  const UserConfigDevice(ServerDeviceIdentifier item1, UserConfig item2) : super(item1, item2);
-  ServerDeviceIdentifier get identifier => item1;
-  UserConfig get config => item2;
-}
-
-class UserConfigDeviceConverter implements JsonConverter<UserConfigDevice, List<dynamic>> {
-  static const instance = UserConfigDeviceConverter();
-
-  const UserConfigDeviceConverter();
-
-  @override
-  UserConfigDevice fromJson(dynamic json) {
-    final identifier = ServerDeviceIdentifier.fromJson(json[0]);
-    final config = UserConfig.fromJson(json[1]);
-
-    return UserConfigDevice(identifier, config);
-  }
-
-  @override
-  List<dynamic> toJson(UserConfigDevice entry) {
-    return [entry.identifier, entry.config];
-  }
+@JsonSerializable()
+class UserConfigPair {
+  late UserConfigDeviceIdentifier identifier;
+  late UserConfig config;
+  UserConfigPair(this.identifier, this.config);
+  Map<String, dynamic> toJson() => _$UserConfigPairToJson(this);
+  factory UserConfigPair.fromJson(Map<String, dynamic> json) => _$UserConfigPairFromJson(json);
 }
 
 @JsonSerializable()
-@UserConfigDeviceConverter.instance
 class UserDeviceConfigurationFileContent {
   // Protocol to definition mapping
   Map<String, UserProtocolDefinition> specifiers = {};
   //@JsonKey(name: "devices")
-  List<UserConfigDevice> devices = [];
-  Map<ServerDeviceIdentifier, UserConfig>? _deviceMap;
-  Map<ServerDeviceIdentifier, UserConfig> get deviceMap {
-    if (_deviceMap == null) {
-      _deviceMap = {};
-      for (var config in devices) {
-        _deviceMap![config.identifier] = config.config;
-      }
+  List<UserConfigPair> devices = [];
+  Map<UserConfigDeviceIdentifier, UserConfig> get deviceMap {
+    Map<UserConfigDeviceIdentifier, UserConfig> deviceMap = {};
+    for (var config in devices) {
+      deviceMap[config.identifier] = config.config;
     }
-    return _deviceMap!;
+    return deviceMap;
   }
 
   Map<String, dynamic> toJson() => _$UserDeviceConfigurationFileContentToJson(this);
@@ -96,25 +74,31 @@ class UserProtocolDefinition {
 }
 
 @JsonSerializable()
-class ServerDeviceIdentifier extends Equatable {
+class UserConfigDeviceIdentifier extends Equatable {
   final String address;
   final String protocol;
-  final String identifier;
+  @JsonKey(includeIfNull: false)
+  final String? identifier;
 
   @override
-  List<Object> get props => [address, protocol, identifier];
+  List<dynamic> get props => [address, protocol, identifier];
 
-  Map<String, dynamic> toJson() => _$ServerDeviceIdentifierToJson(this);
-  factory ServerDeviceIdentifier.fromJson(Map<String, dynamic> json) => _$ServerDeviceIdentifierFromJson(json);
-  const ServerDeviceIdentifier(this.address, this.protocol, this.identifier);
+  Map<String, dynamic> toJson() => _$UserConfigDeviceIdentifierToJson(this);
+  factory UserConfigDeviceIdentifier.fromJson(Map<String, dynamic> json) => _$UserConfigDeviceIdentifierFromJson(json);
+  const UserConfigDeviceIdentifier(this.address, this.protocol, this.identifier);
 }
 
 @JsonSerializable()
 class UserConfig {
+  @JsonKey(includeIfNull: false)
   String? displayName;
+  @JsonKey(includeIfNull: false)
   bool? allow;
+  @JsonKey(includeIfNull: false)
   bool? deny;
+  @JsonKey(includeIfNull: false)
   int? index;
+  @JsonKey(includeIfNull: false)
   ServerGenericDeviceMessageAttributes? messageAttributes;
   Map<String, dynamic> toJson() => _$UserConfigToJson(this);
   factory UserConfig.fromJson(Map<String, dynamic> json) => _$UserConfigFromJson(json);
@@ -164,15 +148,23 @@ class RawDeviceMessageAttributes {
 
 @JsonSerializable(fieldRename: FieldRename.pascal, includeIfNull: false)
 class ServerDeviceMessageAttributes {
+  @JsonKey(includeIfNull: false)
   List<ServerGenericDeviceMessageAttributes>? scalarCmd;
+  @JsonKey(includeIfNull: false)
   List<ServerGenericDeviceMessageAttributes>? rotateCmd;
+  @JsonKey(includeIfNull: false)
   List<ServerGenericDeviceMessageAttributes>? linearCmd;
+  @JsonKey(includeIfNull: false)
   List<SensorDeviceMessageAttributes>? sensorReadCmd;
+  @JsonKey(includeIfNull: false)
   List<SensorDeviceMessageAttributes>? sensorSubscribeCmd;
   // This is the only message that should always exist, so don't mark it nullable. If it's null, our parser should throw.
   NullDeviceMessageAttributes stopDeviceCmd = NullDeviceMessageAttributes();
+  @JsonKey(includeIfNull: false)
   List<RawDeviceMessageAttributes>? rawReadCmd;
+  @JsonKey(includeIfNull: false)
   List<RawDeviceMessageAttributes>? rawWriteCmd;
+  @JsonKey(includeIfNull: false)
   List<RawDeviceMessageAttributes>? rawSubscribeCmd;
 
   Map<String, dynamic> toJson() => _$ServerDeviceMessageAttributesToJson(this);
