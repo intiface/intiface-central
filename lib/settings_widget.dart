@@ -233,7 +233,58 @@ class SettingWidget extends StatelessWidget {
                             barrierDismissible: false, // user must tap button!
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text('Reset Configuration'),
+                                title: const Text('Reset User Device Configuration'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: const <Widget>[
+                                      Text(
+                                          'This will erase the user device configuration, which stores per-device info. It is recommended to stop and restart the application after this step.'),
+                                      Text('Would you like to continue?'),
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Ok'),
+                                    onPressed: () async {
+                                      logWarning("Running user device configuration reset");
+                                      // This is gross and a bug, but until we can check context mounting across asyncs in Flutter
+                                      // 3.4+, we're stuck.
+                                      var navigator = Navigator.of(context);
+                                      var resetCubit = BlocProvider.of<AppResetCubit>(context);
+                                      // Delete all file assets
+                                      if (await IntifacePaths.userDeviceConfigFile.exists()) {
+                                        await IntifacePaths.userDeviceConfigFile.delete();
+                                      }
+                                      logWarning("User device configuration reset finished");
+                                      navigator.pop();
+                                      resetCubit.reset();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      : null,
+                  child: const Text("Reset User Device Configuration"),
+                )),
+                CustomSettingsTile(
+                    child: TextButton(
+                  onPressed: !engineIsRunning
+                      ? () {
+                          showDialog<void>(
+                            context: context,
+                            barrierDismissible: false, // user must tap button!
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Reset Application to Defaults'),
                                 content: SingleChildScrollView(
                                   child: ListBody(
                                     children: const <Widget>[
