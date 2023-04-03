@@ -60,7 +60,7 @@ void main() {
     UserConfig config = UserConfig();
     config.displayName = "Test Device";
     config.index = 1;
-    configFile.userConfigs.devices.add(UserConfigDevice(ident, config));
+    configFile.userConfigs.devices.add(UserConfigPair(ident, config));
     checkConfigFile(configFile);
     var jsonConfig = jsonEncode(configFile.toJson());
     var decodedConfig = UserDeviceConfigurationFile.fromJson(jsonDecode(jsonConfig));
