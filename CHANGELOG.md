@@ -1,3 +1,11 @@
+# v2.3.1 - 2023/04/14 (Android)
+
+## Features
+
+- Builds now include binaries for 32/64-bit ARM CPUs
+- Removes background scanning perm on Android
+  - Should allow app to pass review, but will break scanning in background for now.
+
 # v2.3.0 - 2023/02/19 (All Platforms)
 
 ## Features
