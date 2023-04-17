@@ -3,6 +3,8 @@ use crate::{
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
+use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition}, server::device::ServerDeviceIdentifier};
+pub use buttplug::{util::device_configuration::UserConfigDeviceIdentifier};
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
@@ -188,4 +190,71 @@ pub fn send_backend_server_message(msg: String) {
       .send(msg)
       .expect("This should be infallible since we already checked for receivers");
   }
+}
+
+#[frb(mirror(UserConfigDeviceIdentifier))]
+pub struct _UserConfigDeviceIdentifier {
+  address: String,
+  protocol: String,
+  identifier: Option<String>,
+}
+
+pub struct ExposedUserDeviceConfig {
+  pub identifier: UserConfigDeviceIdentifier,
+  pub name: String,
+  pub display_name: Option<String>,
+  pub allow: Option<bool>,
+  pub deny: Option<bool>,
+  pub reserved_index: Option<u32>
+}
+
+impl From<&UserDeviceConfigPair> for ExposedUserDeviceConfig {
+  fn from(value: &UserDeviceConfigPair) -> Self {
+    Self {
+      identifier: value.identifier().clone(),
+      name: "".to_owned(),
+      display_name: value.config().display_name().clone(),
+      allow: value.config().allow().clone(),
+      deny: value.config().deny().clone(),
+      reserved_index: value.config().index().clone()
+    }
+  }
+}
+
+impl Into<UserDeviceConfigPair> for ExposedUserDeviceConfig {
+  fn into(self) -> UserDeviceConfigPair {
+    let mut config = UserDeviceConfig::default();
+    config.set_display_name(self.display_name);
+    config.set_allow(self.allow);
+    config.set_deny(self.deny);
+    config.set_index(self.reserved_index);
+    UserDeviceConfigPair::new(self.identifier, config)
+  }
+}
+
+pub fn get_user_device_configs(device_config_json: String, user_config_json: String) -> Vec<ExposedUserDeviceConfig> {
+  let mut dcm_builder = load_protocol_configs(Some(device_config_json.to_owned()), Some(user_config_json.to_owned()), false).unwrap();
+  let dcm = dcm_builder.finish().unwrap();
+  let raw_user_configs = load_user_configs(&user_config_json);
+  let mut config_out = vec!();
+  for config in raw_user_configs {
+    let maybe_attrs = dcm.protocol_device_attributes(&ServerDeviceIdentifier::from(config.identifier().clone()), &[]);
+    if let Some(attrs) = maybe_attrs {
+      let mut user_config = ExposedUserDeviceConfig::from(&config);
+      user_config.name = attrs.name().to_owned();
+      config_out.push(user_config)
+    }
+  }
+  config_out
+}
+
+pub fn generate_user_device_config_file(user_config: Vec<ExposedUserDeviceConfig>) -> String {
+  let mut config_file = ProtocolConfiguration::new(2, 0);
+  let mut user_config_def = UserConfigDefinition::default();
+  let configs: Vec<UserDeviceConfigPair> = user_config.into_iter().map(|x| x.into()).collect();
+  if !configs.is_empty() {
+    user_config_def.set_user_device_configs(Some(configs));
+    config_file.user_configs = Some(user_config_def);
+  }
+  config_file.to_json()
 }
