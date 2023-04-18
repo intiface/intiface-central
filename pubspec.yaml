@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   json_annotation: ^4.8.0
   flutter_local_notifications: ^13.0.0
-  flutter_rust_bridge: ^1.64.0
+  flutter_rust_bridge: ^1.75.0
   plugin_platform_interface: ^2.1.3
   freezed_annotation: ^2.2.0
   ffi: ^2.0.1
