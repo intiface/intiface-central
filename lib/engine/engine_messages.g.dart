@@ -158,11 +158,37 @@ ClientDisconnected _$ClientDisconnectedFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ClientDisconnectedToJson(ClientDisconnected instance) =>
     <String, dynamic>{};
 
+SerializableUserConfigDeviceIdentifier
+    _$SerializableUserConfigDeviceIdentifierFromJson(
+            Map<String, dynamic> json) =>
+        SerializableUserConfigDeviceIdentifier(
+          json['address'] as String,
+          json['protocol'] as String,
+          json['identifier'] as String?,
+        );
+
+Map<String, dynamic> _$SerializableUserConfigDeviceIdentifierToJson(
+    SerializableUserConfigDeviceIdentifier instance) {
+  final val = <String, dynamic>{
+    'address': instance.address,
+    'protocol': instance.protocol,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('identifier', instance.identifier);
+  return val;
+}
+
 DeviceConnected _$DeviceConnectedFromJson(Map<String, dynamic> json) =>
     DeviceConnected(
       name: json['name'] as String,
       index: json['index'] as int,
-      identifier: UserConfigDeviceIdentifier.fromJson(
+      identifier: SerializableUserConfigDeviceIdentifier.fromJson(
           json['identifier'] as Map<String, dynamic>),
       displayName: json['display_name'] as String?,
     );

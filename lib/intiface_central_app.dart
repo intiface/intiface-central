@@ -162,7 +162,7 @@ class IntifaceCentralApp extends StatelessWidget {
     var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
-    var userConfigCubit = UserDeviceConfigurationCubit(IntifacePaths.userDeviceConfigFile);
+    var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
     var networkCubit = await NetworkInfoCubit.create();
 
@@ -218,7 +218,7 @@ class IntifaceCentralApp extends StatelessWidget {
       }
       if (state is DeviceConnectedState) {
         logInfo("Updating device index to ${state.index}");
-        userConfigCubit.updateDeviceIndex(state.identifier, state.index);
+        await userConfigCubit.updateDeviceIndex(state.identifier, state.index);
       }
     });
 

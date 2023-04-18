@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:equatable/equatable.dart';
 
 part 'engine_messages.g.dart';
 
@@ -123,10 +124,30 @@ class ClientDisconnected {
 }
 
 @JsonSerializable()
+class SerializableUserConfigDeviceIdentifier extends Equatable {
+  final String address;
+  final String protocol;
+  @JsonKey(includeIfNull: false)
+  final String? identifier;
+
+  @override
+  List<dynamic> get props => [address, protocol, identifier];
+
+  Map<String, dynamic> toJson() => _$SerializableUserConfigDeviceIdentifierToJson(this);
+  factory SerializableUserConfigDeviceIdentifier.fromJson(Map<String, dynamic> json) =>
+      _$SerializableUserConfigDeviceIdentifierFromJson(json);
+  const SerializableUserConfigDeviceIdentifier(this.address, this.protocol, this.identifier);
+
+  UserConfigDeviceIdentifier toUserConfigDeviceIdentifier() {
+    return UserConfigDeviceIdentifier(address: address, protocol: protocol, identifier: identifier);
+  }
+}
+
+@JsonSerializable()
 class DeviceConnected {
   final String name;
   final int index;
-  final UserConfigDeviceIdentifier identifier;
+  final SerializableUserConfigDeviceIdentifier identifier;
   @JsonKey(name: "display_name", defaultValue: null)
   final String? displayName;
   factory DeviceConnected.fromJson(Map<String, dynamic> json) => _$DeviceConnectedFromJson(json);

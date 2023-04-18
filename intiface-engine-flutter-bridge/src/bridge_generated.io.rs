@@ -21,7 +21,29 @@ pub extern "C" fn wire_send_backend_server_message(port_: i64, msg: *mut wire_ui
   wire_send_backend_server_message_impl(port_, msg)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_get_user_device_configs(
+  port_: i64,
+  device_config_json: *mut wire_uint_8_list,
+  user_config_json: *mut wire_uint_8_list,
+) {
+  wire_get_user_device_configs_impl(port_, device_config_json, user_config_json)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_generate_user_device_config_file(
+  port_: i64,
+  user_config: *mut wire_list_exposed_user_device_config,
+) {
+  wire_generate_user_device_config_file_impl(port_, user_config)
+}
+
 // Section: allocate functions
+
+#[no_mangle]
+pub extern "C" fn new_box_autoadd_bool_0(value: bool) -> *mut bool {
+  support::new_leak_box_ptr(value)
+}
 
 #[no_mangle]
 pub extern "C" fn new_box_autoadd_engine_options_external_0() -> *mut wire_EngineOptionsExternal {
@@ -31,6 +53,22 @@ pub extern "C" fn new_box_autoadd_engine_options_external_0() -> *mut wire_Engin
 #[no_mangle]
 pub extern "C" fn new_box_autoadd_u16_0(value: u16) -> *mut u16 {
   support::new_leak_box_ptr(value)
+}
+
+#[no_mangle]
+pub extern "C" fn new_box_autoadd_u32_0(value: u32) -> *mut u32 {
+  support::new_leak_box_ptr(value)
+}
+
+#[no_mangle]
+pub extern "C" fn new_list_exposed_user_device_config_0(
+  len: i32,
+) -> *mut wire_list_exposed_user_device_config {
+  let wrap = wire_list_exposed_user_device_config {
+    ptr: support::new_leak_vec_ptr(<wire_ExposedUserDeviceConfig>::new_with_null_ptr(), len),
+    len,
+  };
+  support::new_leak_box_ptr(wrap)
 }
 
 #[no_mangle]
@@ -53,6 +91,11 @@ impl Wire2Api<String> for *mut wire_uint_8_list {
   }
 }
 
+impl Wire2Api<bool> for *mut bool {
+  fn wire2api(self) -> bool {
+    unsafe { *support::box_from_leak_ptr(self) }
+  }
+}
 impl Wire2Api<EngineOptionsExternal> for *mut wire_EngineOptionsExternal {
   fn wire2api(self) -> EngineOptionsExternal {
     let wrap = unsafe { support::box_from_leak_ptr(self) };
@@ -61,6 +104,11 @@ impl Wire2Api<EngineOptionsExternal> for *mut wire_EngineOptionsExternal {
 }
 impl Wire2Api<u16> for *mut u16 {
   fn wire2api(self) -> u16 {
+    unsafe { *support::box_from_leak_ptr(self) }
+  }
+}
+impl Wire2Api<u32> for *mut u32 {
+  fn wire2api(self) -> u32 {
     unsafe { *support::box_from_leak_ptr(self) }
   }
 }
@@ -94,12 +142,42 @@ impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
     }
   }
 }
+impl Wire2Api<ExposedUserDeviceConfig> for wire_ExposedUserDeviceConfig {
+  fn wire2api(self) -> ExposedUserDeviceConfig {
+    ExposedUserDeviceConfig {
+      identifier: self.identifier.wire2api(),
+      name: self.name.wire2api(),
+      display_name: self.display_name.wire2api(),
+      allow: self.allow.wire2api(),
+      deny: self.deny.wire2api(),
+      reserved_index: self.reserved_index.wire2api(),
+    }
+  }
+}
+impl Wire2Api<Vec<ExposedUserDeviceConfig>> for *mut wire_list_exposed_user_device_config {
+  fn wire2api(self) -> Vec<ExposedUserDeviceConfig> {
+    let vec = unsafe {
+      let wrap = support::box_from_leak_ptr(self);
+      support::vec_from_leak_ptr(wrap.ptr, wrap.len)
+    };
+    vec.into_iter().map(Wire2Api::wire2api).collect()
+  }
+}
 
 impl Wire2Api<Vec<u8>> for *mut wire_uint_8_list {
   fn wire2api(self) -> Vec<u8> {
     unsafe {
       let wrap = support::box_from_leak_ptr(self);
       support::vec_from_leak_ptr(wrap.ptr, wrap.len)
+    }
+  }
+}
+impl Wire2Api<UserConfigDeviceIdentifier> for wire_UserConfigDeviceIdentifier {
+  fn wire2api(self) -> UserConfigDeviceIdentifier {
+    UserConfigDeviceIdentifier {
+      address: self.address.wire2api(),
+      protocol: self.protocol.wire2api(),
+      identifier: self.identifier.wire2api(),
     }
   }
 }
@@ -136,9 +214,35 @@ pub struct wire_EngineOptionsExternal {
 
 #[repr(C)]
 #[derive(Clone)]
+pub struct wire_ExposedUserDeviceConfig {
+  identifier: wire_UserConfigDeviceIdentifier,
+  name: *mut wire_uint_8_list,
+  display_name: *mut wire_uint_8_list,
+  allow: *mut bool,
+  deny: *mut bool,
+  reserved_index: *mut u32,
+}
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct wire_list_exposed_user_device_config {
+  ptr: *mut wire_ExposedUserDeviceConfig,
+  len: i32,
+}
+
+#[repr(C)]
+#[derive(Clone)]
 pub struct wire_uint_8_list {
   ptr: *mut u8,
   len: i32,
+}
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct wire_UserConfigDeviceIdentifier {
+  address: *mut wire_uint_8_list,
+  protocol: *mut wire_uint_8_list,
+  identifier: *mut wire_uint_8_list,
 }
 
 // Section: impl NewWithNullPtr
@@ -181,6 +285,47 @@ impl NewWithNullPtr for wire_EngineOptionsExternal {
       crash_task_thread: Default::default(),
       websocket_client_address: core::ptr::null_mut(),
     }
+  }
+}
+
+impl Default for wire_EngineOptionsExternal {
+  fn default() -> Self {
+    Self::new_with_null_ptr()
+  }
+}
+
+impl NewWithNullPtr for wire_ExposedUserDeviceConfig {
+  fn new_with_null_ptr() -> Self {
+    Self {
+      identifier: Default::default(),
+      name: core::ptr::null_mut(),
+      display_name: core::ptr::null_mut(),
+      allow: core::ptr::null_mut(),
+      deny: core::ptr::null_mut(),
+      reserved_index: core::ptr::null_mut(),
+    }
+  }
+}
+
+impl Default for wire_ExposedUserDeviceConfig {
+  fn default() -> Self {
+    Self::new_with_null_ptr()
+  }
+}
+
+impl NewWithNullPtr for wire_UserConfigDeviceIdentifier {
+  fn new_with_null_ptr() -> Self {
+    Self {
+      address: core::ptr::null_mut(),
+      protocol: core::ptr::null_mut(),
+      identifier: core::ptr::null_mut(),
+    }
+  }
+}
+
+impl Default for wire_UserConfigDeviceIdentifier {
+  fn default() -> Self {
+    Self::new_with_null_ptr()
   }
 }
 

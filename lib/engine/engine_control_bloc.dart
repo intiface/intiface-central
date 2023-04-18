@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
@@ -127,9 +127,10 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           }
           if (engineMessage.deviceConnected != null) {
             var deviceInfo = engineMessage.deviceConnected!;
-            _devices[deviceInfo.index] = EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier);
-            return DeviceConnectedState(
-                deviceInfo.name, deviceInfo.displayName, deviceInfo.index, deviceInfo.identifier);
+            _devices[deviceInfo.index] =
+                EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier.toUserConfigDeviceIdentifier());
+            return DeviceConnectedState(deviceInfo.name, deviceInfo.displayName, deviceInfo.index,
+                deviceInfo.identifier.toUserConfigDeviceIdentifier());
           }
           if (engineMessage.deviceDisconnected != null) {
             _devices.remove(engineMessage.deviceDisconnected!.index);

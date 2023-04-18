@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
+import 'package:intiface_central/bridge_generated.dart';
+//import 'package:intiface_central/device_configuration/user_device_configuration_file.dart';
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:intiface_central/ffi.dart';
 import 'package:loggy/loggy.dart';
 
 class UserDeviceConfigurationState {}
@@ -11,45 +13,50 @@ class UserDeviceConfigurationState {}
 class UserDeviceConfigurationStateInitial extends UserDeviceConfigurationState {}
 
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
-  late UserDeviceConfigurationFile _configFile;
+  List<ExposedUserDeviceConfig> _configs = List.empty();
 
-  UserDeviceConfigurationCubit(File filePath) : super(UserDeviceConfigurationStateInitial()) {
-    // This is only ever run on program start so we're fine to check it synchronously.
-    try {
+  UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
+
+  static Future<UserDeviceConfigurationCubit> create() async {
+    var cubit = UserDeviceConfigurationCubit._();
+    if (!IntifacePaths.userDeviceConfigFile.existsSync()) {
+      await cubit._saveConfigFile();
+    }
+    if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
+      var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
       var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
-      _configFile = UserDeviceConfigurationFile.fromJson(jsonDecode(jsonConfig));
-      logInfo("User device config ${filePath.path} loaded from disk.");
-    } catch (e) {
-      if (IntifacePaths.userDeviceConfigFile.existsSync()) {
-        logError("Error loading user config file: ${e.toString()}. Removing and rebuilding.");
-      } else {
-        logInfo("User config file not found, assuming first run, rebuilding default.");
-      }
-      _configFile = UserDeviceConfigurationFile();
-      _configFile.version.major = 2;
-      _configFile.version.minor = 0;
-      IntifacePaths.userDeviceConfigFile.createSync(recursive: true);
-      _saveConfigFile();
+      cubit._configs = await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig);
     }
+    return cubit;
   }
 
-  void updateDeviceIndex(UserConfigDeviceIdentifier deviceIdentifier, int index) {
+  Future<void> updateDeviceIndex(UserConfigDeviceIdentifier deviceIdentifier, int index) async {
     // See if device already exists in config
-    if (_configFile.userConfigs.deviceMap.containsKey(deviceIdentifier)) {
-      logInfo("Device key exists");
-    } else {
-      logInfo("Device key ${jsonEncode(deviceIdentifier.toJson())} does not exist, adding");
-      // If not, add it.
-      var config = UserConfig();
-      config.index = index;
-      _configFile.userConfigs.devices.add(UserConfigPair(deviceIdentifier, config));
-      logInfo("New file ${jsonEncode(_configFile.toJson())}");
-      _saveConfigFile();
+    var new_config = ExposedUserDeviceConfig(
+        identifier: deviceIdentifier,
+        name: "Does not matter",
+        displayName: null,
+        reservedIndex: index,
+        allow: null,
+        deny: null);
+    for (var config in _configs) {
+      if (config.identifier == deviceIdentifier) {
+        new_config = ExposedUserDeviceConfig(
+            identifier: deviceIdentifier,
+            name: config.name,
+            displayName: config.displayName,
+            reservedIndex: index,
+            allow: config.allow,
+            deny: config.deny);
+      }
     }
+    _configs.clear();
+    _configs.add(new_config);
+    await _saveConfigFile();
   }
 
-  void _saveConfigFile() {
-    logInfo("SAVING CONFIG FILE");
-    IntifacePaths.userDeviceConfigFile.writeAsStringSync(jsonEncode(_configFile.toJson()));
+  Future<void> _saveConfigFile() async {
+    var jsonString = await api.generateUserDeviceConfigFile(userConfig: _configs);
+    await IntifacePaths.userDeviceConfigFile.writeAsString(jsonString);
   }
 }
