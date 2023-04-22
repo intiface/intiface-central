@@ -63,6 +63,13 @@ class DeviceConfigWidget extends StatelessWidget {
                   await userDeviceConfigCubit.updateDeviceAllow(config.identifier, value);
                 },
                 title: const Text("Only Connect to this Device")),
+            CustomSettingsTile(
+                child: TextButton(
+              child: const Text('Remove Device Configuration'),
+              onPressed: () async {
+                await userDeviceConfigCubit.removeDeviceConfig(config.identifier);
+              },
+            ))
           ]));
         }
 

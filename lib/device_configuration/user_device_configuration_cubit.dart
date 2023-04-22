@@ -113,6 +113,14 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await _updateConfig(deviceIdentifier, newConfig);
   }
 
+  Future<void> removeDeviceConfig(UserConfigDeviceIdentifier deviceIdentifier) async {
+    _configs.removeWhere((element) =>
+        element.identifier.address == deviceIdentifier.address &&
+        element.identifier.protocol == deviceIdentifier.protocol &&
+        element.identifier.identifier == deviceIdentifier.identifier);
+    await _saveConfigFile();
+  }
+
   // This is me being lazy about not wanting to implement equatable's immutable requirements.
   bool _compareIdentifiers(UserConfigDeviceIdentifier ident1, UserConfigDeviceIdentifier ident2) {
     return ident1.address == ident2.address &&
