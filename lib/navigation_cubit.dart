@@ -4,7 +4,9 @@ class NavigationState {}
 
 class NavigationStateSettings extends NavigationState {}
 
-class NavigationStateDevices extends NavigationState {}
+class NavigationStateDeviceConfig extends NavigationState {}
+
+class NavigationStateDeviceControl extends NavigationState {}
 
 class NavigationStateLogs extends NavigationState {}
 
@@ -25,8 +27,12 @@ class NavigationCubit extends Cubit<NavigationState> {
     emit(NavigationStateNews());
   }
 
-  void goDevices() {
-    emit(NavigationStateDevices());
+  void goDeviceControl() {
+    emit(NavigationStateDeviceControl());
+  }
+
+  void goDeviceConfig() {
+    emit(NavigationStateDeviceConfig());
   }
 
   void goLogs() {

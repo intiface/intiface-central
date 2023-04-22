@@ -8,8 +8,8 @@ import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-class DeviceWidget extends StatelessWidget {
-  const DeviceWidget({super.key});
+class DeviceControlWidget extends StatelessWidget {
+  const DeviceControlWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class DeviceWidget extends StatelessWidget {
         builder: (context, engineState) {
           var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
           return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
-            List<Widget> onlineDeviceWidgets = [const ListTile(title: Text("Devices"))];
+            List<Widget> onlineDeviceWidgets = [const ListTile(title: Text("Connected Devices"))];
 
             deviceBloc.devices.forEach((element) {
               // Since the device is still online, we know we can get the ClientDevice out of it.
@@ -136,7 +136,8 @@ class DeviceWidget extends StatelessWidget {
               onlineDeviceWidgets.add(Card(
                   child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                 ListTile(
-                  title: Text(device.name),
+                  title: Text(device.displayName ?? device.name),
+                  subtitle: Text("Index: ${device.index} - Base Name: ${device.name}"),
                 ),
                 ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: actuatorList)
               ])));
