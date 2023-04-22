@@ -53,11 +53,15 @@ class DeviceConfigWidget extends StatelessWidget {
                 }),
             SettingsTile.switchTile(
                 initialValue: config.deny,
-                onToggle: (value) {}, //=> config.allow = value,
+                onToggle: (value) async {
+                  await userDeviceConfigCubit.updateDeviceDeny(config.identifier, value);
+                },
                 title: const Text("Do Not Connect to this Device")),
             SettingsTile.switchTile(
                 initialValue: config.allow,
-                onToggle: (value) {}, // => cubit.useLovenseSerialDongle = value,
+                onToggle: (value) async {
+                  await userDeviceConfigCubit.updateDeviceAllow(config.identifier, value);
+                },
                 title: const Text("Only Connect to this Device")),
           ]));
         }
