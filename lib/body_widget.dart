@@ -49,7 +49,7 @@ class BodyWidget extends StatelessWidget {
           (NavigationCubit cubit) => cubit.goDeviceConfig(),
           const Icon(Icons.settings_remote_outlined),
           const Icon(Icons.settings_remote),
-          'Device Config',
+          'Config',
           () => const DeviceConfigWidget(),
           true),
       NavigationDestination(
@@ -57,7 +57,7 @@ class BodyWidget extends StatelessWidget {
           (NavigationCubit cubit) => cubit.goDeviceControl(),
           const Icon(Icons.vibration_outlined),
           const Icon(Icons.vibration),
-          'Device Control',
+          'Control',
           () => const DeviceControlWidget(),
           true),
       NavigationDestination(
