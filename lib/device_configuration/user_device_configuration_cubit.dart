@@ -12,10 +12,14 @@ class UserDeviceConfigurationState {}
 
 class UserDeviceConfigurationStateInitial extends UserDeviceConfigurationState {}
 
+class UserDeviceConfigurationStateUpdated extends UserDeviceConfigurationState {}
+
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   List<ExposedUserDeviceConfig> _configs = List.empty();
 
   UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
+
+  List<ExposedUserDeviceConfig> get configs => _configs;
 
   static Future<UserDeviceConfigurationCubit> create() async {
     var cubit = UserDeviceConfigurationCubit._();
@@ -32,16 +36,10 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> updateDeviceIndex(UserConfigDeviceIdentifier deviceIdentifier, int index) async {
     // See if device already exists in config
-    var new_config = ExposedUserDeviceConfig(
-        identifier: deviceIdentifier,
-        name: "Does not matter",
-        displayName: null,
-        reservedIndex: index,
-        allow: null,
-        deny: null);
+    ExposedUserDeviceConfig? newConfig;
     for (var config in _configs) {
       if (config.identifier == deviceIdentifier) {
-        new_config = ExposedUserDeviceConfig(
+        newConfig = ExposedUserDeviceConfig(
             identifier: deviceIdentifier,
             name: config.name,
             displayName: config.displayName,
@@ -50,13 +48,42 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
             deny: config.deny);
       }
     }
-    _configs.clear();
-    _configs.add(new_config);
+    if (newConfig != null) {
+      await _updateConfig(deviceIdentifier, newConfig);
+    }
+  }
+
+  Future<void> updateDisplayName(UserConfigDeviceIdentifier deviceIdentifier, String displayName) async {
+    // See if device already exists in config
+    ExposedUserDeviceConfig? newConfig;
+    for (var config in _configs) {
+      if (config.identifier == deviceIdentifier) {
+        newConfig = ExposedUserDeviceConfig(
+            identifier: deviceIdentifier,
+            name: config.name,
+            displayName: displayName,
+            reservedIndex: config.reservedIndex,
+            allow: config.allow,
+            deny: config.deny);
+      }
+    }
+    if (newConfig != null) {
+      await _updateConfig(deviceIdentifier, newConfig);
+    }
+  }
+
+  Future<void> _updateConfig(UserConfigDeviceIdentifier deviceIdentifier, ExposedUserDeviceConfig newConfig) async {
+    _configs.removeWhere((element) =>
+        element.identifier.address == deviceIdentifier.address &&
+        element.identifier.protocol == deviceIdentifier.protocol &&
+        element.identifier.identifier == deviceIdentifier.identifier);
+    _configs.add(newConfig);
     await _saveConfigFile();
   }
 
   Future<void> _saveConfigFile() async {
     var jsonString = await api.generateUserDeviceConfigFile(userConfig: _configs);
     await IntifacePaths.userDeviceConfigFile.writeAsString(jsonString);
+    emit(UserDeviceConfigurationStateUpdated());
   }
 }
