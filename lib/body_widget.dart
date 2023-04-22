@@ -87,19 +87,11 @@ class BodyWidget extends StatelessWidget {
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to
       // hide our About/Help in the Settings widget on mobile.
       NavigationDestination(
-          (state) => state is NavigationStateHelp,
-          (NavigationCubit cubit) => cubit.goHelp(),
-          const Icon(Icons.tips_and_updates_outlined),
-          const Icon(Icons.tips_and_updates),
-          'Help',
-          () => MarkdownWidget(markdownContent: assets.helpAsset, backToSettings: true),
-          false),
-      NavigationDestination(
           (state) => state is NavigationStateAbout,
           (NavigationCubit cubit) => cubit.goAbout(),
           const Icon(Icons.help_outlined),
           const Icon(Icons.help),
-          'About',
+          'Help / About',
           () => MarkdownWidget(markdownContent: assets.aboutAsset, backToSettings: true),
           false),
     ];

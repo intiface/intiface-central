@@ -1,8 +1,20 @@
-# Intiface® Central
+# Intiface® Central Help
 
-Version v2.3.0
+Help for current versions of Intiface® Central is available via 
 
-Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022
+- [Buttplug/Intiface® Discourse Forum](https://discuss.buttplug.io)
+- [Buttplug and Intiface® FAQ](https://how.do.i.get.buttplug.in/intiface/intiface-central.html)
+- [Buttplug Discord](https://discord.buttplug.io)
+
+Documentation will exist someday in the future.
+
+Looking for apps and games to use with Intiface® Central? Check out the [Awesome Buttplug List](https://awesome.buttplug.io)!
+
+# About Intiface® Central
+
+Version v2.4.0
+
+Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2023
 
 The Intiface® word mark is a registered trademark of Nonpolynomial Labs, LLC
 

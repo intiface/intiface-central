@@ -28,14 +28,9 @@ class SettingWidget extends StatelessWidget {
               if (!cubit.useSideNavigationBar) {
                 tiles.add(SettingsSection(tiles: [
                   SettingsTile.navigation(
-                      title: const Text("About"),
+                      title: const Text("Help / About"),
                       onPressed: (context) {
                         BlocProvider.of<NavigationCubit>(context).goAbout();
-                      }),
-                  SettingsTile.navigation(
-                      title: const Text("Help"),
-                      onPressed: (context) {
-                        BlocProvider.of<NavigationCubit>(context).goHelp();
                       }),
                 ]));
               }

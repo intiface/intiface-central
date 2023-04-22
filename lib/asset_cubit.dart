@@ -13,17 +13,15 @@ class AssetUpdatedEvent extends AssetEvent {}
 class AssetCubit extends Cubit<AssetEvent> {
   String _newsAsset;
   final String _aboutAsset;
-  final String _helpAsset;
 
-  AssetCubit(this._newsAsset, this._aboutAsset, this._helpAsset) : super(AssetLoadingEvent());
+  AssetCubit(this._newsAsset, this._aboutAsset) : super(AssetLoadingEvent());
 
   static Future<AssetCubit> create() async {
     var newsAsset = await IntifacePaths.newsFile.exists()
         ? await IntifacePaths.newsFile.readAsString()
         : await rootBundle.loadString('assets/news.md');
     var aboutAsset = await rootBundle.loadString('assets/about.md');
-    var helpAsset = await rootBundle.loadString('assets/help.md');
-    return AssetCubit(newsAsset, aboutAsset, helpAsset);
+    return AssetCubit(newsAsset, aboutAsset);
   }
 
   Future<void> update() async {
@@ -34,5 +32,4 @@ class AssetCubit extends Cubit<AssetEvent> {
 
   String get newsAsset => _newsAsset;
   String get aboutAsset => _aboutAsset;
-  String get helpAsset => _helpAsset;
 }

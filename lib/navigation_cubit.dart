@@ -42,8 +42,4 @@ class NavigationCubit extends Cubit<NavigationState> {
   void goAbout() {
     emit(NavigationStateAbout());
   }
-
-  void goHelp() {
-    emit(NavigationStateHelp());
-  }
 }
