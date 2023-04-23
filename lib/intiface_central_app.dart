@@ -14,6 +14,7 @@ import 'package:intiface_central/device_configuration/user_device_configuration_
 import 'package:intiface_central/engine/engine_control_bloc.dart';
 import 'package:intiface_central/engine/engine_repository.dart';
 import 'package:intiface_central/engine/foreground_task_library_engine_provider.dart';
+import 'package:intiface_central/gui_settings_cubit.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
@@ -32,10 +33,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
-class IntifaceCentralApp extends StatelessWidget {
-  const IntifaceCentralApp({super.key});
+class IntifaceCentralApp extends StatelessWidget with WindowListener {
+  final GuiSettingsCubit guiSettingsCubit;
 
-  void windowDisplayModeResize(bool useCompactDisplay) {
+  const IntifaceCentralApp({super.key, required this.guiSettingsCubit});
+
+  void windowDisplayModeResize(bool useCompactDisplay, GuiSettingsCubit settingsCubit) {
     const compactSize = Size(500, 175);
     if (useCompactDisplay) {
       windowManager.setMinimumSize(compactSize);
@@ -44,8 +47,19 @@ class IntifaceCentralApp extends StatelessWidget {
     } else {
       windowManager.setMinimumSize(const Size(800, 600));
       windowManager.setMaximumSize(const Size(10000, 10000));
-      windowManager.setSize(const Size(800, 600));
+      var size = settingsCubit.getWindowSize();
+      windowManager.setSize(size);
     }
+  }
+
+  @override
+  void onWindowResize() async {
+    guiSettingsCubit.setWindowSize(await windowManager.getSize());
+  }
+
+  @override
+  void onWindowMove() async {
+    guiSettingsCubit.setWindowPosition(await windowManager.getPosition());
   }
 
   Future<Widget> buildApp() async {
@@ -72,7 +86,11 @@ class IntifaceCentralApp extends StatelessWidget {
         title: windowTitle,
         //backgroundColor: Colors.transparent,
       );
+
       windowManager.waitUntilReadyToShow(windowOptions, () async {
+        windowManager.addListener(this);
+        windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+        windowDisplayModeResize(configRepo.useCompactDisplay, guiSettingsCubit);
         await windowManager.show();
         await windowManager.focus();
       });
@@ -81,10 +99,8 @@ class IntifaceCentralApp extends StatelessWidget {
         if (event is! UseCompactDisplay) {
           return;
         }
-        windowDisplayModeResize(event.value);
+        windowDisplayModeResize(event.value, guiSettingsCubit);
       });
-
-      windowDisplayModeResize(configRepo.useCompactDisplay);
 
       // Only add app update checks on desktop, mobile apps will use stores.
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
