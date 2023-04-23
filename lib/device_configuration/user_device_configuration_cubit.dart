@@ -19,6 +19,12 @@ class ExposedWritableUserDeviceConfig {
   ExposedWritableUserDeviceConfig(
       this.identifier, this.name, this.reservedIndex, this.displayName, this.allow, this.deny);
 
+  bool matches(UserConfigDeviceIdentifier other) {
+    return identifier.address == other.address &&
+        identifier.protocol == other.protocol &&
+        identifier.identifier == other.identifier;
+  }
+
   static ExposedWritableUserDeviceConfig fromRust(ExposedUserDeviceConfig config) {
     return ExposedWritableUserDeviceConfig(
         config.identifier, config.name, config.reservedIndex, config.displayName, config.allow, config.deny);
@@ -60,7 +66,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   Future<void> updateDeviceAllow(UserConfigDeviceIdentifier deviceIdentifier, bool allow) async {
     // See if device already exists in config
     for (var config in _configs) {
-      if (_compareIdentifiers(config.identifier, deviceIdentifier)) {
+      if (config.matches(deviceIdentifier)) {
         config.allow = allow;
         await _saveConfigFile();
         return;
@@ -74,7 +80,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   Future<void> updateDeviceDeny(UserConfigDeviceIdentifier deviceIdentifier, bool deny) async {
     // See if device already exists in config
     for (var config in _configs) {
-      if (_compareIdentifiers(config.identifier, deviceIdentifier)) {
+      if (config.matches(deviceIdentifier)) {
         config.deny = deny;
         await _saveConfigFile();
         return;
@@ -88,7 +94,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   Future<void> updateDeviceIndex(UserConfigDeviceIdentifier deviceIdentifier, int reservedIndex) async {
     // See if device already exists in config
     for (var config in _configs) {
-      if (_compareIdentifiers(config.identifier, deviceIdentifier)) {
+      if (config.matches(deviceIdentifier)) {
         config.reservedIndex = reservedIndex;
         await _saveConfigFile();
         return;
@@ -102,7 +108,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   Future<void> updateDisplayName(UserConfigDeviceIdentifier deviceIdentifier, String displayName) async {
     // See if device already exists in config
     for (var config in _configs) {
-      if (_compareIdentifiers(config.identifier, deviceIdentifier)) {
+      if (config.matches(deviceIdentifier)) {
         config.displayName = displayName;
         await _saveConfigFile();
         return;
@@ -114,26 +120,13 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   }
 
   Future<void> removeDeviceConfig(UserConfigDeviceIdentifier deviceIdentifier) async {
-    _configs.removeWhere((element) =>
-        element.identifier.address == deviceIdentifier.address &&
-        element.identifier.protocol == deviceIdentifier.protocol &&
-        element.identifier.identifier == deviceIdentifier.identifier);
+    _configs.removeWhere((element) => element.matches(deviceIdentifier));
     await _saveConfigFile();
-  }
-
-  // This is me being lazy about not wanting to implement equatable's immutable requirements.
-  bool _compareIdentifiers(UserConfigDeviceIdentifier ident1, UserConfigDeviceIdentifier ident2) {
-    return ident1.address == ident2.address &&
-        ident1.protocol == ident2.protocol &&
-        ident1.identifier == ident2.identifier;
   }
 
   Future<void> _updateConfig(
       UserConfigDeviceIdentifier deviceIdentifier, ExposedWritableUserDeviceConfig newConfig) async {
-    _configs.removeWhere((element) =>
-        element.identifier.address == deviceIdentifier.address &&
-        element.identifier.protocol == deviceIdentifier.protocol &&
-        element.identifier.identifier == deviceIdentifier.identifier);
+    _configs.removeWhere((element) => element.matches(deviceIdentifier));
     _configs.add(newConfig);
     await _saveConfigFile();
   }
