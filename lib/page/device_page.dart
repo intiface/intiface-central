@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/gui_settings_cubit.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
 import 'package:intiface_central/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
@@ -18,11 +19,12 @@ class DevicePage extends StatelessWidget {
             current is ClientDisconnectedState ||
             current is EngineStoppedState,
         builder: (context, engineState) {
-          var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
+          var deviceBloc = context.watch<DeviceManagerBloc>();
+          var guiSettingsCubit = context.watch<GuiSettingsCubit>();
           return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
             List<Widget> deviceWidgets = [];
             List<int> connectedIndexes = [];
-            var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+            var userDeviceConfigCubit = context.watch<UserDeviceConfigurationCubit>();
 
             if (engineState is! EngineStoppedState) {
               deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
@@ -31,6 +33,7 @@ class DevicePage extends StatelessWidget {
                 connectedIndexes.add(device.index);
                 var deviceConfig =
                     userDeviceConfigCubit.configs.firstWhere((element) => element.reservedIndex == device.index);
+                var expansionName = "device-settings-${device.index}";
                 deviceWidgets.add(Card(
                     child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                   ListTile(
@@ -38,18 +41,30 @@ class DevicePage extends StatelessWidget {
                     subtitle: Text("Index: ${device.index} - Base Name: ${device.name}"),
                   ),
                   DeviceControlWidget(deviceCubit: deviceCubit),
-                  ExpansionPanelList(children: [
-                    ExpansionPanel(
-                        headerBuilder: (BuildContext context, bool isExpanded) {
-                          return const ListTile(
-                            title: Text("Settings"),
-                          );
-                        },
-                        body: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
-                          DeviceConfigWidget(identifier: deviceConfig.identifier),
-                        ]),
-                        isExpanded: false)
-                  ])
+                  BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                      buildWhen: (previous, current) =>
+                          current is GuiSettingStateUpdate && current.valueName == expansionName,
+                      builder: (context, state) {
+                        return ExpansionPanelList(
+                          children: [
+                            ExpansionPanel(
+                                headerBuilder: (BuildContext context, bool isExpanded) {
+                                  return const ListTile(
+                                    title: Text("Settings"),
+                                  );
+                                },
+                                body: ListView(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    children: [
+                                      DeviceConfigWidget(identifier: deviceConfig.identifier),
+                                    ]),
+                                isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false)
+                          ],
+                          expansionCallback: (panelIndex, isExpanded) =>
+                              guiSettingsCubit.setExpansionValue(expansionName, !isExpanded),
+                        );
+                      })
                 ])));
               }
             }
@@ -59,18 +74,28 @@ class DevicePage extends StatelessWidget {
               if (connectedIndexes.contains(deviceConfig.reservedIndex)) {
                 continue;
               }
-              deviceWidgets.add(ExpansionPanelList(children: [
-                ExpansionPanel(
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                        title: Text(deviceConfig.displayName ?? deviceConfig.name),
-                      );
-                    },
-                    body: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
-                      DeviceConfigWidget(identifier: deviceConfig.identifier),
-                    ]),
-                    isExpanded: true)
-              ]));
+              var expansionName = "device-settings-${deviceConfig.reservedIndex}";
+              deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                  buildWhen: (previous, current) =>
+                      current is GuiSettingStateUpdate && current.valueName == expansionName,
+                  builder: (context, state) {
+                    return ExpansionPanelList(
+                        children: [
+                          ExpansionPanel(
+                              headerBuilder: (BuildContext context, bool isExpanded) {
+                                return ListTile(
+                                  title: Text(deviceConfig.displayName ?? deviceConfig.name),
+                                );
+                              },
+                              body:
+                                  ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
+                                DeviceConfigWidget(identifier: deviceConfig.identifier),
+                              ]),
+                              isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? true)
+                        ],
+                        expansionCallback: (panelIndex, isExpanded) =>
+                            guiSettingsCubit.setExpansionValue(expansionName, !isExpanded));
+                  }));
             }
 
             return Expanded(

@@ -13,7 +13,11 @@ class GuiSettingsState {}
 
 class GuiSettingsStateInitial extends GuiSettingsState {}
 
-class GuiSettingStateUpdate extends GuiSettingsState {}
+class GuiSettingStateUpdate extends GuiSettingsState {
+  final String valueName;
+
+  GuiSettingStateUpdate({required this.valueName});
+}
 
 class GuiSettingsCubit extends Cubit<GuiSettingsState> {
   final SharedPreferences _prefs;
@@ -36,7 +40,7 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
 
   void setExpansionValue(String expansionName, bool isExpanded) {
     _prefs.setBool(expansionName, isExpanded);
-    emit(GuiSettingStateUpdate());
+    emit(GuiSettingStateUpdate(valueName: expansionName));
   }
 
   Size getWindowSize() {
@@ -50,7 +54,7 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
   void setWindowSize(Size windowSize) {
     _prefs.setInt(GUI_WINDOW_WIDTH, windowSize.width.floor());
     _prefs.setInt(GUI_WINDOW_HEIGHT, windowSize.height.floor());
-    emit(GuiSettingStateUpdate());
+    emit(GuiSettingStateUpdate(valueName: GUI_WINDOW_WIDTH));
   }
 
   Offset getWindowPosition() {
@@ -64,6 +68,6 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
   void setWindowPosition(Offset windowSize) {
     _prefs.setInt(GUI_WINDOW_POSX, windowSize.dx.floor());
     _prefs.setInt(GUI_WINDOW_POSY, windowSize.dy.floor());
-    emit(GuiSettingStateUpdate());
+    emit(GuiSettingStateUpdate(valueName: GUI_WINDOW_POSX));
   }
 }

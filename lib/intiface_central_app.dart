@@ -36,7 +36,13 @@ import 'package:device_info_plus/device_info_plus.dart';
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
   final GuiSettingsCubit guiSettingsCubit;
 
-  const IntifaceCentralApp({super.key, required this.guiSettingsCubit});
+  IntifaceCentralApp._create({super.key, required this.guiSettingsCubit});
+
+  static Future<IntifaceCentralApp> create() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    var guiSettingsCubit = await GuiSettingsCubit.create();
+    return IntifaceCentralApp._create(guiSettingsCubit: guiSettingsCubit);
+  }
 
   void windowDisplayModeResize(bool useCompactDisplay, GuiSettingsCubit settingsCubit) {
     const compactSize = Size(500, 175);
@@ -87,10 +93,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
         //backgroundColor: Colors.transparent,
       );
 
+      windowManager.addListener(this);
+      windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+      windowDisplayModeResize(configRepo.useCompactDisplay, guiSettingsCubit);
       windowManager.waitUntilReadyToShow(windowOptions, () async {
-        windowManager.addListener(this);
-        windowManager.setPosition(guiSettingsCubit.getWindowPosition());
-        windowDisplayModeResize(configRepo.useCompactDisplay, guiSettingsCubit);
         await windowManager.show();
         await windowManager.focus();
       });
@@ -274,6 +280,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       BlocProvider(create: (context) => networkCubit),
       BlocProvider(create: (context) => errorNotifierCubit),
       BlocProvider(create: (context) => userConfigCubit),
+      BlocProvider(create: (context) => guiSettingsCubit),
     ], child: const IntifaceCentralView());
   }
 
