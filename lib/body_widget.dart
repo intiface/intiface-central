@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/asset_cubit.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/device_config_widget.dart';
-import 'package:intiface_central/device_control_widget.dart';
 import 'package:intiface_central/error_notifier_cubit.dart';
 import 'package:intiface_central/logging/log_widget.dart';
 import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/markdown_widget.dart';
+import 'package:intiface_central/page/device_page.dart';
 import 'package:intiface_central/settings_widget.dart';
 import 'package:intiface_central/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
@@ -45,20 +44,12 @@ class BodyWidget extends StatelessWidget {
               builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
           true),
       NavigationDestination(
-          (state) => state is NavigationStateDeviceConfig,
-          (NavigationCubit cubit) => cubit.goDeviceConfig(),
-          const Icon(Icons.settings_remote_outlined),
-          const Icon(Icons.settings_remote),
-          'Config',
-          () => const DeviceConfigWidget(),
-          true),
-      NavigationDestination(
           (state) => state is NavigationStateDeviceControl,
           (NavigationCubit cubit) => cubit.goDeviceControl(),
           const Icon(Icons.vibration_outlined),
           const Icon(Icons.vibration),
-          'Control',
-          () => const DeviceControlWidget(),
+          'Devices',
+          () => const DevicePage(),
           true),
       NavigationDestination(
           (state) => state is NavigationStateLogs,
