@@ -3,12 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
-import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
-
 import "../ffi.dart";
-
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
@@ -22,40 +19,6 @@ String _kMainServerPortName = "intifaceCentralServerMain";
 void startCallback() {
   // The setTaskHandler function must be called to handle the task in the background.
   FlutterForegroundTask.setTaskHandler(IntifaceEngineTaskHandler());
-}
-
-Future<EngineOptionsExternal> _buildArguments(IntifaceConfigurationRepository configRepo) async {
-  String? deviceConfigFile;
-  if (await IntifacePaths.deviceConfigFile.exists()) {
-    deviceConfigFile = await File(IntifacePaths.deviceConfigFile.path).readAsString();
-  }
-
-  String? userDeviceConfigFile;
-  if (await IntifacePaths.userDeviceConfigFile.exists()) {
-    userDeviceConfigFile = await File(IntifacePaths.userDeviceConfigFile.path).readAsString();
-  }
-
-  return EngineOptionsExternal(
-      serverName: configRepo.serverName,
-      deviceConfigJson: deviceConfigFile,
-      userDeviceConfigJson: userDeviceConfigFile,
-      crashReporting: configRepo.crashReporting,
-      websocketUseAllInterfaces: configRepo.websocketServerAllInterfaces,
-      websocketPort: configRepo.websocketServerPort,
-      frontendInProcessChannel: isMobile(),
-      maxPingTime: configRepo.serverMaxPingTime,
-      allowRawMessages: configRepo.allowRawMessages,
-      logLevel: "DEBUG".toString(),
-      useBluetoothLe: configRepo.useBluetoothLE,
-      useSerialPort: isDesktop() ? configRepo.useSerialPort : false,
-      useHid: isDesktop() ? configRepo.useHID : false,
-      useLovenseDongleSerial: isDesktop() ? configRepo.useLovenseSerialDongle : false,
-      useLovenseDongleHid: isDesktop() ? configRepo.useLovenseHIDDongle : false,
-      useXinput: isDesktop() ? configRepo.useXInput : false,
-      useLovenseConnect: isDesktop() ? configRepo.useLovenseConnectService : false,
-      useDeviceWebsocketServer: configRepo.useDeviceWebsocketServer,
-      crashMainThread: false,
-      crashTaskThread: false);
 }
 
 class IntifaceEngineTaskHandler extends TaskHandler {
@@ -97,17 +60,15 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     //
     // Under the covers, flutter_foreground_task is just using SharedPreferences for its data commands anyways, so this
     // is basically doing what it does, while not having to deal with shuffling things around.
-    _sendProviderLog("INFO", "Creating shared prefs");
-    var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
     _sendProviderLog("INFO", "Creating config repo");
-    var configRepo = await IntifaceConfigurationRepository.create(prefs);
+    var configRepo = await IntifaceConfigurationCubit.create();
     _sendProviderLog("INFO", "Building arguments");
 
     // Since we're on another process we'll have to reinitialize our paths.
     await IntifacePaths.init();
 
     // Ok, NOW we can build our engine options.
-    var engineOptions = await _buildArguments(configRepo);
+    var engineOptions = await configRepo.getEngineOptions();
     _sendProviderLog("INFO", "Starting engine");
 
     _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
@@ -170,7 +131,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   SendPort? _backdoorSendPort;
 
   @override
-  Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
+  Future<void> start({required EngineOptionsExternal options}) async {
     await _startForegroundTask();
   }
 

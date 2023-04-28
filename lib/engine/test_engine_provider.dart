@@ -1,9 +1,9 @@
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 
 class TestEngineProvider implements EngineProvider {
   @override
-  Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
+  Future<void> start({required EngineOptionsExternal options}) async {
     throw "Unimplemented";
   }
 

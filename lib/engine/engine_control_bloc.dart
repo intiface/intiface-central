@@ -57,7 +57,11 @@ class EngineError extends EngineControlState {}
 
 class EngineControlEvent {}
 
-class EngineControlEventStart extends EngineControlEvent {}
+class EngineControlEventStart extends EngineControlEvent {
+  final EngineOptionsExternal options;
+
+  EngineControlEventStart({required this.options});
+}
 
 class EngineControlEventStop extends EngineControlEvent {}
 
@@ -90,7 +94,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
       logInfo("Trying to start engine...");
-      await _repo.start();
+      await _repo.start(options: event.options);
       _isRunning = true;
       emit(EngineStartingState());
       return emit.forEach(_repo.messageStream, onData: (EngineOutput message) {

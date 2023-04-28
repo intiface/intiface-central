@@ -2,12 +2,12 @@
 // This means our providers ONLY handle start/stop/basic stream comms with our provider types, and the repository
 // operates as a stream transformer.
 
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/bridge_generated.dart';
 
 abstract class EngineProcessMessage {}
 
 abstract class EngineProvider {
-  Future<void> start({required IntifaceConfigurationRepository configRepo});
+  Future<void> start({required EngineOptionsExternal options});
   Future<void> stop();
   void cycleStream();
 

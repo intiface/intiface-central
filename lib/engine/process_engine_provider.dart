@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
@@ -15,7 +15,7 @@ class ProcessEngineProvider implements EngineProvider {
   WebSocketChannel? _ipcChannel;
   final StreamController<String> _processMessageStream = StreamController();
 
-  List<String> _buildCLIArgs(IntifaceConfigurationRepository options, int frontendPort) {
+  List<String> _buildCLIArgs(EngineOptionsExternal options, int frontendPort) {
     List<String> arguments = [];
 
     arguments.addAll(["--server-name", options.serverName]);
@@ -26,13 +26,13 @@ class ProcessEngineProvider implements EngineProvider {
     if (IntifacePaths.userDeviceConfigFile.existsSync()) {
       arguments.addAll(["--user-device-config-file", IntifacePaths.userDeviceConfigFile.path]);
     }
-    if (options.websocketServerAllInterfaces) {
+    if (options.websocketUseAllInterfaces) {
       arguments.add("--websocket-use-all-interfaces");
     }
-    arguments.addAll(["--websocket-port", options.websocketServerPort.toString()]);
+    arguments.addAll(["--websocket-port", options.websocketPort.toString()]);
     arguments.addAll(["--log", "debug"]);
-    if (options.serverMaxPingTime > 0) {
-      arguments.addAll(["--max-ping-time", options.serverMaxPingTime.toString()]);
+    if (options.maxPingTime > 0) {
+      arguments.addAll(["--max-ping-time", options.maxPingTime.toString()]);
     }
 
     if (options.crashReporting) {
@@ -41,35 +41,35 @@ class ProcessEngineProvider implements EngineProvider {
     if (options.allowRawMessages) {
       arguments.add("--allow-raw");
     }
-    if (options.useBluetoothLE) {
+    if (options.useBluetoothLe) {
       arguments.add("--use-bluetooth-le");
     }
     if (options.useDeviceWebsocketServer) {
       arguments.add("--use-device-websocket-server");
     }
-    if (options.useHID) {
+    if (options.useHid) {
       arguments.add("--use-hid");
     }
-    if (options.useLovenseHIDDongle) {
+    if (options.useLovenseDongleHid) {
       arguments.add("--use-lovense-dongle-hid");
     }
-    if (options.useLovenseSerialDongle) {
+    if (options.useLovenseDongleSerial) {
       arguments.add("--use-lovense-dongle-serial");
     }
     if (options.useSerialPort) {
       arguments.add("--use-serial");
     }
-    if (options.useXInput) {
+    if (options.useXinput) {
       arguments.add("--use-xinput");
     }
-    if (options.useLovenseConnectService) {
+    if (options.useLovenseConnect) {
       arguments.add("--use-lovense-connect");
     }
     return arguments;
   }
 
   @override
-  Future<void> start({required IntifaceConfigurationRepository configRepo}) async {
+  Future<void> start({required EngineOptionsExternal options}) async {
     // If the process is already up, return success.
     if (_ipcChannel != null || _serverProcess != null) {
       return;
@@ -86,7 +86,7 @@ class ProcessEngineProvider implements EngineProvider {
     var frontendPort = rng.nextInt(50000) + 10000;
     //var frontendPort = 51865;
 
-    var engineArguments = _buildCLIArgs(configRepo, frontendPort);
+    var engineArguments = _buildCLIArgs(options, frontendPort);
 
     logInfo("Starting $engineArguments");
 

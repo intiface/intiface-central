@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:flutter/foundation.dart';
+import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/util/intiface_util.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IntifaceConfigurationState {}
 
@@ -118,219 +124,283 @@ class UseForegroundProcess extends IntifaceConfigurationState {
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
-  final IntifaceConfigurationRepository _repo;
-  IntifaceConfigurationCubit(this._repo) : super(IntifaceConfigurationStateNone());
+  final SharedPreferences _prefs;
 
-  set startServerOnStartup(bool value) {
-    _repo.startServerOnStartup = value;
-    emit(StartServerOnStartupState(value));
+  IntifaceConfigurationCubit._create(this._prefs) : super(IntifaceConfigurationStateNone());
+
+  static Future<IntifaceConfigurationCubit> create() async {
+    final prefs = await SharedPreferences.getInstance();
+    var cubit = IntifaceConfigurationCubit._create(prefs);
+    await cubit._init();
+    return cubit;
   }
 
-  bool get useSideNavigationBar {
-    return _repo.useSideNavigationBar;
-  }
+  Future<void> _init() async {
+    // Our initializer runs through all of our known configuration values, either setting them to what they already are,
+    // or providing them with default values.
 
-  set useSideNavigationBar(value) {
-    _repo.useSideNavigationBar = value;
-    emit(UseSideNavigationBar(value));
-  }
+    // Window settings for desktop. Will be ignored on mobile. Default to expanded.
+    useCompactDisplay = _prefs.getBool("useCompactDisplay") ?? false;
 
-  bool get useLightTheme {
-    return _repo.useLightTheme;
-  }
+    // Check all of our values to make sure they exist. If not, set defaults, based on platform if needed.
+    serverName = _prefs.getString("serverName") ?? "Intiface Server";
+    serverMaxPingTime = _prefs.getInt("maxPingTime") ?? 0;
+    // This should automatically be true on phones, otherwise people are going to be VERY confused.
+    websocketServerAllInterfaces = _prefs.getBool("websocketServerAllInterfaces") ?? isMobile();
+    websocketServerPort = _prefs.getInt("websocketServerPort") ?? 12345;
+    serverLogLevel = _prefs.getString("serverLogLevel") ?? "info";
+    checkForUpdateOnStart = _prefs.getBool("checkForUpdateOnStart") ?? true;
+    startServerOnStartup = _prefs.getBool("startServerOnStartup") ?? false;
+    crashReporting = _prefs.getBool("crashReporting") ?? true;
+    showNotifications = _prefs.getBool("showNotifications") ?? false;
+    hasRunFirstUse = _prefs.getBool("hasRunFirstUse") ?? false;
+    showExtendedUI = _prefs.getBool("showExtendedUI") ?? false;
+    allowRawMessages = _prefs.getBool("allowRawMessages") ?? false;
+    unreadNews = _prefs.getBool("unreadNews") ?? false;
+    useSideNavigationBar = _prefs.getBool("useSideNavigationBar") ?? isDesktop();
+    useLightTheme = _prefs.getBool("useLightTheme") ?? true;
 
-  set useLightTheme(value) {
-    _repo.useLightTheme = value;
-    emit(UseLightThemeState(value));
-  }
+    // True on all platforms
+    useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
 
-  bool get startServerOnStartup {
-    return _repo.startServerOnStartup;
-  }
+    // Only works on Windows
+    useXInput = _prefs.getBool("useXInput") ?? Platform.isWindows;
 
-  set serverName(String value) {
-    _repo.serverName = value;
-    emit(ServerNameState(value));
-  }
+    // Always default off, require user to turn them on.
+    useLovenseConnectService = _prefs.getBool("useLovenseConnectService") ?? false;
+    useDeviceWebsocketServer = _prefs.getBool("useDeviceWebsocketServer") ?? false;
+    useSerialPort = _prefs.getBool("useSerialPort") ?? false;
+    useHID = _prefs.getBool("useHID") ?? false;
+    useLovenseHIDDongle = _prefs.getBool("useLovenseHIDDongle") ?? false;
+    useLovenseSerialDongle = _prefs.getBool("useLovenseSerialDongle") ?? false;
 
-  String get serverName {
-    return _repo.serverName;
-  }
+    // Update settings
+    currentNewsEtag = _prefs.getString("currentNewsEtag") ?? "";
+    currentDeviceConfigEtag = _prefs.getString("currentDeviceConfigEtag") ?? "";
+    currentDeviceConfigVersion = _prefs.getString("currentDeviceConfigVersion") ?? "0.0";
 
-  set useBluetoothLE(bool value) {
-    _repo.useBluetoothLE = value;
-    emit(UseBluetoothLE(value));
-  }
+    var packageInfo = await PackageInfo.fromPlatform();
+    currentAppVersion = packageInfo.version;
+    latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
 
-  bool get useBluetoothLE {
-    return _repo.useBluetoothLE;
-  }
-
-  set useXInput(bool value) {
-    _repo.useXInput = value;
-    emit(UseXInput(value));
-  }
-
-  bool get useXInput {
-    return _repo.useXInput;
-  }
-
-  set useLovenseConnectService(bool value) {
-    _repo.useLovenseConnectService = value;
-    emit(UseLovenseConnectService(value));
-  }
-
-  bool get useLovenseConnectService {
-    return _repo.useLovenseConnectService;
-  }
-
-  set useDeviceWebsocketServer(bool value) {
-    _repo.useDeviceWebsocketServer = value;
-    emit(UseDeviceWebsocketServer(value));
-  }
-
-  bool get useDeviceWebsocketServer {
-    return _repo.useDeviceWebsocketServer;
-  }
-
-  set useSerialPort(bool value) {
-    _repo.useSerialPort = value;
-    emit(UseSerialPort(value));
-  }
-
-  bool get useSerialPort {
-    return _repo.useSerialPort;
-  }
-
-  set useHID(bool value) {
-    _repo.useHID = value;
-    emit(UseHID(value));
-  }
-
-  bool get useHID {
-    return _repo.useHID;
-  }
-
-  set useLovenseHIDDongle(bool value) {
-    _repo.useLovenseHIDDongle = value;
-    emit(UseLovenseHIDDongle(value));
-  }
-
-  bool get useLovenseHIDDongle {
-    return _repo.useLovenseHIDDongle;
-  }
-
-  set useLovenseSerialDongle(bool value) {
-    _repo.useLovenseSerialDongle = value;
-    emit(UseLovenseSerialDongle(value));
-  }
-
-  bool get useLovenseSerialDongle {
-    return _repo.useLovenseSerialDongle;
-  }
-
-  set websocketServerAllInterfaces(bool value) {
-    _repo.websocketServerAllInterfaces = value;
-    emit(WebsocketServerAllInterfaces(value));
-  }
-
-  bool get websocketServerAllInterfaces {
-    return _repo.websocketServerAllInterfaces;
-  }
-
-  set websocketServerPort(int value) {
-    _repo.websocketServerPort = value;
-    emit(WebsocketServerPort(value));
-  }
-
-  int get websocketServerPort {
-    return _repo.websocketServerPort;
-  }
-
-  set useCompactDisplay(bool value) {
-    _repo.useCompactDisplay = value;
-    emit(UseCompactDisplay(value));
-  }
-
-  bool get useCompactDisplay {
-    return _repo.useCompactDisplay;
-  }
-
-  set currentNewsEtag(String value) {
-    _repo.currentNewsEtag = value;
-    emit(CurrentNewsEtag(value));
-  }
-
-  String get currentNewsEtag {
-    return _repo.currentNewsEtag;
-  }
-
-  set currentDeviceConfigEtag(String value) {
-    _repo.currentDeviceConfigEtag = value;
-    emit(CurrentDeviceConfigEtag(value));
-  }
-
-  String get currentDeviceConfigEtag {
-    return _repo.currentDeviceConfigEtag;
-  }
-
-  set currentAppVersion(String value) {
-    _repo.currentAppVersion = value;
-    // Nothing to emit here, this will never change *while* we're running.
-  }
-
-  String get currentAppVersion {
-    return _repo.currentAppVersion;
-  }
-
-  set latestAppVersion(String value) {
-    _repo.latestAppVersion = value;
-    emit(LatestAppVersion(value));
-  }
-
-  String get latestAppVersion {
-    return _repo.latestAppVersion;
-  }
-
-  set currentDeviceConfigVersion(String value) {
-    _repo.currentDeviceConfigVersion = value;
-    emit(CurrentDeviceConfigVersion(value));
-  }
-
-  String get currentDeviceConfigVersion {
-    return _repo.currentDeviceConfigVersion;
+    useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
+    useForegroundProcess = Platform.isAndroid ? (_prefs.getBool("useForegroundProcess") ?? false) : false;
   }
 
   Future<bool> reset() async {
-    var result = await _repo.reset();
+    var result = await _prefs.clear();
     emit(ConfigurationReset());
     return result;
   }
 
+  String get currentNewsEtag => _prefs.getString("currentNewsEtag")!;
+  set currentNewsEtag(String value) {
+    _prefs.setString("currentNewsEtag", value);
+    emit(CurrentNewsEtag(value));
+  }
+
+  String get currentDeviceConfigEtag => _prefs.getString("currentDeviceConfigEtag")!;
+  set currentDeviceConfigEtag(String value) {
+    _prefs.setString("currentDeviceConfigEtag", value);
+    emit(CurrentDeviceConfigEtag(value));
+  }
+
+  bool get useCompactDisplay => _prefs.getBool("useCompactDisplay")!;
+  set useCompactDisplay(bool value) {
+    _prefs.setBool("useCompactDisplay", value);
+    emit(UseCompactDisplay(value));
+  }
+
+  bool get useSideNavigationBar => _prefs.getBool("useSideNavigationBar")!;
+  set useSideNavigationBar(bool value) {
+    _prefs.setBool("useSideNavigationBar", value);
+    emit(UseSideNavigationBar(value));
+  }
+
+  bool get useLightTheme => _prefs.getBool("useLightTheme")!;
+  set useLightTheme(bool value) {
+    _prefs.setBool("useLightTheme", value);
+    emit(UseLightThemeState(value));
+  }
+
+  String get serverName => _prefs.getString("serverName")!;
+  set serverName(String value) {
+    _prefs.setString("serverName", value);
+    emit(ServerNameState(value));
+  }
+
+  int get serverMaxPingTime => _prefs.getInt("maxPingTime")!;
+  set serverMaxPingTime(int value) {
+    _prefs.setInt("maxPingTime", value);
+  }
+
+  bool get websocketServerAllInterfaces => _prefs.getBool("websocketServerAllInterfaces")!;
+  set websocketServerAllInterfaces(bool value) {
+    _prefs.setBool("websocketServerAllInterfaces", value);
+    emit(WebsocketServerAllInterfaces(value));
+  }
+
+  int get websocketServerPort => _prefs.getInt("websocketServerPort")!;
+  set websocketServerPort(int value) {
+    _prefs.setInt("websocketServerPort", value);
+    emit(WebsocketServerPort(value));
+  }
+
+  String get serverLogLevel => _prefs.getString("serverLogLevel")!;
+  set serverLogLevel(String value) {
+    _prefs.setString("serverLogLevel", value);
+  }
+
+  bool get checkForUpdateOnStart => _prefs.getBool("checkForUpdateOnStart")!;
   set checkForUpdateOnStart(bool value) {
-    _repo.checkForUpdateOnStart = value;
+    _prefs.setBool("checkForUpdateOnStart", value);
     emit(CheckForUpdateOnStart(value));
   }
 
-  bool get checkForUpdateOnStart {
-    return _repo.checkForUpdateOnStart;
+  bool get startServerOnStartup => _prefs.getBool("startServerOnStartup")!;
+  set startServerOnStartup(bool value) {
+    _prefs.setBool("startServerOnStartup", value);
+    emit(StartServerOnStartupState(value));
   }
 
+  bool get useBluetoothLE => _prefs.getBool("useBluetoothLE")!;
+  set useBluetoothLE(bool value) {
+    _prefs.setBool("useBluetoothLE", value);
+    emit(UseBluetoothLE(value));
+  }
+
+  bool get useSerialPort => _prefs.getBool("useSerialPort")!;
+  set useSerialPort(bool value) {
+    _prefs.setBool("useSerialPort", value);
+    emit(UseSerialPort(value));
+  }
+
+  bool get useHID => _prefs.getBool("useHID")!;
+  set useHID(bool value) {
+    _prefs.setBool("useHID", value);
+    emit(UseHID(value));
+  }
+
+  bool get useLovenseHIDDongle => _prefs.getBool("useLovenseHIDDongle")!;
+  set useLovenseHIDDongle(bool value) {
+    _prefs.setBool("useLovenseHIDDongle", value);
+    emit(UseLovenseHIDDongle(value));
+  }
+
+  bool get useLovenseSerialDongle => _prefs.getBool("useLovenseSerialDongle")!;
+  set useLovenseSerialDongle(bool value) {
+    _prefs.setBool("useLovenseSerialDongle", value);
+    emit(UseLovenseSerialDongle(value));
+  }
+
+  bool get useLovenseConnectService => _prefs.getBool("useLovenseConnectService")!;
+  set useLovenseConnectService(bool value) {
+    _prefs.setBool("useLovenseConnectService", value);
+    emit(UseLovenseConnectService(value));
+  }
+
+  bool get useXInput => _prefs.getBool("useXInput")!;
+  set useXInput(bool value) {
+    _prefs.setBool("useXInput", value);
+    emit(UseXInput(value));
+  }
+
+  bool get useDeviceWebsocketServer => _prefs.getBool("useDeviceWebsocketServer")!;
+  set useDeviceWebsocketServer(bool value) {
+    _prefs.setBool("useDeviceWebsocketServer", value);
+    emit(UseDeviceWebsocketServer(value));
+  }
+
+  bool get crashReporting => _prefs.getBool("crashReporting")!;
+  set crashReporting(bool value) {
+    _prefs.setBool("crashReporting", value);
+  }
+
+  bool get showNotifications => _prefs.getBool("showNotifications")!;
+  set showNotifications(bool value) {
+    _prefs.setBool("showNotifications", value);
+  }
+
+  bool get hasRunFirstUse => _prefs.getBool("hasRunFirstUse")!;
+  set hasRunFirstUse(bool value) {
+    _prefs.setBool("hasRunFirstUse", value);
+  }
+
+  bool get showExtendedUI => _prefs.getBool("showExtendedUI")!;
+  set showExtendedUI(bool value) {
+    _prefs.setBool("showExtendedUI", value);
+  }
+
+  bool get allowRawMessages => _prefs.getBool("allowRawMessages")!;
+  set allowRawMessages(bool value) {
+    _prefs.setBool("allowRawMessages", value);
+  }
+
+  bool get unreadNews => _prefs.getBool("unreadNews")!;
+  set unreadNews(bool value) {
+    _prefs.setBool("unreadNews", value);
+  }
+
+  String get currentAppVersion => _prefs.getString("currentAppVersion")!;
+  set currentAppVersion(String value) {
+    _prefs.setString("currentAppVersion", value);
+  }
+
+  String get latestAppVersion => _prefs.getString("latestAppVersion")!;
+  set latestAppVersion(String value) {
+    _prefs.setString("latestAppVersion", value);
+    emit(LatestAppVersion(value));
+  }
+
+  String get currentDeviceConfigVersion => _prefs.getString("currentDeviceConfigVersion")!;
+  set currentDeviceConfigVersion(String value) {
+    _prefs.setString("currentDeviceConfigVersion", value);
+    emit(CurrentDeviceConfigVersion(value));
+  }
+
+  bool get useProcessEngine => _prefs.getBool("useProcessEngine")!;
   set useProcessEngine(bool value) {
-    _repo.useProcessEngine = value;
+    _prefs.setBool("useProcessEngine", value);
     emit(UseProcessEngine(value));
   }
 
-  bool get useProcessEngine {
-    return _repo.useProcessEngine;
-  }
-
+  bool get useForegroundProcess => _prefs.getBool("useForegroundProcess")!;
   set useForegroundProcess(bool value) {
-    _repo.useForegroundProcess = value;
+    _prefs.setBool("useForegroundProcess", value);
     emit(UseForegroundProcess(value));
   }
 
-  bool get useForegroundProcess {
-    return _repo.useForegroundProcess;
+  Future<EngineOptionsExternal> getEngineOptions() async {
+    String? deviceConfigFile;
+    if (await IntifacePaths.deviceConfigFile.exists()) {
+      deviceConfigFile = await File(IntifacePaths.deviceConfigFile.path).readAsString();
+    }
+
+    String? userDeviceConfigFile;
+    if (await IntifacePaths.userDeviceConfigFile.exists()) {
+      userDeviceConfigFile = await File(IntifacePaths.userDeviceConfigFile.path).readAsString();
+    }
+
+    return EngineOptionsExternal(
+        serverName: serverName,
+        deviceConfigJson: deviceConfigFile,
+        userDeviceConfigJson: userDeviceConfigFile,
+        crashReporting: crashReporting,
+        websocketUseAllInterfaces: websocketServerAllInterfaces,
+        websocketPort: websocketServerPort,
+        frontendInProcessChannel: isMobile(),
+        maxPingTime: serverMaxPingTime,
+        allowRawMessages: allowRawMessages,
+        logLevel: "DEBUG".toString(),
+        useBluetoothLe: useBluetoothLE,
+        useSerialPort: isDesktop() ? useSerialPort : false,
+        useHid: isDesktop() ? useHID : false,
+        useLovenseDongleSerial: isDesktop() ? useLovenseSerialDongle : false,
+        useLovenseDongleHid: isDesktop() ? useLovenseHIDDongle : false,
+        useXinput: isDesktop() ? useXInput : false,
+        useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
+        useDeviceWebsocketServer: useDeviceWebsocketServer,
+        crashMainThread: false,
+        crashTaskThread: false);
   }
 }

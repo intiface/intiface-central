@@ -19,8 +19,6 @@ import 'package:intiface_central/navigation_cubit.dart';
 import 'package:intiface_central/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:intiface_central/configuration/intiface_configuration_provider_shared_preferences.dart';
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
 import 'package:intiface_central/device_configuration/device_configuration.dart';
 import 'package:intiface_central/engine/library_engine_provider.dart';
 import 'package:intiface_central/error_notifier_cubit.dart';
@@ -73,15 +71,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     await IntifacePaths.init();
 
     // Bring up our settings repo.
-    var prefs = await IntifaceConfigurationProviderSharedPreferences.create();
-    var configRepo = await IntifaceConfigurationRepository.create(prefs);
-    var configCubit = IntifaceConfigurationCubit(configRepo);
+    var configCubit = await IntifaceConfigurationCubit.create();
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
     EngineRepository engineRepo;
 
     if (isDesktop()) {
-      engineRepo = EngineRepository(LibraryEngineProvider(), configRepo);
+      engineRepo = EngineRepository(LibraryEngineProvider());
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
@@ -95,7 +91,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
       windowManager.addListener(this);
       windowManager.setPosition(guiSettingsCubit.getWindowPosition());
-      windowDisplayModeResize(configRepo.useCompactDisplay, guiSettingsCubit);
+      windowDisplayModeResize(configCubit.useCompactDisplay, guiSettingsCubit);
       windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
         await windowManager.focus();
@@ -112,8 +108,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
     } else {
       engineRepo = configCubit.useForegroundProcess
-          ? EngineRepository(ForegroundTaskLibraryEngineProvider(), configRepo)
-          : EngineRepository(LibraryEngineProvider(), configRepo);
+          ? EngineRepository(ForegroundTaskLibraryEngineProvider())
+          : EngineRepository(LibraryEngineProvider());
 
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;

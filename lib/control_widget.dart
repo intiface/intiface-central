@@ -50,7 +50,9 @@ class ControlWidget extends StatelessWidget {
                 } else if (state is EngineStoppedState) {
                   statusMessage = "Server not running";
                   statusIcon = Icons.block;
-                  buttonAction = () => engineControlBloc.add(EngineControlEventStart());
+                  buttonAction = () async => engineControlBloc.add(EngineControlEventStart(
+                      options: await BlocProvider.of<IntifaceConfigurationCubit>(context, listen: false)
+                          .getEngineOptions()));
                 } else if (state is EngineStartingState) {
                   statusMessage = "Server starting";
                   buttonAction = null;

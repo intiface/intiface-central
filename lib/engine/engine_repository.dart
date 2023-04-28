@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/configuration/intiface_configuration_repository.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/engine/engine_messages.dart';
 import 'package:intiface_central/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
@@ -19,12 +19,11 @@ class EngineOutput {
 
 class EngineRepository {
   final EngineProvider _provider;
-  final IntifaceConfigurationRepository _configRepo;
   StreamController<EngineOutput> _engineMessageStream = StreamController.broadcast();
 
-  EngineRepository(this._provider, this._configRepo);
+  EngineRepository(this._provider);
 
-  Future<void> start() async {
+  Future<void> start({required EngineOptionsExternal options}) async {
     _engineMessageStream.close();
     _engineMessageStream = StreamController.broadcast();
     _provider.cycleStream();
@@ -55,7 +54,7 @@ class EngineRepository {
         }
       }
     });
-    await _provider.start(configRepo: _configRepo);
+    await _provider.start(options: options);
   }
 
   Future<void> stop() async {
