@@ -206,7 +206,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(CurrentDeviceConfigEtag(value));
   }
 
-  bool get useCompactDisplay => _prefs.getBool("useCompactDisplay")!;
+  // Slam to false until we figure out how to window resizing.
+  bool get useCompactDisplay => false; //_prefs.getBool("useCompactDisplay")!;
   set useCompactDisplay(bool value) {
     _prefs.setBool("useCompactDisplay", value);
     emit(UseCompactDisplay(value));

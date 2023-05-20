@@ -340,6 +340,7 @@ class IntifaceCentralPage extends StatelessWidget {
             builder: (context, state) {
               var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
               List<Widget> widgets = [const ControlWidget()];
+              /*
               if (isDesktop()) {
                 widgets.addAll([
                   const Divider(height: 2),
@@ -358,6 +359,7 @@ class IntifaceCentralPage extends StatelessWidget {
                   )
                 ]);
               }
+              */
               if (!isDesktop() || !useCompactDisplay) {
                 widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
               }
