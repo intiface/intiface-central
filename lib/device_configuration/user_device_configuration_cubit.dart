@@ -106,10 +106,12 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   }
 
   Future<void> updateDisplayName(UserConfigDeviceIdentifier deviceIdentifier, String displayName) async {
+    var updatedDisplayName = displayName.trim();
+
     // See if device already exists in config
     for (var config in _configs) {
       if (config.matches(deviceIdentifier)) {
-        config.displayName = displayName;
+        config.displayName = updatedDisplayName.isEmpty ? null : updatedDisplayName;
         await _saveConfigFile();
         return;
       }
