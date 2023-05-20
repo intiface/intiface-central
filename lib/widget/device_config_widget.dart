@@ -38,18 +38,37 @@ class DeviceConfigWidget extends StatelessWidget {
                     title: const Text("Display Name"),
                     value: Text(config.displayName ?? ""),
                     onPressed: (context) {
+                      final TextEditingController nameController =
+                          TextEditingController(text: config.displayName ?? "");
+                      var nameField = TextField(
+                        controller: nameController,
+                        onSubmitted: (value) async {
+                          Navigator.pop(context);
+                          await userDeviceConfigCubit.updateDisplayName(config.identifier, value);
+                        },
+                        decoration: const InputDecoration(hintText: "Display Name Entry"),
+                      );
                       showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                                 title: const Text('Display Name'),
-                                content: TextField(
-                                  controller: TextEditingController(text: config.displayName ?? ""),
-                                  onSubmitted: (value) async {
-                                    Navigator.pop(context);
-                                    await userDeviceConfigCubit.updateDisplayName(config.identifier, value);
-                                  },
-                                  decoration: const InputDecoration(hintText: "Display Name Entry"),
-                                ),
+                                content: nameField,
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Ok'),
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      await userDeviceConfigCubit.updateDisplayName(
+                                          config.identifier, nameController.text);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
                               ));
                     }),
                 SettingsTile.switchTile(
