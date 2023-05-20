@@ -19,12 +19,12 @@ class DevicePage extends StatelessWidget {
             current is ClientDisconnectedState ||
             current is EngineStoppedState,
         builder: (context, engineState) {
-          var deviceBloc = context.watch<DeviceManagerBloc>();
-          var guiSettingsCubit = context.watch<GuiSettingsCubit>();
+          var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
+          var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
           return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
             List<Widget> deviceWidgets = [];
             List<int> connectedIndexes = [];
-            var userDeviceConfigCubit = context.watch<UserDeviceConfigurationCubit>();
+            var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
 
             if (engineState is! EngineStoppedState) {
               deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
@@ -38,7 +38,8 @@ class DevicePage extends StatelessWidget {
                     child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                   ListTile(
                     title: Text(device.displayName ?? device.name),
-                    subtitle: Text("Index: ${device.index} - Base Name: ${device.name}"),
+                    subtitle:
+                        Text("Index: ${device.index} - Base Name: ${device.name}\n${deviceConfig.identifierString}"),
                   ),
                   DeviceControlWidget(deviceCubit: deviceCubit),
                   BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
@@ -84,7 +85,10 @@ class DevicePage extends StatelessWidget {
                           ExpansionPanel(
                               headerBuilder: (BuildContext context, bool isExpanded) {
                                 return ListTile(
-                                  title: Text(deviceConfig.displayName ?? deviceConfig.name),
+                                  title: Text(deviceConfig.displayName != null
+                                      ? "${deviceConfig.displayName} (${deviceConfig.name})"
+                                      : deviceConfig.name),
+                                  subtitle: Text(deviceConfig.identifierString),
                                 );
                               },
                               body:

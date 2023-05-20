@@ -19,6 +19,10 @@ class ExposedWritableUserDeviceConfig {
   ExposedWritableUserDeviceConfig(
       this.identifier, this.name, this.reservedIndex, this.displayName, this.allow, this.deny);
 
+  String get identifierString {
+    return "${identifier.protocol}:${identifier.identifier}:${identifier.address}:$reservedIndex";
+  }
+
   bool matches(UserConfigDeviceIdentifier other) {
     return identifier.address == other.address &&
         identifier.protocol == other.protocol &&
