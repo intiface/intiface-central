@@ -1,3 +1,24 @@
+# v2.4.0 - 2023/05/21 (All Platforms)
+
+## Features
+
+- Upgrade to Flutter v3.10
+  - There's more material components, so who knows what UI might've changed.
+- User Device Configuation
+  - List all known (previously connected to) devices even when server not up
+  - Device indexes now saved between sessions
+  - Ability to add a "display name" to a device
+  - Ability to choose whether or not to connect to a device
+- Added Start Server on Startup Options
+- Desktop - Window now remembers size, position on desktop
+- Collapsable mode removed for now
+  - Causes tons of issues on linux, doesn't resize right, etc...
+  - Will come back in another version
+- Android now defaults to foreground task mode
+  - Can still opt-out on settings, but not recommended
+- Update to Buttplug v7.0.3
+  - Tons of device protocol fixes/updates
+
 # v2.3.1 - 2023/04/14 (Android)
 
 ## Features
