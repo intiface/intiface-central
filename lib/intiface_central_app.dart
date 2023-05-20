@@ -266,6 +266,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       updateBloc.add(RunUpdate());
     }
 
+    if (configCubit.startServerOnStartup) {
+      engineControlBloc.add(EngineControlEventStart(options: await configCubit.getEngineOptions()));
+    }
+
     return MultiBlocProvider(providers: [
       BlocProvider(create: (context) => engineControlBloc),
       BlocProvider(create: (context) => deviceControlBloc),

@@ -78,13 +78,11 @@ class SettingWidget extends StatelessWidget {
                 SettingsSection(title: const Text("Server Settings"), tiles: [
                   // Turn this off until we know the server is mostly stable, or have a way to handle crash on startup
                   // gracefully.
-                  /*
                   SettingsTile.switchTile(
                       enabled: !engineIsRunning,
                       initialValue: cubit.startServerOnStartup,
                       onToggle: (value) => cubit.startServerOnStartup = value,
                       title: const Text("Start Server when Intiface Central Launches")),
-                      */
                   SettingsTile.navigation(
                       enabled: !engineIsRunning,
                       title: const Text("Server Name"),
