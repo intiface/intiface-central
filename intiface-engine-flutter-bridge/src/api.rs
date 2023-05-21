@@ -83,6 +83,8 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
 
   let mut backdoor_incoming = BACKDOOR_INCOMING_BROADCASTER.subscribe();
   let outgoing_sink = sink.clone();
+  let sink_clone = sink.clone();
+
   // Start our backdoor task first
   runtime.spawn(
     async move {
@@ -138,7 +140,6 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   // Our notifier needs to run in a task by itself, because we don't want our engine future to get
   // cancelled, so we can't select between it and the notifier. It needs to shutdown gracefully.
   let engine_clone = engine.clone();
-
   runtime.spawn(
     async move {
       info!("Entering main engine waiter task");
@@ -163,6 +164,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       );
       RUN_STATUS.store(false, Ordering::SeqCst);
       info!("Exiting main engine waiter task");
+      sink_clone.close();
     }
     .instrument(info_span!("IC main engine task")),
   );
