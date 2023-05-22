@@ -19,6 +19,11 @@
 - Update to Buttplug v7.0.3
   - Tons of device protocol fixes/updates
 
+## Bugfixes
+
+- Simplified internal configuration system
+- Fixed bug where engine messages may possibly be repeated on engine restart
+
 # v2.3.1 - 2023/04/14 (Android)
 
 ## Features
