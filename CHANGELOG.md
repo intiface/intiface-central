@@ -1,3 +1,9 @@
+# v2.4.1 - 2023/06/10 (iOS)
+
+## Bugfixes
+
+- Only query for android info on android (freezes other platforms)
+
 # v2.4.0 - 2023/05/21 (All Platforms)
 
 ## Features
