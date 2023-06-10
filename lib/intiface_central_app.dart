@@ -112,16 +112,19 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           : EngineRepository(LibraryEngineProvider());
 
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
       // For older android builds, ask for location perms.
-      if (Platform.isAndroid && androidInfo.version.sdkInt <= 30) {
-        await [
-          Permission.bluetooth,
-          Permission.location,
-          Permission.locationWhenInUse,
-          Permission.locationAlways,
-        ].request();
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+        if (androidInfo.version.sdkInt <= 30) {
+          await [
+            Permission.bluetooth,
+            Permission.location,
+            Permission.locationWhenInUse,
+            Permission.locationAlways,
+          ].request();
+        }
       }
       await [
         Permission.bluetoothConnect,
