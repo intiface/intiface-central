@@ -3,8 +3,8 @@ use crate::{
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
-use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition}, server::device::ServerDeviceIdentifier};
-pub use buttplug::{util::device_configuration::UserConfigDeviceIdentifier};
+use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition}, server::device::{ServerDeviceIdentifier}};
+pub use buttplug::{util::device_configuration::UserConfigDeviceIdentifier, server::device::configuration::WebsocketSpecifier};
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
@@ -201,6 +201,26 @@ pub struct _UserConfigDeviceIdentifier {
   identifier: Option<String>,
 }
 
+pub struct ExposedWebsocketSpecifier {
+  pub names: Vec<String>,
+}
+
+impl From<&WebsocketSpecifier> for ExposedWebsocketSpecifier {
+  fn from(other: &WebsocketSpecifier) -> Self {
+    ExposedWebsocketSpecifier { names: other.names().iter().cloned().collect() }
+  }
+}
+
+pub struct ExposedUserDeviceSpecifiers {
+  pub websocket: Option<ExposedWebsocketSpecifier>,
+}
+
+pub struct ExposedUserConfig {
+  pub specifiers: Vec<(String, ExposedUserDeviceSpecifiers)>,
+  pub configurations: Vec<ExposedUserDeviceConfig>
+}
+
+
 pub struct ExposedUserDeviceConfig {
   pub identifier: UserConfigDeviceIdentifier,
   pub name: String,
@@ -234,20 +254,29 @@ impl Into<UserDeviceConfigPair> for ExposedUserDeviceConfig {
   }
 }
 
-pub fn get_user_device_configs(device_config_json: String, user_config_json: String) -> Vec<ExposedUserDeviceConfig> {
+pub fn get_user_device_configs(device_config_json: String, user_config_json: String) -> ExposedUserConfig {
   let mut dcm_builder = load_protocol_configs(Some(device_config_json.to_owned()), Some(user_config_json.to_owned()), false).unwrap();
   let dcm = dcm_builder.finish().unwrap();
   let raw_user_configs = load_user_configs(&user_config_json);
   let mut config_out = vec!();
-  for config in raw_user_configs {
+  let mut websocket_specifiers_out = Vec::new();
+  for (protocol, specifiers) in raw_user_configs.specifiers().as_ref().unwrap() {
+    if let Some(websocket_specifiers) = specifiers.websocket() {
+      websocket_specifiers_out.push((protocol.clone(), ExposedUserDeviceSpecifiers { websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)) }));
+    }
+  }
+  for config in raw_user_configs.user_device_configs().as_ref().unwrap() {
     let maybe_attrs = dcm.protocol_device_attributes(&ServerDeviceIdentifier::from(config.identifier().clone()), &[]);
     if let Some(attrs) = maybe_attrs {
-      let mut user_config = ExposedUserDeviceConfig::from(&config);
+      let mut user_config = ExposedUserDeviceConfig::from(*&config);
       user_config.name = attrs.name().to_owned();
       config_out.push(user_config)
     }
   }
-  config_out
+  ExposedUserConfig {
+    specifiers: websocket_specifiers_out,
+    configurations: config_out
+  }
 }
 
 pub fn generate_user_device_config_file(user_config: Vec<ExposedUserDeviceConfig>) -> String {

@@ -61,6 +61,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
       var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
       cubit._configs = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig))
+          .configurations
           .map((e) => ExposedWritableUserDeviceConfig.fromRust(e))
           .toList();
     }
