@@ -22,7 +22,7 @@
   - Will come back in another version
 - Android now defaults to foreground task mode
   - Can still opt-out on settings, but not recommended
-- Update to Buttplug v7.0.3
+- Update to Buttplug v7.1.0
   - Tons of device protocol fixes/updates
 
 ## Bugfixes
