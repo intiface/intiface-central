@@ -25,9 +25,6 @@ class DeviceControlWidget extends StatelessWidget {
             current is EngineStoppedState,
         builder: (context, engineState) {
           return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
-            // Since the device is still online, we know we can get the ClientDevice out of it.
-            var device = _deviceCubit.device!;
-
             List<Widget> actuatorList = [];
             for (var actuator in _deviceCubit.actuators) {
               if (actuator is ScalarActuatorCubit) {

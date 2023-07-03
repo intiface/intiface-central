@@ -101,7 +101,7 @@ fn wire_get_user_device_configs_impl(
 }
 fn wire_generate_user_device_config_file_impl(
   port_: MessagePort,
-  user_config: impl Wire2Api<Vec<ExposedUserDeviceConfig>> + UnwindSafe,
+  user_config: impl Wire2Api<ExposedUserConfig> + UnwindSafe,
 ) {
   FLUTTER_RUST_BRIDGE_HANDLER.wrap(
     WrapInfo {
@@ -113,6 +113,16 @@ fn wire_generate_user_device_config_file_impl(
       let api_user_config = user_config.wire2api();
       move |task_callback| Ok(generate_user_device_config_file(api_user_config))
     },
+  )
+}
+fn wire_get_protocol_names_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+    WrapInfo {
+      debug_name: "get_protocol_names",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || move |task_callback| Ok(get_protocol_names()),
   )
 }
 // Section: wrapper structs

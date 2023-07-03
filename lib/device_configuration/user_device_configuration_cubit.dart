@@ -1,12 +1,48 @@
 import 'package:bloc/bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/ffi.dart';
+import 'package:loggy/loggy.dart';
 
 class UserDeviceConfigurationState {}
 
 class UserDeviceConfigurationStateInitial extends UserDeviceConfigurationState {}
 
 class UserDeviceConfigurationStateUpdated extends UserDeviceConfigurationState {}
+
+class ExposedWritableUserDeviceSpecifier {
+  List<String>? websocketNames;
+
+  ExposedWritableUserDeviceSpecifier(this.websocketNames);
+
+  void addWebsocketDeviceName(String name) {
+    if (websocketNames != null) {
+      if (!websocketNames!.contains(name)) {
+        websocketNames!.add(name);
+      }
+    } else {
+      websocketNames = [name].toList();
+    }
+  }
+
+  void removeWebsocketDeviceName(String name) {
+    if (websocketNames != null) {
+      websocketNames!.remove(name);
+    }
+  }
+
+  static ExposedWritableUserDeviceSpecifier? fromRust(ExposedUserDeviceSpecifiers config) {
+    return ExposedWritableUserDeviceSpecifier(config.websocket!.names.toList());
+  }
+
+  ExposedUserDeviceSpecifiers? toRust() {
+    // For now, assume we'll only use websockets here. This will change once we can also set up serial ports.
+    if (websocketNames == null) {
+      return null;
+    }
+    var websocketSpecifier = ExposedWebsocketSpecifier(names: websocketNames!);
+    return ExposedUserDeviceSpecifiers(websocket: websocketSpecifier);
+  }
+}
 
 class ExposedWritableUserDeviceConfig {
   UserConfigDeviceIdentifier identifier;
@@ -47,10 +83,14 @@ class ExposedWritableUserDeviceConfig {
 
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   List<ExposedWritableUserDeviceConfig> _configs = List.empty();
+  List<String> _protocols = List.empty();
+  final Map<String, ExposedWritableUserDeviceSpecifier> _specifiers = {};
 
   UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
 
   List<ExposedWritableUserDeviceConfig> get configs => _configs;
+  Map<String, ExposedWritableUserDeviceSpecifier> get specifiers => _specifiers;
+  List<String> get protocols => _protocols;
 
   static Future<UserDeviceConfigurationCubit> create() async {
     var cubit = UserDeviceConfigurationCubit._();
@@ -60,12 +100,37 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
       var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
       var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
-      cubit._configs = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig))
-          .configurations
-          .map((e) => ExposedWritableUserDeviceConfig.fromRust(e))
-          .toList();
+      var config = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
+      cubit._configs = config.configurations.map((e) => ExposedWritableUserDeviceConfig.fromRust(e)).toList();
+      for (var k in config.specifiers) {
+        var protocol = k.$1;
+        var specifier = k.$2;
+        var dartSpecifier = ExposedWritableUserDeviceSpecifier.fromRust(specifier);
+        if (dartSpecifier == null) {
+          continue;
+        }
+        cubit._specifiers[protocol] = dartSpecifier;
+      }
+      //.map((k, v) => ExposedWritableUserDeviceSpecifier())
     }
+    cubit._protocols = await api.getProtocolNames();
     return cubit;
+  }
+
+  Future<void> addWebsocketDeviceName(String protocol, String name) async {
+    if (!_specifiers.containsKey(protocol)) {
+      _specifiers[protocol] = ExposedWritableUserDeviceSpecifier([name]);
+    } else {
+      _specifiers[protocol]!.addWebsocketDeviceName(name);
+    }
+    await _saveConfigFile();
+  }
+
+  Future<void> removeWebsocketDeviceName(String protocol, String name) async {
+    if (_specifiers.containsKey(protocol)) {
+      _specifiers[protocol]!.removeWebsocketDeviceName(name);
+      await _saveConfigFile();
+    }
   }
 
   Future<void> updateDeviceAllow(UserConfigDeviceIdentifier deviceIdentifier, bool allow) async {
@@ -139,7 +204,18 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   }
 
   Future<void> _saveConfigFile() async {
-    var jsonString = await api.generateUserDeviceConfigFile(userConfig: _configs.map((e) => e.toRust()).toList());
+    List<(String, ExposedUserDeviceSpecifiers)> specifierList = [];
+    logInfo(_specifiers);
+    for (var entry in _specifiers.entries) {
+      if (entry.value.toRust() != null) {
+        logInfo(entry.key);
+        specifierList.add((entry.key, entry.value.toRust()!));
+      }
+    }
+    logInfo(specifierList);
+    var jsonString = await api.generateUserDeviceConfigFile(
+        userConfig:
+            ExposedUserConfig(configurations: _configs.map((e) => e.toRust()).toList(), specifiers: specifierList));
     await IntifacePaths.userDeviceConfigFile.writeAsString(jsonString);
     emit(UserDeviceConfigurationStateUpdated());
   }

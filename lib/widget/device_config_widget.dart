@@ -18,7 +18,7 @@ class DeviceConfigWidget extends StatelessWidget {
         buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
         builder: (context, state) {
           return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
-              builder: (context, engineState) {
+              builder: (context, userConfigState) {
             var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
             return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
               List<AbstractSettingsSection> tiles = [];

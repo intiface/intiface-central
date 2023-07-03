@@ -3,16 +3,16 @@ use crate::{
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
-use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition}, server::device::{ServerDeviceIdentifier}};
+use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition, ProtocolDefinition}, server::device::{ServerDeviceIdentifier, protocol::get_default_protocol_map}};
 pub use buttplug::{util::device_configuration::UserConfigDeviceIdentifier, server::device::configuration::WebsocketSpecifier};
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
-use std::sync::{
+use std::{sync::{
   atomic::{AtomicBool, Ordering},
   Arc,
-};
+}, collections::HashMap};
 use tokio::{
   select,
   sync::{broadcast, Notify},
@@ -211,6 +211,12 @@ impl From<&WebsocketSpecifier> for ExposedWebsocketSpecifier {
   }
 }
 
+impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
+  fn into(self) -> WebsocketSpecifier {
+    WebsocketSpecifier::new(&self.names)
+  }
+}
+
 pub struct ExposedUserDeviceSpecifiers {
   pub websocket: Option<ExposedWebsocketSpecifier>,
 }
@@ -220,6 +226,27 @@ pub struct ExposedUserConfig {
   pub configurations: Vec<ExposedUserDeviceConfig>
 }
 
+impl Into<UserConfigDefinition> for ExposedUserConfig {
+  fn into(self) -> UserConfigDefinition {
+    let mut user_config_def = UserConfigDefinition::default();
+    let configs: Vec<UserDeviceConfigPair> = self.configurations.into_iter().map(|x| x.into()).collect();
+    let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
+    self.specifiers.into_iter().for_each(|(protocol, specifiers)| {
+      if let Some(websocket_specifier) = specifiers.websocket {
+        let mut protocol_def = ProtocolDefinition::default();
+        protocol_def.set_websocket(Some(websocket_specifier.into()));
+        specifier_map.insert(protocol, protocol_def);
+      }
+    });
+    //if !specifier_map.is_empty() {
+      user_config_def.set_specifiers(Some(specifier_map));
+    //}
+    if !configs.is_empty() {
+      user_config_def.set_user_device_configs(Some(configs));
+    }
+    user_config_def
+  }
+}
 
 pub struct ExposedUserDeviceConfig {
   pub identifier: UserConfigDeviceIdentifier,
@@ -260,9 +287,11 @@ pub fn get_user_device_configs(device_config_json: String, user_config_json: Str
   let raw_user_configs = load_user_configs(&user_config_json);
   let mut config_out = vec!();
   let mut websocket_specifiers_out = Vec::new();
-  for (protocol, specifiers) in raw_user_configs.specifiers().as_ref().unwrap() {
-    if let Some(websocket_specifiers) = specifiers.websocket() {
-      websocket_specifiers_out.push((protocol.clone(), ExposedUserDeviceSpecifiers { websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)) }));
+  if let Some(user_specifiers) = raw_user_configs.specifiers() {
+    for (protocol, specifiers) in user_specifiers {
+      if let Some(websocket_specifiers) = specifiers.websocket() {
+        websocket_specifiers_out.push((protocol.clone(), ExposedUserDeviceSpecifiers { websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)) }));
+      }
     }
   }
   for config in raw_user_configs.user_device_configs().as_ref().unwrap() {
@@ -279,13 +308,13 @@ pub fn get_user_device_configs(device_config_json: String, user_config_json: Str
   }
 }
 
-pub fn generate_user_device_config_file(user_config: Vec<ExposedUserDeviceConfig>) -> String {
+pub fn generate_user_device_config_file(user_config: ExposedUserConfig) -> String {
   let mut config_file = ProtocolConfiguration::new(2, 0);
-  let mut user_config_def = UserConfigDefinition::default();
-  let configs: Vec<UserDeviceConfigPair> = user_config.into_iter().map(|x| x.into()).collect();
-  if !configs.is_empty() {
-    user_config_def.set_user_device_configs(Some(configs));
-    config_file.user_configs = Some(user_config_def);
-  }
+  let user_config_def: UserConfigDefinition = user_config.into();
+  config_file.user_configs = Some(user_config_def);
   config_file.to_json()
+}
+
+pub fn get_protocol_names() -> Vec<String> {
+  get_default_protocol_map().keys().into_iter().cloned().collect()
 }
