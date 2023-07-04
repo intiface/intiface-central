@@ -296,12 +296,14 @@ pub fn get_user_device_configs(device_config_json: String, user_config_json: Str
       }
     }
   }
-  for config in raw_user_configs.user_device_configs().as_ref().unwrap() {
-    let maybe_attrs = dcm.protocol_device_attributes(&ServerDeviceIdentifier::from(config.identifier().clone()), &[]);
-    if let Some(attrs) = maybe_attrs {
-      let mut user_config = ExposedUserDeviceConfig::from(*&config);
-      user_config.name = attrs.name().to_owned();
-      config_out.push(user_config)
+  if let Some(configs) = raw_user_configs.user_device_configs() {
+    for config in configs {
+      let maybe_attrs = dcm.protocol_device_attributes(&ServerDeviceIdentifier::from(config.identifier().clone()), &[]);
+      if let Some(attrs) = maybe_attrs {
+        let mut user_config = ExposedUserDeviceConfig::from(*&config);
+        user_config.name = attrs.name().to_owned();
+        config_out.push(user_config)
+      }
     }
   }
   ExposedUserConfig {
