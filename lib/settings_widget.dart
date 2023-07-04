@@ -227,9 +227,9 @@ class SettingWidget extends StatelessWidget {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text('Reset User Device Configuration'),
-                                content: SingleChildScrollView(
+                                content: const SingleChildScrollView(
                                   child: ListBody(
-                                    children: const <Widget>[
+                                    children: <Widget>[
                                       Text(
                                           'This will erase the user device configuration, which stores per-device info. It is recommended to stop and restart the application after this step.'),
                                       Text('Would you like to continue?'),
@@ -278,9 +278,9 @@ class SettingWidget extends StatelessWidget {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text('Reset Application to Defaults'),
-                                content: SingleChildScrollView(
+                                content: const SingleChildScrollView(
                                   child: ListBody(
-                                    children: const <Widget>[
+                                    children: <Widget>[
                                       Text(
                                           'This will erase all configuration and downloaded engine/config files. It is recommended to stop and restart the application after this step.'),
                                       Text('Would you like to continue?'),
