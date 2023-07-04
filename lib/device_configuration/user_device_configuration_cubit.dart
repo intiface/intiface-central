@@ -94,26 +94,30 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   static Future<UserDeviceConfigurationCubit> create() async {
     var cubit = UserDeviceConfigurationCubit._();
-    if (!IntifacePaths.userDeviceConfigFile.existsSync()) {
-      await cubit._saveConfigFile();
-    }
-    if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
-      var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
-      var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
-      var config = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
-      cubit._configs = config.configurations.map((e) => ExposedWritableUserDeviceConfig.fromRust(e)).toList();
-      for (var k in config.specifiers) {
-        var protocol = k.$1;
-        var specifier = k.$2;
-        var dartSpecifier = ExposedWritableUserDeviceSpecifier.fromRust(specifier);
-        if (dartSpecifier == null) {
-          continue;
-        }
-        cubit._specifiers[protocol] = dartSpecifier;
+    try {
+      if (!IntifacePaths.userDeviceConfigFile.existsSync()) {
+        await cubit._saveConfigFile();
       }
-      //.map((k, v) => ExposedWritableUserDeviceSpecifier())
+      if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
+        var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
+        var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
+        var config = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
+        cubit._configs = config.configurations.map((e) => ExposedWritableUserDeviceConfig.fromRust(e)).toList();
+        for (var k in config.specifiers) {
+          var protocol = k.$1;
+          var specifier = k.$2;
+          var dartSpecifier = ExposedWritableUserDeviceSpecifier.fromRust(specifier);
+          if (dartSpecifier == null) {
+            continue;
+          }
+          cubit._specifiers[protocol] = dartSpecifier;
+        }
+        //.map((k, v) => ExposedWritableUserDeviceSpecifier())
+      }
+      cubit._protocols = await api.getProtocolNames();
+    } catch (e) {
+      logError("Error loading cubit! starting with null config");
     }
-    cubit._protocols = await api.getProtocolNames();
     return cubit;
   }
 
