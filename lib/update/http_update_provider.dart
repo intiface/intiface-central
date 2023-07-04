@@ -19,7 +19,10 @@ abstract class HttpUpdateProvider implements UpdateProvider {
     HttpClient client = HttpClient();
 
     HttpClientRequest req = await client.getUrl(Uri.parse(_updateUrl));
-    req.headers.add(HttpHeaders.ifNoneMatchHeader, _expectedVersion);
+    // If we don't have a copy of the file locally, skip our version check and always download it.
+    if (await _localFile.exists()) {
+      req.headers.add(HttpHeaders.ifNoneMatchHeader, _expectedVersion);
+    }
     HttpClientResponse response = await req.close();
     if (response.statusCode == 200) {
       final etag = response.headers.value(HttpHeaders.etagHeader);

@@ -35,8 +35,13 @@ class DeviceConfiguration {
       return "0.0";
     }
     var configFileJson = await configFile.readAsString();
-    DeviceConfigFile config = DeviceConfigFile.fromJson(jsonDecode(configFileJson));
-    logInfo("Device configuration file version: ${config.version}");
-    return config.version.toString();
+    try {
+      DeviceConfigFile config = DeviceConfigFile.fromJson(jsonDecode(configFileJson));
+      logInfo("Device configuration file version: ${config.version}");
+      return config.version.toString();
+    } catch (e) {
+      logError("Error loading config file! Deleting config file and letting system pull from repo.");
+      return "0.0";
+    }
   }
 }

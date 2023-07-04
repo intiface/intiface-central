@@ -116,7 +116,10 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       }
       cubit._protocols = await api.getProtocolNames();
     } catch (e) {
-      logError("Error loading cubit! starting with null config");
+      logError("Error loading cubit! Deleting configs and creating new ones.");
+      await IntifacePaths.deviceConfigFile.delete();
+      await IntifacePaths.userDeviceConfigFile.delete();
+      await cubit._saveConfigFile();
     }
     return cubit;
   }
