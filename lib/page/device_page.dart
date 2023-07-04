@@ -194,9 +194,9 @@ class DevicePage extends StatelessWidget {
                           children: [
                             ExpansionPanel(
                                 isExpanded:
-                                    guiSettingsCubit.getExpansionValue("device-settings-websocketdevices") ?? true,
+                                    guiSettingsCubit.getExpansionValue("device-settings-websocketdevices") ?? false,
                                 headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Websocket Devices")),
+                                    const ListTile(title: Text("Websocket Devices (Advanced)")),
                                 body: FractionallySizedBox(
                                     widthFactor: 0.8,
                                     child: Column(
