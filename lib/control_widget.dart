@@ -102,7 +102,7 @@ class ControlWidget extends StatelessWidget {
                             bloc: configCubit,
                             buildWhen: (previous, current) => current is WebsocketServerAllInterfaces,
                             builder: (context, state) => Text(
-                                "Server Address: ${configCubit.websocketServerAllInterfaces ? networkCubit.ip : "localhost"}:12345")),
+                                "Server Address: ${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:12345")),
                       ])),
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -112,35 +112,31 @@ class ControlWidget extends StatelessWidget {
                           builder: (context, ErrorNotifierState state) {
                             return Visibility(
                               visible: state is ErrorNotifierTriggerState ? true : false,
-                              child: IconButton(
-                                iconSize: 25,
-                                onPressed: () => navCubit.goLogs(),
-                                color: Colors.red,
-                                icon: const Icon(Icons.warning),
-                                tooltip: "Errors Occured",
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
+                              child: TextButton.icon(
+                                  label: const Text("Error"),
+                                  onPressed: () => navCubit.goLogs(),
+                                  icon: const Icon(Icons.warning),
+                                  style: ButtonStyle(
+                                      foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.red))),
                             );
                           }),
                       Visibility(
-                          visible: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion,
-                          child: IconButton(
-                              iconSize: 25,
-                              onPressed: () => navCubit.goSettings(),
-                              icon: const Icon(Icons.update, color: Colors.green),
-                              tooltip: "Updates Available",
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints())),
+                        visible: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion,
+                        child: TextButton.icon(
+                            label: const Text("Update"),
+                            onPressed: () => navCubit.goSettings(),
+                            icon: const Icon(Icons.update, color: Colors.green),
+                            style:
+                                ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.green))),
+                      ),
                       Visibility(
-                          visible: false,
-                          child: IconButton(
-                              iconSize: 25,
-                              onPressed: () => navCubit.goNews(),
-                              icon: const Icon(Icons.newspaper),
-                              tooltip: "New News Available",
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints())),
+                        visible: false,
+                        child: TextButton.icon(
+                            onPressed: () => navCubit.goNews(),
+                            icon: const Icon(Icons.newspaper),
+                            label: const Text("News"),
+                            style: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.blue))),
+                      )
                     ],
                   ),
                   Tooltip(message: statusMessage, child: Icon(statusIcon, size: 70)),
