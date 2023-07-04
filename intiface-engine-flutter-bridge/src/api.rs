@@ -233,9 +233,11 @@ impl Into<UserConfigDefinition> for ExposedUserConfig {
     let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
     self.specifiers.into_iter().for_each(|(protocol, specifiers)| {
       if let Some(websocket_specifier) = specifiers.websocket {
-        let mut protocol_def = ProtocolDefinition::default();
-        protocol_def.set_websocket(Some(websocket_specifier.into()));
-        specifier_map.insert(protocol, protocol_def);
+        if (websocket_specifier.names.len() > 0) {
+          let mut protocol_def = ProtocolDefinition::default();
+          protocol_def.set_websocket(Some(websocket_specifier.into()));
+          specifier_map.insert(protocol, protocol_def);
+        }
       }
     });
     //if !specifier_map.is_empty() {
