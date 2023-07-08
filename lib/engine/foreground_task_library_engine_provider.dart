@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
@@ -98,7 +97,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   @override
-  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
+  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
     // Send data to the main isolate.
     sendPort?.send(timestamp);
   }
@@ -114,7 +113,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   @override
-  void onButtonPressed(String id) {
+  void onNotificationButtonPressed(String id) {
     if (id == "stopServerButton") {
       FlutterForegroundTask.stopService();
     } else {
