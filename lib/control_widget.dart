@@ -102,7 +102,7 @@ class ControlWidget extends StatelessWidget {
                             bloc: configCubit,
                             buildWhen: (previous, current) => current is WebsocketServerAllInterfaces,
                             builder: (context, state) => Text(
-                                "Server Address: ${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:12345")),
+                                "Server Address: ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:12345")),
                       ])),
                   Column(
                     mainAxisSize: MainAxisSize.min,
