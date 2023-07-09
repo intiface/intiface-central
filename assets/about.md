@@ -12,7 +12,7 @@ Looking for apps and games to use with Intiface® Central? Check out the [Awesom
 
 # About Intiface® Central
 
-Version v2.4.0
+Version v2.4.1
 
 Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2023
 
@@ -23,6 +23,7 @@ Find us on:
 - [Discourse Forum](https://discuss.buttplug.io)
 - [Twitter](https://twitter.com/buttplugio)
 - [Mastodon](https://buttplug.zone/@buttplugio)
+- [Bluesky](https://bsky.app/profile/buttplug.io)
 - [Discord](https://discord.buttplug.io)
 - [Youtube](https://youtube.buttplug.io)
 
