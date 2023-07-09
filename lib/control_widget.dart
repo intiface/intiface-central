@@ -101,8 +101,6 @@ class ControlWidget extends StatelessWidget {
                   engineStatus = "Engine starting...";
                 } else if (state is EngineStoppedState) {
                   engineStatus = "Engine not running";
-                } else {
-                  engineStatus = state.toString();
                 }
 
                 return Row(children: [
