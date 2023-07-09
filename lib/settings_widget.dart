@@ -41,28 +41,30 @@ class SettingWidget extends StatelessWidget {
                       ]));
                     }
 
-                    var versionTiles = [
-                      CustomSettingsTile(
-                          child: TextButton(
+                    List<AbstractSettingsTile> versionTiles = [
+                      SettingsTile(
+                          title: TextButton(
                               onPressed:
                                   !engineIsRunning ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()) : null,
                               child: const Text("Check For Updates"))),
-                      CustomSettingsTile(child: Text("App Version: ${cubit.currentAppVersion}")),
+                      SettingsTile(title: const Text("App Version"), value: Text(cubit.currentAppVersion)),
                     ];
                     if (isDesktop() && cubit.currentAppVersion != cubit.latestAppVersion) {
-                      versionTiles.add(CustomSettingsTile(
-                          child: TextButton(
-                              onPressed: () async {
-                                const url = "https://github.com/intiface/intiface-central/releases";
-                                if (await canLaunchUrlString(url)) {
-                                  await launchUrlString(url);
-                                }
-                              },
-                              child: Text(
-                                  "New Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to go to releases site."))));
+                      versionTiles.add(SettingsTile.navigation(
+                          onPressed: (context) async {
+                            const url = "https://github.com/intiface/intiface-central/releases";
+                            if (await canLaunchUrlString(url)) {
+                              await launchUrlString(url);
+                            }
+                          },
+                          title: Text(
+                            "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click to visit releases site.",
+                            style: const TextStyle(color: Colors.green),
+                          )));
                     }
                     versionTiles.addAll([
-                      CustomSettingsTile(child: Text("Device Config Version: ${cubit.currentDeviceConfigVersion}")),
+                      SettingsTile(
+                          title: const Text("Device Config Version"), value: Text(cubit.currentDeviceConfigVersion)),
                     ]);
 
                     tiles.addAll([
@@ -164,11 +166,15 @@ class SettingWidget extends StatelessWidget {
                             initialValue: cubit.useLovenseHIDDongle,
                             onToggle: (value) => cubit.useLovenseHIDDongle = value,
                             title: const Text("Lovense HID Dongle")),
-                        const CustomSettingsTile(
-                          child: Text("Other Device Managers are in Advanced Settings Below"),
-                        )
                       ]);
                     }
+
+                    deviceSettings.add(SettingsTile(
+                      title: const Text(
+                        "Other Device Managers are in Advanced Settings Below",
+                        textAlign: TextAlign.center,
+                      ),
+                    ));
 
                     tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
 
@@ -211,10 +217,9 @@ class SettingWidget extends StatelessWidget {
                     }
 
                     tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
-                      CustomSettingsTile(
-                          child: TextButton(
+                      SettingsTile.navigation(
                         onPressed: !engineIsRunning
-                            ? () {
+                            ? (context) {
                                 showDialog<void>(
                                   context: context,
                                   barrierDismissible: false, // user must tap button!
@@ -260,12 +265,11 @@ class SettingWidget extends StatelessWidget {
                                 );
                               }
                             : null,
-                        child: const Text("Reset User Device Configuration"),
-                      )),
-                      CustomSettingsTile(
-                          child: TextButton(
+                        title: const Text("Reset User Device Configuration"),
+                      ),
+                      SettingsTile.navigation(
                         onPressed: !engineIsRunning
-                            ? () {
+                            ? (context) {
                                 showDialog<void>(
                                   context: context,
                                   barrierDismissible: false, // user must tap button!
@@ -319,8 +323,8 @@ class SettingWidget extends StatelessWidget {
                                 );
                               }
                             : null,
-                        child: const Text("Reset Application Configuration"),
-                      ))
+                        title: const Text("Reset Application Configuration"),
+                      )
                     ]));
 
                     var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
