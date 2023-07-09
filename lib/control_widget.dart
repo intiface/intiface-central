@@ -45,15 +45,16 @@ class ControlWidget extends StatelessWidget {
                   buttonAction = () => engineControlBloc.add(EngineControlEventStop());
                 } else if (state is EngineStartedState) {
                   statusMessage = "Server started";
-                  statusIcon = Icons.block;
+                  statusIcon = Icons.bedtime;
                   buttonAction = () => engineControlBloc.add(EngineControlEventStop());
                 } else if (state is EngineStoppedState) {
                   statusMessage = "Server not running";
-                  statusIcon = Icons.block;
+                  statusIcon = Icons.bedtime;
                   buttonAction = () async => engineControlBloc.add(EngineControlEventStart(
                       options: await BlocProvider.of<IntifaceConfigurationCubit>(context, listen: false)
                           .getEngineOptions()));
                 } else if (state is EngineStartingState) {
+                  statusIcon = Icons.start;
                   statusMessage = "Server starting";
                   buttonAction = null;
                 }
@@ -96,7 +97,7 @@ class ControlWidget extends StatelessWidget {
                 } else if (state is EngineStartedState ||
                     state is EngineServerCreatedState ||
                     state is ClientDisconnectedState) {
-                  engineStatus = "Engine started, waiting for client";
+                  engineStatus = "Engine running, waiting for client";
                 } else if (state is EngineStartingState) {
                   engineStatus = "Engine starting...";
                 } else if (state is EngineStoppedState) {
