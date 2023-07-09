@@ -90,6 +90,21 @@ class ControlWidget extends StatelessWidget {
                       icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop));
                 }
 
+                var engineStatus = "Engine Status Unknown";
+                if (state is ClientConnectedState) {
+                  engineStatus = "${state.clientName} connected";
+                } else if (state is EngineStartedState ||
+                    state is EngineServerCreatedState ||
+                    state is ClientDisconnectedState) {
+                  engineStatus = "Engine started, waiting for client";
+                } else if (state is EngineStartingState) {
+                  engineStatus = "Engine starting...";
+                } else if (state is EngineStoppedState) {
+                  engineStatus = "Engine not running";
+                } else {
+                  engineStatus = state.toString();
+                }
+
                 return Row(children: [
                   Padding(padding: const EdgeInsets.all(5.0), child: controlButton),
                   Expanded(
@@ -97,13 +112,15 @@ class ControlWidget extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text(state is ClientConnectedState ? "${state.clientName} Connected" : "No Client Connected"),
+                        const Text("Status:", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(engineStatus),
+                        const Text("Server Address:", style: TextStyle(fontWeight: FontWeight.bold)),
                         BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
                             bloc: configCubit,
                             buildWhen: (previous, current) =>
                                 current is WebsocketServerAllInterfaces || current is WebsocketServerPort,
                             builder: (context, state) => Text(
-                                "Server Address: ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
+                                "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
                       ])),
                   Column(
                     mainAxisSize: MainAxisSize.min,
