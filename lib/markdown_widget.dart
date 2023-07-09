@@ -5,11 +5,9 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class MarkdownWidget extends StatelessWidget {
   final String _markdownContent;
-  final bool _backToSettings;
 
   const MarkdownWidget({super.key, required String markdownContent, required bool backToSettings})
-      : _markdownContent = markdownContent,
-        _backToSettings = backToSettings;
+      : _markdownContent = markdownContent;
 
   @override
   Widget build(BuildContext context) {
