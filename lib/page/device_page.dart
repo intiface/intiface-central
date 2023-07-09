@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/gui_settings_cubit.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
 import 'package:intiface_central/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
 import 'package:intiface_central/device/device_manager_bloc.dart';
 import 'package:intiface_central/engine/engine_control_bloc.dart';
-import 'package:loggy/loggy.dart';
 
 class ProtocolDropdownButton extends StatefulWidget {
   final List<String> protocols;
@@ -70,6 +70,7 @@ class DevicePage extends StatelessWidget {
         builder: (context, engineState) {
           var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
           var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
+          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
           return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
             return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
                 builder: (context, userConfigState) {
@@ -185,81 +186,87 @@ class DevicePage extends StatelessWidget {
                 protocol: valueNotifier,
                 enabled: !engineIsRunning,
               );
-              deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                  buildWhen: (previous, current) =>
-                      current is GuiSettingStateUpdate && current.valueName == "device-settings-websocketdevices",
-                  builder: (context, state) => ExpansionPanelList(
-                          expansionCallback: (panelIndex, isExpanded) =>
-                              guiSettingsCubit.setExpansionValue("device-settings-websocketdevices", !isExpanded),
-                          children: [
-                            ExpansionPanel(
-                                isExpanded:
-                                    guiSettingsCubit.getExpansionValue("device-settings-websocketdevices") ?? false,
-                                headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Websocket Devices (Advanced)")),
-                                body: FractionallySizedBox(
-                                    widthFactor: 0.8,
-                                    child: Column(
-                                      children: [
-                                        Visibility(
-                                            visible: rows.isNotEmpty,
-                                            child: DataTable(columns: const <DataColumn>[
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Protocol',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Device Name',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              )
-                                            ], rows: rows)),
-                                        FractionallySizedBox(
-                                          widthFactor: 0.8,
-                                          child: Column(children: [
-                                            const Text("Add Websocket Device",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                )),
-                                            protocolDropdown,
-                                            SizedBox(
-                                              width: 150,
-                                              child: TextField(
-                                                enabled: !engineIsRunning,
-                                                controller: controller,
-                                                decoration: const InputDecoration(hintText: "Name"),
-                                              ),
+              deviceWidgets.add(const ListTile(title: Text("Advanced Device Config")));
+              if (configCubit.useDeviceWebsocketServer) {
+                deviceWidgets.add(ExpansionPanelList(
+                    expansionCallback: (panelIndex, isExpanded) =>
+                        guiSettingsCubit.setExpansionValue("device-settings-websocketdevices", !isExpanded),
+                    children: [
+                      ExpansionPanel(
+                          isExpanded: guiSettingsCubit.getExpansionValue("device-settings-websocketdevices") ?? false,
+                          headerBuilder: (BuildContext context, bool isExpanded) =>
+                              const ListTile(title: Text("Websocket Devices (Advanced)")),
+                          body: FractionallySizedBox(
+                              widthFactor: 0.8,
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                      visible: rows.isNotEmpty,
+                                      child: DataTable(columns: const <DataColumn>[
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'Protocol',
+                                              style: TextStyle(fontStyle: FontStyle.italic),
                                             ),
-                                            TextButton(
-                                                onPressed: engineIsRunning
-                                                    ? null
-                                                    : () {
-                                                        var name = controller.text;
-                                                        var protocol = protocolDropdown.protocol.value;
-                                                        userDeviceConfigCubit.addWebsocketDeviceName(protocol!, name);
-                                                      },
-                                                child: const Text("Add Websocket Device"))
-                                          ]),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'Device Name',
+                                              style: TextStyle(fontStyle: FontStyle.italic),
+                                            ),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'Delete',
+                                              style: TextStyle(fontStyle: FontStyle.italic),
+                                            ),
+                                          ),
                                         )
-                                      ],
-                                    )))
-                          ])));
+                                      ], rows: rows)),
+                                  FractionallySizedBox(
+                                    widthFactor: 0.8,
+                                    child: Column(children: [
+                                      const Text("Add Websocket Device",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                          )),
+                                      protocolDropdown,
+                                      SizedBox(
+                                        width: 150,
+                                        child: TextField(
+                                          enabled: !engineIsRunning,
+                                          controller: controller,
+                                          decoration: const InputDecoration(hintText: "Name"),
+                                        ),
+                                      ),
+                                      TextButton(
+                                          onPressed: engineIsRunning
+                                              ? null
+                                              : () {
+                                                  var name = controller.text;
+                                                  var protocol = protocolDropdown.protocol.value;
+                                                  userDeviceConfigCubit.addWebsocketDeviceName(protocol, name);
+                                                },
+                                          child: const Text("Add Websocket Device"))
+                                    ]),
+                                  )
+                                ],
+                              )))
+                    ]));
+              } else {
+                deviceWidgets.add(const FractionallySizedBox(
+                    widthFactor: 0.8,
+                    child: Text(
+                      "Advanced device managers (Websocket, Serial Port, etc...) can be turned on in Advanced Settings section of the settings panel.",
+                      textAlign: TextAlign.center,
+                    )));
+              }
 
               return Expanded(
                   child: Column(children: [
