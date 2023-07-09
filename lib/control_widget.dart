@@ -100,9 +100,10 @@ class ControlWidget extends StatelessWidget {
                         Text(state is ClientConnectedState ? "${state.clientName} Connected" : "No Client Connected"),
                         BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
                             bloc: configCubit,
-                            buildWhen: (previous, current) => current is WebsocketServerAllInterfaces,
+                            buildWhen: (previous, current) =>
+                                current is WebsocketServerAllInterfaces || current is WebsocketServerPort,
                             builder: (context, state) => Text(
-                                "Server Address: ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:12345")),
+                                "Server Address: ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
                       ])),
                   Column(
                     mainAxisSize: MainAxisSize.min,
