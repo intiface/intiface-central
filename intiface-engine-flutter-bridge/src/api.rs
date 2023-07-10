@@ -196,8 +196,11 @@ pub fn send_backend_server_message(msg: String) {
 
 #[frb(mirror(UserConfigDeviceIdentifier))]
 pub struct _UserConfigDeviceIdentifier {
+  #[allow(dead_code)]
   address: String,
+  #[allow(dead_code)]
   protocol: String,
+  #[allow(dead_code)]
   identifier: Option<String>,
 }
 
@@ -233,7 +236,7 @@ impl Into<UserConfigDefinition> for ExposedUserConfig {
     let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
     self.specifiers.into_iter().for_each(|(protocol, specifiers)| {
       if let Some(websocket_specifier) = specifiers.websocket {
-        if (websocket_specifier.names.len() > 0) {
+        if websocket_specifier.names.len() > 0 {
           let mut protocol_def = ProtocolDefinition::default();
           protocol_def.set_websocket(Some(websocket_specifier.into()));
           specifier_map.insert(protocol, protocol_def);
