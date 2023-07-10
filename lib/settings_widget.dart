@@ -378,7 +378,9 @@ class SettingWidget extends StatelessWidget {
                           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
                     }
 
-                    return Expanded(child: SingleChildScrollView(child: Column(children: widgets)));
+                    // SettingsList apparently handles its own scrolling, so do not try wrapping this in scroll views or
+                    // list views. It will work on desktop and break on mobile.
+                    return Expanded(child: Column(children: [Expanded(child: SettingsList(sections: tiles))]));
                   });
             }));
   }
