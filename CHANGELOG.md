@@ -1,3 +1,24 @@
+# v2.4.2 - 2023/07/09
+
+## Features
+
+- Update to Buttplug v7.1.1/Intiface Engine v1.4.1
+  - Mostly device additions, maybe some bluetooth bug fixes
+- Websocket Device setup now has UI
+- Created Advanced Settings section
+  - Adds raw message settings
+  - Moved less-used device managers to advanced
+
+## Bugfixes
+
+- Devices with Raw Message exposure no longer throw errors
+- Invalid configurations now deleted on startup, versus stalling app load
+- Vague icons now have wording in control panel
+- Changes from No symbol to Sleep symbol when engine not running
+- Fixed control widget layout to not linebreak on mobile
+- Added ws:// prefix for server address
+- "Listen on All Interfaces" on desktop now shows 0.0.0.0 instead of null in control panel
+
 # v2.4.1 - 2023/06/10 (iOS)
 
 ## Bugfixes
