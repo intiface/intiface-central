@@ -1,3 +1,10 @@
+# 1.0.4 (2023/07/09)
+
+## Features
+
+- Update to Intiface Engine 1.4.1
+- Add methods for handling user config import/export to dart
+
 # 1.0.3 (2023/02/19)
 
 ## Features
