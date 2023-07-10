@@ -10,11 +10,11 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = "1.4.0"
+intiface-engine = "1.4.1"
 # intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
-# buttplug = "7.1.0"
+buttplug = "7.1.1"
 flutter_rust_bridge = "1.78.0"
 log = "0.4.19"
 lazy_static = "1.4.0"
@@ -25,11 +25,11 @@ anyhow = "1.0.71"
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 # btleplug = { path = "../../btleplug" }
 btleplug = "0.11.0"
-thiserror = "1.0.40"
+thiserror = "1.0.43"
 getset = "0.1.2"
-serde = "1.0.164"
-serde_json = "1.0.99"
-async-trait = "0.1.68"
+serde = "1.0.170"
+serde_json = "1.0.100"
+async-trait = "0.1.71"
 futures = "0.3.28"
 tracing = "0.1.37"
 tracing-futures = "0.2.5"
@@ -38,7 +38,7 @@ tracing-futures = "0.2.5"
 # THESE VERSIONS ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 jni = "0.19.0"
-jni-utils = "0.1.0"
+jni-utils = "0.1.1"
 openssl-sys = {version = "0.9.90", features=["vendored"]}
 
 [lib]
