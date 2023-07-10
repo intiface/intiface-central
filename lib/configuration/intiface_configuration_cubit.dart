@@ -121,6 +121,11 @@ class UseForegroundProcess extends IntifaceConfigurationState {
   UseForegroundProcess(this.value);
 }
 
+class AllowRawMessages extends IntifaceConfigurationState {
+  final bool value;
+  AllowRawMessages(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -336,6 +341,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get allowRawMessages => _prefs.getBool("allowRawMessages")!;
   set allowRawMessages(bool value) {
     _prefs.setBool("allowRawMessages", value);
+    emit(AllowRawMessages(value));
   }
 
   bool get unreadNews => _prefs.getBool("unreadNews")!;

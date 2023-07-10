@@ -104,23 +104,32 @@ class ControlWidget extends StatelessWidget {
                   engineStatus = "Engine not running";
                 }
 
+                List<Widget> columnWidgets = [
+                  const Text("Status:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(engineStatus),
+                  const Text("Server Address:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+                      bloc: configCubit,
+                      buildWhen: (previous, current) =>
+                          current is WebsocketServerAllInterfaces || current is WebsocketServerPort,
+                      builder: (context, state) => Text(
+                          "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
+                  BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+                      bloc: configCubit,
+                      buildWhen: (previous, current) => current is AllowRawMessages,
+                      builder: (context, state) => Visibility(
+                          visible: configCubit.allowRawMessages,
+                          child: const Text("Raw Messages Allowed",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))))
+                ];
+
                 return Row(children: [
                   Padding(padding: const EdgeInsets.all(5.0), child: controlButton),
                   Expanded(
                       child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        const Text("Status:", style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(engineStatus),
-                        const Text("Server Address:", style: TextStyle(fontWeight: FontWeight.bold)),
-                        BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-                            bloc: configCubit,
-                            buildWhen: (previous, current) =>
-                                current is WebsocketServerAllInterfaces || current is WebsocketServerPort,
-                            builder: (context, state) => Text(
-                                "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
-                      ])),
+                          children: columnWidgets)),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
