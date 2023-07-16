@@ -155,7 +155,7 @@ class SettingWidget extends StatelessWidget {
                             enabled: !engineIsRunning,
                             initialValue: cubit.useXInput,
                             onToggle: (value) => cubit.useXInput = value,
-                            title: const Text("XInput (Windows Only)")),
+                            title: const Text("XBox Compatible Gamepads (XInput)")),
                         SettingsTile.switchTile(
                             enabled: !engineIsRunning,
                             initialValue: cubit.useLovenseConnectService,
@@ -165,7 +165,7 @@ class SettingWidget extends StatelessWidget {
                             enabled: !engineIsRunning,
                             initialValue: cubit.useLovenseHIDDongle,
                             onToggle: (value) => cubit.useLovenseHIDDongle = value,
-                            title: const Text("Lovense HID Dongle")),
+                            title: const Text("Lovense USB Dongle (HID/White Circuit Board)")),
                       ]);
                     }
 
@@ -357,7 +357,7 @@ class SettingWidget extends StatelessWidget {
                           enabled: !engineIsRunning,
                           initialValue: cubit.useLovenseSerialDongle,
                           onToggle: (value) => cubit.useLovenseSerialDongle = value,
-                          title: const Text("Lovense Serial Dongle")),
+                          title: const Text("Lovense USB Dongle (Serial/Black Circuit Board)")),
                       SettingsTile.switchTile(
                           enabled: !engineIsRunning,
                           initialValue: cubit.useSerialPort,
