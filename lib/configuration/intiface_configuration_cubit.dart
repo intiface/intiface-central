@@ -196,6 +196,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   Future<bool> reset() async {
     var result = await _prefs.clear();
     emit(ConfigurationReset());
+    await _init();
     return result;
   }
 
