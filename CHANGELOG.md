@@ -1,9 +1,9 @@
-# v2.4.2 - 2023/07/09
+# v2.4.2 - 2023/07/16
 
 ## Features
 
-- Update to Buttplug v7.1.1/Intiface Engine v1.4.1
-  - Mostly device additions, maybe some bluetooth bug fixes
+- Update to Buttplug v7.1.2/Intiface Engine v1.4.2
+  - Mostly device additions, maybe some bluetooth bug fixes, lovense connect fixes
 - Websocket Device setup now has UI
 - Created Advanced Settings section
   - Adds raw message settings
