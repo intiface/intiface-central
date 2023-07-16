@@ -85,7 +85,7 @@ class DeviceConfigWidget extends StatelessWidget {
                       : () async {
                           await userDeviceConfigCubit.removeDeviceConfig(config.identifier);
                         },
-                  child: const Text('Remove Device Configuration'),
+                  child: const Text('Forget Device'),
                 ))
               ]));
 
