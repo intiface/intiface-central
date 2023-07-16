@@ -1,3 +1,10 @@
+# 1.0.5 (2023/07/16)
+
+## Features
+
+- Update to Intiface Engine 1.4.2/Buttplug 7.1.2
+  - Magic Motion device additions, Lovense Connect fix
+
 # 1.0.4 (2023/07/09)
 
 ## Features
