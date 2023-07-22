@@ -1,3 +1,17 @@
+# v2.4.3 - 2023/07/22
+
+## Features
+
+- Intiface Central now generates from CI builds
+
+## Bugfixes
+
+- Fix freeze on boot for macOS
+- Move linux build image from Ubuntu 20.04 to Ubuntu 22.04
+  - Should fix library compat issues on modern linux distros
+- Fix device tab page going blank on first device connect
+- Fix device title not showing in disconnected devices on first device connect
+
 # v2.4.2 - 2023/07/16
 
 ## Features
