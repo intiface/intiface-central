@@ -82,8 +82,8 @@ class ExposedWritableUserDeviceConfig {
 }
 
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
-  List<ExposedWritableUserDeviceConfig> _configs = List.empty();
-  List<String> _protocols = List.empty();
+  List<ExposedWritableUserDeviceConfig> _configs = List.empty(growable: true);
+  List<String> _protocols = List.empty(growable: true);
   final Map<String, ExposedWritableUserDeviceSpecifier> _specifiers = {};
 
   UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
