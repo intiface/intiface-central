@@ -15,7 +15,7 @@ intiface-engine = "1.4.2"
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
 buttplug = "7.1.2"
-flutter_rust_bridge = "1.78.0"
+flutter_rust_bridge = "1.79.0"
 log = "0.4.19"
 lazy_static = "1.4.0"
 once_cell = "1.18.0"
