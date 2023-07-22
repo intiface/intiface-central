@@ -4,7 +4,8 @@ name: Intiface Central Build
 on: 
   push:
     branches:
-      - master
+      - main
+      - dev
 
 jobs:
   windows:
@@ -28,19 +29,19 @@ jobs:
           $encodedBytes = [System.Convert]::FromBase64String($env:PFX_CONTENT); 
           Set-Content $pfxPath -Value $encodedBytes -AsByteStream;
           Write-Output "::set-output name=PFX_PATH::$pfxPath";
-      - name: Build MSIX
-        shell: pwsh
-        env:
-          PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
-        run: |
-          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
-          flutter pub run msix:create -c $pfxPath -p "$env:PFX_KEY"
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-msix
-          path: |
-            build/windows/runner/Release/*.msix
+#      - name: Build MSIX
+#        shell: pwsh
+#        env:
+#          PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
+#        run: |
+#          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
+#          flutter pub run msix:create -c $pfxPath -p "$env:PFX_KEY"
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: windows-msix
+#          path: |
+#            build/windows/runner/Release/*.msix
   linux:
     runs-on: ubuntu-latest
     steps:
@@ -55,15 +56,15 @@ jobs:
         name: flutter config
       - run: flutter build linux --release
         name: flutter build
-#  macos:
-#    runs-on: macos-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          channel: 'stable'
-#          architecture: x64
-#      - run: flutter config --enable-macos-desktop
-#        name: flutter config
-#      - run: flutter build macos --release
-#        name: flutter build
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+      - run: flutter config --enable-macos-desktop
+        name: flutter config
+      - run: flutter build macos --release
+        name: flutter build
