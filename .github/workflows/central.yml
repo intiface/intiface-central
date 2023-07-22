@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - dev
+      - ci
 
 jobs:
   windows:
@@ -18,12 +19,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: intiface-engine-flutter-bridge
-          cache-targets: false
-          cache-directories: .\build\windows\x64\Release\cargo
-          prefix-key: rust-v0
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -33,104 +28,88 @@ jobs:
         name: flutter config
       - run: flutter build windows --release
         name: flutter build
-#      - name: Restore signing pfx
-#        id: create-pfx
-#        shell: pwsh
-#        env:
-#          PFX_CONTENT: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_CERT }} 
-#        run: |
-#          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"; 
-#          $encodedBytes = [System.Convert]::FromBase64String($env:PFX_CONTENT); 
-#          Set-Content $pfxPath -Value $encodedBytes -AsByteStream;
-#          Write-Output "::set-output name=PFX_PATH::$pfxPath";
-#      - name: Sign Intiface Central Executable
-#        shell: pwsh
-#        env:
-#          PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }}
-#        run: |
-#          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx";
-#          & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe" sign /f $pfxPath /p $env:PFX_KEY /t http://timestamp.digicert.com /fd SHA256 .\build\windows\runner\Release\intiface_central.exe
+      - uses: dlemstra/code-sign-action@v1
+        with:
+          certificate: '${{ secrets.NPLABS_WINDOWS_202205_CERT }}'
+          password: '${{ secrets.NPLABS_WINDOWS_202205_KEY }}'
+          folder: '.\build\windows\runner\Release'
+          recursive: false
+          files: |
+            intiface_central.exe
+          description: 'Sign Intiface Central Executable'
       - name: Build Innosetup Installer
         shell: pwsh
         run: |
           iscc .\intiface-central-installer.iss
-#      - name: Sign Innosetup Installer
-#        shell: pwsh
-#        env:
-#          PFX_KEY: ${{ secrets.NPLABS_WINDOWS_20210514_SIGNING_KEY }} 
-#        run: |
-#          $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx";
-#          & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe" sign /f $pfxPath /p $env:PFX_KEY /t http://timestamp.digicert.com /fd SHA256 .\installer\intiface-central-installer.exe
+      - uses: dlemstra/code-sign-action@v1
+        with:
+          certificate: '${{ secrets.NPLABS_WINDOWS_202205_CERT }}'
+          password: '${{ secrets.NPLABS_WINDOWS_202205_KEY }}'
+          folder: '.\installer\'
+          recursive: false
+          files: |
+            intiface-central-installer.exe
+          description: 'Sign Intiface Central Installer'          
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
           name: windows-installer
           path: |
             installer/intiface-central-installer.exe
-#  linux:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: rust toolchain
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          profile: minimal
-#          toolchain: stable
-#          override: true
-#      - uses: Swatinem/rust-cache@v2
-#        with:
-#          workspaces: intiface-engine-flutter-bridge
-#          prefix-key: rust-v0
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          channel: 'stable'
-#          cache: true
-#          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-#      - run: |
-#         sudo apt-get update -y
-#         sudo apt-get install -y ninja-build libudev-dev libgtk-3-dev
-#      - run: flutter config --enable-linux-desktop
-#        name: flutter config
-#      - run: flutter build linux --release
-#        name: flutter build
-#      - name: Zip Release
-#        run: zip -r intiface-central-linux-x64.zip build/linux/x64/release/bundle
-#      - name: Archive production artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: linux-zip
-#          path: ./intiface-central-linux-x64.zip
-#            
-#  macos:
-#    runs-on: macos-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: rust toolchain
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          profile: minimal
-#          toolchain: stable
-#          override: true
-#      - uses: Swatinem/rust-cache@v2
-#        with:
-#          workspaces: intiface-engine-flutter-bridge
-#          prefix-key: rust-v0
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          channel: 'stable'
-#          cache: true
-#          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-#      - run: flutter config --enable-macos-desktop
-#        name: flutter config
-#      - run: flutter build macos --release
-#        name: flutter build
-#      - name: Zip Release
-#        run: zip -r intiface-central-macos-universal.zip build/macos/Build/Products/Release/intiface_central.app
-#      - name: Archive production artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: macos-zip
-#          path: ./intiface-central-macos-universal.zip
-#
-#
-#
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - run: |
+         sudo apt-get update -y
+         sudo apt-get install -y ninja-build libudev-dev libgtk-3-dev
+      - run: flutter config --enable-linux-desktop
+        name: flutter config
+      - run: flutter build linux --release
+        name: flutter build
+      - name: Zip Release
+        run: zip -r intiface-central-linux-x64.zip build/linux/x64/release/bundle
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-zip
+          path: ./intiface-central-linux-x64.zip
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - run: flutter config --enable-macos-desktop
+        name: flutter config
+      - run: flutter build macos --release
+        name: flutter build
+      - name: Zip Release
+        run: zip -r intiface-central-macos-universal.zip build/macos/Build/Products/Release/intiface_central.app
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-zip
+          path: ./intiface-central-macos-universal.zip
+
+
