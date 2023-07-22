@@ -187,6 +187,22 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await _updateConfig(deviceIdentifier, newConfig);
   }
 
+  Future<void> updateName(UserConfigDeviceIdentifier deviceIdentifier, String name) async {
+    var updatedName = name.trim();
+
+    // See if device already exists in config
+    for (var config in _configs) {
+      if (config.matches(deviceIdentifier)) {
+        config.name = updatedName.isEmpty ? "" : updatedName;
+        await _saveConfigFile();
+        return;
+      }
+    }
+    ExposedWritableUserDeviceConfig newConfig =
+        ExposedWritableUserDeviceConfig(deviceIdentifier, updatedName, null, null, null, null);
+    await _updateConfig(deviceIdentifier, newConfig);
+  }
+
   Future<void> updateDisplayName(UserConfigDeviceIdentifier deviceIdentifier, String displayName) async {
     var updatedDisplayName = displayName.trim();
 
