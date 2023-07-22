@@ -83,8 +83,9 @@ class DevicePage extends StatelessWidget {
                 for (var deviceCubit in deviceBloc.devices) {
                   var device = deviceCubit.device!;
                   connectedIndexes.add(device.index);
-                  var deviceConfig =
-                      userDeviceConfigCubit.configs.firstWhere((element) => element.reservedIndex == device.index);
+                  var deviceConfig = userDeviceConfigCubit.configs.firstWhere(
+                      (element) => element.reservedIndex == device.index,
+                      orElse: () => ExposedWritableUserDeviceConfig.createDefault(device.index));
                   var expansionName = "device-settings-${device.index}";
                   deviceWidgets.add(Card(
                       child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [

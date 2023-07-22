@@ -52,6 +52,11 @@ class ExposedWritableUserDeviceConfig {
   bool? deny;
   int? reservedIndex;
 
+  static ExposedWritableUserDeviceConfig createDefault(index) {
+    return ExposedWritableUserDeviceConfig(
+        const UserConfigDeviceIdentifier(address: "", protocol: ""), "", index, "", false, false);
+  }
+
   ExposedWritableUserDeviceConfig(
       this.identifier, this.name, this.reservedIndex, this.displayName, this.allow, this.deny);
 
