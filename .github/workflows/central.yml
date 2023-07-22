@@ -1,12 +1,14 @@
 name: Intiface Central Build
 
-# Only build on master pushes for now, otherwise we'll eat CI.
+# Only build on tag pushes
 on: 
   push:
-    branches:
-      - main
-      - dev
-      - ci
+#    branches:
+#      - main
+#      - dev
+#      - ci
+    tags:
+      - 'v*'      
 
 jobs:
   windows:
@@ -39,6 +41,8 @@ jobs:
           description: 'Sign Intiface Central Executable'
       - name: Build Innosetup Installer
         shell: pwsh
+        env:
+          BUILD_VERSION: ${{ github.ref_name }}
         run: |
           iscc .\intiface-central-installer.iss
       - uses: dlemstra/code-sign-action@v1
