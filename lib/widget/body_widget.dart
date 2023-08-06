@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/asset_cubit.dart';
-import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/error_notifier_cubit.dart';
+import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/logging/log_widget.dart';
-import 'package:intiface_central/navigation_cubit.dart';
-import 'package:intiface_central/markdown_widget.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
+import 'package:intiface_central/widget/markdown_widget.dart';
 import 'package:intiface_central/page/device_page.dart';
-import 'package:intiface_central/settings_widget.dart';
-import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/page/settings_page.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
@@ -72,7 +72,7 @@ class BodyWidget extends StatelessWidget {
                   ? Colors.green
                   : IconTheme.of(context).color),
           'Settings',
-          () => const SettingWidget(),
+          () => const SettingPage(),
           true),
 
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to

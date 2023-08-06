@@ -1,11 +1,11 @@
 import 'package:buttplug/buttplug.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/device/device_actuator_cubit.dart';
-import 'package:intiface_central/device/device_cubit.dart';
-import 'package:intiface_central/device/device_manager_bloc.dart';
-import 'package:intiface_central/device/device_sensor_cubit.dart';
-import 'package:intiface_central/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/device/device_actuator_cubit.dart';
+import 'package:intiface_central/bloc/device/device_cubit.dart';
+import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
+import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
+import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceControlWidget extends StatelessWidget {

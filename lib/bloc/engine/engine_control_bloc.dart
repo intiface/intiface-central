@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/bridge_generated.dart';
-import 'package:intiface_central/engine/engine_messages.dart';
-import 'package:intiface_central/engine/engine_repository.dart';
+import 'package:intiface_central/bloc/engine/engine_messages.dart';
+import 'package:intiface_central/bloc/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
 
 abstract class EngineControlState {}

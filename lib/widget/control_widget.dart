@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/engine/engine_control_bloc.dart';
-import 'package:intiface_central/error_notifier_cubit.dart';
-import 'package:intiface_central/navigation_cubit.dart';
-import 'package:intiface_central/network_info_cubit.dart';
-import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
+import 'package:intiface_central/bloc/util/network_info_cubit.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class ControlWidget extends StatelessWidget {

@@ -2,19 +2,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/app_reset_cubit.dart';
-import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/engine/engine_control_bloc.dart';
-import 'package:intiface_central/gui_settings_cubit.dart';
-import 'package:intiface_central/navigation_cubit.dart';
+import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:intiface_central/update/update_bloc.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class SettingWidget extends StatelessWidget {
-  const SettingWidget({super.key});
+class SettingPage extends StatelessWidget {
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {

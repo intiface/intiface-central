@@ -1,6 +1,6 @@
-import 'package:intiface_central/update/http_update_provider.dart';
-import 'package:intiface_central/update/update_bloc.dart';
-import 'package:intiface_central/update/update_provider.dart';
+import 'package:intiface_central/bloc/update/http_update_provider.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
+import 'package:intiface_central/bloc/update/update_provider.dart';
 import 'package:loggy/loggy.dart';
 
 class UpdateRepository {

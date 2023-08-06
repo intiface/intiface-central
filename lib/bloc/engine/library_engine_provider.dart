@@ -1,6 +1,6 @@
 import 'dart:async';
-import "../ffi.dart";
-import 'package:intiface_central/engine/engine_provider.dart';
+import "../../ffi.dart";
+import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
 
 class LibraryEngineProvider implements EngineProvider {

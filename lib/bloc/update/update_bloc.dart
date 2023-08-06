@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:intiface_central/update/update_repository.dart';
+import 'package:intiface_central/bloc/update/update_repository.dart';
 
 abstract class UpdateState {}
 

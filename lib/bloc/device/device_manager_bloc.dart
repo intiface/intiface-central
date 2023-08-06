@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/device/backdoor_connector.dart';
-import 'package:intiface_central/device/device_cubit.dart';
-import 'package:intiface_central/engine/engine_control_bloc.dart';
+import 'package:intiface_central/util/backdoor_connector.dart';
+import 'package:intiface_central/bloc/device/device_cubit.dart';
+import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:loggy/loggy.dart';
 
 class DeviceManagerEvent {}

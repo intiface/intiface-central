@@ -6,8 +6,8 @@ import 'dart:convert';
 
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/bridge_generated.dart';
-import 'package:intiface_central/engine/engine_messages.dart';
-import 'package:intiface_central/engine/engine_provider.dart';
+import 'package:intiface_central/bloc/engine/engine_messages.dart';
+import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
 
 class EngineOutput {

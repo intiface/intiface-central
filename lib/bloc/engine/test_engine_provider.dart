@@ -1,5 +1,5 @@
 import 'package:intiface_central/bridge_generated.dart';
-import 'package:intiface_central/engine/engine_provider.dart';
+import 'package:intiface_central/bloc/engine/engine_provider.dart';
 
 class TestEngineProvider implements EngineProvider {
   @override

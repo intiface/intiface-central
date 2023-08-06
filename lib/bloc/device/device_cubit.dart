@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/device/device_actuator_cubit.dart';
-import 'package:intiface_central/device/device_sensor_cubit.dart';
+import 'package:intiface_central/bloc/device/device_actuator_cubit.dart';
+import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
 
 class DeviceState {}
 

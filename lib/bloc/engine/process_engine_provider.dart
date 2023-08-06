@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:intiface_central/bridge_generated.dart';
-import 'package:intiface_central/engine/engine_messages.dart';
-import 'package:intiface_central/engine/engine_provider.dart';
+import 'package:intiface_central/bloc/engine/engine_messages.dart';
+import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';

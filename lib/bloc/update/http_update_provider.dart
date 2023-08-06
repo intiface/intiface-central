@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:intiface_central/update/update_bloc.dart';
-import 'package:intiface_central/update/update_provider.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
+import 'package:intiface_central/bloc/update/update_provider.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 

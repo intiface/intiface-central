@@ -1,5 +1,5 @@
-import 'package:intiface_central/update/update_bloc.dart';
-import 'package:intiface_central/update/update_provider.dart';
+import 'package:intiface_central/bloc/update/update_bloc.dart';
+import 'package:intiface_central/bloc/update/update_provider.dart';
 import 'package:github/github.dart';
 import 'package:loggy/loggy.dart';
 import 'package:version/version.dart';

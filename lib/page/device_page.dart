@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/gui_settings_cubit.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
-import 'package:intiface_central/device_configuration/user_device_configuration_cubit.dart';
+import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
-import 'package:intiface_central/device/device_manager_bloc.dart';
-import 'package:intiface_central/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
+import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 
 class ProtocolDropdownButton extends StatefulWidget {
   final List<String> protocols;
