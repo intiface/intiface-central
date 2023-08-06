@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
 import 'package:intiface_central/util/intiface_util.dart';
-import 'package:path/path.dart' as p;
 
 // From https://github.com/infinum/floggy/issues/50
 class FileOutput extends LoggyPrinter {

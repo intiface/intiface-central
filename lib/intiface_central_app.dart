@@ -34,7 +34,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
   final GuiSettingsCubit guiSettingsCubit;
 
-  IntifaceCentralApp._create({super.key, required this.guiSettingsCubit});
+  IntifaceCentralApp._create({required this.guiSettingsCubit});
 
   static Future<IntifaceCentralApp> create() async {
     WidgetsFlutterBinding.ensureInitialized();

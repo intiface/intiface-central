@@ -91,7 +91,7 @@ class LinearActuatorCubit extends DeviceActuatorCubit {
   Future<void> runOscillation() async {
     bool toMin = false;
     while (_running) {
-      var cmd;
+      ButtplugDeviceCommand<LinearComponent> cmd;
       if (toMin) {
         cmd = LinearCommand.setMap(
             {_index: LinearComponent(currentMin / stepCount.toDouble(), _currentDuration.toInt())});

@@ -22,8 +22,8 @@ void startCallback() {
 
 class IntifaceEngineTaskHandler extends TaskHandler {
   SendPort? _sendPort;
-  ReceivePort _serverMessageReceivePort;
-  ReceivePort _backdoorMessageReceivePort;
+  final ReceivePort _serverMessageReceivePort;
+  final ReceivePort _backdoorMessageReceivePort;
   Stream<String>? _stream;
   final Completer<void> _serverExited = Completer();
 
@@ -185,7 +185,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
     ReceivePort? receivePort;
     if (reqResult) {
-      receivePort = await FlutterForegroundTask.receivePort;
+      receivePort = FlutterForegroundTask.receivePort;
     }
 
     return _registerReceivePort(receivePort);
