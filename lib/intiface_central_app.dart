@@ -22,7 +22,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/bloc/device_configuration/device_configuration.dart';
 import 'package:intiface_central/bloc/engine/library_engine_provider.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
-import 'package:intiface_central/logging/logging.dart';
+import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/bloc/update/github_update_provider.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/bloc/update/update_repository.dart';
