@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 
-void main() async {
-  runApp(await IntifaceCentralApp.create());
+Future<void> main() async {
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = const String.fromEnvironment('SENTRY_DSN');
+      options.sampleRate = 1.0;
+      options.release = "intiface_central@${packageInfo.version}+${packageInfo.buildNumber}";
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 0.0;
+    },
+    appRunner: () async => runApp(await IntifaceCentralApp.create()),
+  );
 }

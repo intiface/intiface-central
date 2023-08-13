@@ -78,7 +78,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     logInfo("Intiface Central ${packageInfo.version}+${packageInfo.buildNumber} Starting...");
     logInfo("Running main builder");
 
-    if (const String.fromEnvironment('SENTRY_DSN_URL').isEmpty) {
+    if (const String.fromEnvironment('SENTRY_DSN').isEmpty) {
       logInfo("No sentry URL set, crash and log reporting turned off.");
     } else {
       logInfo("Sentry URL set, crash and log reporting available.");

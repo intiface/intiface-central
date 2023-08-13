@@ -45,6 +45,7 @@ dependencies:
 #    path: /Users/qdot/code/buttplug_dart
   flutter_foreground_task: ^6.0.0+1
   tuple: ^2.0.2
+  sentry_flutter: ^7.9.0
 
 dev_dependencies:
   flutter_test:
