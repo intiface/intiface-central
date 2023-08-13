@@ -41,15 +41,21 @@ class ErrorNotifier extends LoggyPrinter {
 
 class MultiPrinter extends LoggyPrinter {
   MultiPrinter(ErrorNotifier errorNotifier) {
-    _printers.add(const PrettyDeveloperPrinter());
     _printers.add(errorNotifier);
-    _printers.add(FileOutput());
     if (!kReleaseMode) {
       _printers.add(const PrettyPrinter());
     }
   }
 
   final List<LoggyPrinter> _printers = [];
+
+  void addFilePrinter() {
+    _printers.add(FileOutput());
+  }
+
+  void addGUIPrinter() {
+    _printers.add(const PrettyDeveloperPrinter());
+  }
 
   @override
   void onLog(LogRecord record) {
@@ -59,11 +65,9 @@ class MultiPrinter extends LoggyPrinter {
   }
 }
 
-void initLogging(ErrorNotifier errorNotifier) {
+void initLogging(MultiPrinter multiPrinter) {
   Loggy.initLoggy(
-    logPrinter: StreamPrinter(
-      MultiPrinter(errorNotifier),
-    ),
+    logPrinter: StreamPrinter(multiPrinter),
     logOptions: const LogOptions(
       LogLevel.all,
       stackTraceLevel: LogLevel.error,

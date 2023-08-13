@@ -68,16 +68,33 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
   Future<Widget> buildApp() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    var errorNotifier = ErrorNotifier();
+    var multiPrinter = MultiPrinter(errorNotifier);
+    multiPrinter.addGUIPrinter();
+    // Logging setup needs to happen after we've done initial setup.
+    initLogging(multiPrinter);
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    logInfo("Intiface Central ${packageInfo.version}+${packageInfo.buildNumber} Starting...");
+    logInfo("Running main builder");
+
+    if (const String.fromEnvironment('SENTRY_DSN_URL').isEmpty) {
+      logInfo("No sentry URL set, crash and log reporting turned off.");
+    } else {
+      logInfo("Sentry URL set, crash and log reporting available.");
+    }
+
+    logInfo("Initializing paths...");
     await IntifacePaths.init();
+    logInfo("Starting file logger...");
+    multiPrinter.addFilePrinter();
 
     // Bring up our settings repo.
     var configCubit = await IntifaceConfigurationCubit.create();
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
-    EngineRepository engineRepo;
 
     if (isDesktop()) {
-      engineRepo = EngineRepository(LibraryEngineProvider());
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
@@ -107,10 +124,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       // Only add app update checks on desktop, mobile apps will use stores.
       updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
     } else {
-      engineRepo = configCubit.useForegroundProcess
-          ? EngineRepository(ForegroundTaskLibraryEngineProvider())
-          : EngineRepository(LibraryEngineProvider());
-
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
       // For older android builds, ask for location perms.
@@ -159,25 +172,16 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
         );
       }
     }
-
-    var errorNotifier = ErrorNotifier();
-    // Logging setup needs to happen after we've done initial setup.
-    initLogging(errorNotifier);
-    logInfo("Running main builder");
-
     var errorNotifierCubit = ErrorNotifierCubit();
 
     errorNotifier.stream.listen((record) {
       errorNotifierCubit.emitError(record);
     });
 
-    logInfo("Intiface Central Starting...");
-
     if (kDebugMode) {
       logWarning("Intiface currently running in DEBUG MODE.");
     }
 
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
     configCubit.currentAppVersion = packageInfo.version;
 
     var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
@@ -186,6 +190,15 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
     var networkCubit = await NetworkInfoCubit.create();
+
+    EngineRepository engineRepo;
+    if (isDesktop()) {
+      engineRepo = EngineRepository(LibraryEngineProvider());
+    } else {
+      engineRepo = configCubit.useForegroundProcess
+          ? EngineRepository(ForegroundTaskLibraryEngineProvider())
+          : EngineRepository(LibraryEngineProvider());
+    }
 
     var engineControlBloc = EngineControlBloc(engineRepo);
 
