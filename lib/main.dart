@@ -4,6 +4,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   await SentryFlutter.init(
     (options) {

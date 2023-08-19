@@ -67,8 +67,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
   }
 
   Future<Widget> buildApp() async {
-    WidgetsFlutterBinding.ensureInitialized();
-
     var errorNotifier = ErrorNotifier();
     var multiPrinter = MultiPrinter(errorNotifier);
     multiPrinter.addGUIPrinter();
