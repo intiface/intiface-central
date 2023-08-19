@@ -53,10 +53,6 @@ class MultiPrinter extends LoggyPrinter {
     _printers.add(FileOutput());
   }
 
-  void addGUIPrinter() {
-    _printers.add(const PrettyDeveloperPrinter());
-  }
-
   @override
   void onLog(LogRecord record) {
     for (var printer in _printers) {

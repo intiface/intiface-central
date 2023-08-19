@@ -69,7 +69,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
   Future<Widget> buildApp() async {
     var errorNotifier = ErrorNotifier();
     var multiPrinter = MultiPrinter(errorNotifier);
-    multiPrinter.addGUIPrinter();
     // Logging setup needs to happen after we've done initial setup.
     initLogging(multiPrinter);
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
