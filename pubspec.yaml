@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   json_annotation: ^4.8.1
   flutter_local_notifications: ^15.1.0+1
-  flutter_rust_bridge: ^1.80.1
+  flutter_rust_bridge: ^1.82.1
   plugin_platform_interface: ^2.1.3
   # Needed for rust ffigen
   ffi: ^2.0.2

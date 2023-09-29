@@ -14,22 +14,22 @@ intiface-engine = "1.4.2"
 # intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
-buttplug = "7.1.2"
-flutter_rust_bridge = "1.80.1"
-log = "0.4.19"
+# buttplug = "7.1.2"
+flutter_rust_bridge = "1.82.1"
+log = "0.4.20"
 lazy_static = "1.4.0"
 once_cell = "1.18.0"
-tokio = { version = "1.29.1", features = ["rt-multi-thread", "tracing"] }
-anyhow = "1.0.72"
+tokio = { version = "1.32.0", features = ["rt", "tracing"] }
+anyhow = "1.0.75"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 # btleplug = { path = "../../btleplug" }
-btleplug = "0.11.0"
-thiserror = "1.0.44"
+btleplug = "0.11.1"
+thiserror = "1.0.49"
 getset = "0.1.2"
-serde = "1.0.182"
-serde_json = "1.0.104"
-async-trait = "0.1.72"
+serde = "1.0.188"
+serde_json = "1.0.107"
+async-trait = "0.1.73"
 futures = "0.3.28"
 tracing = "0.1.37"
 tracing-futures = "0.2.5"
