@@ -158,6 +158,11 @@ class SettingPage extends StatelessWidget {
                             title: const Text("XBox Compatible Gamepads (XInput)")),
                         SettingsTile.switchTile(
                             enabled: !engineIsRunning,
+                            initialValue: cubit.useHID,
+                            onToggle: (value) => cubit.useHID = value,
+                            title: const Text("HID Devices (Joycon, etc...)")),
+                        SettingsTile.switchTile(
+                            enabled: !engineIsRunning,
                             initialValue: cubit.useLovenseConnectService,
                             onToggle: (value) => cubit.useLovenseConnectService = value,
                             title: const Text("Lovense Connect Service")),
