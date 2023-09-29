@@ -23,13 +23,11 @@ class WrongPrinterException implements Exception {
 /// ```
 class LoggyStreamWidget extends StatelessWidget {
   const LoggyStreamWidget({
-    required this.appStartTime,
     this.logLevel = LogLevel.all,
     Key? key,
   }) : super(key: key);
 
   final LogLevel? logLevel;
-  final DateTime appStartTime;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,7 @@ class LoggyStreamWidget extends StatelessWidget {
                 reverse: true,
                 children: records.data!
                     .where((LogRecord record) => record.level.priority >= logLevel!.priority)
-                    .map((LogRecord record) => _LoggyItemWidget(record, appStartTime))
+                    .map((LogRecord record) => _LoggyItemWidget(record))
                     .toList(),
               );
             },
@@ -66,10 +64,9 @@ class LoggyStreamWidget extends StatelessWidget {
 }
 
 class _LoggyItemWidget extends StatelessWidget {
-  const _LoggyItemWidget(this.record, this.appStartTime, {Key? key}) : super(key: key);
+  const _LoggyItemWidget(this.record, {Key? key}) : super(key: key);
 
   final LogRecord record;
-  final DateTime appStartTime;
 
   @override
   Widget build(BuildContext context) {
