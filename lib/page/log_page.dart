@@ -8,10 +8,10 @@ import 'package:loggy/loggy.dart';
 import 'package:sentry/sentry.dart';
 import 'package:sentry/sentry_io.dart';
 
-class LogWidget extends StatelessWidget {
+class LogPage extends StatelessWidget {
   static final DateTime appStartTime = DateTime.now();
 
-  const LogWidget({super.key});
+  const LogPage({super.key});
 
   @override
   Widget build(BuildContext context) {

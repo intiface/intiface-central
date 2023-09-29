@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
-import 'package:intiface_central/widget/log_widget.dart';
+import 'package:intiface_central/page/log_page.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/widget/markdown_widget.dart';
 import 'package:intiface_central/page/device_page.dart';
@@ -58,7 +58,7 @@ class BodyWidget extends StatelessWidget {
               color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : IconTheme.of(context).color),
           const Icon(Icons.text_snippet),
           'Log',
-          () => const LogWidget(),
+          () => const LogPage(),
           true),
       NavigationDestination(
           (state) => state is NavigationStateSettings,
