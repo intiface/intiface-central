@@ -55,7 +55,9 @@ pub struct _EngineOptionsExternal {
   pub device_websocket_server_port: Option<u16>,
   pub crash_main_thread: bool,
   pub crash_task_thread: bool,
-  pub websocket_client_address: Option<String>
+  pub websocket_client_address: Option<String>,
+  pub broadcast_server_mdns: bool,
+  pub mdns_suffix: Option<String>
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {

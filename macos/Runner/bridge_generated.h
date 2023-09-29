@@ -39,6 +39,8 @@ typedef struct wire_EngineOptionsExternal {
   bool crash_main_thread;
   bool crash_task_thread;
   struct wire_uint_8_list *websocket_client_address;
+  bool broadcast_server_mdns;
+  struct wire_uint_8_list *mdns_suffix;
 } wire_EngineOptionsExternal;
 
 typedef struct wire_StringList {
@@ -139,6 +141,8 @@ struct wire_list_exposed_user_device_config *new_list_exposed_user_device_config
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
+
+jint JNI_OnLoad(JavaVM vm, const void *_res);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;

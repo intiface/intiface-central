@@ -206,6 +206,8 @@ impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
       crash_main_thread: self.crash_main_thread.wire2api(),
       crash_task_thread: self.crash_task_thread.wire2api(),
       websocket_client_address: self.websocket_client_address.wire2api(),
+      broadcast_server_mdns: self.broadcast_server_mdns.wire2api(),
+      mdns_suffix: self.mdns_suffix.wire2api(),
     }
   }
 }
@@ -324,6 +326,8 @@ pub struct wire_EngineOptionsExternal {
   crash_main_thread: bool,
   crash_task_thread: bool,
   websocket_client_address: *mut wire_uint_8_list,
+  broadcast_server_mdns: bool,
+  mdns_suffix: *mut wire_uint_8_list,
 }
 
 #[repr(C)]
@@ -439,6 +443,8 @@ impl NewWithNullPtr for wire_EngineOptionsExternal {
       crash_main_thread: Default::default(),
       crash_task_thread: Default::default(),
       websocket_client_address: core::ptr::null_mut(),
+      broadcast_server_mdns: Default::default(),
+      mdns_suffix: core::ptr::null_mut(),
     }
   }
 }

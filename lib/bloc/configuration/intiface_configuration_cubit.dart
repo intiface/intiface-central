@@ -126,6 +126,16 @@ class AllowRawMessages extends IntifaceConfigurationState {
   AllowRawMessages(this.value);
 }
 
+class BroadcastServerMdns extends IntifaceConfigurationState {
+  final bool value;
+  BroadcastServerMdns(this.value);
+}
+
+class MdnsSuffix extends IntifaceConfigurationState {
+  final String? value;
+  MdnsSuffix(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -191,6 +201,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
     // Default to true on android, slam to false everywhere else.
     useForegroundProcess = Platform.isAndroid ? (_prefs.getBool("useForegroundProcess2") ?? true) : false;
+
+    broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
+    mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
   }
 
   Future<bool> reset() async {
@@ -379,6 +392,18 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseForegroundProcess(value));
   }
 
+  bool get broadcastServerMdns => _prefs.getBool("broadcastServerMdns")!;
+  set broadcastServerMdns(bool value) {
+    _prefs.setBool("broadcastServerMdns", value);
+    emit(BroadcastServerMdns(value));
+  }
+
+  String get mdnsSuffix => _prefs.getString("mdnsSuffix")!;
+  set mdnsSuffix(String value) {
+    _prefs.setString("mdnsSuffix", value);
+    emit(MdnsSuffix(value));
+  }
+
   Future<EngineOptionsExternal> getEngineOptions() async {
     String? deviceConfigFile;
     if (await IntifacePaths.deviceConfigFile.exists()) {
@@ -410,6 +435,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
         useDeviceWebsocketServer: useDeviceWebsocketServer,
         crashMainThread: false,
-        crashTaskThread: false);
+        crashTaskThread: false,
+        broadcastServerMdns: broadcastServerMdns,
+        mdnsSuffix: mdnsSuffix);
   }
 }
