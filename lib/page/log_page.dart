@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
-import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/widget/log/widgets/loggy_stream_widget.dart';
 import 'package:loggy/loggy.dart';
-import 'package:sentry/sentry.dart';
-import 'package:sentry/sentry_io.dart';
 
 class LogPage extends StatelessWidget {
   static final DateTime appStartTime = DateTime.now();
@@ -16,6 +14,7 @@ class LogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ErrorNotifierCubit>(context).clearError();
+    var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
     var expansionName = "gui_log_settings";
     final List<DropdownMenuEntry<LogLevel>> logLevelEntries = <DropdownMenuEntry<LogLevel>>[];
@@ -36,26 +35,24 @@ class LogPage extends StatelessWidget {
                       );
                     },
                     body: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
-                      DropdownMenu(label: const Text("Log Level"), dropdownMenuEntries: logLevelEntries),
-                      TextButton(
-                          onPressed: () {
-                            final logAttachment = IoSentryAttachment.fromFile(IntifacePaths.logFile);
-                            final userConfigAttachment =
-                                IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
-
-                            Sentry.captureMessage("User submitted logs", withScope: (scope) {
-                              scope.addAttachment(logAttachment);
-                              scope.addAttachment(userConfigAttachment);
-                            });
-                          },
-                          child: const Text("Send logs to developers"))
+                      DropdownMenu(
+                          label: const Text("Log Level"),
+                          dropdownMenuEntries: logLevelEntries,
+                          onSelected: (value) => configCubit.displayLogLevel = value!.name),
                     ]),
                     isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false)
               ],
               expansionCallback: (panelIndex, isExpanded) {
                 guiSettingsCubit.setExpansionValue(expansionName, isExpanded);
               })),
-      const Expanded(child: LoggyStreamWidget())
+      Expanded(
+          child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+              buildWhen: (previous, current) => current is DisplayLogLevel,
+              builder: (context, state) {
+                var level = LogLevel.values
+                    .firstWhere((element) => element.name == configCubit.displayLogLevel, orElse: () => LogLevel.info);
+                return LoggyStreamWidget(logLevel: level);
+              }))
     ]));
   }
 }

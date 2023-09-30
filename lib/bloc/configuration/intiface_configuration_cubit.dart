@@ -136,6 +136,11 @@ class MdnsSuffix extends IntifaceConfigurationState {
   MdnsSuffix(this.value);
 }
 
+class DisplayLogLevel extends IntifaceConfigurationState {
+  final String? value;
+  DisplayLogLevel(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -204,6 +209,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
+    displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
   }
 
   Future<bool> reset() async {
@@ -402,6 +408,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set mdnsSuffix(String value) {
     _prefs.setString("mdnsSuffix", value);
     emit(MdnsSuffix(value));
+  }
+
+  String get displayLogLevel => _prefs.getString("displayLogLevel")!;
+  set displayLogLevel(String value) {
+    _prefs.setString("displayLogLevel", value);
+    emit(DisplayLogLevel(value));
   }
 
   Future<EngineOptionsExternal> getEngineOptions() async {
