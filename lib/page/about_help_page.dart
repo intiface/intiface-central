@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
-import 'package:intiface_central/util/intiface_util.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/widget/markdown_widget.dart';
-import 'package:sentry/sentry_io.dart';
 
 class AboutHelpPage extends StatelessWidget {
   const AboutHelpPage({super.key});
@@ -21,13 +20,7 @@ class AboutHelpPage extends StatelessWidget {
         ),
         TextButton(
             onPressed: () {
-              final logAttachment = IoSentryAttachment.fromFile(IntifacePaths.logFile);
-              final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
-
-              Sentry.captureMessage("User submitted logs", withScope: (scope) {
-                scope.addAttachment(logAttachment);
-                scope.addAttachment(userConfigAttachment);
-              });
+              BlocProvider.of<NavigationCubit>(context).goSendLogs();
             },
             child: const Text("Send logs to devs for support."))
       ]),

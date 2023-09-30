@@ -6,6 +6,7 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/page/about_help_page.dart';
 import 'package:intiface_central/page/log_page.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
+import 'package:intiface_central/page/submit_logs_page.dart';
 import 'package:intiface_central/widget/markdown_widget.dart';
 import 'package:intiface_central/page/device_page.dart';
 import 'package:intiface_central/page/settings_page.dart';
@@ -20,9 +21,10 @@ class NavigationDestination {
   final String title;
   final Widget Function() widgetProvider;
   final bool showInMobileRail;
+  final bool showInDesktopRail;
 
   NavigationDestination(this.stateCheck, this.navigate, this.icon, this.selectedIcon, this.title, this.widgetProvider,
-      this.showInMobileRail);
+      this.showInMobileRail, this.showInDesktopRail);
 }
 
 class BodyWidget extends StatelessWidget {
@@ -43,6 +45,7 @@ class BodyWidget extends StatelessWidget {
           () => BlocBuilder<UpdateBloc, UpdateState>(
               buildWhen: (previous, current) => current is NewsUpdateRetrieved,
               builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
+          true,
           true),
       NavigationDestination(
           (state) => state is NavigationStateDeviceControl,
@@ -51,6 +54,7 @@ class BodyWidget extends StatelessWidget {
           const Icon(Icons.vibration),
           'Devices',
           () => const DevicePage(),
+          true,
           true),
       NavigationDestination(
           (state) => state is NavigationStateLogs,
@@ -60,6 +64,7 @@ class BodyWidget extends StatelessWidget {
           const Icon(Icons.text_snippet),
           'Log',
           () => const LogPage(),
+          true,
           true),
       NavigationDestination(
           (state) => state is NavigationStateSettings,
@@ -74,12 +79,29 @@ class BodyWidget extends StatelessWidget {
                   : IconTheme.of(context).color),
           'Settings',
           () => const SettingPage(),
+          true,
           true),
 
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to
-      // hide our About/Help in the Settings widget on mobile.
-      NavigationDestination((state) => state is NavigationStateAbout, (NavigationCubit cubit) => cubit.goAbout(),
-          const Icon(Icons.help_outlined), const Icon(Icons.help), 'Help / About', () => const AboutHelpPage(), false),
+      // hide our About/Help in the Settings widget on mobile, and we never want the Send Logs page shown.
+      NavigationDestination(
+          (state) => state is NavigationStateAbout,
+          (NavigationCubit cubit) => cubit.goAbout(),
+          const Icon(Icons.help_outlined),
+          const Icon(Icons.help),
+          'Help / About',
+          () => const AboutHelpPage(),
+          false,
+          true),
+      NavigationDestination(
+          (state) => state is NavigationStateSendLogs,
+          (NavigationCubit cubit) => cubit.goSendLogs(),
+          const Icon(Icons.help_outlined),
+          const Icon(Icons.help),
+          'Send Logs',
+          () => const SendLogsPage(),
+          false,
+          false),
     ];
 
     var navCubit = BlocProvider.of<NavigationCubit>(context);
@@ -95,16 +117,19 @@ class BodyWidget extends StatelessWidget {
     }
 
     if (configCubit.useSideNavigationBar) {
+      var navSelectedIndex = destinations[selectedIndex].showInDesktopRail ? selectedIndex : 0;
       return Row(children: <Widget>[
         NavigationRail(
-            selectedIndex: selectedIndex,
+            selectedIndex: navSelectedIndex,
             groupAlignment: -1.0,
             onDestinationSelected: (int index) {
               destinations[index].navigate(navCubit);
             },
             labelType: NavigationRailLabelType.all,
-            destinations:
-                destinations.map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title))).toList()),
+            destinations: destinations
+                .where((element) => element.showInDesktopRail)
+                .map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title)))
+                .toList()),
         Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
       ]);
     }
