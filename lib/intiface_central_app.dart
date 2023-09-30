@@ -30,8 +30,10 @@ import 'package:loggy/loggy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:sentry/sentry_io.dart';
 
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
+  static List<bool Function(SentryEvent, {Hint? hint})> eventProcessors = [];
   final GuiSettingsCubit guiSettingsCubit;
 
   IntifaceCentralApp._create({required this.guiSettingsCubit});
@@ -90,6 +92,32 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     var configCubit = await IntifaceConfigurationCubit.create();
     // Set up Update/Configuration Pipe/Cubit.
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
+
+    // Set up attachments to be sent with sentry events.
+    final dir = Directory(IntifacePaths.logPath.path);
+    logInfo(IntifacePaths.logPath.path);
+    var entities = (await dir.list().toList()).whereType<File>();
+    Sentry.configureScope((scope) {
+      final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
+      final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
+      for (var attachment in logAttachments) {
+        scope.addAttachment(attachment);
+      }
+      scope.addAttachment(userConfigAttachment);
+    });
+
+    // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
+    IntifaceCentralApp.eventProcessors.add((event, {hint}) {
+      if (!configCubit.crashReporting) {
+        if (event.tags?.containsKey("ManualLogSubmit") != true) {
+          logWarning("Crash/error received but CrashReporting is off, not sending to devs.");
+          return false;
+        }
+        logWarning("Manual log submission, crashReporting is off, overriding and sending to devs.");
+      }
+      logWarning("Submitting crash report/logs to developers.");
+      return true;
+    });
 
     if (isDesktop()) {
       // Must add this line before we work with the manager.

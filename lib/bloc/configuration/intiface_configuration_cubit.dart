@@ -162,6 +162,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     // Window settings for desktop. Will be ignored on mobile. Default to expanded.
     useCompactDisplay = _prefs.getBool("useCompactDisplay") ?? false;
 
+    // Crash reporting setting is now CrashReporting2, because it was originally slammed to true but never actually
+    // used anywhere. With the addition of Sentry, it's now defaulted to off so we're not sending data without the
+    // user's approval.
+    crashReporting = _prefs.getBool("crashReporting2") ?? false;
+
     // Check all of our values to make sure they exist. If not, set defaults, based on platform if needed.
     serverName = _prefs.getString("serverName") ?? "Intiface Server";
     serverMaxPingTime = _prefs.getInt("maxPingTime") ?? 0;
@@ -171,7 +176,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     serverLogLevel = _prefs.getString("serverLogLevel") ?? "info";
     checkForUpdateOnStart = _prefs.getBool("checkForUpdateOnStart") ?? true;
     startServerOnStartup = _prefs.getBool("startServerOnStartup") ?? false;
-    crashReporting = _prefs.getBool("crashReporting") ?? true;
     showNotifications = _prefs.getBool("showNotifications") ?? false;
     hasRunFirstUse = _prefs.getBool("hasRunFirstUse") ?? false;
     showExtendedUI = _prefs.getBool("showExtendedUI") ?? false;
@@ -338,9 +342,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseDeviceWebsocketServer(value));
   }
 
-  bool get crashReporting => _prefs.getBool("crashReporting")!;
+  bool get crashReporting => _prefs.getBool("crashReporting2")!;
   set crashReporting(bool value) {
-    _prefs.setBool("crashReporting", value);
+    _prefs.setBool("crashReporting2", value);
   }
 
   bool get showNotifications => _prefs.getBool("showNotifications")!;

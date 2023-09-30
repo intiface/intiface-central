@@ -9,12 +9,20 @@ Future<void> main() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   await SentryFlutter.init(
     (options) {
-      options.dsn = const String.fromEnvironment('SENTRY_DSN');
+      //options.dsn = const String.fromEnvironment('SENTRY_DSN');
       options.sampleRate = 1.0;
       options.release = "intiface_central@${packageInfo.version}+${packageInfo.buildNumber}";
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
       // We recommend adjusting this value in production.
       options.tracesSampleRate = 0.0;
+      options.beforeSend = (event, {hint}) {
+        for (var proc in IntifaceCentralApp.eventProcessors) {
+          if (!proc(event, hint: hint)) {
+            return null;
+          }
+        }
+        return event;
+      };
     },
     appRunner: () async => runApp(await IntifaceCentralApp.create()),
   );

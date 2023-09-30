@@ -55,30 +55,15 @@ class SendLogsPage extends StatelessWidget {
                           // We're going to assume the stateful builder runs before we get a return from our capture.
                           // Bold, possibly stupid move.
                           late StateSetter _setState;
-                          final dir = Directory(IntifacePaths.logPath.path);
-                          logInfo(IntifacePaths.logPath.path);
-                          dir.list().toList().then((value) {
-                            var entities = value.whereType<File>();
-                            Sentry.captureMessage(textController.value.text, withScope: (scope) {
-                              final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
-                              final userConfigAttachment =
-                                  IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
-                              for (var attachment in logAttachments) {
-                                scope.addAttachment(attachment);
-                              }
-                              scope.addAttachment(userConfigAttachment);
-                            }).then((value) {
-                              _setState(() {
-                                contentText = "Logs sent!";
-                                sendFinished = true;
-                              });
-                            }).onError((error, stackTrace) {
-                              contentText = "Error sending logs, please try again.";
+                          Sentry.captureMessage(textController.value.text, withScope: (scope) {
+                            scope.setTag("ManualLogSubmit", true.toString());
+                          }).then((value) {
+                            _setState(() {
+                              contentText = "Logs sent!";
                               sendFinished = true;
-                              sendFailed = true;
                             });
                           }).onError((error, stackTrace) {
-                            contentText = "Error sending logs, please contact developers.";
+                            contentText = "Error sending logs, please try again.";
                             sendFinished = true;
                             sendFailed = true;
                           });

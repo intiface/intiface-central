@@ -82,6 +82,10 @@ class SettingPage extends StatelessWidget {
                             initialValue: cubit.checkForUpdateOnStart,
                             onToggle: (value) => cubit.checkForUpdateOnStart = value,
                             title: const Text("Check For Updates when Intiface Central Launches")),
+                        SettingsTile.switchTile(
+                            initialValue: cubit.crashReporting,
+                            onToggle: (value) => cubit.crashReporting = value,
+                            title: const Text("Crash Reporting")),
                       ]),
                       SettingsSection(title: const Text("Server Settings"), tiles: [
                         // Turn this off until we know the server is mostly stable, or have a way to handle crash on startup
