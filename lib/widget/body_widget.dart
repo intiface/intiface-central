@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
+import 'package:intiface_central/page/about_help_page.dart';
 import 'package:intiface_central/page/log_page.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/widget/markdown_widget.dart';
@@ -77,14 +78,8 @@ class BodyWidget extends StatelessWidget {
 
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to
       // hide our About/Help in the Settings widget on mobile.
-      NavigationDestination(
-          (state) => state is NavigationStateAbout,
-          (NavigationCubit cubit) => cubit.goAbout(),
-          const Icon(Icons.help_outlined),
-          const Icon(Icons.help),
-          'Help / About',
-          () => MarkdownWidget(markdownContent: assets.aboutAsset, backToSettings: true),
-          false),
+      NavigationDestination((state) => state is NavigationStateAbout, (NavigationCubit cubit) => cubit.goAbout(),
+          const Icon(Icons.help_outlined), const Icon(Icons.help), 'Help / About', () => const AboutHelpPage(), false),
     ];
 
     var navCubit = BlocProvider.of<NavigationCubit>(context);
