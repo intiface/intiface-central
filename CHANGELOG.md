@@ -1,3 +1,14 @@
+# v2.4.4 - 2023/10/04
+
+# Features
+
+- Update to Buttplug v7.1.5/Intiface Engine v1.4.3
+  - See [Buttplug Changelog](https://github.com/buttplugio/buttplug/blob/master/buttplug/CHANGELOG. md) for full info
+- Added HID Manager for supporting Joycon connections
+- (EXPERIMENTAL) Added Crash Reporting (opt-in, off by default)
+- (EXPERIMENTAL) Added mDNS broadcast capabilities for engine
+- (EXPERIMENTAL) Added manual log submission capabilities
+
 # v2.4.3 - 2023/07/22
 
 ## Features
@@ -18,6 +29,7 @@
 
 - Update to Buttplug v7.1.2/Intiface Engine v1.4.2
   - Mostly device additions, maybe some bluetooth bug fixes, lovense connect fixes
+  - See [Buttplug Changelog](https://github.com/buttplugio/buttplug/blob/master/buttplug/CHANGELOG.md) for full info
 - Websocket Device setup now has UI
 - Created Advanced Settings section
   - Adds raw message settings
