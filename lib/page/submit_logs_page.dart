@@ -85,7 +85,7 @@ class SendLogsPage extends StatelessWidget {
                                         ? () {
                                             Navigator.of(context).pop();
                                             if (!sendFailed) {
-                                              BlocProvider.of<NavigationCubit>(context).goAbout();
+                                              BlocProvider.of<NavigationCubit>(context).goSettings();
                                             }
                                           }
                                         : null,

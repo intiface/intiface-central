@@ -82,10 +82,6 @@ class SettingPage extends StatelessWidget {
                             initialValue: cubit.checkForUpdateOnStart,
                             onToggle: (value) => cubit.checkForUpdateOnStart = value,
                             title: const Text("Check For Updates when Intiface Central Launches")),
-                        SettingsTile.switchTile(
-                            initialValue: cubit.crashReporting,
-                            onToggle: (value) => cubit.crashReporting = value,
-                            title: const Text("Crash Reporting")),
                       ]),
                       SettingsSection(title: const Text("Server Settings"), tiles: [
                         // Turn this off until we know the server is mostly stable, or have a way to handle crash on startup
@@ -142,7 +138,7 @@ class SettingPage extends StatelessWidget {
                             enabled: !engineIsRunning,
                             initialValue: cubit.websocketServerAllInterfaces,
                             onToggle: (value) => cubit.websocketServerAllInterfaces = value,
-                            title: const Text("Listen on all network interfaces.")),
+                            title: const Text("Listen on all network interfaces")),
                       ])
                     ]);
 
@@ -342,19 +338,52 @@ class SettingPage extends StatelessWidget {
                           enabled: true,
                           initialValue: guiSettingsCubit.getExpansionValue(expansionName),
                           onToggle: (value) => guiSettingsCubit.setExpansionValue(expansionName, value),
-                          title: const Text("Show Advanced Settings")),
+                          title: const Text("Show Advanced/Experimental Settings")),
                     ];
 
                     if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
+                      advancedSettingsTiles.add(SettingsTile.switchTile(
+                          initialValue: cubit.crashReporting,
+                          onToggle: (value) => cubit.crashReporting = value,
+                          title: const Text("Crash Reporting")));
                       advancedSettingsTiles.add(SettingsTile.switchTile(
                           enabled: !engineIsRunning,
                           initialValue: cubit.allowRawMessages,
                           onToggle: (value) => cubit.allowRawMessages = value,
                           title: const Text("Allow Raw Messages")));
+                      advancedSettingsTiles.add(SettingsTile.switchTile(
+                          enabled: !engineIsRunning,
+                          initialValue: cubit.broadcastServerMdns,
+                          onToggle: (value) => cubit.broadcastServerMdns = value,
+                          title: const Text("Broadcast Server Info via mDNS")));
+
+                      advancedSettingsTiles.add(SettingsTile.navigation(
+                          enabled: !engineIsRunning,
+                          title: const Text("mDNS Identifier Suffix (Optional)"),
+                          value: Text(cubit.mdnsSuffix),
+                          onPressed: (context) {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: const Text('mDNS Suffix'),
+                                      content: TextField(
+                                        controller: TextEditingController(text: cubit.mdnsSuffix),
+                                        onSubmitted: (value) {
+                                          cubit.mdnsSuffix = value;
+                                          Navigator.pop(context);
+                                        },
+                                        decoration: const InputDecoration(hintText: "mDNS Suffix Entry"),
+                                      ),
+                                    ));
+                          }));
+
+                      advancedSettingsTiles.add(SettingsTile.navigation(
+                          title: const Text("Send Logs to Developers"),
+                          onPressed: (context) => BlocProvider.of<NavigationCubit>(context).goSendLogs()));
                     }
 
-                    var advancedSettings =
-                        SettingsSection(title: const Text("Advanced Settings"), tiles: advancedSettingsTiles);
+                    var advancedSettings = SettingsSection(
+                        title: const Text("Advanced/Experimental Settings"), tiles: advancedSettingsTiles);
 
                     var advancedManagers = SettingsSection(title: const Text("Advanced Device Managers"), tiles: [
                       SettingsTile.switchTile(
