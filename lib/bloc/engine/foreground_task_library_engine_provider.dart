@@ -99,7 +99,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   @override
   Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
     // Send data to the main isolate.
-    sendPort?.send(timestamp);
+    //sendPort?.send(timestamp);
   }
 
   @override
