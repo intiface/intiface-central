@@ -426,6 +426,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(DisplayLogLevel(value));
   }
 
+  bool get canUseCrashReporting => const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
+
   Future<EngineOptionsExternal> getEngineOptions() async {
     String? deviceConfigFile;
     if (await IntifacePaths.deviceConfigFile.exists()) {

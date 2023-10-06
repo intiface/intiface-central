@@ -343,10 +343,6 @@ class SettingPage extends StatelessWidget {
 
                     if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
                       advancedSettingsTiles.add(SettingsTile.switchTile(
-                          initialValue: cubit.crashReporting,
-                          onToggle: (value) => cubit.crashReporting = value,
-                          title: const Text("Crash Reporting")));
-                      advancedSettingsTiles.add(SettingsTile.switchTile(
                           enabled: !engineIsRunning,
                           initialValue: cubit.allowRawMessages,
                           onToggle: (value) => cubit.allowRawMessages = value,
@@ -376,10 +372,15 @@ class SettingPage extends StatelessWidget {
                                       ),
                                     ));
                           }));
-
-                      advancedSettingsTiles.add(SettingsTile.navigation(
-                          title: const Text("Send Logs to Developers"),
-                          onPressed: (context) => BlocProvider.of<NavigationCubit>(context).goSendLogs()));
+                      if (cubit.canUseCrashReporting) {
+                        advancedSettingsTiles.add(SettingsTile.switchTile(
+                            initialValue: cubit.crashReporting,
+                            onToggle: (value) => cubit.crashReporting = value,
+                            title: const Text("Crash Reporting")));
+                        advancedSettingsTiles.add(SettingsTile.navigation(
+                            title: const Text("Send Logs to Developers"),
+                            onPressed: (context) => BlocProvider.of<NavigationCubit>(context).goSendLogs()));
+                      }
                     }
 
                     var advancedSettings = SettingsSection(

@@ -77,12 +77,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     logInfo("Intiface Central ${packageInfo.version}+${packageInfo.buildNumber} Starting...");
     logInfo("Running main builder");
 
-    if (const String.fromEnvironment('SENTRY_DSN').isEmpty) {
-      logInfo("No sentry URL set, crash and log reporting turned off.");
-    } else {
-      logInfo("Sentry URL set, crash and log reporting available.");
-    }
-
     logInfo("Initializing paths...");
     await IntifacePaths.init();
     logInfo("Starting file logger...");
@@ -94,17 +88,22 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
 
     // Set up attachments to be sent with sentry events.
-    final dir = Directory(IntifacePaths.logPath.path);
-    logInfo(IntifacePaths.logPath.path);
-    var entities = (await dir.list().toList()).whereType<File>();
-    Sentry.configureScope((scope) {
-      final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
-      final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
-      for (var attachment in logAttachments) {
-        scope.addAttachment(attachment);
-      }
-      scope.addAttachment(userConfigAttachment);
-    });
+    if (configCubit.canUseCrashReporting) {
+      logInfo("Sentry URL set, crash and log reporting available.");
+      final dir = Directory(IntifacePaths.logPath.path);
+      logInfo(IntifacePaths.logPath.path);
+      var entities = (await dir.list().toList()).whereType<File>();
+      Sentry.configureScope((scope) {
+        final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
+        final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
+        for (var attachment in logAttachments) {
+          scope.addAttachment(attachment);
+        }
+        scope.addAttachment(userConfigAttachment);
+      });
+    } else {
+      logWarning("DSN not set, crash reporting cannot be used in this version of Intiface Central");
+    }
 
     // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
     IntifaceCentralApp.eventProcessors.add((event, {hint}) {
