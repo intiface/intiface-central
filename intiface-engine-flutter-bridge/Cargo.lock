@@ -1486,9 +1486,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "1.4.3"
+version = "1.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa22b8b82f1a4c66804368cf7fc993b453864f96dc5253a4bb907392ddeab42d"
+checksum = "8bc525c2e711ff8263e69e52c56e93a2c8bbda97de4db1b656c1bd27045db219"
 dependencies = [
  "anyhow",
  "argh",
@@ -1505,6 +1505,7 @@ dependencies = [
  "log-panics",
  "mdns-sd",
  "once_cell",
+ "rand",
  "serde",
  "serde_json",
  "thiserror",
