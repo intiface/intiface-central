@@ -141,6 +141,11 @@ class DisplayLogLevel extends IntifaceConfigurationState {
   DisplayLogLevel(this.value);
 }
 
+class CrashReporting extends IntifaceConfigurationState {
+  final bool value;
+  CrashReporting(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -345,6 +350,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get crashReporting => _prefs.getBool("crashReporting2")!;
   set crashReporting(bool value) {
     _prefs.setBool("crashReporting2", value);
+    emit(CrashReporting(value));
   }
 
   bool get showNotifications => _prefs.getBool("showNotifications")!;
