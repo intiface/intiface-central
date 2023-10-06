@@ -159,7 +159,8 @@ jobs:
         run: cargo install cargo-make
       - name: Build rust android library
         env: 
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}        
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          RANLIB: ${{ format('{0}{1}', steps.setup-ndk.outputs.ndk-path, '/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib') }}
         run: cargo make build-android 
         working-directory: intiface-engine-flutter-bridge
       - uses: subosito/flutter-action@v2
