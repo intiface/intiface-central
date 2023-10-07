@@ -183,7 +183,7 @@ class SettingPage extends StatelessWidget {
 
                     tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
 
-                    if (Platform.isAndroid) {
+                    if (Platform.isAndroid || Platform.isIOS) {
                       var mobileSettings = [
                         SettingsTile.switchTile(
                             enabled: !engineIsRunning,
