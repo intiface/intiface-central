@@ -34,13 +34,10 @@
 	<string>We need Bluetooth to discover and communicate with nearby Intiface compatible devices.   Only hardware that works with Intiface will be accessed.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!--
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
-		<string>processing</string>
 	</array>
-	-->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
