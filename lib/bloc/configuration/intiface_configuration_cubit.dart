@@ -214,7 +214,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
     useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
     // Default to true on android, slam to false everywhere else.
-    useForegroundProcess = Platform.isAndroid ? (_prefs.getBool("useForegroundProcess2") ?? true) : false;
+    useForegroundProcess =
+        (Platform.isAndroid || Platform.isIOS) ? (_prefs.getBool("useForegroundProcess2") ?? true) : false;
 
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
