@@ -12,6 +12,40 @@ For users, it provides simple, friendly capabilites for managing, connecting, cu
 
 For developers, it allows their application to connect to and control sex toys, without having to worry about constantly updating the underlying libraries or dealing with bugs and crashes in a difficult-to-debug cross langauge environment.
 
+## How to Build
+
+Building Intiface Central will require the following tools:
+
+- Flutter SDK (3.13 or greater) and it's requirements for your platform (XCode for iOS/macOS,
+  Android SDK/JDK etc for Android, etc...)
+- Rust (Latest version)
+
+To run a development version instead of making a build, switch out the `flutter build -d [target]` statements below with `flutter run [target]` (or just `flutter run` if the default platform is what you're aiming for).
+
+### Desktop (Windows/macOS/Linux) and iOS
+
+To build for Desktop, simply run 
+
+`flutter build`
+
+Or, if you have multiple targets available
+
+`flutter build -d [target]`
+
+The Rust build for Desktop and iOS is integrated into the Android build.
+
+### Android
+
+Android requires building on Linux or macOS due to OpenSSL requirements that don't play well on Windows.
+
+Due to this restriction, Rust and Flutter builds are separate for Android. To build for android:
+
+- Start with the Rust build:
+  - `cd intiface-engine-flutter-bridge`
+  - `cargo make build-android`
+- Then run the flutter build:
+  - `flutter build -d [target]`
+
 ## How to Get Support
 
 Support is currently available via:
