@@ -1,3 +1,11 @@
+# 1.0.6 (2023/10/08)
+
+## Features
+
+- Update to Intiface Engine 1.4.5/Buttplug 7.1.6
+  - Check respective changelogs for updates
+  - Only code change: Add mDNS options
+
 # 1.0.5 (2023/07/16)
 
 ## Features

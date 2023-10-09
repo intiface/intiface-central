@@ -390,9 +390,7 @@ checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "buttplug"
-version = "7.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf03b6099e1136653c2406de686e9ab8344873c1a932a15e35a416b52065b0db"
+version = "7.1.6"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -1487,8 +1485,6 @@ dependencies = [
 [[package]]
 name = "intiface-engine"
 version = "1.4.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bc525c2e711ff8263e69e52c56e93a2c8bbda97de4db1b656c1bd27045db219"
 dependencies = [
  "anyhow",
  "argh",
