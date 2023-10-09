@@ -1,6 +1,13 @@
+# v2.4.5 - 2023/10/08
+
+## Bugfixes
+
+- Update to Buttplug v7.1.6/Engine v1.4.5
+  - Fixes issues with Lovense Dongles
+
 # v2.4.4 - 2023/10/04
 
-# Features
+## Features
 
 - Update to Buttplug v7.1.5/Intiface Engine v1.4.3
   - See [Buttplug Changelog](https://github.com/buttplugio/buttplug/blob/master/buttplug/CHANGELOG. md) for full info
