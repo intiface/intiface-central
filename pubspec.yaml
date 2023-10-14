@@ -48,6 +48,7 @@ dependencies:
   sentry_flutter: ^7.10.1
   sentry: ^7.10.1
   rxdart: ^0.27.7
+  screen_retriever: ^0.1.9
 
 dev_dependencies:
   flutter_test:

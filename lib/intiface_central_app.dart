@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/bloc/device_configuration/device_configuration.dart';
 import 'package:intiface_central/bloc/engine/library_engine_provider.dart';
@@ -65,7 +67,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
   @override
   void onWindowMove() async {
-    guiSettingsCubit.setWindowPosition(await windowManager.getPosition());
+    var windowPosition = await windowManager.getPosition();
+
+    logInfo("$windowPosition");
+    guiSettingsCubit.setWindowPosition(windowPosition);
   }
 
   Future<Widget> buildApp() async {
@@ -131,7 +136,30 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       );
 
       windowManager.addListener(this);
-      windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+
+      // #87: Fetch our displays and make sure what we're trying to show is in bounds. If it isn't, set to top left of
+      // main display.
+
+      var displays = await screenRetriever.getAllDisplays();
+      var minBounds = const Offset(0.0, 0.0);
+      var maxBounds = const Offset(0.0, 0.0);
+      for (var display in displays) {
+        minBounds = Offset(min<double>(display.visiblePosition!.dx, minBounds.dx),
+            min<double>(display.visiblePosition!.dy, minBounds.dy));
+        maxBounds = Offset(max<double>(display.visiblePosition!.dx + display.size.width, maxBounds.dy),
+            max<double>(display.visiblePosition!.dy + display.size.height, maxBounds.dy));
+      }
+      var windowPosition = guiSettingsCubit.getWindowPosition();
+      logInfo("Testing window position $windowPosition against min $minBounds max $maxBounds");
+      if (windowPosition.dx < minBounds.dx ||
+          windowPosition.dy < minBounds.dy ||
+          windowPosition.dx > maxBounds.dx ||
+          windowPosition.dy > maxBounds.dy) {
+        logInfo("Window position out of bounds, resetting position");
+        guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
+      } else {
+        windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+      }
       windowDisplayModeResize(configCubit.useCompactDisplay, guiSettingsCubit);
       windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
