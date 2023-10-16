@@ -68,8 +68,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
   @override
   void onWindowMove() async {
     var windowPosition = await windowManager.getPosition();
-
-    logInfo("$windowPosition");
     guiSettingsCubit.setWindowPosition(windowPosition);
   }
 
@@ -141,20 +139,21 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       // main display.
 
       var displays = await screenRetriever.getAllDisplays();
-      var minBounds = const Offset(0.0, 0.0);
-      var maxBounds = const Offset(0.0, 0.0);
-      for (var display in displays) {
-        minBounds = Offset(min<double>(display.visiblePosition!.dx, minBounds.dx),
-            min<double>(display.visiblePosition!.dy, minBounds.dy));
-        maxBounds = Offset(max<double>(display.visiblePosition!.dx + display.size.width, maxBounds.dy),
-            max<double>(display.visiblePosition!.dy + display.size.height, maxBounds.dy));
-      }
       var windowPosition = guiSettingsCubit.getWindowPosition();
-      logInfo("Testing window position $windowPosition against min $minBounds max $maxBounds");
-      if (windowPosition.dx < minBounds.dx ||
-          windowPosition.dy < minBounds.dy ||
-          windowPosition.dx > maxBounds.dx ||
-          windowPosition.dy > maxBounds.dy) {
+      var windowInBounds = false;
+      for (var display in displays) {
+        logInfo(
+            "Testing window position $windowPosition against ${display.name} (${display.size} ${display.visiblePosition})");
+        if (display.visiblePosition!.dx < windowPosition.dx &&
+            (display.visiblePosition!.dx + display.size.width) > windowPosition.dx &&
+            display.visiblePosition!.dy < windowPosition.dy &&
+            (display.visiblePosition!.dy + display.size.width) > windowPosition.dy) {
+          windowInBounds = true;
+          logInfo("Window in bounds for ${display.name}");
+          break;
+        }
+      }
+      if (!windowInBounds) {
         logInfo("Window position out of bounds, resetting position");
         guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
       } else {
