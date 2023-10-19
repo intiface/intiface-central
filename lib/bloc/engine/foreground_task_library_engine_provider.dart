@@ -12,6 +12,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 String _kMainBackdoorPortName = "intifaceCentralBackdoorMain";
 String _kMainServerPortName = "intifaceCentralServerMain";
+String _kMainShutdownPortName = "intifaceCentralShutdownMain";
 
 // The callback function should always be a top-level function.
 @pragma('vm:entry-point')
@@ -24,6 +25,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   SendPort? _sendPort;
   final ReceivePort _serverMessageReceivePort;
   final ReceivePort _backdoorMessageReceivePort;
+  final ReceivePort _shutdownReceivePort;
   Stream<String>? _stream;
   final Completer<void> _serverExited = Completer();
 
@@ -39,12 +41,15 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
   IntifaceEngineTaskHandler()
       : _serverMessageReceivePort = ReceivePort(),
-        _backdoorMessageReceivePort = ReceivePort() {
+        _backdoorMessageReceivePort = ReceivePort(),
+        _shutdownReceivePort = ReceivePort() {
     // Once we've started everything up, register our receive port
     final serverSendPort = _serverMessageReceivePort.sendPort;
     final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
+    final shutdownSendPort = _shutdownReceivePort.sendPort;
     IsolateNameServer.registerPortWithName(serverSendPort, _kMainServerPortName);
     IsolateNameServer.registerPortWithName(backdoorSendPort, _kMainBackdoorPortName);
+    IsolateNameServer.registerPortWithName(shutdownSendPort, _kMainShutdownPortName);
   }
 
   @override
@@ -94,6 +99,14 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _backdoorMessageReceivePort.forEach((element) async {
       await api.sendBackendServerMessage(msg: element);
     });
+    _shutdownReceivePort.forEach((element) async {
+      _sendProviderLog("INFO", "Engine shutdown request received");
+      await api.stopEngine();
+      await _serverExited.future;
+      _sendProviderLog("INFO", "Engine shutdown successful");
+      // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.
+      _sendPort!.send(false);
+    });
   }
 
   @override
@@ -104,12 +117,10 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    _sendProviderLog("INFO", "Destroying foreground service.");
-    await api.stopEngine();
-    await _serverExited.future;
-    _sendProviderLog("INFO", "Foreground service destroyed.");
+    _sendProviderLog("INFO", "Shutting down foreground task");
     IsolateNameServer.removePortNameMapping(_kMainServerPortName);
     IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
+    IsolateNameServer.removePortNameMapping(_kMainShutdownPortName);
   }
 
   @override
@@ -128,6 +139,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   ReceivePort? _receivePort;
   SendPort? _serverSendPort;
   SendPort? _backdoorSendPort;
+  SendPort? _shutdownSendPort;
 
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
@@ -144,18 +156,22 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   void onEngineStart() {
     _serverSendPort = IsolateNameServer.lookupPortByName(_kMainServerPortName);
     _backdoorSendPort = IsolateNameServer.lookupPortByName(_kMainBackdoorPortName);
+    _shutdownSendPort = IsolateNameServer.lookupPortByName(_kMainShutdownPortName);
   }
 
   @override
   void onEngineStop() {
+    logInfo("Engine stopped?!");
     _serverSendPort = null;
     _backdoorSendPort = null;
   }
 
   @override
   Future<void> stop() async {
-    //api.stopEngine();
-    await FlutterForegroundTask.stopService();
+    if (_shutdownSendPort == null) {
+      return;
+    }
+    _shutdownSendPort!.send(null);
     logInfo("Engine stop request sent");
   }
 
@@ -166,8 +182,6 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   void sendBackdoorMessage(String msg) {
-    //logInfo("Outgoing: $msg");
-    //api.sendBackendServerMessage(msg: msg);
     _backdoorSendPort!.send(msg);
   }
 
@@ -206,6 +220,9 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
           logInfo('timestamp: ${message.toString()}');
         } else if (message is String) {
           _processMessageStream.add(message);
+        } else if (message is bool) {
+          logInfo("Shutdown complete message received, stopping foreground task.");
+          FlutterForegroundTask.stopService().then((_) => logInfo("Foreground task shutdown complete."));
         }
       });
 
