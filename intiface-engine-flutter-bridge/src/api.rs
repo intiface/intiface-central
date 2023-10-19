@@ -17,9 +17,10 @@ use tokio::{
   select,
   sync::{broadcast, Notify},
 };
+use tracing::Level;
 use tracing_futures::Instrument;
 
-pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
+pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage, setup_frontend_logging};
 
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
@@ -75,7 +76,12 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       .expect("We already checked creation so this shouldn't fail");
   }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
-  let frontend = FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone());
+  let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone()));
+  let frontend_clone = frontend.clone();
+  runtime.spawn(async move {
+    setup_frontend_logging(Level::DEBUG, frontend_clone);
+  });
+  info!("Frontend logging set up.");
   let frontend_waiter = frontend.notify_on_creation();
   let engine = Arc::new(IntifaceEngine::default());
   let engine_clone = engine.clone();
@@ -154,7 +160,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       let notify_clone = notify.clone();
       futures::join!(
         async move {
-          if let Err(e) = engine.run(&options, Some(Arc::new(frontend)), false).await {
+          if let Err(e) = engine.run(&options, Some(frontend), true).await {
             error!("Error running engine: {:?}", e);
           }
           notify_clone.notify_waiters();
@@ -183,6 +189,7 @@ pub fn send(msg_json: String) {
 }
 
 pub fn stop_engine() {
+  info!("Stop engine called in rust.");
   if let Some(notifier) = ENGINE_NOTIFIER.get() {
     notifier.notify_waiters();
   }
