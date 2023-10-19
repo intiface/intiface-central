@@ -30,5 +30,7 @@
 	<string>NSApplication</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>This app uses Bluetooth to scan and communicate with various hardware.</string>
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.utilities</string>	
 </dict>
 </plist>
