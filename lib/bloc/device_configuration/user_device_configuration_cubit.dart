@@ -122,8 +122,23 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       cubit._protocols = await api.getProtocolNames();
     } catch (e) {
       logError("Error loading cubit! Deleting configs and creating new ones.");
-      await IntifacePaths.deviceConfigFile.delete();
-      await IntifacePaths.userDeviceConfigFile.delete();
+      logError(e);
+      try {
+        if (await IntifacePaths.deviceConfigFile.exists()) {
+          await IntifacePaths.deviceConfigFile.delete();
+        }
+      } catch (e) {
+        logError("Error deleting device configs");
+        logError(e);
+      }
+      try {
+        if (await IntifacePaths.userDeviceConfigFile.exists()) {
+          await IntifacePaths.userDeviceConfigFile.delete();
+        }
+      } catch (e) {
+        logError("Error deleting user device configs");
+        logError(e);
+      }
       await cubit._saveConfigFile();
     }
     return cubit;
