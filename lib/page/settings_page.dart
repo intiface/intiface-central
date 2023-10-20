@@ -82,6 +82,15 @@ class SettingPage extends StatelessWidget {
                             initialValue: cubit.checkForUpdateOnStart,
                             onToggle: (value) => cubit.checkForUpdateOnStart = value,
                             title: const Text("Check For Updates when Intiface Central Launches")),
+                        SettingsTile.switchTile(
+                            initialValue: cubit.crashReporting,
+                            onToggle: cubit.canUseCrashReporting ? ((value) => cubit.crashReporting = value) : null,
+                            title: const Text("Crash Reporting")),
+                        SettingsTile.navigation(
+                            title: const Text("Send Logs to Developers"),
+                            onPressed: cubit.canUseCrashReporting
+                                ? ((context) => BlocProvider.of<NavigationCubit>(context).goSendLogs())
+                                : null)
                       ]),
                       SettingsSection(title: const Text("Server Settings"), tiles: [
                         // Turn this off until we know the server is mostly stable, or have a way to handle crash on startup
@@ -372,15 +381,6 @@ class SettingPage extends StatelessWidget {
                                       ),
                                     ));
                           }));
-                      if (cubit.canUseCrashReporting) {
-                        advancedSettingsTiles.add(SettingsTile.switchTile(
-                            initialValue: cubit.crashReporting,
-                            onToggle: (value) => cubit.crashReporting = value,
-                            title: const Text("Crash Reporting")));
-                        advancedSettingsTiles.add(SettingsTile.navigation(
-                            title: const Text("Send Logs to Developers"),
-                            onPressed: (context) => BlocProvider.of<NavigationCubit>(context).goSendLogs()));
-                      }
                     }
 
                     var advancedSettings = SettingsSection(
