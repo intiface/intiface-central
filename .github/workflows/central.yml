@@ -89,32 +89,32 @@ jobs:
         with:
           name: linux-zip
           path: ./intiface-central-linux-x64.zip
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - run: flutter config --enable-macos-desktop
-        name: flutter config
-      - run: flutter build macos --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
-        name: flutter build
-      - name: Zip Release
-        run: zip -r intiface-central-macos-universal.zip build/macos/Build/Products/Release/intiface_central.app
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: macos-zip
-          path: ./intiface-central-macos-universal.zip
+#  macos:
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: rust toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          override: true
+#      - uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#          cache: true
+#          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+#      - run: flutter config --enable-macos-desktop
+#        name: flutter config
+#      - run: flutter build macos --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
+#        name: flutter build
+#      - name: Zip Release
+#        run: zip -r intiface-central-macos-universal.zip build/macos/Build/Products/Release/intiface_central.app
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: macos-zip
+#          path: ./intiface-central-macos-universal.zip
   android:
     runs-on: ubuntu-latest
     steps:
