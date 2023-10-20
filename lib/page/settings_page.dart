@@ -361,7 +361,6 @@ class SettingPage extends StatelessWidget {
                           initialValue: cubit.broadcastServerMdns,
                           onToggle: (value) => cubit.broadcastServerMdns = value,
                           title: const Text("Broadcast Server Info via mDNS")));
-
                       advancedSettingsTiles.add(SettingsTile.navigation(
                           enabled: !engineIsRunning,
                           title: const Text("mDNS Identifier Suffix (Optional)"),
@@ -386,28 +385,34 @@ class SettingPage extends StatelessWidget {
                     var advancedSettings = SettingsSection(
                         title: const Text("Advanced/Experimental Settings"), tiles: advancedSettingsTiles);
 
-                    var advancedManagers = SettingsSection(title: const Text("Advanced Device Managers"), tiles: [
+                    var advancedManagers = [
                       SettingsTile.switchTile(
                           enabled: !engineIsRunning,
                           initialValue: cubit.useDeviceWebsocketServer,
                           onToggle: (value) => cubit.useDeviceWebsocketServer = value,
                           title: const Text("Device Websocket Server")),
-                      SettingsTile.switchTile(
-                          enabled: !engineIsRunning,
-                          initialValue: cubit.useLovenseSerialDongle,
-                          onToggle: (value) => cubit.useLovenseSerialDongle = value,
-                          title: const Text("Lovense USB Dongle (Serial/Black Circuit Board)")),
-                      SettingsTile.switchTile(
-                          enabled: !engineIsRunning,
-                          initialValue: cubit.useSerialPort,
-                          onToggle: (value) => cubit.useSerialPort = value,
-                          title: const Text("Serial Port")),
-                    ]);
+                    ];
+
+                    if (!Platform.isIOS && !Platform.isAndroid) {
+                      advancedManagers.addAll([
+                        SettingsTile.switchTile(
+                            enabled: !engineIsRunning,
+                            initialValue: cubit.useLovenseSerialDongle,
+                            onToggle: (value) => cubit.useLovenseSerialDongle = value,
+                            title: const Text("Lovense USB Dongle (Serial/Black Circuit Board)")),
+                        SettingsTile.switchTile(
+                            enabled: !engineIsRunning,
+                            initialValue: cubit.useSerialPort,
+                            onToggle: (value) => cubit.useSerialPort = value,
+                            title: const Text("Serial Port")),
+                      ]);
+                    }
 
                     tiles.addAll([advancedSettings]);
 
                     if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
-                      tiles.add(advancedManagers);
+                      tiles
+                          .add(SettingsSection(title: const Text("Advanced Device Managers"), tiles: advancedManagers));
                     }
 
                     List<Widget> widgets = [SettingsList(shrinkWrap: true, sections: tiles)];
