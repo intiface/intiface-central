@@ -204,9 +204,12 @@
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
+				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/DebugProfile.entitlements;
 				CURRENT_PROJECT_VERSION = 0.0;
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonpolynomial.intifacecentral;
 				PRODUCT_NAME = intiface_engine_flutter_bridge;
 				SDKROOT = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -229,8 +232,11 @@
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*]" = "ios-sim";
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
+				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/Release.entitlements;
 				CURRENT_PROJECT_VERSION = 0.0;
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nonpolynomial.intifacecentral;
 				PRODUCT_NAME = intiface_engine_flutter_bridge;
 				SDKROOT = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -256,6 +262,8 @@
 			buildSettings = {
 				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
 				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.dylib;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				DYLIB_COMPATIBILITY_VERSION = 0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				PRODUCT_NAME = libintiface_engine_flutter_bridge;
@@ -283,6 +291,8 @@
 			buildSettings = {
 				CARGO_XCODE_CARGO_DEP_FILE_NAME = libintiface_engine_flutter_bridge.d;
 				CARGO_XCODE_CARGO_FILE_NAME = libintiface_engine_flutter_bridge.dylib;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				DYLIB_COMPATIBILITY_VERSION = 0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				PRODUCT_NAME = libintiface_engine_flutter_bridge;
