@@ -49,7 +49,7 @@ class SettingPage extends StatelessWidget {
                               child: const Text("Check For Updates"))),
                       SettingsTile(title: const Text("App Version"), value: Text(cubit.currentAppVersion)),
                     ];
-                    if (isDesktop() && cubit.currentAppVersion != cubit.latestAppVersion) {
+                    if (isDesktop() && canShowUpdate() && cubit.currentAppVersion != cubit.latestAppVersion) {
                       versionTiles.add(SettingsTile.navigation(
                           onPressed: (context) async {
                             const url = "https://github.com/intiface/intiface-central/releases";

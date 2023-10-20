@@ -81,3 +81,4 @@ class IntifacePaths {
 
 bool isDesktop() => Platform.isLinux || Platform.isMacOS || Platform.isWindows;
 bool isMobile() => Platform.isAndroid || Platform.isIOS;
+bool canShowUpdate() => !(const bool.fromEnvironment('NO_VISIBLE_UPDATES'));

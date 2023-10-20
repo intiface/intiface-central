@@ -147,7 +147,9 @@ class ControlWidget extends StatelessWidget {
                             );
                           }),
                       Visibility(
-                        visible: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion,
+                        visible: isDesktop() &&
+                            canShowUpdate() &&
+                            configCubit.currentAppVersion != configCubit.latestAppVersion,
                         child: TextButton.icon(
                             label: const Text("Update"),
                             onPressed: () => navCubit.goSettings(),
