@@ -1,3 +1,11 @@
+# 1.0.7 (2023/10/19)
+
+## Features
+
+- Update to Intiface Engine 1.4.6/Buttplug 7.1.7
+  - Add device keepalive on iOS
+- Reshuffle some logging methods (still needs cleanup)
+
 # 1.0.6 (2023/10/08)
 
 ## Features
