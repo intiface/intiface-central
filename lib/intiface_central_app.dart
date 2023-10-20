@@ -97,6 +97,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       logInfo(IntifacePaths.logPath.path);
       var entities = (await dir.list().toList()).whereType<File>();
       Sentry.configureScope((scope) {
+        scope.clearAttachments();
         final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
         final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
         for (var attachment in logAttachments) {
