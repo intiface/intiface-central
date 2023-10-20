@@ -213,9 +213,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
 
     useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
-    // Default to true on android, slam to false everywhere else.
+    // Default to true on mobile.
     useForegroundProcess =
-        (Platform.isAndroid || Platform.isIOS) ? (_prefs.getBool("useForegroundProcess2") ?? true) : false;
+        (Platform.isAndroid || Platform.isIOS) ? (_prefs.getBool("useForegroundProcess3") ?? true) : false;
 
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
@@ -403,9 +403,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseProcessEngine(value));
   }
 
-  bool get useForegroundProcess => _prefs.getBool("useForegroundProcess2")!;
+  bool get useForegroundProcess => _prefs.getBool("useForegroundProcess3")!;
   set useForegroundProcess(bool value) {
-    _prefs.setBool("useForegroundProcess2", value);
+    _prefs.setBool("useForegroundProcess3", value);
     emit(UseForegroundProcess(value));
   }
 
