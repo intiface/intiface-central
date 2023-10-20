@@ -205,6 +205,7 @@
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
 				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/DebugProfile.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 0.0;
 				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
@@ -233,6 +234,7 @@
 				"CARGO_XCODE_TARGET_OS[sdk=iphonesimulator*][arch=x86_64*]" = ios;
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
 				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/Release.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = 0.0;
 				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
