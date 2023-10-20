@@ -1,3 +1,21 @@
+# v2.5.0 - 2023/10/19
+
+## Features
+
+- iOS Backgrounding now stable, defaulted to on
+- Crash Reporting and Log Submission moved to main settings
+
+## Bugfixes
+
+- Fixed issue where app window can disappear in multi-monitor situations on desktop
+- Fixed issue with server shutdown instability on android
+- Device Settings UX now expands correctly
+- Fixed memory leak when mDNS system on
+- Fixed icons on iOS
+- Application display name on macOS, Android should now be "Intiface Central"
+- Trying to delete non-existent config files will no longer freeze app load
+- Desktop-only device managers no longer show up in mobile advanced settings
+
 # v2.4.5 - 2023/10/08
 
 ## Bugfixes
