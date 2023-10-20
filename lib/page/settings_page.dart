@@ -192,44 +192,6 @@ class SettingPage extends StatelessWidget {
 
                     tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
 
-                    if (Platform.isAndroid || Platform.isIOS) {
-                      var mobileSettings = [
-                        SettingsTile.switchTile(
-                            enabled: !engineIsRunning,
-                            initialValue: cubit.useForegroundProcess,
-                            onToggle: (value) {
-                              cubit.useForegroundProcess = value;
-                              showDialog<void>(
-                                context: context,
-                                barrierDismissible: false, // user must tap button!
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('App needs restart'),
-                                    content: const SingleChildScrollView(
-                                      child: ListBody(
-                                        children: <Widget>[
-                                          Text(
-                                              'Changing to/from foregrounding requires an app restart. Please close and reopen the application to use foregrounding.'),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Ok'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            title: const Text("Use Foreground Process"))
-                      ];
-                      tiles.add(SettingsSection(title: const Text("Mobile Settings"), tiles: mobileSettings));
-                    }
-
                     tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
                       SettingsTile.navigation(
                         onPressed: !engineIsRunning
@@ -385,6 +347,9 @@ class SettingPage extends StatelessWidget {
                     var advancedSettings = SettingsSection(
                         title: const Text("Advanced/Experimental Settings"), tiles: advancedSettingsTiles);
 
+                    // Add the advanced settings tiles first, then the extra advanced sections after.
+                    tiles.addAll([advancedSettings]);
+
                     var advancedManagers = [
                       SettingsTile.switchTile(
                           enabled: !engineIsRunning,
@@ -408,11 +373,51 @@ class SettingPage extends StatelessWidget {
                       ]);
                     }
 
-                    tiles.addAll([advancedSettings]);
-
                     if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
                       tiles
                           .add(SettingsSection(title: const Text("Advanced Device Managers"), tiles: advancedManagers));
+                    }
+
+                    if (Platform.isAndroid || Platform.isIOS) {
+                      var mobileSettings = [
+                        SettingsTile.switchTile(
+                            enabled: !engineIsRunning,
+                            initialValue: cubit.useForegroundProcess,
+                            onToggle: (value) {
+                              cubit.useForegroundProcess = value;
+                              showDialog<void>(
+                                context: context,
+                                barrierDismissible: false, // user must tap button!
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('App needs restart'),
+                                    content: const SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          Text(
+                                              'Changing to/from foregrounding requires an app restart. Please close and reopen the application to use foregrounding.'),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Ok'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            title: const Text("Use Foreground Process"))
+                      ];
+                      // Only show when showing advanced settings, this shouldn't really be turned off now.
+                      if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
+                        tiles
+                            .add(SettingsSection(title: const Text("Advanced Mobile Settings"), tiles: mobileSettings));
+                      }
                     }
 
                     List<Widget> widgets = [SettingsList(shrinkWrap: true, sections: tiles)];
