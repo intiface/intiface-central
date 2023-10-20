@@ -206,6 +206,7 @@
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
 				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/DebugProfile.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 0.0;
 				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
@@ -235,6 +236,7 @@
 				"CARGO_XCODE_TARGET_OS[sdk=macosx*]" = darwin;
 				CODE_SIGN_ENTITLEMENTS = ../macos/Runner/Release.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 0.0;
 				DEVELOPMENT_TEAM = MSRA4LCTEZ;
 				MARKETING_VERSION = 0.0.1;
