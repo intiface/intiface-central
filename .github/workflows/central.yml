@@ -86,12 +86,12 @@ jobs:
       - run: flutter build linux --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
         name: flutter build
       - name: Zip Release
-        run: zip -r intiface-central-linux-x64.zip build/linux/x64/release/bundle
+        run: zip -r intiface-central-linux-${{ matrix.os }}-x64.zip build/linux/x64/release/bundle
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: linux-zip
-          path: ./intiface-central-linux-x64.zip
+          name: linux-${{ matrix.os }}-zip
+          path: ./intiface-central-linux-${{ matrix.os }}-x64.zip
 #  macos:
 #    runs-on: macos-latest
 #    steps:
