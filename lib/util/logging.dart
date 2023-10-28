@@ -61,6 +61,8 @@ class IntifaceStreamPrinter extends LoggyPrinter {
 
 // From https://github.com/infinum/floggy/issues/50
 class FileOutput extends LoggyPrinter {
+  static final DateTime _appStartTime = DateTime.now();
+
   FileOutput() : super() {
     _sink = IntifacePaths.logFile.openWrite(
       mode: FileMode.writeOnly,
@@ -71,7 +73,9 @@ class FileOutput extends LoggyPrinter {
 
   @override
   void onLog(LogRecord record) async {
-    _sink?.writeln(record.toString());
+    var logString =
+        "${DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0} : [${record.level.toString().substring(0, 1)}] : $record.message";
+    _sink?.writeln(logString);
   }
 }
 
