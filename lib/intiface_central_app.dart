@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/ffi.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/widget/control_widget.dart';
@@ -108,19 +109,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     } else {
       logWarning("DSN not set, crash reporting cannot be used in this version of Intiface Central");
     }
-
-    // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
-    IntifaceCentralApp.eventProcessors.add((event, {hint}) {
-      if (!configCubit.crashReporting) {
-        if (event.tags?.containsKey("ManualLogSubmit") != true) {
-          logWarning("Crash/error received but CrashReporting is off, not sending to devs.");
-          return false;
-        }
-        logWarning("Manual log submission, crashReporting is off, overriding and sending to devs.");
-      }
-      logWarning("Submitting crash report/logs to developers.");
-      return true;
-    });
 
     if (isDesktop()) {
       // Must add this line before we work with the manager.
@@ -239,8 +227,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
-    var userConfigCubit = await UserDeviceConfigurationCubit.create();
-
     var networkCubit = await NetworkInfoCubit.create();
 
     EngineRepository engineRepo;
@@ -252,14 +238,46 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           : EngineRepository(LibraryEngineProvider());
     }
 
+    var assetCubit = await AssetCubit.create();
+
+    var updateBloc = UpdateBloc(updateRepo);
+
+    updateBloc.stream.forEach((state) async {
+      if (state is NewsUpdateRetrieved) {
+        configCubit.currentNewsEtag = state.version;
+        await assetCubit.update();
+      }
+      if (state is DeviceConfigUpdateRetrieved) {
+        configCubit.currentDeviceConfigEtag = state.version;
+        // Load the file and pull internal version while we're at it.
+        var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
+        configCubit.currentDeviceConfigVersion = deviceConfigVersion;
+      }
+      if (isDesktop()) {
+        if (state is IntifaceCentralUpdateAvailable) {
+          configCubit.latestAppVersion = state.version;
+        }
+      }
+    });
+
+    if (configCubit.checkForUpdateOnStart) {
+      updateBloc.add(RunUpdate());
+    }
+
     var engineControlBloc = EngineControlBloc(engineRepo);
 
     var deviceControlBloc = DeviceManagerBloc(engineControlBloc.stream, engineControlBloc.add);
 
-    if (kDebugMode) {
-      // Make sure the engine is stopped, just in case we've reloaded.
-      engineControlBloc.add(EngineControlEventStop());
-    }
+    ///
+    /// ORDER MATTERS HERE
+    ///
+    /// We need to bind to our library and start making calls as late as possible, so we can collect as much information
+    /// about bootup as possible before we possibly crash on a native error.
+
+    // Bring up the FFI now that we have logging available and crash logging set up.
+    initializeApi();
+
+    var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
     engineControlBloc.stream.forEach((state) async {
       if (state is ServerLogMessageState) {
@@ -309,35 +327,29 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       }
     });
 
-    var assetCubit = await AssetCubit.create();
-
-    var updateBloc = UpdateBloc(updateRepo);
-
-    updateBloc.stream.forEach((state) async {
-      if (state is NewsUpdateRetrieved) {
-        configCubit.currentNewsEtag = state.version;
-        await assetCubit.update();
-      }
-      if (state is DeviceConfigUpdateRetrieved) {
-        configCubit.currentDeviceConfigEtag = state.version;
-        // Load the file and pull internal version while we're at it.
-        var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
-        configCubit.currentDeviceConfigVersion = deviceConfigVersion;
-      }
-      if (isDesktop()) {
-        if (state is IntifaceCentralUpdateAvailable) {
-          configCubit.latestAppVersion = state.version;
-        }
-      }
-    });
-
-    if (configCubit.checkForUpdateOnStart) {
-      updateBloc.add(RunUpdate());
+    if (kDebugMode) {
+      // Make sure the engine is stopped, just in case we've reloaded.
+      engineControlBloc.add(EngineControlEventStop());
     }
 
     if (configCubit.startServerOnStartup) {
       engineControlBloc.add(EngineControlEventStart(options: await configCubit.getEngineOptions()));
     }
+
+    // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
+    IntifaceCentralApp.eventProcessors.add((event, {hint}) {
+      logInfo(event.eventId);
+      if (!configCubit.crashReporting) {
+        if (event.tags?.containsKey("ManualLogSubmit") != true) {
+          logWarning("Crash/error received but CrashReporting is off, not sending to devs.");
+          return false;
+        }
+        logWarning("Manual log submission, crashReporting is off, overriding and sending to devs.");
+      } else {
+        logWarning("Submitting crash report/logs to developers.");
+      }
+      return true;
+    });
 
     return MultiBlocProvider(providers: [
       BlocProvider(create: (context) => engineControlBloc),

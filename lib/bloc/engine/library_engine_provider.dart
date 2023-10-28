@@ -10,7 +10,7 @@ class LibraryEngineProvider implements EngineProvider {
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
     logInfo("Starting library internal engine with the following arguments: $options");
-    _stream = api.runEngine(args: options);
+    _stream = api!.runEngine(args: options);
     logInfo("Engine started");
     _stream!.forEach((element) {
       try {
@@ -30,19 +30,19 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    api.stopEngine();
+    api!.stopEngine();
     logInfo("Engine stopped");
   }
 
   @override
   void send(String msg) {
-    api.send(msgJson: msg);
+    api!.send(msgJson: msg);
   }
 
   @override
   void sendBackdoorMessage(String msg) {
     //logInfo("Outgoing: $msg");
-    api.sendBackendServerMessage(msg: msg);
+    api!.sendBackendServerMessage(msg: msg);
   }
 
   @override

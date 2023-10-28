@@ -106,7 +106,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
         var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
         var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
-        var config = (await api.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
+        var config = (await api!.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
         cubit._configs = config.configurations.map((e) => ExposedWritableUserDeviceConfig.fromRust(e)).toList();
         for (var k in config.specifiers) {
           var protocol = k.$1;
@@ -119,7 +119,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
         }
         //.map((k, v) => ExposedWritableUserDeviceSpecifier())
       }
-      cubit._protocols = await api.getProtocolNames();
+      cubit._protocols = await api!.getProtocolNames();
     } catch (e) {
       logError("Error loading cubit! Deleting configs and creating new ones.");
       logError(e);
@@ -256,7 +256,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       }
     }
     logInfo(specifierList);
-    var jsonString = await api.generateUserDeviceConfigFile(
+    var jsonString = await api!.generateUserDeviceConfigFile(
         userConfig:
             ExposedUserConfig(configurations: _configs.map((e) => e.toRust()).toList(), specifiers: specifierList));
     await IntifacePaths.userDeviceConfigFile.writeAsString(jsonString);

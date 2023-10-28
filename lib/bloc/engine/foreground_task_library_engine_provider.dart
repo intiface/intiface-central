@@ -76,7 +76,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _sendProviderLog("INFO", "Starting engine");
 
     _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
-    _stream = api.runEngine(args: engineOptions);
+    _stream = api!.runEngine(args: engineOptions);
     _sendProviderLog("INFO", "Engine started");
     _stream!.forEach((element) {
       try {
@@ -94,14 +94,14 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       }
     });
     _serverMessageReceivePort.forEach((element) async {
-      await api.send(msgJson: element);
+      await api!.send(msgJson: element);
     });
     _backdoorMessageReceivePort.forEach((element) async {
-      await api.sendBackendServerMessage(msg: element);
+      await api!.sendBackendServerMessage(msg: element);
     });
     _shutdownReceivePort.forEach((element) async {
       _sendProviderLog("INFO", "Engine shutdown request received");
-      await api.stopEngine();
+      await api!.stopEngine();
       await _serverExited.future;
       _sendProviderLog("INFO", "Engine shutdown successful");
       // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.

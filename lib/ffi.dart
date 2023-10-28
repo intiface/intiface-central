@@ -1,5 +1,7 @@
 import 'dart:ffi';
 
+import 'package:loggy/loggy.dart';
+
 import 'bridge_generated.dart';
 
 // Re-export the bridge so it is only necessary to import this file.
@@ -19,5 +21,10 @@ final _dylib = io.Platform.isWindows
 
 // The late modifier delays initializing the value until it is actually needed,
 // leaving precious little time for the program to quickly start up.
-final IntifaceEngineFlutterBridge api = IntifaceEngineFlutterBridgeImpl(
-    io.Platform.isIOS || io.Platform.isMacOS ? DynamicLibrary.executable() : DynamicLibrary.open(_dylib));
+IntifaceEngineFlutterBridge? api;
+
+void initializeApi() {
+  logInfo("Initializing API static via ${io.Platform.isIOS || io.Platform.isMacOS ? "executable" : _dylib}");
+  api = IntifaceEngineFlutterBridgeImpl(
+      io.Platform.isIOS || io.Platform.isMacOS ? DynamicLibrary.executable() : DynamicLibrary.open(_dylib));
+}
