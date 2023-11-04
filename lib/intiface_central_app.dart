@@ -136,7 +136,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
         if (display.visiblePosition!.dx < windowPosition.dx &&
             (display.visiblePosition!.dx + display.size.width) > windowPosition.dx &&
             display.visiblePosition!.dy < windowPosition.dy &&
-            (display.visiblePosition!.dy + display.size.width) > windowPosition.dy) {
+            (display.visiblePosition!.dy + display.size.height) > windowPosition.dy) {
           windowInBounds = true;
           logInfo("Window in bounds for ${display.name}");
           break;
