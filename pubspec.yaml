@@ -40,7 +40,7 @@ dependencies:
   intl: ^0.18.1
   easy_debounce: ^2.0.3
   percent_indicator: ^4.2.3
-  buttplug: ^0.0.3
+  buttplug: ^0.0.4
 #  buttplug: 
 #    path: /Users/qdot/code/buttplug_dart
   flutter_foreground_task: ^6.1.2
