@@ -14,11 +14,17 @@ For developers, it allows their application to connect to and control sex toys, 
 
 ## How to Get Binaries/Installers
 
-- **Windows:** Use the [latest github release](https://intiface.com/central)
+- **Windows:**
+  - Use the [latest github release](https://intiface.com/central)
+  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and Microsoft Store support coming soon.
 - **macOS:** Use the [latest github release](https://intiface.com/central)
+  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and macOS App Store support coming soon.
 - **Linux:**
   - **Ubuntu 20.04/22.04:** Use the [latest github release](https://intiface.com/central)
-  - **Arch:** [Use the intiface-central-bin package](https://aur.archlinux.org/packages/intiface-central-bin) (Maintained by community)
+  - **Arch:** [Use the intiface-central-bin package in AUR](https://aur.archlinux.org/packages/intiface-central-bin) (Maintained by community)
+  - **Alpine:** [Use the intiface-central package in the Alpine repo](https://pkgs.alpinelinux.org/package/edge/testing/x86_64/intiface-central)
+  - **Steam Deck:** [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) support
+    coming soon, for now Ubuntu 20.04 builds seem to work.
   - **All others:** Recommended to build yourself using instructions below (Flatpak coming
     soon)[https://github.com/intiface/intiface-central/issues/62]
 - **Android:** Use the [Google Play Store](https://play.google.com/store/apps/details?id=com.nonpolynomial.intiface_central&hl=en_US&gl=US)
