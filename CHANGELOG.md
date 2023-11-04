@@ -1,3 +1,21 @@
+# v2.5.1 - 2023/11/04
+
+## Features
+
+- Added Device Support (via Buttplug v7.1.8)
+  - Lovense Lapis, Vulse
+  - Funtown toys
+
+## Bugfixes
+
+- Fixed Svakom Sam Neo connection issue
+- Fixed Synchro connection issue
+- Fixed monitor bounds check for multiple monitor support
+- Moved dylib loading to after crash reporting setup, so we can hopefully get better crash stacks
+- Fixed issue with lovense connect spamming logs
+- Fixed issue with common Buttplug events in buttplug_dart causing log warnings (and therefore
+  reporting to sentry)
+
 # v2.5.0 - 2023/10/19
 
 ## Features

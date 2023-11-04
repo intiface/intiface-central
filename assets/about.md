@@ -12,7 +12,7 @@ Looking for apps and games to use with Intiface® Central? Check out the [Awesom
 
 # About Intiface® Central
 
-Version v2.5.0
+Version v2.5.1
 
 Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2023
 
