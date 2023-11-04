@@ -390,9 +390,7 @@ checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "buttplug"
-version = "7.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac9651062ddcd4871b7fd74be8b187540ba33f44bc62831ffdd4caa9a1cf5d43"
+version = "7.1.8"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -416,6 +414,7 @@ dependencies = [
  "paste",
  "prost",
  "prost-build",
+ "regex",
  "reqwest",
  "rusty-xinput",
  "serde",
@@ -1486,8 +1485,6 @@ dependencies = [
 [[package]]
 name = "intiface-engine"
 version = "1.4.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22c73c37330ba8f217948910cf1721196d415bfb3a9f56cfcc47fa038099f334"
 dependencies = [
  "anyhow",
  "argh",

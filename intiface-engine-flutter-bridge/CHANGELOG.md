@@ -1,3 +1,15 @@
+# 1.0.8 (2023/11/04)
+
+## Features
+
+- Update to Buttplug v7.1.8/Intiface Engine v1.4.7
+  - Code fix required for a lovense devices to work, which is pretty much a forcing factor for a
+    new version. :c
+
+## Bugfixes
+
+- Set rust log env var to make reqwest and its dependencies shut up.
+
 # 1.0.7 (2023/10/19)
 
 ## Features
