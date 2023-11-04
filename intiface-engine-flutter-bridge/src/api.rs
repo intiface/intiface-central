@@ -3,16 +3,28 @@ use crate::{
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
-use buttplug::{util::device_configuration::{load_protocol_configs, load_user_configs, UserDeviceConfigPair, ProtocolConfiguration, UserDeviceConfig, UserConfigDefinition, ProtocolDefinition}, server::device::{ServerDeviceIdentifier, protocol::get_default_protocol_map}};
-pub use buttplug::{util::device_configuration::UserConfigDeviceIdentifier, server::device::configuration::WebsocketSpecifier};
+pub use buttplug::{
+  server::device::configuration::WebsocketSpecifier,
+  util::device_configuration::UserConfigDeviceIdentifier,
+};
+use buttplug::{
+  server::device::{protocol::get_default_protocol_map, ServerDeviceIdentifier},
+  util::device_configuration::{
+    load_protocol_configs, load_user_configs, ProtocolConfiguration, ProtocolDefinition,
+    UserConfigDefinition, UserDeviceConfig, UserDeviceConfigPair,
+  },
+};
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
-use std::{sync::{
-  atomic::{AtomicBool, Ordering},
-  Arc,
-}, collections::HashMap};
+use std::{
+  collections::HashMap,
+  sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+  },
+};
 use tokio::{
   select,
   sync::{broadcast, Notify},
@@ -20,7 +32,9 @@ use tokio::{
 use tracing::Level;
 use tracing_futures::Instrument;
 
-pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage, setup_frontend_logging};
+pub use intiface_engine::{
+  setup_frontend_logging, EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage,
+};
 
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
@@ -58,7 +72,7 @@ pub struct _EngineOptionsExternal {
   pub crash_task_thread: bool,
   pub websocket_client_address: Option<String>,
   pub broadcast_server_mdns: bool,
-  pub mdns_suffix: Option<String>
+  pub mdns_suffix: Option<String>,
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
@@ -76,11 +90,17 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       .expect("We already checked creation so this shouldn't fail");
   }
   let runtime = RUNTIME.get().expect("Runtime not initialized");
-  let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(sink.clone(), ENGINE_BROADCASTER.clone()));
+  let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(
+    sink.clone(),
+    ENGINE_BROADCASTER.clone(),
+  ));
   let frontend_clone = frontend.clone();
   runtime.spawn(async move {
     // Set up an environment variable to supress reqwest/rustls logging
-    std::env::set_var("RUST_LOG", format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"));
+    std::env::set_var(
+      "RUST_LOG",
+      format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
+    );
     setup_frontend_logging(Level::DEBUG, frontend_clone);
   });
   info!("Frontend logging set up.");
@@ -221,7 +241,9 @@ pub struct ExposedWebsocketSpecifier {
 
 impl From<&WebsocketSpecifier> for ExposedWebsocketSpecifier {
   fn from(other: &WebsocketSpecifier) -> Self {
-    ExposedWebsocketSpecifier { names: other.names().iter().cloned().collect() }
+    ExposedWebsocketSpecifier {
+      names: other.names().iter().cloned().collect(),
+    }
   }
 }
 
@@ -237,25 +259,29 @@ pub struct ExposedUserDeviceSpecifiers {
 
 pub struct ExposedUserConfig {
   pub specifiers: Vec<(String, ExposedUserDeviceSpecifiers)>,
-  pub configurations: Vec<ExposedUserDeviceConfig>
+  pub configurations: Vec<ExposedUserDeviceConfig>,
 }
 
 impl Into<UserConfigDefinition> for ExposedUserConfig {
   fn into(self) -> UserConfigDefinition {
     let mut user_config_def = UserConfigDefinition::default();
-    let configs: Vec<UserDeviceConfigPair> = self.configurations.into_iter().map(|x| x.into()).collect();
+    let configs: Vec<UserDeviceConfigPair> =
+      self.configurations.into_iter().map(|x| x.into()).collect();
     let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
-    self.specifiers.into_iter().for_each(|(protocol, specifiers)| {
-      if let Some(websocket_specifier) = specifiers.websocket {
-        if websocket_specifier.names.len() > 0 {
-          let mut protocol_def = ProtocolDefinition::default();
-          protocol_def.set_websocket(Some(websocket_specifier.into()));
-          specifier_map.insert(protocol, protocol_def);
+    self
+      .specifiers
+      .into_iter()
+      .for_each(|(protocol, specifiers)| {
+        if let Some(websocket_specifier) = specifiers.websocket {
+          if websocket_specifier.names.len() > 0 {
+            let mut protocol_def = ProtocolDefinition::default();
+            protocol_def.set_websocket(Some(websocket_specifier.into()));
+            specifier_map.insert(protocol, protocol_def);
+          }
         }
-      }
-    });
+      });
     //if !specifier_map.is_empty() {
-      user_config_def.set_specifiers(Some(specifier_map));
+    user_config_def.set_specifiers(Some(specifier_map));
     //}
     if !configs.is_empty() {
       user_config_def.set_user_device_configs(Some(configs));
@@ -270,7 +296,7 @@ pub struct ExposedUserDeviceConfig {
   pub display_name: Option<String>,
   pub allow: Option<bool>,
   pub deny: Option<bool>,
-  pub reserved_index: Option<u32>
+  pub reserved_index: Option<u32>,
 }
 
 impl From<&UserDeviceConfigPair> for ExposedUserDeviceConfig {
@@ -281,7 +307,7 @@ impl From<&UserDeviceConfigPair> for ExposedUserDeviceConfig {
       display_name: value.config().display_name().clone(),
       allow: value.config().allow().clone(),
       deny: value.config().deny().clone(),
-      reserved_index: value.config().index().clone()
+      reserved_index: value.config().index().clone(),
     }
   }
 }
@@ -297,22 +323,38 @@ impl Into<UserDeviceConfigPair> for ExposedUserDeviceConfig {
   }
 }
 
-pub fn get_user_device_configs(device_config_json: String, user_config_json: String) -> ExposedUserConfig {
-  let mut dcm_builder = load_protocol_configs(Some(device_config_json.to_owned()), Some(user_config_json.to_owned()), false).unwrap();
+pub fn get_user_device_configs(
+  device_config_json: String,
+  user_config_json: String,
+) -> ExposedUserConfig {
+  let mut dcm_builder = load_protocol_configs(
+    Some(device_config_json.to_owned()),
+    Some(user_config_json.to_owned()),
+    false,
+  )
+  .unwrap();
   let dcm = dcm_builder.finish().unwrap();
   let raw_user_configs = load_user_configs(&user_config_json);
-  let mut config_out = vec!();
+  let mut config_out = vec![];
   let mut websocket_specifiers_out = Vec::new();
   if let Some(user_specifiers) = raw_user_configs.specifiers() {
     for (protocol, specifiers) in user_specifiers {
       if let Some(websocket_specifiers) = specifiers.websocket() {
-        websocket_specifiers_out.push((protocol.clone(), ExposedUserDeviceSpecifiers { websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)) }));
+        websocket_specifiers_out.push((
+          protocol.clone(),
+          ExposedUserDeviceSpecifiers {
+            websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)),
+          },
+        ));
       }
     }
   }
   if let Some(configs) = raw_user_configs.user_device_configs() {
     for config in configs {
-      let maybe_attrs = dcm.protocol_device_attributes(&ServerDeviceIdentifier::from(config.identifier().clone()), &[]);
+      let maybe_attrs = dcm.protocol_device_attributes(
+        &ServerDeviceIdentifier::from(config.identifier().clone()),
+        &[],
+      );
       if let Some(attrs) = maybe_attrs {
         let mut user_config = ExposedUserDeviceConfig::from(*&config);
         user_config.name = attrs.name().to_owned();
@@ -322,7 +364,7 @@ pub fn get_user_device_configs(device_config_json: String, user_config_json: Str
   }
   ExposedUserConfig {
     specifiers: websocket_specifiers_out,
-    configurations: config_out
+    configurations: config_out,
   }
 }
 
@@ -334,5 +376,9 @@ pub fn generate_user_device_config_file(user_config: ExposedUserConfig) -> Strin
 }
 
 pub fn get_protocol_names() -> Vec<String> {
-  get_default_protocol_map().keys().into_iter().cloned().collect()
+  get_default_protocol_map()
+    .keys()
+    .into_iter()
+    .cloned()
+    .collect()
 }
