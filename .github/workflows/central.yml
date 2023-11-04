@@ -46,6 +46,7 @@ jobs:
         run: |
           iscc .\intiface-central-installer.iss
       - uses: dlemstra/code-sign-action@v1
+        name: Sign Installer
         with:
           certificate: '${{ secrets.NPLABS_WINDOWS_202205_CERT }}'
           password: '${{ secrets.NPLABS_WINDOWS_202205_KEY }}'
@@ -53,7 +54,7 @@ jobs:
           recursive: false
           files: |
             intiface-central-installer.exe
-          description: 'Sign Intiface Central Installer'          
+          description: 'Intiface Central Installer'          
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
