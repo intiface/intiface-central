@@ -12,6 +12,18 @@ For users, it provides simple, friendly capabilites for managing, connecting, cu
 
 For developers, it allows their application to connect to and control sex toys, without having to worry about constantly updating the underlying libraries or dealing with bugs and crashes in a difficult-to-debug cross langauge environment.
 
+## How to Get Binaries/Installers
+
+- **Windows:** Use the [latest github release](https://intiface.com/central)
+- **macOS:** Use the [latest github release](https://intiface.com/central)
+- **Linux:**
+  - **Ubuntu 20.04/22.04:** Use the [latest github release](https://intiface.com/central)
+  - **Arch:** [Use the intiface-central-bin package](https://aur.archlinux.org/packages/intiface-central-bin) (Maintained by community)
+  - **All others:** Recommended to build yourself using instructions below (Flatpak coming
+    soon)[https://github.com/intiface/intiface-central/issues/62]
+- **Android:** Use the [Google Play Store](https://play.google.com/store/apps/details?id=com.nonpolynomial.intiface_central&hl=en_US&gl=US)
+- **iOS:** Use the [Apple App Store](https://apps.apple.com/us/app/intiface-central/id6444728067)
+
 ## How to Build
 
 Building Intiface Central will require the following tools:
