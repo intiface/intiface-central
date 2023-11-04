@@ -80,7 +80,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   let frontend_clone = frontend.clone();
   runtime.spawn(async move {
     // Set up an environment variable to supress reqwest/rustls logging
-    std::env::set_var("RUST_LOG", format!("debug,h2=warn,reqwest=warn,rustls=warn, hyper=warn"));
+    std::env::set_var("RUST_LOG", format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"));
     setup_frontend_logging(Level::DEBUG, frontend_clone);
   });
   info!("Frontend logging set up.");
