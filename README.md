@@ -44,7 +44,8 @@ Or, if you have multiple targets available
 
 `flutter build -d [target]`
 
-The Rust build for Desktop and iOS is integrated into the Android build.
+The Rust build for Desktop and iOS is integrated into the Flutter build. Android requires an
+additional step.
 
 ### Android
 
@@ -52,6 +53,8 @@ Android requires building on Linux or macOS due to OpenSSL requirements that don
 
 Due to this restriction, Rust and Flutter builds are separate for Android. To build for android:
 
+- Install cargo make:
+  - `cargo install cargo-make`
 - Start with the Rust build:
   - `cd intiface-engine-flutter-bridge`
   - `cargo make build-android`
