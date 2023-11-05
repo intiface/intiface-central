@@ -25,6 +25,10 @@ IntifaceEngineFlutterBridge? api;
 
 void initializeApi() {
   logInfo("Initializing API static via ${io.Platform.isIOS || io.Platform.isMacOS ? "executable" : _dylib}");
-  api = IntifaceEngineFlutterBridgeImpl(
-      io.Platform.isIOS || io.Platform.isMacOS ? DynamicLibrary.executable() : DynamicLibrary.open(_dylib));
+  if (api == null) {
+    api = IntifaceEngineFlutterBridgeImpl(
+        io.Platform.isIOS || io.Platform.isMacOS ? DynamicLibrary.executable() : DynamicLibrary.open(_dylib));
+  } else {
+    logWarning("API already initialized, should not need to initialize again.");
+  }
 }

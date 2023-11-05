@@ -43,6 +43,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       : _serverMessageReceivePort = ReceivePort(),
         _backdoorMessageReceivePort = ReceivePort(),
         _shutdownReceivePort = ReceivePort() {
+    initializeApi();
     // Once we've started everything up, register our receive port
     final serverSendPort = _serverMessageReceivePort.sendPort;
     final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
