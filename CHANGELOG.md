@@ -1,4 +1,10 @@
-# v2.5.1 - 2023/11/04
+# v2.5.2 - 2023/11/05 (Mobile Platforms)
+
+## Bugfixes
+
+- Fix bug where native API was not initialized on creation of new foreground service (#111)
+
+# v2.5.1 - 2023/11/04 (All Platforms)
 
 ## Features
 
@@ -16,7 +22,7 @@
 - Fixed issue with common Buttplug events in buttplug_dart causing log warnings (and therefore
   reporting to sentry)
 
-# v2.5.0 - 2023/10/19
+# v2.5.0 - 2023/10/19 (All Platforms)
 
 ## Features
 
@@ -34,14 +40,14 @@
 - Trying to delete non-existent config files will no longer freeze app load
 - Desktop-only device managers no longer show up in mobile advanced settings
 
-# v2.4.5 - 2023/10/08
+# v2.4.5 - 2023/10/08 (Desktop Platforms)
 
 ## Bugfixes
 
 - Update to Buttplug v7.1.6/Engine v1.4.5
   - Fixes issues with Lovense Dongles
 
-# v2.4.4 - 2023/10/04
+# v2.4.4 - 2023/10/04 (All Platforms)
 
 ## Features
 
@@ -52,7 +58,7 @@
 - (EXPERIMENTAL) Added mDNS broadcast capabilities for engine
 - (EXPERIMENTAL) Added manual log submission capabilities
 
-# v2.4.3 - 2023/07/22
+# v2.4.3 - 2023/07/22 (All Platforms)
 
 ## Features
 
@@ -66,7 +72,7 @@
 - Fix device tab page going blank on first device connect
 - Fix device title not showing in disconnected devices on first device connect
 
-# v2.4.2 - 2023/07/16
+# v2.4.2 - 2023/07/16 (All Platforms)
 
 ## Features
 
