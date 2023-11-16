@@ -1,3 +1,10 @@
+# v2.5.3 - 2023/11/16 (All Platforms)
+
+## Features
+
+- Update to Buttplug v7.1.9
+  - Add support for Lovense Solace, OhMiBod Foxy, Chill
+
 # v2.5.2 - 2023/11/05 (Mobile Platforms)
 
 ## Bugfixes
