@@ -34,9 +34,9 @@ Name: "{localappdata}\IntifaceCentral"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "build\windows\runner\{#Configuration}\*.exe"; DestDir: "{app}"
-Source: "build\windows\runner\{#Configuration}\*.dll"; DestDir: "{app}"
-Source: "build\windows\runner\{#Configuration}\data\*.*"; DestDir: "{app}\data"; Flags: recursesubdirs
+Source: "build\windows\x64\runner\{#Configuration}\*.exe"; DestDir: "{app}"
+Source: "build\windows\x64\runner\{#Configuration}\*.dll"; DestDir: "{app}"
+Source: "build\windows\x64\runner\{#Configuration}\data\*.*"; DestDir: "{app}\data"; Flags: recursesubdirs
 Source: "Readme.md"; DestDir: "{app}"; DestName: "Readme.txt"
 // Source: "LICENSE"; DestDir: "{app}"; DestName: "License.txt"
 

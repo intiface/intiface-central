@@ -34,7 +34,7 @@ jobs:
         with:
           certificate: '${{ secrets.NPLABS_WINDOWS_202205_CERT }}'
           password: '${{ secrets.NPLABS_WINDOWS_202205_KEY }}'
-          folder: '.\build\windows\runner\Release'
+          folder: '.\build\windows\x64\runner\Release'
           recursive: false
           files: |
             intiface_central.exe
