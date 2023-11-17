@@ -74,7 +74,7 @@ class FileOutput extends LoggyPrinter {
   @override
   void onLog(LogRecord record) async {
     var logString =
-        "${DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0} : [${record.level.toString().substring(0, 1)}] : $record.message";
+        "${DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0} : [${record.level.toString().substring(0, 1)}] : ${record.message}";
     _sink?.writeln(logString);
   }
 }
