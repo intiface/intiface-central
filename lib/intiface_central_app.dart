@@ -1,45 +1,45 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
-import 'package:intiface_central/bloc/util/asset_cubit.dart';
-import 'package:intiface_central/ffi.dart';
-import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
-import 'package:intiface_central/widget/control_widget.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
+import 'package:intiface_central/bloc/device_configuration/device_configuration.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_repository.dart';
 import 'package:intiface_central/bloc/engine/foreground_task_library_engine_provider.dart';
-import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
-import 'package:intiface_central/bloc/util/navigation_cubit.dart';
-import 'package:intiface_central/bloc/util/network_info_cubit.dart';
-import 'package:intiface_central/util/intiface_util.dart';
-import 'package:screen_retriever/screen_retriever.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:intiface_central/bloc/device_configuration/device_configuration.dart';
 import 'package:intiface_central/bloc/engine/library_engine_provider.dart';
-import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
-import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/bloc/update/github_update_provider.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/bloc/update/update_repository.dart';
+import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
+import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
+import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
+import 'package:intiface_central/bloc/util/network_info_cubit.dart';
+import 'package:intiface_central/ffi.dart';
+import 'package:intiface_central/util/intiface_util.dart';
+import 'package:intiface_central/util/logging.dart';
+import 'package:intiface_central/widget/body_widget.dart';
+import 'package:intiface_central/widget/control_widget.dart';
 import 'package:loggy/loggy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
+import 'package:window_manager/window_manager.dart';
 
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
+  IntifaceCentralApp._create({required this.guiSettingsCubit});
+
   static List<bool Function(SentryEvent, {Hint? hint})> eventProcessors = [];
   final GuiSettingsCubit guiSettingsCubit;
-
-  IntifaceCentralApp._create({required this.guiSettingsCubit});
 
   static Future<IntifaceCentralApp> create() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -146,10 +146,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
         logInfo("Window position out of bounds, resetting position");
         guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
       } else {
-        windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+        await windowManager.setPosition(guiSettingsCubit.getWindowPosition());
       }
       windowDisplayModeResize(configCubit.useCompactDisplay, guiSettingsCubit);
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
         await windowManager.focus();
       });
@@ -204,9 +204,6 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           iosNotificationOptions: const IOSNotificationOptions(),
           foregroundTaskOptions: const ForegroundTaskOptions(
             interval: 1000,
-            isOnceEvent: false,
-            autoRunOnBoot: false,
-            allowWakeLock: true,
             allowWifiLock: true,
           ),
         );
@@ -444,7 +441,7 @@ class IntifaceCentralPage extends StatelessWidget {
               if (!isDesktop() || !useCompactDisplay) {
                 widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
               }
-              return Scaffold(body: Column(mainAxisSize: MainAxisSize.max, children: widgets));
+              return Scaffold(body: Column(children: widgets));
             }));
   }
 }
