@@ -27,8 +27,7 @@ abstract class DeviceActuatorCubit extends Cubit<DeviceActuatorState> {
 class ScalarActuatorCubit extends DeviceActuatorCubit {
   final ActuatorType actuatorType;
 
-  ScalarActuatorCubit(ButtplugClientDevice device, String descriptor, int stepCount, int index, this.actuatorType)
-      : super(device, descriptor, stepCount, index);
+  ScalarActuatorCubit(super.device, super.descriptor, super.stepCount, super.index, this.actuatorType);
 
   void scalar(double value) {
     var cmd = ScalarCommand.setMap({_index: ScalarComponent(value / stepCount.toDouble(), actuatorType)});
@@ -41,8 +40,7 @@ class ScalarActuatorCubit extends DeviceActuatorCubit {
 }
 
 class RotateActuatorCubit extends DeviceActuatorCubit {
-  RotateActuatorCubit(ButtplugClientDevice device, String descriptor, int stepCount, int index)
-      : super(device, descriptor, stepCount, index);
+  RotateActuatorCubit(super.device, super.descriptor, super.stepCount, super.index);
 
   void rotate(double value) {
     var cmd = RotateCommand.setMap({_index: RotateComponent((value / stepCount.toDouble()).abs(), value < 0)});

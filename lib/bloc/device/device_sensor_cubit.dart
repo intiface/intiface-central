@@ -37,9 +37,7 @@ abstract class DeviceSensorBloc<T> extends Bloc<T, DeviceSensorState> {
 }
 
 class SensorReadBloc extends DeviceSensorBloc<DeviceReadSensorEvent> {
-  SensorReadBloc(
-      ButtplugClientDevice device, String descriptor, List<List<int>> sensorRange, int index, SensorType sensorType)
-      : super(device, descriptor, sensorRange, index, sensorType) {
+  SensorReadBloc(super.device, super.descriptor, super.sensorRange, super.index, super.sensorType) {
     on<DeviceReadSensorEventRead>(((event, emit) async {
       var newData = await _device.sensorRead(_index);
       logInfo("Sensor data: $newData");
