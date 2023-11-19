@@ -1,3 +1,10 @@
+# v2.5.4 - 2023/11/18 (Android)
+
+## Bugfixes
+
+- Update to Buttplug v7.1.10
+  - Bluetooth name parsing fix for Lovense Solace on Android
+
 # v2.5.3 - 2023/11/16 (All Platforms)
 
 ## Features
