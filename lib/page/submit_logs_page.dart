@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
-import 'package:intiface_central/util/intiface_util.dart';
-import 'package:loggy/loggy.dart';
 import 'package:sentry/sentry_io.dart';
 
 class SendLogsPage extends StatelessWidget {

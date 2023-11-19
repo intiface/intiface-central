@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:intiface_central/util/logging.dart';
 import 'package:loggy/loggy.dart';
-import 'package:intiface_central/widget/log/widgets/loggy_stream_item_widget.dart';
 
 class WrongPrinterException implements Exception {
   WrongPrinterException();
