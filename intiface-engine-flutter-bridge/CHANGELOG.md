@@ -1,3 +1,10 @@
+# 1.0.10 (2023/11/18)
+
+## Features
+
+- Update to Buttplug v7.1.10/Intiface Engine v1.4.9
+  - Fixes bug with invalid strings in android bluetooth advertisement handling
+
 # 1.0.9 (2023/11/16)
 
 ## Features

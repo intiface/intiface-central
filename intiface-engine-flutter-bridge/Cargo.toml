@@ -1,6 +1,6 @@
 [package]
 name = "intiface_engine_flutter_bridge"
-version = "1.0.8"
+version = "1.0.10"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
 license = "BSD-3-Clause"
@@ -10,27 +10,27 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = "1.4.8"
+intiface-engine = "1.4.10"
 # intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
-buttplug = "7.1.9"
-flutter_rust_bridge = "1.82.3"
+buttplug = "7.1.11"
+flutter_rust_bridge = "1.82.4"
 log = "0.4.20"
 lazy_static = "1.4.0"
 once_cell = "1.18.0"
-tokio = { version = "1.33.0", features = ["rt", "tracing"] }
+tokio = { version = "1.34.0", features = ["rt", "tracing"] }
 anyhow = "1.0.75"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 # btleplug = { path = "../../btleplug" }
-btleplug = "0.11.1"
+btleplug = "0.11.3"
 thiserror = "1.0.50"
 getset = "0.1.2"
-serde = "1.0.189"
-serde_json = "1.0.107"
+serde = "1.0.192"
+serde_json = "1.0.108"
 async-trait = "0.1.74"
-futures = "0.3.28"
+futures = "0.3.29"
 tracing = "0.1.40"
 tracing-futures = "0.2.5"
 
@@ -39,10 +39,10 @@ tracing-futures = "0.2.5"
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 jni = "0.19.0"
 jni-utils = "0.1.1"
-openssl-sys = {version = "0.9.93", features=["vendored"]}
+openssl-sys = {version = "0.9.95", features=["vendored"]}
 
 [lib]
 crate-type = ["staticlib", "cdylib"]
 
 [build-dependencies]
-flutter_rust_bridge_codegen = "1.82.3"
+flutter_rust_bridge_codegen = "1.82.4"
