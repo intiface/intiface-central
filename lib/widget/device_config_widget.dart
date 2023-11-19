@@ -10,7 +10,7 @@ import 'package:settings_ui/settings_ui.dart';
 class DeviceConfigWidget extends StatelessWidget {
   final UserConfigDeviceIdentifier identifier;
 
-  const DeviceConfigWidget({Key? key, required this.identifier}) : super(key: key);
+  const DeviceConfigWidget({super.key, required this.identifier});
 
   @override
   Widget build(BuildContext context) {

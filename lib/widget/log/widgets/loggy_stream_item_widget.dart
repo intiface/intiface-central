@@ -4,7 +4,7 @@ import 'package:loggy/loggy.dart';
 final List<LogRecord> _shownRecords = <LogRecord>[];
 
 class LoggyItemStackWidget extends StatefulWidget {
-  const LoggyItemStackWidget(this.record, {Key? key}) : super(key: key);
+  const LoggyItemStackWidget(this.record, {super.key});
 
   final LogRecord record;
 
@@ -56,7 +56,7 @@ class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
 }
 
 class _StackList extends StatelessWidget {
-  const _StackList(this.record, {Key? key}) : super(key: key);
+  const _StackList(this.record, {super.key});
 
   final LogRecord record;
 
@@ -106,7 +106,7 @@ class _StackList extends StatelessWidget {
 }
 
 class _CollapsableButton extends StatelessWidget {
-  const _CollapsableButton(this.record, {Key? key}) : super(key: key);
+  const _CollapsableButton(this.record, {super.key});
 
   final LogRecord record;
 

@@ -24,8 +24,8 @@ class WrongPrinterException implements Exception {
 class LoggyStreamWidget extends StatelessWidget {
   const LoggyStreamWidget({
     this.logLevel = LogLevel.all,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final LogLevel? logLevel;
 
@@ -64,7 +64,7 @@ class LoggyStreamWidget extends StatelessWidget {
 }
 
 class _LoggyItemWidget extends StatelessWidget {
-  const _LoggyItemWidget(this.record, {Key? key}) : super(key: key);
+  const _LoggyItemWidget(this.record, {super.key});
 
   final LogRecord record;
 

@@ -7,8 +7,6 @@ class DeviceState {}
 
 class DeviceStateInitial extends DeviceState {}
 
-class DeviceEvent {}
-
 class DeviceStateOnline extends DeviceState {}
 
 class DeviceStateOffline extends DeviceState {}
