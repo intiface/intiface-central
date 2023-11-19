@@ -12,7 +12,7 @@ class LibraryEngineProvider implements EngineProvider {
     logInfo("Starting library internal engine with the following arguments: $options");
     _stream = api!.runEngine(args: options);
     logInfo("Engine started");
-    _stream!.forEach((element) {
+    _stream!.listen((element) {
       try {
         _processMessageStream.add(element);
       } catch (e) {

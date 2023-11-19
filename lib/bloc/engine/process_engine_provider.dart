@@ -98,7 +98,7 @@ class ProcessEngineProvider implements EngineProvider {
     _ipcChannel = WebSocketChannel.connect(
       Uri.parse('ws://127.0.0.1:$frontendPort'),
     );
-    _ipcChannel!.stream.forEach((element) {
+    _ipcChannel!.stream.listen((element) {
       try {
         _processMessageStream.add(element);
       } catch (e) {

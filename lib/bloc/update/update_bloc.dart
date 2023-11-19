@@ -60,7 +60,7 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
     on<RunUpdate>(((event, emit) async {
       emit(UpdateRunning());
       var events = await _repo.update();
-      events.forEach(emit);
+      events.forEach(emit.call);
       emit(UpdateFinished());
     }));
   }

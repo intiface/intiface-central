@@ -79,7 +79,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
     _stream = api!.runEngine(args: engineOptions);
     _sendProviderLog("INFO", "Engine started");
-    _stream!.forEach((element) {
+    _stream!.listen((element) {
       try {
         // Send first
         _sendPort!.send(element);
@@ -94,13 +94,13 @@ class IntifaceEngineTaskHandler extends TaskHandler {
         // There's a chance the message may not decode it could possibly be from the backend server. So just no-op here.
       }
     });
-    _serverMessageReceivePort.forEach((element) async {
+    _serverMessageReceivePort.listen((element) async {
       await api!.send(msgJson: element);
     });
-    _backdoorMessageReceivePort.forEach((element) async {
+    _backdoorMessageReceivePort.listen((element) async {
       await api!.sendBackendServerMessage(msg: element);
     });
-    _shutdownReceivePort.forEach((element) async {
+    _shutdownReceivePort.listen((element) async {
       _sendProviderLog("INFO", "Engine shutdown request received");
       await api!.stopEngine();
       await _serverExited.future;

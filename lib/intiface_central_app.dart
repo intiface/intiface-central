@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -239,7 +238,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     var updateBloc = UpdateBloc(updateRepo);
 
-    updateBloc.stream.forEach((state) async {
+    updateBloc.stream.listen((state) async {
       if (state is NewsUpdateRetrieved) {
         configCubit.currentNewsEtag = state.version;
         await assetCubit.update();
@@ -276,7 +275,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
-    engineControlBloc.stream.forEach((state) async {
+    engineControlBloc.stream.listen((state) async {
       if (state is ServerLogMessageState) {
         // TODO Turn level into an enum
         var message = state.message.message!;

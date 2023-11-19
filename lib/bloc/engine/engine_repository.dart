@@ -27,7 +27,7 @@ class EngineRepository {
     _engineMessageStream.close();
     _engineMessageStream = StreamController.broadcast();
     _provider.cycleStream();
-    _provider.engineRawMessageStream.forEach((element) {
+    _provider.engineRawMessageStream.listen((element) {
       dynamic jsonElement;
       try {
         // Try parsing the JSON first to make sure it's even valid JSON.
