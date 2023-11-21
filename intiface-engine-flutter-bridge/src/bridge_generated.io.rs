@@ -208,6 +208,9 @@ impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
       websocket_client_address: self.websocket_client_address.wire2api(),
       broadcast_server_mdns: self.broadcast_server_mdns.wire2api(),
       mdns_suffix: self.mdns_suffix.wire2api(),
+      repeater_mode: self.repeater_mode.wire2api(),
+      repeater_local_port: self.repeater_local_port.wire2api(),
+      repeater_remote_address: self.repeater_remote_address.wire2api(),
     }
   }
 }
@@ -328,6 +331,9 @@ pub struct wire_EngineOptionsExternal {
   websocket_client_address: *mut wire_uint_8_list,
   broadcast_server_mdns: bool,
   mdns_suffix: *mut wire_uint_8_list,
+  repeater_mode: bool,
+  repeater_local_port: *mut u16,
+  repeater_remote_address: *mut wire_uint_8_list,
 }
 
 #[repr(C)]
@@ -445,6 +451,9 @@ impl NewWithNullPtr for wire_EngineOptionsExternal {
       websocket_client_address: core::ptr::null_mut(),
       broadcast_server_mdns: Default::default(),
       mdns_suffix: core::ptr::null_mut(),
+      repeater_mode: Default::default(),
+      repeater_local_port: core::ptr::null_mut(),
+      repeater_remote_address: core::ptr::null_mut(),
     }
   }
 }

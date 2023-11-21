@@ -146,6 +146,16 @@ class CrashReporting extends IntifaceConfigurationState {
   CrashReporting(this.value);
 }
 
+class RepeaterLocalPort extends IntifaceConfigurationState {
+  final int value;
+  RepeaterLocalPort(this.value);
+}
+
+class RepeaterRemoteAddress extends IntifaceConfigurationState {
+  final String value;
+  RepeaterRemoteAddress(this.value);
+}
+
 class ConfigurationReset extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -220,6 +230,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
     displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
+    repeaterLocalPort = _prefs.getInt("repeaterLocalPort") ?? 12345;
+    repeaterRemoteAddress = _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
   }
 
   Future<bool> reset() async {
@@ -427,6 +439,18 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(DisplayLogLevel(value));
   }
 
+  int get repeaterLocalPort => _prefs.getInt("repeaterLocalPort")!;
+  set repeaterLocalPort(int value) {
+    _prefs.setInt("repeaterLocalPort", value);
+    emit(RepeaterLocalPort(value));
+  }
+
+  String get repeaterRemoteAddress => _prefs.getString("repeaterRemoteAddress")!;
+  set repeaterRemoteAddress(String value) {
+    _prefs.setString("repeaterRemoteAddress", value);
+    emit(RepeaterRemoteAddress(value));
+  }
+
   bool get canUseCrashReporting => const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
 
   Future<EngineOptionsExternal> getEngineOptions() async {
@@ -462,6 +486,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         crashMainThread: false,
         crashTaskThread: false,
         broadcastServerMdns: broadcastServerMdns,
-        mdnsSuffix: mdnsSuffix);
+        mdnsSuffix: mdnsSuffix,
+        // If we're getting options from config, the repeater won't have anything to do with it.
+        repeaterMode: false);
   }
 }

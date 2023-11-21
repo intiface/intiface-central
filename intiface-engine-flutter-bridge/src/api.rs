@@ -73,6 +73,9 @@ pub struct _EngineOptionsExternal {
   pub websocket_client_address: Option<String>,
   pub broadcast_server_mdns: bool,
   pub mdns_suffix: Option<String>,
+  pub repeater_mode: bool,
+  pub repeater_local_port: Option<u16>,
+  pub repeater_remote_address: Option<String>
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
