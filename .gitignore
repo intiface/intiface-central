@@ -132,3 +132,6 @@ app.*.symbols
 
 # Android build files
 *.so
+
+# Random executables for testing
+*.exe
