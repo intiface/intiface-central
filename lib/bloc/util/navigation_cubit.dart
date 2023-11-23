@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 
 class NavigationState {}
 
+class NavigationStateAppControl extends NavigationState {}
+
 class NavigationStateSettings extends NavigationState {}
 
 class NavigationStateDeviceConfig extends NavigationState {}
@@ -20,6 +22,10 @@ class NavigationStateSendLogs extends NavigationState {}
 
 class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationStateNews());
+
+  void goAppControl() {
+    emit(NavigationStateAppControl());
+  }
 
   void goSettings() {
     emit(NavigationStateSettings());

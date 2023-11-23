@@ -4,6 +4,7 @@ import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/page/about_help_page.dart';
+import 'package:intiface_central/page/app_control_page.dart';
 import 'package:intiface_central/page/log_page.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/page/submit_logs_page.dart';
@@ -36,6 +37,15 @@ class BodyWidget extends StatelessWidget {
     var assets = BlocProvider.of<AssetCubit>(context);
 
     var destinations = [
+      NavigationDestination(
+          (state) => state is NavigationStateAppControl,
+          (NavigationCubit cubit) => cubit.goAppControl(),
+          const Icon(Icons.play_circle_outlined),
+          const Icon(Icons.play_circle),
+          'Controls',
+          () => const AppControlPage(),
+          true,
+          true),
       NavigationDestination(
           (state) => state is NavigationStateNews,
           (NavigationCubit cubit) => cubit.goNews(),

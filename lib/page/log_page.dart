@@ -47,7 +47,7 @@ class LogPage extends StatelessWidget {
               })),
       Expanded(
           child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-              buildWhen: (previous, current) => current is DisplayLogLevel,
+              buildWhen: (previous, current) => current is DisplayLogLevelState,
               builder: (context, state) {
                 var level = LogLevel.values
                     .firstWhere((element) => element.name == configCubit.displayLogLevel, orElse: () => LogLevel.info);

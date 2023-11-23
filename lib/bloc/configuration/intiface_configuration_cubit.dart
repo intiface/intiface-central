@@ -7,6 +7,8 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum AppMode { engine, repeater, match }
+
 class IntifaceConfigurationState {}
 
 class IntifaceConfigurationStateNone extends IntifaceConfigurationState {}
@@ -31,132 +33,137 @@ class ServerNameState extends IntifaceConfigurationState {
   ServerNameState(this.value);
 }
 
-class UseBluetoothLE extends IntifaceConfigurationState {
+class UseBluetoothLEState extends IntifaceConfigurationState {
   final bool value;
-  UseBluetoothLE(this.value);
+  UseBluetoothLEState(this.value);
 }
 
-class UseXInput extends IntifaceConfigurationState {
+class UseXInputState extends IntifaceConfigurationState {
   final bool value;
-  UseXInput(this.value);
+  UseXInputState(this.value);
 }
 
-class UseLovenseConnectService extends IntifaceConfigurationState {
+class UseLovenseConnectServiceState extends IntifaceConfigurationState {
   final bool value;
-  UseLovenseConnectService(this.value);
+  UseLovenseConnectServiceState(this.value);
 }
 
-class UseDeviceWebsocketServer extends IntifaceConfigurationState {
+class UseDeviceWebsocketServerState extends IntifaceConfigurationState {
   final bool value;
-  UseDeviceWebsocketServer(this.value);
+  UseDeviceWebsocketServerState(this.value);
 }
 
-class UseSerialPort extends IntifaceConfigurationState {
+class UseSerialPortState extends IntifaceConfigurationState {
   final bool value;
-  UseSerialPort(this.value);
+  UseSerialPortState(this.value);
 }
 
-class UseHID extends IntifaceConfigurationState {
+class UseHIDState extends IntifaceConfigurationState {
   final bool value;
-  UseHID(this.value);
+  UseHIDState(this.value);
 }
 
-class UseLovenseHIDDongle extends IntifaceConfigurationState {
+class UseLovenseHIDDongleState extends IntifaceConfigurationState {
   final bool value;
-  UseLovenseHIDDongle(this.value);
+  UseLovenseHIDDongleState(this.value);
 }
 
-class UseLovenseSerialDongle extends IntifaceConfigurationState {
+class UseLovenseSerialDongleState extends IntifaceConfigurationState {
   final bool value;
-  UseLovenseSerialDongle(this.value);
+  UseLovenseSerialDongleState(this.value);
 }
 
-class WebsocketServerAllInterfaces extends IntifaceConfigurationState {
+class WebsocketServerAllInterfacesState extends IntifaceConfigurationState {
   final bool value;
-  WebsocketServerAllInterfaces(this.value);
+  WebsocketServerAllInterfacesState(this.value);
 }
 
-class WebsocketServerPort extends IntifaceConfigurationState {
+class WebsocketServerPortState extends IntifaceConfigurationState {
   final int value;
-  WebsocketServerPort(this.value);
+  WebsocketServerPortState(this.value);
 }
 
-class UseCompactDisplay extends IntifaceConfigurationState {
+class UseCompactDisplayState extends IntifaceConfigurationState {
   final bool value;
-  UseCompactDisplay(this.value);
+  UseCompactDisplayState(this.value);
 }
 
-class CurrentNewsEtag extends IntifaceConfigurationState {
+class CurrentNewsEtagState extends IntifaceConfigurationState {
   final String value;
-  CurrentNewsEtag(this.value);
+  CurrentNewsEtagState(this.value);
 }
 
-class CurrentDeviceConfigEtag extends IntifaceConfigurationState {
+class CurrentDeviceConfigEtagState extends IntifaceConfigurationState {
   final String value;
-  CurrentDeviceConfigEtag(this.value);
+  CurrentDeviceConfigEtagState(this.value);
 }
 
-class CurrentDeviceConfigVersion extends IntifaceConfigurationState {
+class CurrentDeviceConfigVersionState extends IntifaceConfigurationState {
   final String value;
-  CurrentDeviceConfigVersion(this.value);
+  CurrentDeviceConfigVersionState(this.value);
 }
 
-class LatestAppVersion extends IntifaceConfigurationState {
+class LatestAppVersionState extends IntifaceConfigurationState {
   final String version;
-  LatestAppVersion(this.version);
+  LatestAppVersionState(this.version);
 }
 
-class CheckForUpdateOnStart extends IntifaceConfigurationState {
+class CheckForUpdateOnStartState extends IntifaceConfigurationState {
   final bool value;
-  CheckForUpdateOnStart(this.value);
+  CheckForUpdateOnStartState(this.value);
 }
 
-class UseProcessEngine extends IntifaceConfigurationState {
+class UseProcessEngineState extends IntifaceConfigurationState {
   final bool value;
-  UseProcessEngine(this.value);
+  UseProcessEngineState(this.value);
 }
 
-class UseForegroundProcess extends IntifaceConfigurationState {
+class UseForegroundProcessState extends IntifaceConfigurationState {
   final bool value;
-  UseForegroundProcess(this.value);
+  UseForegroundProcessState(this.value);
 }
 
-class AllowRawMessages extends IntifaceConfigurationState {
+class AllowRawMessagesState extends IntifaceConfigurationState {
   final bool value;
-  AllowRawMessages(this.value);
+  AllowRawMessagesState(this.value);
 }
 
-class BroadcastServerMdns extends IntifaceConfigurationState {
+class BroadcastServerMdnsState extends IntifaceConfigurationState {
   final bool value;
-  BroadcastServerMdns(this.value);
+  BroadcastServerMdnsState(this.value);
 }
 
-class MdnsSuffix extends IntifaceConfigurationState {
+class MdnsSuffixState extends IntifaceConfigurationState {
   final String? value;
-  MdnsSuffix(this.value);
+  MdnsSuffixState(this.value);
 }
 
-class DisplayLogLevel extends IntifaceConfigurationState {
+class DisplayLogLevelState extends IntifaceConfigurationState {
   final String? value;
-  DisplayLogLevel(this.value);
+  DisplayLogLevelState(this.value);
 }
 
-class CrashReporting extends IntifaceConfigurationState {
+class CrashReportingState extends IntifaceConfigurationState {
   final bool value;
-  CrashReporting(this.value);
+  CrashReportingState(this.value);
 }
 
-class RepeaterLocalPort extends IntifaceConfigurationState {
+class RepeaterLocalPortState extends IntifaceConfigurationState {
   final int value;
-  RepeaterLocalPort(this.value);
+  RepeaterLocalPortState(this.value);
 }
 
-class RepeaterRemoteAddress extends IntifaceConfigurationState {
+class RepeaterRemoteAddressState extends IntifaceConfigurationState {
   final String value;
-  RepeaterRemoteAddress(this.value);
+  RepeaterRemoteAddressState(this.value);
 }
 
-class ConfigurationReset extends IntifaceConfigurationState {}
+class AppModeState extends IntifaceConfigurationState {
+  final AppMode value;
+  AppModeState(this.value);
+}
+
+class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final SharedPreferences _prefs;
@@ -188,7 +195,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     // This should automatically be true on phones, otherwise people are going to be VERY confused.
     websocketServerAllInterfaces = _prefs.getBool("websocketServerAllInterfaces") ?? isMobile();
     websocketServerPort = _prefs.getInt("websocketServerPort") ?? 12345;
-    serverLogLevel = _prefs.getString("serverLogLevel") ?? "info";
     checkForUpdateOnStart = _prefs.getBool("checkForUpdateOnStart") ?? true;
     startServerOnStartup = _prefs.getBool("startServerOnStartup") ?? false;
     showNotifications = _prefs.getBool("showNotifications") ?? false;
@@ -232,11 +238,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
     repeaterLocalPort = _prefs.getInt("repeaterLocalPort") ?? 12345;
     repeaterRemoteAddress = _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
+    // Default for appMode built into getter, since it also requires a type conversion.
   }
 
   Future<bool> reset() async {
     var result = await _prefs.clear();
-    emit(ConfigurationReset());
+    emit(ConfigurationResetState());
     await _init();
     return result;
   }
@@ -244,20 +251,20 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   String get currentNewsEtag => _prefs.getString("currentNewsEtag")!;
   set currentNewsEtag(String value) {
     _prefs.setString("currentNewsEtag", value);
-    emit(CurrentNewsEtag(value));
+    emit(CurrentNewsEtagState(value));
   }
 
   String get currentDeviceConfigEtag => _prefs.getString("currentDeviceConfigEtag")!;
   set currentDeviceConfigEtag(String value) {
     _prefs.setString("currentDeviceConfigEtag", value);
-    emit(CurrentDeviceConfigEtag(value));
+    emit(CurrentDeviceConfigEtagState(value));
   }
 
   // Slam to false until we figure out how to window resizing.
   bool get useCompactDisplay => false; //_prefs.getBool("useCompactDisplay")!;
   set useCompactDisplay(bool value) {
     _prefs.setBool("useCompactDisplay", value);
-    emit(UseCompactDisplay(value));
+    emit(UseCompactDisplayState(value));
   }
 
   bool get useSideNavigationBar => _prefs.getBool("useSideNavigationBar")!;
@@ -286,24 +293,19 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get websocketServerAllInterfaces => _prefs.getBool("websocketServerAllInterfaces")!;
   set websocketServerAllInterfaces(bool value) {
     _prefs.setBool("websocketServerAllInterfaces", value);
-    emit(WebsocketServerAllInterfaces(value));
+    emit(WebsocketServerAllInterfacesState(value));
   }
 
   int get websocketServerPort => _prefs.getInt("websocketServerPort")!;
   set websocketServerPort(int value) {
     _prefs.setInt("websocketServerPort", value);
-    emit(WebsocketServerPort(value));
-  }
-
-  String get serverLogLevel => _prefs.getString("serverLogLevel")!;
-  set serverLogLevel(String value) {
-    _prefs.setString("serverLogLevel", value);
+    emit(WebsocketServerPortState(value));
   }
 
   bool get checkForUpdateOnStart => _prefs.getBool("checkForUpdateOnStart")!;
   set checkForUpdateOnStart(bool value) {
     _prefs.setBool("checkForUpdateOnStart", value);
-    emit(CheckForUpdateOnStart(value));
+    emit(CheckForUpdateOnStartState(value));
   }
 
   bool get startServerOnStartup => _prefs.getBool("startServerOnStartup")!;
@@ -315,55 +317,55 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get useBluetoothLE => _prefs.getBool("useBluetoothLE")!;
   set useBluetoothLE(bool value) {
     _prefs.setBool("useBluetoothLE", value);
-    emit(UseBluetoothLE(value));
+    emit(UseBluetoothLEState(value));
   }
 
   bool get useSerialPort => _prefs.getBool("useSerialPort")!;
   set useSerialPort(bool value) {
     _prefs.setBool("useSerialPort", value);
-    emit(UseSerialPort(value));
+    emit(UseSerialPortState(value));
   }
 
   bool get useHID => _prefs.getBool("useHID")!;
   set useHID(bool value) {
     _prefs.setBool("useHID", value);
-    emit(UseHID(value));
+    emit(UseHIDState(value));
   }
 
   bool get useLovenseHIDDongle => _prefs.getBool("useLovenseHIDDongle")!;
   set useLovenseHIDDongle(bool value) {
     _prefs.setBool("useLovenseHIDDongle", value);
-    emit(UseLovenseHIDDongle(value));
+    emit(UseLovenseHIDDongleState(value));
   }
 
   bool get useLovenseSerialDongle => _prefs.getBool("useLovenseSerialDongle")!;
   set useLovenseSerialDongle(bool value) {
     _prefs.setBool("useLovenseSerialDongle", value);
-    emit(UseLovenseSerialDongle(value));
+    emit(UseLovenseSerialDongleState(value));
   }
 
   bool get useLovenseConnectService => _prefs.getBool("useLovenseConnectService")!;
   set useLovenseConnectService(bool value) {
     _prefs.setBool("useLovenseConnectService", value);
-    emit(UseLovenseConnectService(value));
+    emit(UseLovenseConnectServiceState(value));
   }
 
   bool get useXInput => _prefs.getBool("useXInput")!;
   set useXInput(bool value) {
     _prefs.setBool("useXInput", value);
-    emit(UseXInput(value));
+    emit(UseXInputState(value));
   }
 
   bool get useDeviceWebsocketServer => _prefs.getBool("useDeviceWebsocketServer")!;
   set useDeviceWebsocketServer(bool value) {
     _prefs.setBool("useDeviceWebsocketServer", value);
-    emit(UseDeviceWebsocketServer(value));
+    emit(UseDeviceWebsocketServerState(value));
   }
 
   bool get crashReporting => _prefs.getBool("crashReporting2")!;
   set crashReporting(bool value) {
     _prefs.setBool("crashReporting2", value);
-    emit(CrashReporting(value));
+    emit(CrashReportingState(value));
   }
 
   bool get showNotifications => _prefs.getBool("showNotifications")!;
@@ -384,7 +386,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get allowRawMessages => _prefs.getBool("allowRawMessages")!;
   set allowRawMessages(bool value) {
     _prefs.setBool("allowRawMessages", value);
-    emit(AllowRawMessages(value));
+    emit(AllowRawMessagesState(value));
   }
 
   bool get unreadNews => _prefs.getBool("unreadNews")!;
@@ -400,55 +402,65 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   String get latestAppVersion => _prefs.getString("latestAppVersion")!;
   set latestAppVersion(String value) {
     _prefs.setString("latestAppVersion", value);
-    emit(LatestAppVersion(value));
+    emit(LatestAppVersionState(value));
   }
 
   String get currentDeviceConfigVersion => _prefs.getString("currentDeviceConfigVersion")!;
   set currentDeviceConfigVersion(String value) {
     _prefs.setString("currentDeviceConfigVersion", value);
-    emit(CurrentDeviceConfigVersion(value));
+    emit(CurrentDeviceConfigVersionState(value));
   }
 
   bool get useProcessEngine => _prefs.getBool("useProcessEngine")!;
   set useProcessEngine(bool value) {
     _prefs.setBool("useProcessEngine", value);
-    emit(UseProcessEngine(value));
+    emit(UseProcessEngineState(value));
   }
 
   bool get useForegroundProcess => _prefs.getBool("useForegroundProcess3")!;
   set useForegroundProcess(bool value) {
     _prefs.setBool("useForegroundProcess3", value);
-    emit(UseForegroundProcess(value));
+    emit(UseForegroundProcessState(value));
   }
 
   bool get broadcastServerMdns => _prefs.getBool("broadcastServerMdns")!;
   set broadcastServerMdns(bool value) {
     _prefs.setBool("broadcastServerMdns", value);
-    emit(BroadcastServerMdns(value));
+    emit(BroadcastServerMdnsState(value));
   }
 
   String get mdnsSuffix => _prefs.getString("mdnsSuffix")!;
   set mdnsSuffix(String value) {
     _prefs.setString("mdnsSuffix", value);
-    emit(MdnsSuffix(value));
+    emit(MdnsSuffixState(value));
   }
 
   String get displayLogLevel => _prefs.getString("displayLogLevel")!;
   set displayLogLevel(String value) {
     _prefs.setString("displayLogLevel", value);
-    emit(DisplayLogLevel(value));
+    emit(DisplayLogLevelState(value));
   }
 
   int get repeaterLocalPort => _prefs.getInt("repeaterLocalPort")!;
   set repeaterLocalPort(int value) {
     _prefs.setInt("repeaterLocalPort", value);
-    emit(RepeaterLocalPort(value));
+    emit(RepeaterLocalPortState(value));
   }
 
   String get repeaterRemoteAddress => _prefs.getString("repeaterRemoteAddress")!;
   set repeaterRemoteAddress(String value) {
     _prefs.setString("repeaterRemoteAddress", value);
-    emit(RepeaterRemoteAddress(value));
+    emit(RepeaterRemoteAddressState(value));
+  }
+
+  AppMode get appMode {
+    var mode = _prefs.getString("appMode");
+    return AppMode.values.firstWhere((element) => mode == element.name, orElse: () => AppMode.engine);
+  }
+
+  set appMode(AppMode value) {
+    _prefs.setString("appMode", value.name);
+    emit(AppModeState(value));
   }
 
   bool get canUseCrashReporting => const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
@@ -474,7 +486,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         frontendInProcessChannel: isMobile(),
         maxPingTime: serverMaxPingTime,
         allowRawMessages: allowRawMessages,
-        logLevel: "DEBUG".toString(),
         useBluetoothLe: useBluetoothLE,
         useSerialPort: isDesktop() ? useSerialPort : false,
         useHid: isDesktop() ? useHID : false,
@@ -488,6 +499,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         broadcastServerMdns: broadcastServerMdns,
         mdnsSuffix: mdnsSuffix,
         // If we're getting options from config, the repeater won't have anything to do with it.
-        repeaterMode: false);
+        repeaterMode: appMode == AppMode.repeater,
+        repeaterLocalPort: repeaterLocalPort,
+        repeaterRemoteAddress: repeaterRemoteAddress);
   }
 }

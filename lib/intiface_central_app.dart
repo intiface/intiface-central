@@ -154,7 +154,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       });
 
       configCubit.stream.listen((event) {
-        if (event is! UseCompactDisplay) {
+        if (event is! UseCompactDisplayState) {
           return;
         }
         windowDisplayModeResize(event.value, guiSettingsCubit);
@@ -394,7 +394,7 @@ class IntifaceCentralView extends StatelessWidget {
     logInfo(
         "Using theme ${BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark}");
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseLightThemeState || current is ConfigurationReset,
+        buildWhen: (previous, current) => current is UseLightThemeState || current is ConfigurationResetState,
         builder: (context, state) => MaterialApp(
             title: 'Intiface Central',
             debugShowCheckedModeBanner: false,
@@ -413,7 +413,7 @@ class IntifaceCentralPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-            buildWhen: (previous, current) => current is UseCompactDisplay || current is ConfigurationReset,
+            buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
             builder: (context, state) {
               var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
               List<Widget> widgets = [const ControlWidget()];
