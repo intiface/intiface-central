@@ -1,5 +1,6 @@
 use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend,
+  logging::setup_frontend_logging,
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
@@ -32,9 +33,7 @@ use tokio::{
 use tracing::Level;
 use tracing_futures::Instrument;
 
-pub use intiface_engine::{
-  setup_frontend_logging, EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage,
-};
+pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
 
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
@@ -57,7 +56,6 @@ pub struct _EngineOptionsExternal {
   pub frontend_websocket_port: Option<u16>,
   pub frontend_in_process_channel: bool,
   pub max_ping_time: u32,
-  pub log_level: Option<String>,
   pub allow_raw_messages: bool,
   pub use_bluetooth_le: bool,
   pub use_serial_port: bool,
@@ -75,7 +73,7 @@ pub struct _EngineOptionsExternal {
   pub mdns_suffix: Option<String>,
   pub repeater_mode: bool,
   pub repeater_local_port: Option<u16>,
-  pub repeater_remote_address: Option<String>
+  pub repeater_remote_address: Option<String>,
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
@@ -185,7 +183,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       let notify_clone = notify.clone();
       futures::join!(
         async move {
-          if let Err(e) = engine.run(&options, Some(frontend), true).await {
+          if let Err(e) = engine.run(&options, Some(frontend)).await {
             error!("Error running engine: {:?}", e);
           }
           notify_clone.notify_waiters();

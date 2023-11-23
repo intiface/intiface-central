@@ -8,5 +8,6 @@ extern crate tracing;
 mod api;
 mod in_process_frontend;
 mod mobile_init;
+mod logging;
 
 pub use api::*;
