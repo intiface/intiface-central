@@ -55,7 +55,6 @@ class EngineOptionsExternal {
   final int? frontendWebsocketPort;
   final bool frontendInProcessChannel;
   final int maxPingTime;
-  final String? logLevel;
   final bool allowRawMessages;
   final bool useBluetoothLe;
   final bool useSerialPort;
@@ -86,7 +85,6 @@ class EngineOptionsExternal {
     this.frontendWebsocketPort,
     required this.frontendInProcessChannel,
     required this.maxPingTime,
-    this.logLevel,
     required this.allowRawMessages,
     required this.useBluetoothLe,
     required this.useSerialPort,
@@ -650,7 +648,6 @@ class IntifaceEngineFlutterBridgePlatform
     wireObj.frontend_in_process_channel =
         api2wire_bool(apiObj.frontendInProcessChannel);
     wireObj.max_ping_time = api2wire_u32(apiObj.maxPingTime);
-    wireObj.log_level = api2wire_opt_String(apiObj.logLevel);
     wireObj.allow_raw_messages = api2wire_bool(apiObj.allowRawMessages);
     wireObj.use_bluetooth_le = api2wire_bool(apiObj.useBluetoothLe);
     wireObj.use_serial_port = api2wire_bool(apiObj.useSerialPort);
@@ -1145,8 +1142,6 @@ final class wire_EngineOptionsExternal extends ffi.Struct {
 
   @ffi.Uint32()
   external int max_ping_time;
-
-  external ffi.Pointer<wire_uint_8_list> log_level;
 
   @ffi.Bool()
   external bool allow_raw_messages;

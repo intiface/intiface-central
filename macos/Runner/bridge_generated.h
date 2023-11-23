@@ -25,7 +25,6 @@ typedef struct wire_EngineOptionsExternal {
   uint16_t *frontend_websocket_port;
   bool frontend_in_process_channel;
   uint32_t max_ping_time;
-  struct wire_uint_8_list *log_level;
   bool allow_raw_messages;
   bool use_bluetooth_le;
   bool use_serial_port;

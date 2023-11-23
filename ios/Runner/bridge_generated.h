@@ -25,7 +25,6 @@ typedef struct wire_EngineOptionsExternal {
   uint16_t *frontend_websocket_port;
   bool frontend_in_process_channel;
   uint32_t max_ping_time;
-  struct wire_uint_8_list *log_level;
   bool allow_raw_messages;
   bool use_bluetooth_le;
   bool use_serial_port;
@@ -144,8 +143,6 @@ struct wire_list_exposed_user_device_config *new_list_exposed_user_device_config
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
-
-jint JNI_OnLoad(JavaVM vm, const void *_res);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
