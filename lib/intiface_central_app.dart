@@ -161,7 +161,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       });
 
       // Only add app update checks on desktop, mobile apps will use stores.
-      updateRepo.addProvider(IntifaceCentralDesktopUpdater(configCubit.currentAppVersion));
+      updateRepo.addProvider(IntifaceCentralDesktopUpdater());
     } else {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 

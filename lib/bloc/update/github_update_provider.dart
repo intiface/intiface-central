@@ -20,10 +20,7 @@ abstract class GithubUpdater implements UpdateProvider {
 }
 
 class IntifaceCentralDesktopUpdater extends GithubUpdater {
-  late final Version _appVersion;
-  IntifaceCentralDesktopUpdater(String appVersion) : super("intiface", "intiface-central") {
-    _appVersion = Version.parse(appVersion);
-  }
+  IntifaceCentralDesktopUpdater() : super("intiface", "intiface-central");
 
   @override
   Future<UpdateState?> update() async {
