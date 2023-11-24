@@ -77,6 +77,24 @@ pub struct _EngineOptionsExternal {
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
+  // Set up Sentry
+  let _ = if args.crash_reporting {
+    if let Some(sentry_dsn) = &args.sentry_api_key {
+      Some(sentry::init((
+        sentry_dsn.clone(),
+        sentry::ClientOptions {
+          release: sentry::release_name!(),
+          ..Default::default()
+        }
+      )))
+    } else {
+      None
+    }
+  } else {
+    None
+  };
+
+
   if RUN_STATUS.load(Ordering::SeqCst) {
     return Err(anyhow::Error::msg("Server already running!"));
   }
