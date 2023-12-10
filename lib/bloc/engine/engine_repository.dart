@@ -34,6 +34,7 @@ class EngineRepository {
         jsonElement = jsonDecode(element);
       } catch (e) {
         logError("Error decoding engine message $element: $e");
+        return;
       }
       try {
         // If we've got valid JSON, see if it's an engine message or a server message.
@@ -45,14 +46,14 @@ class EngineRepository {
         if (message.engineStopped != null) {
           _provider.onEngineStop();
         }
-      } catch (e) {
-        try {
-          var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);
-          _engineMessageStream.add(EngineOutput(null, buttplugMessage));
-        } catch (e) {
-          logError("Error deserializing engine message $element: $e");
-        }
-      }
+        return;
+      } catch (_) {}
+      try {
+        var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);
+        _engineMessageStream.add(EngineOutput(null, buttplugMessage));
+        return;
+      } catch (_) {}
+      logError("Error deserializing engine message $element");
     });
     await _provider.start(options: options);
   }
