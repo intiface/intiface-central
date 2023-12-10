@@ -15,11 +15,9 @@ typedef struct wire_uint_8_list {
 } wire_uint_8_list;
 
 typedef struct wire_EngineOptionsExternal {
-  struct wire_uint_8_list *sentry_api_key;
   struct wire_uint_8_list *device_config_json;
   struct wire_uint_8_list *user_device_config_json;
   struct wire_uint_8_list *server_name;
-  bool crash_reporting;
   bool websocket_use_all_interfaces;
   uint16_t *websocket_port;
   uint16_t *frontend_websocket_port;
@@ -126,6 +124,7 @@ void wire_setup_logging(int64_t port_);
 
 void wire_shutdown_logging(int64_t port_);
 
+void wire_crash_reporting(int64_t port_, struct wire_uint_8_list *sentry_api_key);
 
 struct wire_StringList *new_StringList_0(int32_t len);
 

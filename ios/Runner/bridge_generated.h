@@ -15,11 +15,9 @@ typedef struct wire_uint_8_list {
 } wire_uint_8_list;
 
 typedef struct wire_EngineOptionsExternal {
-  struct wire_uint_8_list *sentry_api_key;
   struct wire_uint_8_list *device_config_json;
   struct wire_uint_8_list *user_device_config_json;
   struct wire_uint_8_list *server_name;
-  bool crash_reporting;
   bool websocket_use_all_interfaces;
   uint16_t *websocket_port;
   uint16_t *frontend_websocket_port;
@@ -122,6 +120,12 @@ void wire_generate_user_device_config_file(int64_t port_,
 
 void wire_get_protocol_names(int64_t port_);
 
+void wire_setup_logging(int64_t port_);
+
+void wire_shutdown_logging(int64_t port_);
+
+void wire_crash_reporting(int64_t port_, struct wire_uint_8_list *sentry_api_key);
+
 struct wire_StringList *new_StringList_0(int32_t len);
 
 bool *new_box_autoadd_bool_0(bool value);
@@ -144,6 +148,8 @@ struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
 
+jint JNI_OnLoad(JavaVM vm, const void *_res);
+
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) wire_run_engine);
@@ -153,6 +159,9 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_get_user_device_configs);
     dummy_var ^= ((int64_t) (void*) wire_generate_user_device_config_file);
     dummy_var ^= ((int64_t) (void*) wire_get_protocol_names);
+    dummy_var ^= ((int64_t) (void*) wire_setup_logging);
+    dummy_var ^= ((int64_t) (void*) wire_shutdown_logging);
+    dummy_var ^= ((int64_t) (void*) wire_crash_reporting);
     dummy_var ^= ((int64_t) (void*) new_StringList_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_bool_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_engine_options_external_0);

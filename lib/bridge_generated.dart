@@ -51,14 +51,15 @@ abstract class IntifaceEngineFlutterBridge {
 
   FlutterRustBridgeTaskConstMeta get kShutdownLoggingConstMeta;
 
+  Future<void> crashReporting({required String sentryApiKey, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kCrashReportingConstMeta;
 }
 
 class EngineOptionsExternal {
-  final String? sentryApiKey;
   final String? deviceConfigJson;
   final String? userDeviceConfigJson;
   final String serverName;
-  final bool crashReporting;
   final bool websocketUseAllInterfaces;
   final int? websocketPort;
   final int? frontendWebsocketPort;
@@ -84,11 +85,9 @@ class EngineOptionsExternal {
   final String? repeaterRemoteAddress;
 
   const EngineOptionsExternal({
-    this.sentryApiKey,
     this.deviceConfigJson,
     this.userDeviceConfigJson,
     required this.serverName,
-    required this.crashReporting,
     required this.websocketUseAllInterfaces,
     this.websocketPort,
     this.frontendWebsocketPort,
@@ -346,6 +345,24 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "shutdown_logging",
         argNames: [],
+      );
+
+  Future<void> crashReporting({required String sentryApiKey, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(sentryApiKey);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_crash_reporting(port_, arg0),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kCrashReportingConstMeta,
+      argValues: [sentryApiKey],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kCrashReportingConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "crash_reporting",
+        argNames: ["sentryApiKey"],
       );
 
   void dispose() {
@@ -677,12 +694,10 @@ class IntifaceEngineFlutterBridgePlatform
 
   void _api_fill_to_wire_engine_options_external(
       EngineOptionsExternal apiObj, wire_EngineOptionsExternal wireObj) {
-    wireObj.sentry_api_key = api2wire_opt_String(apiObj.sentryApiKey);
     wireObj.device_config_json = api2wire_opt_String(apiObj.deviceConfigJson);
     wireObj.user_device_config_json =
         api2wire_opt_String(apiObj.userDeviceConfigJson);
     wireObj.server_name = api2wire_String(apiObj.serverName);
-    wireObj.crash_reporting = api2wire_bool(apiObj.crashReporting);
     wireObj.websocket_use_all_interfaces =
         api2wire_bool(apiObj.websocketUseAllInterfaces);
     wireObj.websocket_port = api2wire_opt_box_autoadd_u16(apiObj.websocketPort);
@@ -1003,6 +1018,23 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
   late final _wire_shutdown_logging =
       _wire_shutdown_loggingPtr.asFunction<void Function(int)>();
 
+  void wire_crash_reporting(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> sentry_api_key,
+  ) {
+    return _wire_crash_reporting(
+      port_,
+      sentry_api_key,
+    );
+  }
+
+  late final _wire_crash_reportingPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_crash_reporting');
+  late final _wire_crash_reporting = _wire_crash_reportingPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
   ffi.Pointer<wire_StringList> new_StringList_0(
     int len,
   ) {
@@ -1190,16 +1222,11 @@ final class wire_uint_8_list extends ffi.Struct {
 }
 
 final class wire_EngineOptionsExternal extends ffi.Struct {
-  external ffi.Pointer<wire_uint_8_list> sentry_api_key;
-
   external ffi.Pointer<wire_uint_8_list> device_config_json;
 
   external ffi.Pointer<wire_uint_8_list> user_device_config_json;
 
   external ffi.Pointer<wire_uint_8_list> server_name;
-
-  @ffi.Bool()
-  external bool crash_reporting;
 
   @ffi.Bool()
   external bool websocket_use_all_interfaces;

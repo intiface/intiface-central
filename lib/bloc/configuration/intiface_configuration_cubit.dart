@@ -480,7 +480,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         serverName: serverName,
         deviceConfigJson: deviceConfigFile,
         userDeviceConfigJson: userDeviceConfigFile,
-        crashReporting: crashReporting,
         websocketUseAllInterfaces: websocketServerAllInterfaces,
         websocketPort: websocketServerPort,
         frontendInProcessChannel: isMobile(),

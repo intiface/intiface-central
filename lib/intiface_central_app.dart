@@ -293,6 +293,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       }
     });
 
+    if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
+      await api!.crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
+    }
 
     engineControlBloc.stream.listen((state) async {
       if (state is ProviderLogMessageState) {

@@ -150,6 +150,22 @@ fn wire_shutdown_logging_impl(port_: MessagePort) {
     move || move |task_callback| Result::<_, ()>::Ok(shutdown_logging()),
   )
 }
+fn wire_crash_reporting_impl(
+  port_: MessagePort,
+  sentry_api_key: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "crash_reporting",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_sentry_api_key = sentry_api_key.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(crash_reporting(api_sentry_api_key))
+    },
+  )
+}
 // Section: wrapper structs
 
 #[derive(Clone)]

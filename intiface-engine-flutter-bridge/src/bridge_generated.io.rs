@@ -53,6 +53,10 @@ pub extern "C" fn wire_shutdown_logging(port_: i64) {
   wire_shutdown_logging_impl(port_)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_crash_reporting(port_: i64, sentry_api_key: *mut wire_uint_8_list) {
+  wire_crash_reporting_impl(port_, sentry_api_key)
+}
 
 // Section: allocate functions
 
@@ -193,11 +197,9 @@ impl Wire2Api<u32> for *mut u32 {
 impl Wire2Api<EngineOptionsExternal> for wire_EngineOptionsExternal {
   fn wire2api(self) -> EngineOptionsExternal {
     EngineOptionsExternal {
-      sentry_api_key: self.sentry_api_key.wire2api(),
       device_config_json: self.device_config_json.wire2api(),
       user_device_config_json: self.user_device_config_json.wire2api(),
       server_name: self.server_name.wire2api(),
-      crash_reporting: self.crash_reporting.wire2api(),
       websocket_use_all_interfaces: self.websocket_use_all_interfaces.wire2api(),
       websocket_port: self.websocket_port.wire2api(),
       frontend_websocket_port: self.frontend_websocket_port.wire2api(),
@@ -315,11 +317,9 @@ pub struct wire___record__String_exposed_user_device_specifiers {
 #[repr(C)]
 #[derive(Clone)]
 pub struct wire_EngineOptionsExternal {
-  sentry_api_key: *mut wire_uint_8_list,
   device_config_json: *mut wire_uint_8_list,
   user_device_config_json: *mut wire_uint_8_list,
   server_name: *mut wire_uint_8_list,
-  crash_reporting: bool,
   websocket_use_all_interfaces: bool,
   websocket_port: *mut u16,
   frontend_websocket_port: *mut u16,
@@ -434,11 +434,9 @@ impl Default for wire___record__String_exposed_user_device_specifiers {
 impl NewWithNullPtr for wire_EngineOptionsExternal {
   fn new_with_null_ptr() -> Self {
     Self {
-      sentry_api_key: core::ptr::null_mut(),
       device_config_json: core::ptr::null_mut(),
       user_device_config_json: core::ptr::null_mut(),
       server_name: core::ptr::null_mut(),
-      crash_reporting: Default::default(),
       websocket_use_all_interfaces: Default::default(),
       websocket_port: core::ptr::null_mut(),
       frontend_websocket_port: core::ptr::null_mut(),

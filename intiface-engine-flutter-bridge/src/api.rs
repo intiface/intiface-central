@@ -19,6 +19,7 @@ use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
+use sentry::ClientInitGuard;
 use std::{
   collections::HashMap,
   sync::{
@@ -30,11 +31,11 @@ use tokio::{
   select,
   sync::{broadcast, Notify},
 };
-use tracing::Level;
 use tracing_futures::Instrument;
 
 pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
 
+static CRASH_REPORTING: OnceCell<ClientInitGuard> = OnceCell::new();
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
   static ref LOGGER: Arc<Mutex<Option<FlutterTracingWriter>>> = Arc::new(Mutex::new(None));
@@ -47,11 +48,9 @@ lazy_static! {
 
 #[frb(mirror(EngineOptionsExternal))]
 pub struct _EngineOptionsExternal {
-  pub sentry_api_key: Option<String>,
   pub device_config_json: Option<String>,
   pub user_device_config_json: Option<String>,
   pub server_name: String,
-  pub crash_reporting: bool,
   pub websocket_use_all_interfaces: bool,
   pub websocket_port: Option<u16>,
   pub frontend_websocket_port: Option<u16>,
@@ -78,23 +77,6 @@ pub struct _EngineOptionsExternal {
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
-  // Set up Sentry
-  let _ = if args.crash_reporting {
-    if let Some(sentry_dsn) = &args.sentry_api_key {
-      Some(sentry::init((
-        sentry_dsn.clone(),
-        sentry::ClientOptions {
-          release: sentry::release_name!(),
-          ..Default::default()
-        }
-      )))
-    } else {
-      None
-    }
-  } else {
-    None
-  };
-
 
   if RUN_STATUS.load(Ordering::SeqCst) {
     return Err(anyhow::Error::msg("Server already running!"));
@@ -407,3 +389,15 @@ pub fn shutdown_logging() {
   *LOGGER.lock().unwrap() = None;
 }
 
+pub fn crash_reporting(sentry_api_key: String) {
+  // Set up Sentry
+  info!("Initializing native crash reporting.");
+  let _ = CRASH_REPORTING.set(sentry::init((
+    sentry_api_key,
+    sentry::ClientOptions {
+      release: sentry::release_name!(),
+      ..Default::default()
+    },
+  )));
+  info!("Native crash reporting initialized");
+}
