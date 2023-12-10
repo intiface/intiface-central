@@ -1,28 +1,21 @@
-use intiface_engine::{EngineMessage, Frontend};
-use lazy_static::lazy_static;
-use once_cell::sync::OnceCell;
-use std::sync::Arc;
-use tokio::{select, sync::broadcast};
+use flutter_rust_bridge::StreamSink;
 use tracing::Level;
+use std::{sync::{Arc, atomic::AtomicBool}, thread::JoinHandle, time::Duration};
+use crossbeam_channel::{bounded, Sender};
 use tracing_subscriber::{
   filter::{EnvFilter, LevelFilter},
   layer::SubscriberExt,
   util::SubscriberInitExt,
 };
 
-static FRONTEND_LOGGING_SET: OnceCell<bool> = OnceCell::new();
-lazy_static! {
-  static ref LOG_BROADCASTER: Arc<broadcast::Sender<Vec<u8>>> = Arc::new(broadcast::channel(255).0);
-}
-
 use tracing_subscriber::fmt::MakeWriter;
 
 pub struct BroadcastWriter {
-  log_sender: Arc<broadcast::Sender<Vec<u8>>>,
+  log_sender: Sender<String>,
 }
 
 impl BroadcastWriter {
-  pub fn new(sender: Arc<broadcast::Sender<Vec<u8>>>) -> Self {
+  pub fn new(sender: Sender<String>) -> Self {
     Self { log_sender: sender }
   }
 }
@@ -32,7 +25,9 @@ impl std::io::Write for BroadcastWriter {
     let sender = self.log_sender.clone();
     let len = buf.len();
     let send_buf = buf.to_vec();
-    let _ = sender.send(send_buf.to_vec());
+    if let Ok(log_str) = std::str::from_utf8(&send_buf.to_vec()) {
+      let _ = sender.send(log_str.to_owned());
+    }
     Ok(len)
   }
 
@@ -48,35 +43,17 @@ impl MakeWriter<'_> for BroadcastWriter {
   }
 }
 
-pub fn setup_frontend_logging(log_level: Level, frontend: Arc<dyn Frontend>) {
-  // Add panic hook for emitting backtraces through the logging system.
-  log_panics::init();
-  let mut receiver = LOG_BROADCASTER.subscribe();
-  let log_sender = frontend.clone();
-  let notifier = log_sender.disconnect_notifier();
-  tokio::spawn(async move {
-    // We can log until our receiver disappears at this point.
-    loop {
-      select! {
-        log = receiver.recv() => {
-          match log {
-            Ok(log) => {
-              log_sender
-                .send(EngineMessage::EngineLog {
-                  message: std::str::from_utf8(&log).unwrap().to_owned(),
-                })
-                .await;
-            }
-            Err(_) => return
-          }
-        }
-        _ = notifier.notified() => return
-      }
-    }
-  });
+pub struct FlutterTracingWriter {
+  thread_handle: Option<JoinHandle<()>>,
+  cancel: Arc<AtomicBool>
+}
 
-  if FRONTEND_LOGGING_SET.get().is_none() {
-    FRONTEND_LOGGING_SET.set(true).unwrap();
+impl FlutterTracingWriter {
+  pub fn new(sink: StreamSink<String>) -> Self {
+    // Add panic hook for emitting backtraces through the logging system.
+    log_panics::init();
+    let (external_sender, external_receiver) = bounded(255);
+    let external_sender_clone = external_sender.clone();
     if std::env::var("RUST_LOG").is_ok() {
       tracing_subscriber::registry()
         .with(
@@ -89,25 +66,61 @@ pub fn setup_frontend_logging(log_level: Level, frontend: Arc<dyn Frontend>) {
             .json()
             //.with_max_level(log_level)
             .with_ansi(false)
-            .with_writer(move || BroadcastWriter::new(LOG_BROADCASTER.clone())),
+            .with_writer(move || BroadcastWriter::new(external_sender_clone.clone())),
         )
         //.with(sentry_tracing::layer())
         .try_init()
         .unwrap();
     } else {
       tracing_subscriber::registry()
-        .with(LevelFilter::from(log_level))
+        .with(LevelFilter::from(Level::DEBUG))
         .with(
           tracing_subscriber::fmt::layer()
             .json()
             //.with_max_level(log_level)
             .with_ansi(false)
-            .with_writer(move || BroadcastWriter::new(LOG_BROADCASTER.clone())),
+            .with_writer(move || BroadcastWriter::new(external_sender_clone.clone())),
         )
         //.with(sentry_tracing::layer())
         .try_init()
         .unwrap();
-      info!("Logging subscriber added to registry");
     }
+    info!("Logging subscriber added to registry");
+    let cancel = Arc::new(AtomicBool::new(false));
+    let cancel_clone = cancel.clone();
+    let handle = std::thread::spawn(move || {
+      loop {
+        let should_quit = cancel_clone.load(std::sync::atomic::Ordering::Relaxed);
+        if should_quit {
+          info!("Breaking out of logging loop.");
+          // Exhaust all waiting messages.
+          while let Ok(msg) = external_receiver.try_recv() {
+            sink.add(msg);
+          }
+          break;
+        }
+        // Wait on the receiver, as while getting 255 messages in the time between our quit calls is
+        // unlikely, backpressure locks are worse than waiting 10ms.
+        if let Ok(msg) = external_receiver.recv_timeout(Duration::from_millis(10)) {
+          sink.add(msg);
+        }
+      }
+    });
+    Self {
+      thread_handle: Some(handle),
+      cancel
+    }
+  }
+
+  pub fn stop(&mut self) {
+    self.cancel.store(true, std::sync::atomic::Ordering::Relaxed);
+    let thread = self.thread_handle.take().unwrap();
+    let _ = thread.join();
+  }
+}
+
+impl Drop for FlutterTracingWriter {
+  fn drop(&mut self) {
+    self.stop();
   }
 }

@@ -1,6 +1,6 @@
 use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend,
-  logging::setup_frontend_logging,
+  logging::FlutterTracingWriter,
   mobile_init::{self, RUNTIME},
 };
 use anyhow::Result;
@@ -23,7 +23,7 @@ use std::{
   collections::HashMap,
   sync::{
     atomic::{AtomicBool, Ordering},
-    Arc,
+    Arc, Mutex,
   },
 };
 use tokio::{
@@ -37,6 +37,7 @@ pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, 
 
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
+  static ref LOGGER: Arc<Mutex<Option<FlutterTracingWriter>>> = Arc::new(Mutex::new(None));
   static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> =
     Arc::new(broadcast::channel(255).0);
@@ -113,15 +114,6 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     sink.clone(),
     ENGINE_BROADCASTER.clone(),
   ));
-  let frontend_clone = frontend.clone();
-  runtime.spawn(async move {
-    // Set up an environment variable to supress reqwest/rustls logging
-    std::env::set_var(
-      "RUST_LOG",
-      format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
-    );
-    setup_frontend_logging(Level::DEBUG, frontend_clone);
-  });
   info!("Frontend logging set up.");
   let frontend_waiter = frontend.notify_on_creation();
   let engine = Arc::new(IntifaceEngine::default());
@@ -401,3 +393,17 @@ pub fn get_protocol_names() -> Vec<String> {
     .cloned()
     .collect()
 }
+
+pub fn setup_logging(sink: StreamSink<String>) {
+  // Default log to debug, we'll filter in UI if we need it.
+  std::env::set_var(
+    "RUST_LOG",
+    format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
+  );
+  *LOGGER.lock().unwrap() = Some(FlutterTracingWriter::new(sink));
+}
+
+pub fn shutdown_logging() {
+  *LOGGER.lock().unwrap() = None;
+}
+

@@ -42,6 +42,15 @@ abstract class IntifaceEngineFlutterBridge {
   Future<List<String>> getProtocolNames({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetProtocolNamesConstMeta;
+
+  Stream<String> setupLogging({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSetupLoggingConstMeta;
+
+  Future<void> shutdownLogging({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kShutdownLoggingConstMeta;
+
 }
 
 class EngineOptionsExternal {
@@ -302,6 +311,40 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
   FlutterRustBridgeTaskConstMeta get kGetProtocolNamesConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_protocol_names",
+        argNames: [],
+      );
+
+  Stream<String> setupLogging({dynamic hint}) {
+    return _platform.executeStream(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_setup_logging(port_),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: null,
+      constMeta: kSetupLoggingConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kSetupLoggingConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "setup_logging",
+        argNames: [],
+      );
+
+  Future<void> shutdownLogging({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_shutdown_logging(port_),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kShutdownLoggingConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kShutdownLoggingConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "shutdown_logging",
         argNames: [],
       );
 
@@ -931,6 +974,34 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'wire_get_protocol_names');
   late final _wire_get_protocol_names =
       _wire_get_protocol_namesPtr.asFunction<void Function(int)>();
+
+  void wire_setup_logging(
+    int port_,
+  ) {
+    return _wire_setup_logging(
+      port_,
+    );
+  }
+
+  late final _wire_setup_loggingPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_setup_logging');
+  late final _wire_setup_logging =
+      _wire_setup_loggingPtr.asFunction<void Function(int)>();
+
+  void wire_shutdown_logging(
+    int port_,
+  ) {
+    return _wire_shutdown_logging(
+      port_,
+    );
+  }
+
+  late final _wire_shutdown_loggingPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_shutdown_logging');
+  late final _wire_shutdown_logging =
+      _wire_shutdown_loggingPtr.asFunction<void Function(int)>();
 
   ffi.Pointer<wire_StringList> new_StringList_0(
     int len,

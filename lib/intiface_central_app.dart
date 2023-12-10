@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:intiface_central/bloc/api_log/native_api_log.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/device_configuration.dart';
@@ -275,24 +276,25 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
-    engineControlBloc.stream.listen((state) async {
-      if (state is ServerLogMessageState) {
-        // TODO Turn level into an enum
-        var message = state.message.message!;
-        var level = message.level;
-        if (level == "DEBUG") {
-          logDebug(message.fields["message"]);
-        } else if (level == "INFO") {
-          logInfo(message.fields["message"]);
-        } else if (level == "ERROR") {
-          logError(message.fields["message"]);
-        } else if (level == "WARN") {
-          logWarning(message.fields["message"]);
-        } else if (level == "TRACE") {
-          // TODO Implement trace logging level for loggy
-          //log(message.engineLog!.message!.fields["message"]);
-        }
+    var apiLog = NativeApiLog();
+    apiLog.logMessageStream.listen((message) {
+      var level = message.level;
+      if (level == "DEBUG") {
+        logDebug(message.fields["message"]);
+      } else if (level == "INFO") {
+        logInfo(message.fields["message"]);
+      } else if (level == "ERROR") {
+        logError(message.fields["message"]);
+      } else if (level == "WARN") {
+        logWarning(message.fields["message"]);
+      } else if (level == "TRACE") {
+        // TODO Implement trace logging level for loggy
+        //log(message.engineLog!.message!.fields["message"]);
       }
+    });
+
+
+    engineControlBloc.stream.listen((state) async {
       if (state is ProviderLogMessageState) {
         // TODO Turn level into an enum
         var message = state.message.message;

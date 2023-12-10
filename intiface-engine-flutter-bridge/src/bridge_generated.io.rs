@@ -43,6 +43,17 @@ pub extern "C" fn wire_get_protocol_names(port_: i64) {
   wire_get_protocol_names_impl(port_)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_setup_logging(port_: i64) {
+  wire_setup_logging_impl(port_)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_shutdown_logging(port_: i64) {
+  wire_shutdown_logging_impl(port_)
+}
+
+
 // Section: allocate functions
 
 #[no_mangle]

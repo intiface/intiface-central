@@ -126,6 +126,30 @@ fn wire_get_protocol_names_impl(port_: MessagePort) {
     move || move |task_callback| Result::<_, ()>::Ok(get_protocol_names()),
   )
 }
+fn wire_setup_logging_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "setup_logging",
+      port: Some(port_),
+      mode: FfiCallMode::Stream,
+    },
+    move || {
+      move |task_callback| {
+        Result::<_, ()>::Ok(setup_logging(task_callback.stream_sink::<_, String>()))
+      }
+    },
+  )
+}
+fn wire_shutdown_logging_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "shutdown_logging",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || move |task_callback| Result::<_, ()>::Ok(shutdown_logging()),
+  )
+}
 // Section: wrapper structs
 
 #[derive(Clone)]

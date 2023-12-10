@@ -43,11 +43,6 @@ class ButtplugServerMessageState extends EngineControlState {
   ButtplugServerMessageState(this.message);
 }
 
-class ServerLogMessageState extends EngineControlState {
-  final EngineLog message;
-  ServerLogMessageState(this.message);
-}
-
 class ProviderLogMessageState extends EngineControlState {
   final EngineProviderLog message;
   ProviderLogMessageState(this.message);
@@ -112,9 +107,6 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           }
           if (engineMessage.engineServerCreated != null) {
             return EngineServerCreatedState();
-          }
-          if (engineMessage.engineLog != null) {
-            return ServerLogMessageState(engineMessage.engineLog!);
           }
           if (engineMessage.engineProviderLog != null) {
             return ProviderLogMessageState(engineMessage.engineProviderLog!);

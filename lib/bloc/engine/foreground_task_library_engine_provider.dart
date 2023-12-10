@@ -217,9 +217,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     if (receivePort != null) {
       _receivePort = receivePort;
       _receivePort?.listen((message) {
-        if (message is DateTime) {
-          logInfo('timestamp: ${message.toString()}');
-        } else if (message is String) {
+        if (message is String) {
           _processMessageStream.add(message);
         } else if (message is bool) {
           logInfo("Shutdown complete message received, stopping foreground task.");

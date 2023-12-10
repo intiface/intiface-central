@@ -73,7 +73,7 @@ class EngineLog {
   @JsonKey(name: "message")
   String? rawMessage;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   EngineLogMessage? message;
 
   factory EngineLog.fromJson(Map<String, dynamic> json) {
@@ -81,6 +81,7 @@ class EngineLog {
     log.message = EngineLogMessage.fromJson(jsonDecode(log.rawMessage!));
     return log;
   }
+
   EngineLog();
 }
 

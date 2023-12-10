@@ -122,6 +122,11 @@ void wire_generate_user_device_config_file(int64_t port_,
 
 void wire_get_protocol_names(int64_t port_);
 
+void wire_setup_logging(int64_t port_);
+
+void wire_shutdown_logging(int64_t port_);
+
+
 struct wire_StringList *new_StringList_0(int32_t len);
 
 bool *new_box_autoadd_bool_0(bool value);
@@ -153,6 +158,9 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_get_user_device_configs);
     dummy_var ^= ((int64_t) (void*) wire_generate_user_device_config_file);
     dummy_var ^= ((int64_t) (void*) wire_get_protocol_names);
+    dummy_var ^= ((int64_t) (void*) wire_setup_logging);
+    dummy_var ^= ((int64_t) (void*) wire_shutdown_logging);
+    dummy_var ^= ((int64_t) (void*) wire_crash_reporting);
     dummy_var ^= ((int64_t) (void*) new_StringList_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_bool_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_engine_options_external_0);
