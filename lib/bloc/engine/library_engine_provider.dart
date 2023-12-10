@@ -19,7 +19,7 @@ class LibraryEngineProvider implements EngineProvider {
         logError("Error adding message to stream: $e");
         stop();
       }
-    });
+    }).onError((e) => logError(e.anyhow));
   }
 
   @override

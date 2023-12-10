@@ -10,17 +10,19 @@ use crate::mobile_init::Error;
 
 static CLASS_LOADER: OnceCell<GlobalRef> = OnceCell::new();
 pub static JAVAVM: OnceCell<JavaVM> = OnceCell::new();
-pub static RUNTIME: OnceCell<Runtime> = OnceCell::new();
 
 std::thread_local! {
   static JNI_ENV: RefCell<Option<AttachGuard<'static>>> = RefCell::new(None);
 }
 
-pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
+pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, Error> {
   let vm = JAVAVM.get().ok_or(Error::JavaVM)?;
   let env = vm.attach_current_thread().unwrap();
 
-  setup_class_loader(&env).unwrap();
+  // We create runtimes multiple times. Only run our loader setup once.
+  if CLASS_LOADER.get().is_none() {
+    setup_class_loader(&env).unwrap();
+  }
   let runtime = {
     tokio::runtime::Builder::new_multi_thread()
       .enable_all()
@@ -63,8 +65,7 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
       .build()
       .unwrap()
   };
-  RUNTIME.set(runtime).map_err(|_| Error::Runtime)?;
-  Ok(())
+  Ok(runtime)
 }
 
 fn setup_class_loader(env: &JNIEnv) -> Result<(), Error> {
@@ -90,7 +91,8 @@ fn setup_class_loader(env: &JNIEnv) -> Result<(), Error> {
     .map_err(|_| Error::ClassLoader)
 }
 
-// THIS HAS TO BE COMMENTED OUT WHEN BUILDING IOS CODEGEN OTHERWISE IOS BUILDS WILL FAIL
+// THIS HAS TO BE COMMENTED OUT OR REMOVED FROM GENERATED CODE WHEN BUILDING IOS CODEGEN OTHERWISE
+// IOS BUILDS WILL FAIL
 #[cfg(target_os = "android")]
 #[no_mangle]
 pub extern "C" fn JNI_OnLoad(vm: jni::JavaVM, _res: *const std::os::raw::c_void) -> jni::sys::jint {

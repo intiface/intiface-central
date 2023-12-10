@@ -1,7 +1,7 @@
 use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend,
   logging::FlutterTracingWriter,
-  mobile_init::{self, RUNTIME},
+  mobile_init,
 };
 use anyhow::Result;
 pub use buttplug::{
@@ -25,11 +25,11 @@ use std::{
   sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
-  },
+  }, time::Duration, thread,
 };
 use tokio::{
   select,
-  sync::{broadcast, Notify},
+  sync::{broadcast, Notify}, runtime::Runtime,
 };
 use tracing_futures::Instrument;
 
@@ -38,6 +38,7 @@ pub use intiface_engine::{EngineOptions, EngineOptionsExternal, IntifaceEngine, 
 static CRASH_REPORTING: OnceCell<ClientInitGuard> = OnceCell::new();
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
+  static ref RUNTIME: Arc<Mutex<Option<Runtime>>> = Arc::new(Mutex::new(None));
   static ref LOGGER: Arc<Mutex<Option<FlutterTracingWriter>>> = Arc::new(Mutex::new(None));
   static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> =
@@ -78,20 +79,26 @@ pub struct _EngineOptionsExternal {
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
 
-  if RUN_STATUS.load(Ordering::SeqCst) {
+  if RUN_STATUS.load(Ordering::Relaxed) {
     return Err(anyhow::Error::msg("Server already running!"));
   }
-  RUN_STATUS.store(true, Ordering::SeqCst);
-  if RUNTIME.get().is_none() {
-    mobile_init::create_runtime(sink.clone())
-      .expect("Runtime should work, otherwise we can't function.");
+  RUN_STATUS.store(true, Ordering::Relaxed);
+
+  let mut runtime_storage = RUNTIME.lock().unwrap();
+
+  if runtime_storage.is_some() {
+    return Err(anyhow::Error::msg("Runtime already created!"));
   }
+
+  let runtime = mobile_init::create_runtime(sink.clone())
+    .expect("Runtime should work, otherwise we can't function.");
+
   if ENGINE_NOTIFIER.get().is_none() {
     ENGINE_NOTIFIER
       .set(Arc::new(Notify::new()))
       .expect("We already checked creation so this shouldn't fail");
   }
-  let runtime = RUNTIME.get().expect("Runtime not initialized");
+
   let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(
     sink.clone(),
     ENGINE_BROADCASTER.clone(),
@@ -100,97 +107,94 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   let frontend_waiter = frontend.notify_on_creation();
   let engine = Arc::new(IntifaceEngine::default());
   let engine_clone = engine.clone();
+  let engine_clone_clone = engine.clone();
   let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
   let notify_clone = notify.clone();
+  let notify_clone_clone = notify.clone();
   let options = args.into();
 
   let mut backdoor_incoming = BACKDOOR_INCOMING_BROADCASTER.subscribe();
   let outgoing_sink = sink.clone();
   let sink_clone = sink.clone();
 
-  // Start our backdoor task first
   runtime.spawn(
     async move {
-      // Once we finish our waiter, continue. If we cancel the server run before then, just kill the
-      // task.
-      info!("Entering backdoor waiter task");
-      select! {
-        _ = frontend_waiter => {
-          // This firing means the frontend is set up, and we just want to continue to creating our backdoor server.
-        }
-        _ = notify_clone.notified() => {
-          return;
-        }
-      };
-      // At this point we know we'll have a server.
-      let backdoor_server = if let Some(backdoor_server) = engine_clone.backdoor_server() {
-        backdoor_server
-      } else {
-        // If we somehow *don't* have a server here, something has gone very wrong. Just die.
-        return;
-      };
-      let backdoor_server_stream = backdoor_server.event_stream();
-      pin_mut!(backdoor_server_stream);
-      loop {
-        select! {
-          msg = backdoor_incoming.recv() => {
-            match msg {
-              Ok(msg) => {
-                let runtime = RUNTIME.get().expect("Runtime not initialized");
-                let sink = outgoing_sink.clone();
-                let backdoor_server_clone = backdoor_server.clone();
-                runtime.spawn(async move {
-                  sink.add(backdoor_server_clone.parse_message(&msg).await);
-                });
-              }
-              Err(_) => break
-            }
-          },
-          outgoing = backdoor_server_stream.next() => {
-            match outgoing {
-              Some(msg) => { sink.add(msg); }
-              None => break
-            }
-          },
-          _ = notify_clone.notified() => break
-        }
-      }
-      info!("Exiting backdoor waiter task");
-    }
-    .instrument(info_span!("IC Backdoor server task")),
-  );
-
-  // Our notifier needs to run in a task by itself, because we don't want our engine future to get
-  // cancelled, so we can't select between it and the notifier. It needs to shutdown gracefully.
-  let engine_clone = engine.clone();
-  runtime.spawn(
-    async move {
-      info!("Entering main engine waiter task");
-      // These futures need to run in parallel, but the frontend will always notify before the engine
-      // comes down, and we want the engine to run to completion after stop is called, so we can't
-      // call this in a select, as the engine future will be truncated. So, join it is.
-      //
-      // If the engine somehow exits first, make sure we still leave by triggering our notifier
-      // anyways.
-      let notify_clone = notify.clone();
-      futures::join!(
+      info!("Entering main join.");
+      tokio::join!(
+        // Backdoor server task
         async move {
+          // Once we finish our waiter, continue. If we cancel the server run before then, just kill the
+          // task.
+          info!("Entering backdoor waiter task");
+          select! {
+            _ = frontend_waiter => {
+              // This firing means the frontend is set up, and we just want to continue to creating our backdoor server.
+            }
+            _ = notify_clone.notified() => {
+              return;
+            }
+          };
+          // At this point we know we'll have a server.
+          let backdoor_server = if let Some(backdoor_server) = engine_clone.backdoor_server() {
+            backdoor_server
+          } else {
+            // If we somehow *don't* have a server here, something has gone very wrong. Just die.
+            return;
+          };
+          let backdoor_server_stream = backdoor_server.event_stream();
+          pin_mut!(backdoor_server_stream);
+          loop {
+            select! {
+              msg = backdoor_incoming.recv() => {
+                match msg {
+                  Ok(msg) => {
+                    //let runtime = RUNTIME.get().expect("Runtime not initialized");
+                    let sink = outgoing_sink.clone();
+                    let backdoor_server_clone = backdoor_server.clone();
+                    tokio::spawn(async move {
+                      sink.add(backdoor_server_clone.parse_message(&msg).await);
+                    });
+                  }
+                  Err(_) => break
+                }
+              },
+              outgoing = backdoor_server_stream.next() => {
+                match outgoing {
+                  Some(msg) => { sink.add(msg); }
+                  None => break
+                }
+              },
+              _ = notify_clone.notified() => break
+            }
+          }
+          info!("Exiting backdoor waiter task");
+        }
+        .instrument(info_span!("IC Backdoor server task")),
+        // Main engine task.
+        async move {
+          info!("Entering main engine waiter task");
           if let Err(e) = engine.run(&options, Some(frontend)).await {
             error!("Error running engine: {:?}", e);
           }
-          notify_clone.notify_waiters();
-        },
+          info!("Exiting main engine waiter task");
+          notify_clone_clone.notify_waiters();
+        }.instrument(info_span!("IC main engine task")),
+        // Our notifier needs to run in a task by itself, because we don't want our engine future to get
+        // cancelled, so we can't select between it and the notifier. It needs to shutdown gracefully.
         async move {
+          info!("Entering engine stop notification task");
           notify.notified().await;
-          engine_clone.stop();
+          info!("Notifier called, stopping engine");
+          engine_clone_clone.stop();
         }
       );
-      RUN_STATUS.store(false, Ordering::SeqCst);
-      info!("Exiting main engine waiter task");
+      RUN_STATUS.store(false, Ordering::Relaxed);
       sink_clone.close();
+      info!("Exiting main join.");
     }
     .instrument(info_span!("IC main engine task")),
   );
+  *runtime_storage = Some(runtime);
   Ok(())
 }
 
@@ -208,6 +212,19 @@ pub fn stop_engine() {
   if let Some(notifier) = ENGINE_NOTIFIER.get() {
     notifier.notify_waiters();
   }
+  // Need to park ourselves real quick to let the other runtime threads finish out.
+  thread::sleep(Duration::from_millis(1));
+  
+  let runtime;
+  {
+    runtime = RUNTIME.lock().unwrap().take();
+  }
+  if let Some(rt) = runtime {
+    info!("Shutting down runtime");
+    rt.shutdown_timeout(Duration::from_secs(1));
+    info!("Runtime shutdown complete");
+  }
+  RUN_STATUS.store(false, Ordering::Relaxed);
 }
 
 pub fn send_backend_server_message(msg: String) {

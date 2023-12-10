@@ -1,12 +1,9 @@
 use crate::mobile_init::Error;
 use flutter_rust_bridge::StreamSink;
-use once_cell::sync::OnceCell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 
-pub static RUNTIME: OnceCell<Runtime> = OnceCell::new();
-
-pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
+pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, Error> {
   let runtime = {
     tokio::runtime::Builder::new_multi_thread()
       .enable_all()
@@ -19,6 +16,5 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<(), Error> {
       .build()
       .unwrap()
   };
-  RUNTIME.set(runtime).map_err(|_| Error::Runtime)?;
-  Ok(())
+  Ok(runtime)
 }
