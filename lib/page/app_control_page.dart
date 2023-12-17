@@ -6,7 +6,6 @@ import 'package:intiface_central/widget/engine_config_widget.dart';
 import 'package:intiface_central/widget/repeater_config_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 class AppControlPage extends StatelessWidget {
   const AppControlPage({super.key});
@@ -21,17 +20,6 @@ class AppControlPage extends StatelessWidget {
             builder: (context, settingsState) => Expanded(
                     child: Column(
                   children: [
-                    /*
-                    SettingsList(
-                      shrinkWrap: true,
-                      sections: [
-
-                        SettingsSection(
-                          title: const Text("Server Mode"),
-                          tiles: [
-                            CustomSettingsTile(
-                              
-                                child:*/
                     Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: DecoratedBox(

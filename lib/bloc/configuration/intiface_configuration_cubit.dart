@@ -7,7 +7,7 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AppMode { engine, repeater, match }
+enum AppMode { engine, repeater }
 
 class IntifaceConfigurationState {}
 
