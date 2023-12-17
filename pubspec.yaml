@@ -25,14 +25,14 @@ dependencies:
   flutter_local_notifications: ^16.1.0
   flutter_loggy: ^2.0.2
   flutter_markdown: ^0.6.18
-  flutter_rust_bridge: ^1.82.1
+  flutter_rust_bridge: ^1.82.5
   github: ^9.20.0
   intl: ^0.18.1
   json_annotation: ^4.8.1
   loggy: ^2.0.3
   markdown: ^7.1.1
   network_info_plus: ^4.1.0
-  package_info_plus: ^4.2.0
+  package_info_plus: ^5.0.1
   path_provider: ^2.1.1
   path: ^1.8.3
   percent_indicator: ^4.2.3
@@ -49,11 +49,12 @@ dependencies:
   version: ^3.0.2
   web_socket_channel: ^2.4.0
   window_manager: ^0.3.7
+  multicast_dns: ^0.3.2+6
 
 dev_dependencies:
   build_runner: ^2.4.6
   # Needed for rust ffigen
-  ffigen: ^9.0.1
+  ffigen: ^10.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.1
   flutter_test:
