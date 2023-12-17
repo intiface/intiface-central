@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/widget/engine_config_widget.dart';
 import 'package:intiface_central/widget/repeater_config_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
+import 'package:settings_ui/settings_ui.dart';
 
 class AppControlPage extends StatelessWidget {
   const AppControlPage({super.key});
@@ -18,32 +21,65 @@ class AppControlPage extends StatelessWidget {
             builder: (context, settingsState) => Expanded(
                     child: Column(
                   children: [
-                    DropdownButton<String>(
-                      value: configCubit.appMode.name,
-                      icon: const Icon(Icons.arrow_downward),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      underline: Container(
-                        height: 2,
-                        color: Colors.deepPurpleAccent,
-                      ),
-                      onChanged: engineState is EngineStoppedState
-                          ? (String? value) {
-                              configCubit.appMode = AppMode.values.firstWhere((element) {
-                                logInfo("${element.name} $value ${element.name == value}");
-                                return element.name == value;
-                              }, orElse: () => AppMode.engine);
-                              logInfo("Set appMode to ${configCubit.appMode.name}");
-                            }
-                          : null,
-                      items: AppMode.values.map((e) => e.name).map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    const RepeaterConfigWidget()
+                    /*
+                    SettingsList(
+                      shrinkWrap: true,
+                      sections: [
+
+                        SettingsSection(
+                          title: const Text("Server Mode"),
+                          tiles: [
+                            CustomSettingsTile(
+                              
+                                child:*/
+                    Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.deepPurpleAccent, //background color of dropdown button
+                                border: Border.all(color: Colors.black38, width: 3), //border of dropdown button
+                                borderRadius: BorderRadius.circular(50), //border raiuds of dropdown button
+                                boxShadow: const <BoxShadow>[
+                                  //apply shadow on Dropdown button
+                                  BoxShadow(
+                                      color: Color.fromRGBO(0, 0, 0, 0.57), //shadow for button
+                                      blurRadius: 5) //blur radius of shadow
+                                ]),
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 30, right: 30),
+                                child: DropdownButton<String>(
+                                  value: configCubit.appMode.name,
+                                  elevation: 16,
+                                  onChanged: engineState is EngineStoppedState
+                                      ? (String? value) {
+                                          configCubit.appMode = AppMode.values.firstWhere((element) {
+                                            logInfo("${element.name} $value ${element.name == value}");
+                                            return element.name == value;
+                                          }, orElse: () => AppMode.engine);
+                                          logInfo("Set appMode to ${configCubit.appMode.name}");
+                                        }
+                                      : null,
+                                  items:
+                                      AppMode.values.map((e) => e.name).map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text("App Mode: ${toBeginningOfSentenceCase(value)!}"),
+                                    );
+                                  }).toList(),
+                                  icon: const Padding(
+                                      //Icon at tail, arrow bottom is default icon
+                                      padding: EdgeInsets.only(left: 20),
+                                      child: Icon(Icons.arrow_circle_down_sharp)),
+                                  iconEnabledColor: Colors.white, //Icon color
+                                  style: const TextStyle(
+                                      //te
+                                      color: Colors.white, //Font color
+                                      fontSize: 20 //font size on dropdown button
+                                      ),
+                                  dropdownColor: Colors.deepPurpleAccent, //dropdown background color
+                                  underline: Container(), //remove underline
+                                )))),
+                    configCubit.appMode == AppMode.repeater ? const RepeaterConfigWidget() : const EngineConfigWidget()
                   ],
                 ))));
   }
