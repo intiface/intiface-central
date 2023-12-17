@@ -16,9 +16,11 @@ For developers, it allows their application to connect to and control sex toys, 
 
 - **Windows:**
   - Use the [latest github release](https://intiface.com/central)
-  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and Microsoft Store support coming soon.
+  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and Microsoft Store
+    support coming soon.
 - **macOS:** Use the [latest github release](https://intiface.com/central)
-  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and macOS App Store support coming soon.
+  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and macOS App Store
+    support coming soon.
 - **Linux:**
   - **Ubuntu 20.04/22.04:** Use the [latest github release](https://intiface.com/central)
   - **Arch:** [Use the intiface-central-bin package in AUR](https://aur.archlinux.org/packages/intiface-central-bin) (Maintained by community)
@@ -40,7 +42,7 @@ Building Intiface Central will require the following tools:
 
 To run a development version instead of making a build, switch out the `flutter build -d [target]` statements below with `flutter run [target]` (or just `flutter run` if the default platform is what you're aiming for).
 
-### Desktop (Windows/macOS/Linux) and iOS
+### Desktop
 
 To build for Desktop, simply run 
 
@@ -50,22 +52,7 @@ Or, if you have multiple targets available
 
 `flutter build -d [target]`
 
-The Rust build for Desktop and iOS is integrated into the Flutter build. Android requires an
-additional step.
-
-### Android
-
-Android requires building on Linux or macOS due to OpenSSL requirements that don't play well on Windows.
-
-Due to this restriction, Rust and Flutter builds are separate for Android. To build for android:
-
-- Install cargo make:
-  - `cargo install cargo-make`
-- Start with the Rust build:
-  - `cd intiface-engine-flutter-bridge`
-  - `cargo make build-android`
-- Then run the flutter build:
-  - `flutter build -d [target]`
+All platforms now build through the main build command, there is no longer a need to issue separate commands when building Android.
 
 ## How to Get Support
 
