@@ -13,8 +13,8 @@ pub enum Error {
   #[error("Cannot initialize CLASS_LOADER")]
   ClassLoader,
 
-  #[error("Cannot initialize RUNTIME")]
-  Runtime,
+  //#[error("Cannot initialize RUNTIME")]
+  //Runtime,
 
   #[cfg(target_os = "android")]
   #[error("Java vm not initialized")]
