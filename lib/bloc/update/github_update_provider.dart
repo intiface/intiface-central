@@ -33,7 +33,7 @@ class IntifaceCentralDesktopUpdater extends GithubUpdater {
     // Strip the "v" off the front.
     var strippedVersion = latestVersion.substring(1);
     var repoVersion = Version.parse(strippedVersion);
-
+    logInfo("Current application version: ${repoVersion.toString()}");
     return IntifaceCentralUpdateAvailable(repoVersion.toString());
   }
 }
