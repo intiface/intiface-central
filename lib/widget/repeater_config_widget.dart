@@ -1,9 +1,13 @@
+//import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+//import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
+//import 'package:multicast_dns/multicast_dns.dart';
 
 class RepeaterConfigWidget extends StatelessWidget {
   const RepeaterConfigWidget({super.key});
@@ -53,13 +57,13 @@ class RepeaterConfigWidget extends StatelessWidget {
                             }),
                         SettingsTile.navigation(
                             enabled: !engineIsRunning,
-                            title: const Text("Remote Address"),
+                            title: const Text("Remote Server Address"),
                             value: Text(cubit.repeaterRemoteAddress),
                             onPressed: (context) {
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title: const Text('Remote Address'),
+                                        title: const Text('Remote Server Address'),
                                         content: TextField(
                                           //keyboardType: TextInputType.number,
                                           controller: TextEditingController(text: cubit.repeaterRemoteAddress),
@@ -68,10 +72,55 @@ class RepeaterConfigWidget extends StatelessWidget {
                                             configCubit.repeaterRemoteAddress = value;
                                             Navigator.pop(context);
                                           },
-                                          decoration: const InputDecoration(hintText: "Remote Address"),
+                                          decoration: const InputDecoration(hintText: "Remote Server Address"),
                                         ),
                                       ));
                             }),
+/*                            
+                        CustomSettingsTile(
+                            child: TextButton(
+                                onPressed: () async {
+                                  const name = '_intiface_engine';
+                                  //const name = '_intiface_engine._tcp';
+                                  //const name = '_nvstream_dbd';
+                                  logInfo("Starting mDNS query");
+                                  final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+                                      (dynamic host, int port, {bool? reuseAddress, bool? reusePort, int? ttl}) {
+                                    return RawDatagramSocket.bind(host, port,
+                                        reuseAddress: true, reusePort: false, ttl: ttl!);
+                                  });
+                                  // Start the client with default options.
+                                  await client.start(
+                                    interfacesFactory: (type) async {
+                                      final interfaces = await NetworkInterface.list(
+                                        includeLinkLocal: false,
+                                        type: type,
+                                        includeLoopback: false,
+                                      );
+                                      return interfaces;
+                                    },
+                                  );
+
+                                  await for (final PtrResourceRecord ptr
+                                      in client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+                                    logInfo('PTR: ${ptr.toString()}');
+
+                                    await for (final SrvResourceRecord srv in client
+                                        .lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr.domainName))) {
+                                      logInfo('SRV target: ${srv.target} port: ${srv.port}');
+
+                                      await for (final IPAddressResourceRecord ip
+                                          in client.lookup<IPAddressResourceRecord>(
+                                              ResourceRecordQuery.addressIPv4(srv.target))) {
+                                        logInfo('IP: ${ip.address.toString()}');
+                                      }
+                                    }
+                                  }
+                                  logInfo("Finishing mDNS query");
+                                  client.stop();
+                                },
+                                child: const Text("Scan for Local Servers")))
+                                */
                       ])
                     ];
                     return SettingsList(sections: tiles);
