@@ -5,7 +5,7 @@ use crate::{
 };
 use anyhow::Result;
 pub use buttplug::{
-  server::device::configuration::WebsocketSpecifier,
+  server::device::configuration::WebsocketDeviceIdentifier,
   util::device_configuration::UserConfigDeviceIdentifier,
 };
 use buttplug::{
@@ -249,17 +249,17 @@ pub struct ExposedWebsocketSpecifier {
   pub names: Vec<String>,
 }
 
-impl From<&WebsocketSpecifier> for ExposedWebsocketSpecifier {
-  fn from(other: &WebsocketSpecifier) -> Self {
+impl From<&WebsocketDeviceIdentifier> for ExposedWebsocketSpecifier {
+  fn from(other: &WebsocketDeviceIdentifier) -> Self {
     ExposedWebsocketSpecifier {
       names: other.names().iter().cloned().collect(),
     }
   }
 }
 
-impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
-  fn into(self) -> WebsocketSpecifier {
-    WebsocketSpecifier::new(&self.names)
+impl Into<WebsocketDeviceIdentifier> for ExposedWebsocketSpecifier {
+  fn into(self) -> WebsocketDeviceIdentifier {
+    WebsocketDeviceIdentifier::new(&self.names)
   }
 }
 
@@ -278,6 +278,7 @@ impl Into<UserConfigDefinition> for ExposedUserConfig {
     let configs: Vec<UserDeviceConfigPair> =
       self.configurations.into_iter().map(|x| x.into()).collect();
     let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
+    /*
     self
       .specifiers
       .into_iter()
@@ -290,6 +291,7 @@ impl Into<UserConfigDefinition> for ExposedUserConfig {
           }
         }
       });
+      */
     //if !specifier_map.is_empty() {
     user_config_def.set_specifiers(Some(specifier_map));
     //}
@@ -347,6 +349,7 @@ pub fn get_user_device_configs(
   let raw_user_configs = load_user_configs(&user_config_json);
   let mut config_out = vec![];
   let mut websocket_specifiers_out = Vec::new();
+  /*
   if let Some(user_specifiers) = raw_user_configs.specifiers() {
     for (protocol, specifiers) in user_specifiers {
       if let Some(websocket_specifiers) = specifiers.websocket() {
@@ -359,6 +362,7 @@ pub fn get_user_device_configs(
       }
     }
   }
+  */
   if let Some(configs) = raw_user_configs.user_device_configs() {
     for config in configs {
       let maybe_attrs = dcm.protocol_device_attributes(
@@ -397,8 +401,20 @@ pub fn setup_logging(sink: StreamSink<String>) {
   // Default log to debug, we'll filter in UI if we need it.
   std::env::set_var(
     "RUST_LOG",
-    format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
+    format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn,libmdns=warn"),
   );
+  // TODO Fix log restarts here
+  //
+  // if this is called twice (which should only happen if we restart during debug mode), we
+  // should just swap the sink, not try rebuilding the full logger instance, as it will still be in
+  // memory.
+  let logger_running;
+  {
+    logger_running = LOGGER.lock().unwrap().is_some();
+  }
+  if logger_running {
+    shutdown_logging();
+  }
   *LOGGER.lock().unwrap() = Some(FlutterTracingWriter::new(sink));
 }
 
