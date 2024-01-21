@@ -31,6 +31,7 @@ jobs:
       - run: flutter build windows --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
         name: flutter build
       - uses: dlemstra/code-sign-action@v1
+        name: Sign Intiface Central Executable
         with:
           certificate: '${{ secrets.NPLABS_WINDOWS_202205_CERT }}'
           password: '${{ secrets.NPLABS_WINDOWS_202205_KEY }}'
@@ -38,7 +39,7 @@ jobs:
           recursive: false
           files: |
             intiface_central.exe
-          description: 'Sign Intiface Central Executable'
+          description: 'Intiface Central'
       - name: Build Innosetup Installer
         shell: pwsh
         env:
