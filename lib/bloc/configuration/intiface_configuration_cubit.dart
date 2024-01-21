@@ -466,8 +466,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   }
 
   AppMode get appMode {
+    return AppMode.engine;
+    /*
     var mode = _prefs.getString("appMode");
     return AppMode.values.firstWhere((element) => mode == element.name, orElse: () => AppMode.engine);
+    */
   }
 
   set appMode(AppMode value) {
