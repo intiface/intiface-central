@@ -107,10 +107,14 @@ class ControlWidget extends StatelessWidget {
                         engineStatus = "Engine not running";
                       }
                     } else if (configCubit.appMode == AppMode.repeater) {
-                      if (state is EngineStartedState) {
+                      if (state is EngineStartedState ||
+                          state is EngineServerCreatedState ||
+                          state is ClientDisconnectedState) {
                         engineStatus = "Repeater running";
                       } else if (state is EngineStoppedState) {
                         engineStatus = "Repeater not running";
+                      } else if (state is EngineStartingState) {
+                        engineStatus = "Repeater starting...";
                       }
                     }
 
