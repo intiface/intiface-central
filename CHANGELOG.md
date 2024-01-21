@@ -1,3 +1,13 @@
+# v2.5.5 - 2024/01/21 (All Platforms)
+
+## Features
+
+- Update to Buttplug v7.1.11/Intiface Engine v2.0.0
+  - More accurate/complete logging
+  - Move crash reporting to layer where we can see errors in rust bridge
+  - Massive number of device support updates, see https://github.com/buttplugio/buttplug/blob/buttplug-7.1.12/buttplug/CHANGELOG.md for full list.
+- Added option to turn off window position setting on startup
+
 # v2.5.4 - 2023/11/18 (Android)
 
 ## Bugfixes
