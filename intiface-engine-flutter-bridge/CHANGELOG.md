@@ -1,3 +1,10 @@
+# 1.0.11 (2024/01/21)
+
+## Features
+
+- Update to Buttplug v7.1.11/Intiface Engine v2.0.0
+  - Move logging and sentry handling up to this level, since this is the application level now
+
 # 1.0.10 (2023/11/18)
 
 ## Features
