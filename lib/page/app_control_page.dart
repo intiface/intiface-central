@@ -41,10 +41,9 @@ class AppControlPage extends StatelessWidget {
                                   onChanged: engineState is EngineStoppedState
                                       ? (String? value) {
                                           configCubit.appMode = AppMode.values.firstWhere((element) {
-                                            logInfo("${element.name} $value ${element.name == value}");
                                             return element.name == value;
                                           }, orElse: () => AppMode.engine);
-                                          logInfo("Set appMode to ${configCubit.appMode.name}");
+                                          logDebug("Set appMode to ${configCubit.appMode.name}");
                                         }
                                       : null,
                                   items:
