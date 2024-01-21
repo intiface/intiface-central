@@ -37,6 +37,8 @@ class BodyWidget extends StatelessWidget {
     var assets = BlocProvider.of<AssetCubit>(context);
 
     var destinations = [
+      // Control page navigation removed until repeater mode is like, actually tested at all.
+      /*
       NavigationDestination(
           (state) => state is NavigationStateAppControl,
           (NavigationCubit cubit) => cubit.goAppControl(),
@@ -46,6 +48,7 @@ class BodyWidget extends StatelessWidget {
           () => const AppControlPage(),
           true,
           true),
+          */
       NavigationDestination(
           (state) => state is NavigationStateNews,
           (NavigationCubit cubit) => cubit.goNews(),
