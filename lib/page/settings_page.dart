@@ -67,31 +67,42 @@ class SettingPage extends StatelessWidget {
                           title: const Text("Device Config Version"), value: Text(cubit.currentDeviceConfigVersion)),
                     ]);
 
+                    var appSettingsTiles = [
+                      SettingsTile.switchTile(
+                          initialValue: cubit.useLightTheme,
+                          onToggle: (value) => cubit.useLightTheme = value,
+                          title: const Text("Light Theme")),
+                      SettingsTile.switchTile(
+                          initialValue: cubit.useSideNavigationBar,
+                          onToggle: (value) => cubit.useSideNavigationBar = value,
+                          title: const Text("Side Navigation Bar")),
+                      SettingsTile.switchTile(
+                          initialValue: cubit.checkForUpdateOnStart,
+                          onToggle: (value) => cubit.checkForUpdateOnStart = value,
+                          title: const Text("Check For Updates when Intiface Central Launches")),
+                      SettingsTile.switchTile(
+                          initialValue: cubit.crashReporting,
+                          onToggle: cubit.canUseCrashReporting ? ((value) => cubit.crashReporting = value) : null,
+                          title: const Text("Crash Reporting")),
+                      SettingsTile.navigation(
+                          title: const Text("Send Logs to Developers"),
+                          onPressed: cubit.canUseCrashReporting
+                              ? ((context) => BlocProvider.of<NavigationCubit>(context).goSendLogs())
+                              : null)
+                    ];
+
+                    if (isDesktop()) {
+                      appSettingsTiles.insert(
+                          2,
+                          SettingsTile.switchTile(
+                              initialValue: cubit.restoreWindowLocation,
+                              onToggle: (value) => cubit.restoreWindowLocation = value,
+                              title: const Text("Restore Window Location on Start")));
+                    }
+
                     tiles.addAll([
                       SettingsSection(title: const Text("Versions and Updates"), tiles: versionTiles),
-                      SettingsSection(title: const Text("App Settings"), tiles: [
-                        SettingsTile.switchTile(
-                            initialValue: cubit.useLightTheme,
-                            onToggle: (value) => cubit.useLightTheme = value,
-                            title: const Text("Light Theme")),
-                        SettingsTile.switchTile(
-                            initialValue: cubit.useSideNavigationBar,
-                            onToggle: (value) => cubit.useSideNavigationBar = value,
-                            title: const Text("Side Navigation Bar")),
-                        SettingsTile.switchTile(
-                            initialValue: cubit.checkForUpdateOnStart,
-                            onToggle: (value) => cubit.checkForUpdateOnStart = value,
-                            title: const Text("Check For Updates when Intiface Central Launches")),
-                        SettingsTile.switchTile(
-                            initialValue: cubit.crashReporting,
-                            onToggle: cubit.canUseCrashReporting ? ((value) => cubit.crashReporting = value) : null,
-                            title: const Text("Crash Reporting")),
-                        SettingsTile.navigation(
-                            title: const Text("Send Logs to Developers"),
-                            onPressed: cubit.canUseCrashReporting
-                                ? ((context) => BlocProvider.of<NavigationCubit>(context).goSendLogs())
-                                : null)
-                      ]),
+                      SettingsSection(title: const Text("App Settings"), tiles: appSettingsTiles),
                       SettingsSection(title: const Text("Server Settings"), tiles: [
                         // Turn this off until we know the server is mostly stable, or have a way to handle crash on startup
                         // gracefully.

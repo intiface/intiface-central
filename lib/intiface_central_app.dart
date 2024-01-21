@@ -145,9 +145,14 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       if (!windowInBounds) {
         logInfo("Window position out of bounds, resetting position");
         guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
-      } else {
+      } else if (configCubit.restoreWindowLocation) {
+        // Only restore the window location if the option to do so is on.
+        logInfo("Restoring window position to ${guiSettingsCubit.getWindowPosition()}");
         await windowManager.setPosition(guiSettingsCubit.getWindowPosition());
+      } else {
+        logInfo("Window location not restored due to configuration settings");
       }
+
       windowDisplayModeResize(configCubit.useCompactDisplay, guiSettingsCubit);
       await windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();

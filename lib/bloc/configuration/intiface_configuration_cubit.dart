@@ -163,6 +163,11 @@ class AppModeState extends IntifaceConfigurationState {
   AppModeState(this.value);
 }
 
+class RestoreWindowLocation extends IntifaceConfigurationState {
+  final bool value;
+  RestoreWindowLocation(this.value);
+}
+
 class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -204,6 +209,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     unreadNews = _prefs.getBool("unreadNews") ?? false;
     useSideNavigationBar = _prefs.getBool("useSideNavigationBar") ?? isDesktop();
     useLightTheme = _prefs.getBool("useLightTheme") ?? true;
+    restoreWindowLocation = _prefs.getBool("restoreWindowLocation") ?? true;
 
     // True on all platforms
     useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
@@ -277,6 +283,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set useLightTheme(bool value) {
     _prefs.setBool("useLightTheme", value);
     emit(UseLightThemeState(value));
+  }
+
+  bool get restoreWindowLocation => _prefs.getBool("restoreWindowLocation")!;
+  set restoreWindowLocation(bool value) {
+    _prefs.setBool("restoreWindowLocation", value);
+    emit(RestoreWindowLocation(value));
   }
 
   String get serverName => _prefs.getString("serverName")!;
