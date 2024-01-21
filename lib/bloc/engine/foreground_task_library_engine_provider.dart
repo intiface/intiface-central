@@ -162,7 +162,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   void onEngineStop() {
-    logInfo("Engine stopped");
+    logInfo("Engine foreground process stopped");
     _serverSendPort = null;
     _backdoorSendPort = null;
   }
@@ -173,7 +173,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       return;
     }
     _shutdownSendPort!.send(null);
-    logInfo("Engine stop request sent");
+    logInfo("Engine foreground stop request sent");
   }
 
   @override

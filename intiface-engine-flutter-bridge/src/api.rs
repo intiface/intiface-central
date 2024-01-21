@@ -213,15 +213,22 @@ pub fn stop_engine() {
     notifier.notify_waiters();
   }
   // Need to park ourselves real quick to let the other runtime threads finish out.
+  //
+  // HACK The android JNI drop calls are slow and need quite a while to get everything disconnected.
+  // If they don't run to completion, the runtime won't shutdown properly and everything will stall.
+  // Waiting on this is not the optimal way to do it, but I also don't have a good way to know when
+  // shutdown is finished right now. So waiting it is.
+  #[cfg(target_os = "android")]
+  thread::sleep(Duration::from_millis(1000));
+  #[cfg(not(target_os = "android"))]
   thread::sleep(Duration::from_millis(1));
-  
   let runtime;
   {
     runtime = RUNTIME.lock().unwrap().take();
   }
   if let Some(rt) = runtime {
     info!("Shutting down runtime");
-    rt.shutdown_timeout(Duration::from_secs(1));
+    rt.shutdown_timeout(Duration::from_secs(5));
     info!("Runtime shutdown complete");
   }
   RUN_STATUS.store(false, Ordering::Relaxed);
