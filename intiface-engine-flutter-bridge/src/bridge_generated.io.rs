@@ -2,6 +2,11 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
+pub extern "C" fn wire_runtime_started(port_: i64) {
+  wire_runtime_started_impl(port_)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_run_engine(port_: i64, args: *mut wire_EngineOptionsExternal) {
   wire_run_engine_impl(port_, args)
 }

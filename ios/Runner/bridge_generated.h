@@ -103,6 +103,8 @@ uintptr_t new_dart_opaque(Dart_Handle handle);
 
 intptr_t init_frb_dart_api_dl(void *obj);
 
+void wire_runtime_started(int64_t port_);
+
 void wire_run_engine(int64_t port_, struct wire_EngineOptionsExternal *args);
 
 void wire_send(int64_t port_, struct wire_uint_8_list *msg_json);
@@ -148,10 +150,9 @@ struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
 
-jint JNI_OnLoad(JavaVM vm, const void *_res);
-
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
+    dummy_var ^= ((int64_t) (void*) wire_runtime_started);
     dummy_var ^= ((int64_t) (void*) wire_run_engine);
     dummy_var ^= ((int64_t) (void*) wire_send);
     dummy_var ^= ((int64_t) (void*) wire_stop_engine);

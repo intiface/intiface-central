@@ -77,7 +77,12 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _sendProviderLog("INFO", "Starting engine");
 
     _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
-    _stream = api!.runEngine(args: engineOptions);
+    try {
+      _stream = api!.runEngine(args: engineOptions);
+    } catch (e) {
+      _sendProviderLog("ERROR", "Engine start failed!");
+      return;
+    }
     _sendProviderLog("INFO", "Engine started");
     _stream!.listen((element) {
       try {
@@ -145,6 +150,11 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
     await _startForegroundTask();
+  }
+
+  @override
+  Future<bool> runtimeStarted() async {
+    return await api!.runtimeStarted();
   }
 
   @override

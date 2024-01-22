@@ -10,7 +10,13 @@ class LibraryEngineProvider implements EngineProvider {
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
     logInfo("Starting library internal engine with the following arguments: $options");
-    _stream = api!.runEngine(args: options);
+    try {
+      _stream = api!.runEngine(args: options);
+    } catch (e) {
+      logError("Engine start failed!");
+      stop();
+      return;
+    }
     logInfo("Engine started");
     _stream!.listen((element) {
       try {
@@ -20,6 +26,11 @@ class LibraryEngineProvider implements EngineProvider {
         stop();
       }
     }).onError((e) => logError(e.anyhow));
+  }
+
+  @override
+  Future<bool> runtimeStarted() async {
+    return await api!.runtimeStarted();
   }
 
   @override

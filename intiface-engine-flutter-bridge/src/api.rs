@@ -77,6 +77,10 @@ pub struct _EngineOptionsExternal {
   pub repeater_remote_address: Option<String>,
 }
 
+pub fn runtime_started() -> bool {
+  RUNTIME.lock().unwrap().is_some()
+}
+
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
 
   if RUN_STATUS.load(Ordering::Relaxed) {
@@ -214,21 +218,21 @@ pub fn stop_engine() {
   }
   // Need to park ourselves real quick to let the other runtime threads finish out.
   //
-  // HACK The android JNI drop calls are slow and need quite a while to get everything disconnected.
-  // If they don't run to completion, the runtime won't shutdown properly and everything will stall.
-  // Waiting on this is not the optimal way to do it, but I also don't have a good way to know when
-  // shutdown is finished right now. So waiting it is.
-  #[cfg(target_os = "android")]
-  thread::sleep(Duration::from_millis(1000));
-  #[cfg(not(target_os = "android"))]
-  thread::sleep(Duration::from_millis(1));
+  // HACK The android JNI drop calls (and sometimes windows UWP calls) are slow (100ms+) and need
+  // quite a while to get everything disconnected if there are currently connected devices. If they
+  // don't run to completion, the runtime won't shutdown properly and everything will stall. Running
+  // runtime_shutdown() doesn't work here because these are all tasks that may be stalled at the OS
+  // level so we don't have enough info. Waiting on this is not the optimal way to do it, but I also
+  // don't have a good way to know when shutdown is finished right now. So waiting it is. 1s isn't
+  // super noticable from an UX standpoint.
+  thread::sleep(Duration::from_millis(500));
   let runtime;
   {
     runtime = RUNTIME.lock().unwrap().take();
   }
   if let Some(rt) = runtime {
     info!("Shutting down runtime");
-    rt.shutdown_timeout(Duration::from_secs(5));
+    rt.shutdown_timeout(Duration::from_secs(1));
     info!("Runtime shutdown complete");
   }
   RUN_STATUS.store(false, Ordering::Relaxed);

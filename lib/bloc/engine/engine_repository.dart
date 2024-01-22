@@ -62,6 +62,10 @@ class EngineRepository {
     await _provider.stop();
   }
 
+  Future<bool> runtimeStarted() async {
+    return await _provider.runtimeStarted();
+  }
+
   void send(String msg) {
     _provider.send(msg);
   }

@@ -11,6 +11,10 @@ import 'package:uuid/uuid.dart';
 import 'dart:ffi' as ffi;
 
 abstract class IntifaceEngineFlutterBridge {
+  Future<bool> runtimeStarted({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kRuntimeStartedConstMeta;
+
   Stream<String> runEngine({required EngineOptionsExternal args, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kRunEngineConstMeta;
@@ -180,6 +184,23 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
   factory IntifaceEngineFlutterBridgeImpl.wasm(FutureOr<WasmModule> module) =>
       IntifaceEngineFlutterBridgeImpl(module as ExternalLibrary);
   IntifaceEngineFlutterBridgeImpl.raw(this._platform);
+  Future<bool> runtimeStarted({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_runtime_started(port_),
+      parseSuccessData: _wire2api_bool,
+      parseErrorData: null,
+      constMeta: kRuntimeStartedConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kRuntimeStartedConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "runtime_started",
+        argNames: [],
+      );
+
   Stream<String> runEngine(
       {required EngineOptionsExternal args, dynamic hint}) {
     var arg0 = _platform.api2wire_box_autoadd_engine_options_external(args);
@@ -869,6 +890,20 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'init_frb_dart_api_dl');
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
+
+  void wire_runtime_started(
+    int port_,
+  ) {
+    return _wire_runtime_started(
+      port_,
+    );
+  }
+
+  late final _wire_runtime_startedPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_runtime_started');
+  late final _wire_runtime_started =
+      _wire_runtime_startedPtr.asFunction<void Function(int)>();
 
   void wire_run_engine(
     int port_,

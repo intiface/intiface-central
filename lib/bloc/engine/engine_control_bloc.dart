@@ -88,6 +88,10 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
+      if (await _repo.runtimeStarted()) {
+        logWarning("Runtime already started, ignoring restart request.");
+        return;
+      }
       logInfo("Trying to start engine...");
       await _repo.start(options: event.options);
       _isRunning = true;

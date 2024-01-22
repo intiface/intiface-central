@@ -9,6 +9,7 @@ abstract class EngineProcessMessage {}
 abstract class EngineProvider {
   Future<void> start({required EngineOptionsExternal options});
   Future<void> stop();
+  Future<bool> runtimeStarted();
   void cycleStream();
 
   void onEngineStart();

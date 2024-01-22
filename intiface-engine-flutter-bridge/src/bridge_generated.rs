@@ -22,6 +22,16 @@ use std::sync::Arc;
 
 // Section: wire functions
 
+fn wire_runtime_started_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, bool, _>(
+    WrapInfo {
+      debug_name: "runtime_started",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || move |task_callback| Result::<_, ()>::Ok(runtime_started()),
+  )
+}
 fn wire_run_engine_impl(
   port_: MessagePort,
   args: impl Wire2Api<EngineOptionsExternal> + UnwindSafe,
