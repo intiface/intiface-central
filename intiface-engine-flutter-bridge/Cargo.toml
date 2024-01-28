@@ -10,11 +10,11 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = "2.0.0"
+intiface-engine = "2.0.1"
 # intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
-buttplug = "7.1.12"
+buttplug = "7.1.13"
 flutter_rust_bridge = "1.82.6"
 log = "0.4.20"
 lazy_static = "1.4.0"
@@ -27,8 +27,8 @@ anyhow = "1.0.79"
 btleplug = "0.11.5"
 thiserror = "1.0.56"
 getset = "0.1.2"
-serde = "1.0.195"
-serde_json = "1.0.111"
+serde = "1.0.196"
+serde_json = "1.0.112"
 async-trait = "0.1.77"
 futures = "0.3.30"
 tracing = "0.1.40"
