@@ -13,6 +13,11 @@ class TestEngineProvider implements EngineProvider {
   }
 
   @override
+  Future<bool> runtimeStarted() async {
+    throw "Unimplemented";
+  }
+
+  @override
   void cycleStream() {}
 
   @override
