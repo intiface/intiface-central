@@ -1,8 +1,8 @@
-# v2.5.5 - 2024/01/21 (All Platforms)
+# v2.5.5 - 2024/01/28 (All Platforms)
 
 ## Features
 
-- Update to Buttplug v7.1.11/Intiface Engine v2.0.0
+- Update to Buttplug v7.1.13/Intiface Engine v2.0.1
   - More accurate/complete logging
   - Move crash reporting to layer where we can see errors in rust bridge
   - Massive number of device support updates, see https://github.com/buttplugio/buttplug/blob/buttplug-7.1.12/buttplug/CHANGELOG.md for full list.
