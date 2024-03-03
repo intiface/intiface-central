@@ -75,7 +75,16 @@ jobs:
       - run: flutter build linux --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}" --dart-define="DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
         name: flutter build
       - name: Zip Release
-        run: zip -r intiface-central-linux-${{ matrix.os }}-x64.zip build/linux/x64/release/bundle
+        run: |
+          ROOT=`pwd`
+          ZIP=$PWD/intiface-central-linux-${{ matrix.os }}-x64.zip
+          cd build/linux/x64/release/bundle
+          zip -r $ZIP ./*
+          cd $ROOT
+          cd linux/
+          zip -u $ZIP com.nonpolynomial.intiface_central.desktop
+          zip -u $ZIP com.nonpolynomial.intiface_central.metainfo.xml
+          cd $ROOT
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
