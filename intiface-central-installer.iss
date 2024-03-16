@@ -23,7 +23,11 @@ Compression=lzma2
 SolidCompression=yes
 OutputBaseFilename=intiface-central-installer
 OutputDir=.\installer
-PrivilegesRequiredOverridesAllowed=dialog
+// Force local install
+PrivilegesRequired=lowest
+// Uncomment to allow users to install globally. 
+// PrivilegesRequiredOverridesAllowed=dialog
+// Uncomment to show License during install.
 // LicenseFile=LICENSE
 
 
