@@ -19,6 +19,7 @@ class EngineConfigWidget extends StatelessWidget {
       context.select<EngineControlBloc, EngineControlState?>(
           (bloc) => bloc.state is EngineStartedState || bloc.state is EngineStoppedState ? bloc.state : null),
       context.watch<IntifaceConfigurationCubit>().state,
+      context.watch<GuiSettingsCubit>().state,
     ];
 
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
