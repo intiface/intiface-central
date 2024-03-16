@@ -13,6 +13,10 @@
     for platform (should be automatic for windows/linux).
 - Massive number of device support updates, see https://github.com/buttplugio/buttplug/blob/buttplug-7.1.14/buttplug/CHANGELOG.md for full list.
 
+## Bugfixes
+
+- Fix links in markdown documents on Android (#125)
+
 # v2.5.5 - 2024/01/28 (All Platforms)
 
 ## Features
