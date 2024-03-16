@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/bloc/update/github_update_provider.dart';
 import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -40,17 +42,71 @@ class SettingPage extends StatelessWidget {
       SettingsTile(title: const Text("App Version"), value: Text(cubit.currentAppVersion)),
     ];
     if (isDesktop() && canShowUpdate() && cubit.currentAppVersion != cubit.latestAppVersion) {
-      versionTiles.add(SettingsTile.navigation(
-          onPressed: (context) async {
-            const url = "https://github.com/intiface/intiface-central/releases";
-            if (await canLaunchUrlString(url)) {
-              await launchUrlString(url);
-            }
-          },
-          title: Text(
-            "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click to visit releases site.",
-            style: const TextStyle(color: Colors.green),
-          )));
+      if (Platform.isWindows) {
+        versionTiles.add(SettingsTile.navigation(
+            onPressed: (context) async {
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+                builder: (BuildContext context) {
+                  var updater = IntifaceCentralDesktopUpdater();
+                  // This will fire the task into background execution.
+                  updater.downloadUpdate();
+                  return AlertDialog(
+                    title: const Text('Downloading Update'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 50.0,
+                          ),
+                          Text(
+                              'Downloading update. Intiface Central will close and installer will run after download. Hit cancel to stop download.'),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          updater.stopExit();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            title: Text(
+              "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to update now.",
+              style: const TextStyle(color: Colors.green),
+            )));
+        versionTiles.add(SettingsTile.navigation(
+            onPressed: (context) async {
+              const url = "https://github.com/intiface/intiface-central/releases";
+              if (await canLaunchUrlString(url)) {
+                await launchUrlString(url);
+              }
+            },
+            title: const Text(
+              "If autoupdate doesn't work, or you want to install manually, click here to visit downloads site.",
+              style: const TextStyle(color: Colors.green),
+            )));
+      } else {
+        versionTiles.add(SettingsTile.navigation(
+            onPressed: (context) async {
+              const url = "https://github.com/intiface/intiface-central/releases";
+              if (await canLaunchUrlString(url)) {
+                await launchUrlString(url);
+              }
+            },
+            title: Text(
+              "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to visit releases site.",
+              style: const TextStyle(color: Colors.green),
+            )));
+      }
     }
     versionTiles.addAll([
       SettingsTile(title: const Text("Device Config Version"), value: Text(cubit.currentDeviceConfigVersion)),

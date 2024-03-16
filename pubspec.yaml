@@ -26,6 +26,7 @@ dependencies:
   flutter_loggy: ^2.0.2
   flutter_markdown: ^0.6.18
   flutter_rust_bridge: ^1.82.5
+  flutter_spinkit: ^5.2.0
   github: ^9.20.0
   intl: ^0.18.1
   json_annotation: ^4.8.1
