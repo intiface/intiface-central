@@ -78,7 +78,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     // Logging setup needs to happen after we've done initial setup.
     initLogging(multiPrinter);
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    logInfo("Intiface Central ${packageInfo.version}+${packageInfo.buildNumber} Starting...");
+    String packageVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
+    logInfo("Intiface Central $packageVersion Starting...");
     logInfo("Running main builder");
 
     logInfo("Initializing paths...");
@@ -114,13 +115,15 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
-      const String windowTitle = kDebugMode ? "Intiface® Central DEBUG" : "Intiface® Central";
+      String windowTitle = kDebugMode ? "Intiface® Central $packageVersion DEBUG" : "Intiface® Central $packageVersion";
 
       WindowOptions windowOptions = const WindowOptions(
-        //center: true,
-        title: windowTitle,
-        //backgroundColor: Colors.transparent,
-      );
+          //center: true,
+          //title: windowTitle,
+          //backgroundColor: Colors.transparent,
+          );
+
+      windowManager.setTitle(windowTitle);
 
       windowManager.addListener(this);
 
