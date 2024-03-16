@@ -38,7 +38,9 @@ class SettingPage extends StatelessWidget {
       SettingsTile(
           title: TextButton(
               onPressed: !engineIsRunning ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()) : null,
-              child: const Text("Check For Updates"))),
+              child: isDesktop()
+                  ? const Text("Check For App and Config Updates")
+                  : const Text("Check for Config Updates"))),
       SettingsTile(title: const Text("App Version"), value: Text(cubit.currentAppVersion)),
     ];
     if (isDesktop() && canShowUpdate() && cubit.currentAppVersion != cubit.latestAppVersion) {
