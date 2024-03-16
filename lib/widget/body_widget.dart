@@ -37,16 +37,6 @@ class BodyWidget extends StatelessWidget {
     var assets = BlocProvider.of<AssetCubit>(context);
 
     var destinations = [
-      // Control page navigation removed until repeater mode is like, actually tested at all.
-      NavigationDestination(
-          (state) => state is NavigationStateAppControl,
-          (NavigationCubit cubit) => cubit.goAppControl(),
-          const Icon(Icons.play_circle_outlined),
-          const Icon(Icons.play_circle),
-          'Controls',
-          () => const AppControlPage(),
-          true,
-          true),
       NavigationDestination(
           (state) => state is NavigationStateNews,
           (NavigationCubit cubit) => cubit.goNews(),
@@ -56,6 +46,15 @@ class BodyWidget extends StatelessWidget {
           () => BlocBuilder<UpdateBloc, UpdateState>(
               buildWhen: (previous, current) => current is NewsUpdateRetrieved,
               builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
+          true,
+          true),
+      NavigationDestination(
+          (state) => state is NavigationStateAppControl,
+          (NavigationCubit cubit) => cubit.goAppControl(),
+          const Icon(Icons.play_circle_outlined),
+          const Icon(Icons.play_circle),
+          'App Modes',
+          () => const AppControlPage(),
           true,
           true),
       NavigationDestination(
