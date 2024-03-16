@@ -13,7 +13,7 @@ abstract class HttpUpdateProvider implements UpdateProvider {
 
   HttpUpdateProvider(this._localFile, this._updateUrl, this._expectedVersion);
 
-  Future<String?> interalUpdate() async {
+  Future<String?> internalUpdate() async {
     // Insert our currently expected verison as the etag header
     logDebug("Running HTTP Update for $_updateUrl with expected version $_expectedVersion");
     HttpClient client = HttpClient();
@@ -43,7 +43,7 @@ class NewsUpdateProvider extends HttpUpdateProvider {
 
   @override
   Future<UpdateState?> update() async {
-    var etag = await interalUpdate();
+    var etag = await internalUpdate();
     if (etag != null) {
       return NewsUpdateRetrieved(etag);
     }
@@ -57,7 +57,7 @@ class DeviceConfigUpdateProvider extends HttpUpdateProvider {
 
   @override
   Future<UpdateState?> update() async {
-    var etag = await interalUpdate();
+    var etag = await internalUpdate();
     if (etag != null) {
       return DeviceConfigUpdateRetrieved(etag);
     }
