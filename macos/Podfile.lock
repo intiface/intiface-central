@@ -13,13 +13,13 @@ PODS:
     - FlutterMacOS
   - screen_retriever (0.0.1):
     - FlutterMacOS
-  - Sentry/HybridSDK (8.11.0):
-    - SentryPrivate (= 8.11.0)
+  - Sentry/HybridSDK (8.21.0):
+    - SentryPrivate (= 8.21.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.11.0)
-  - SentryPrivate (8.11.0)
+    - Sentry/HybridSDK (= 8.21.0)
+  - SentryPrivate (8.21.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -78,13 +78,13 @@ SPEC CHECKSUMS:
   package_info_plus: 02d7a575e80f194102bef286361c6c326e4c29ce
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   screen_retriever: 59634572a57080243dd1bf715e55b6c54f241a38
-  Sentry: 39d57e691e311bdb73bc1ab5bbebbd6bc890050d
-  sentry_flutter: b2feefdad5b0f06602347172bc7257e8e9da5562
-  SentryPrivate: 48712023cdfd523735c2edb6b06bedf26c4730a3
+  Sentry: ebc12276bd17613a114ab359074096b6b3725203
+  sentry_flutter: dff1df05dc39c83d04f9330b36360fc374574c5e
+  SentryPrivate: d651efb234cf385ec9a1cdd3eff94b5e78a0e0fe
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95
   window_manager: 3a1844359a6295ab1e47659b1a777e36773cd6e8
 
 PODFILE CHECKSUM: 353c8bcc5d5b0994e508d035b5431cfe18c1dea7
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.0
