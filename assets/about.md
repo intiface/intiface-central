@@ -12,7 +12,7 @@ Looking for apps and games to use with Intiface® Central? Check out the [Awesom
 
 # About Intiface® Central
 
-Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2023
+Copyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2024
 
 The Intiface® word mark is a registered trademark of Nonpolynomial Labs, LLC
 
@@ -30,3 +30,8 @@ Want to help fund our work? Here's where you can donate to the project (and get 
 - [Patreon](https://patreon.com/qdot)
 - [Github Sponsors](https://github.com/sponsors/qdot)
 - [Ko-Fi](https://ko-fi.com/qdot76367)
+
+Thanks to our Patrons who've donated at the $5 or higher level!
+
+- Mario
+- JimMcBubbles
