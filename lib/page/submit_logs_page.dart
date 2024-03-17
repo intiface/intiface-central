@@ -8,6 +8,7 @@ class SendLogsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var contactController = TextEditingController();
     var textController = TextEditingController();
     return Expanded(
         child: Card(
@@ -19,21 +20,38 @@ class SendLogsPage extends StatelessWidget {
               "Send Logs to Developers",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
             ),
+            const SizedBox(height: 8),
+            const Text(
+              "Please add your contact info (via email, discord, telegram, x/twitter, bluesky, masto, etc... SUBMISSIONS WITHOUT CONTACT INFO WILL BE IGNORED.) and any information you'd like the devs to know about your issue. Intiface Central logs and config files will be attached automatically.",
+              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(3)),
+              child: TextField(
+                controller: contactController,
+                minLines: 1,
+                maxLines: 1,
+                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                decoration: const InputDecoration(
+                    border: InputBorder.none, enabledBorder: InputBorder.none, hintText: "Put contact info here"),
+              ),
+            ),
+            const SizedBox(height: 5),
             Expanded(
                 child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 3), borderRadius: BorderRadius.circular(5)),
+                  border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(3)),
               child: TextField(
                 controller: textController,
                 minLines: 2,
                 maxLines: null,
+                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
                 decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    hintMaxLines: 3,
-                    hintText:
-                        "Please add your contact info (via email, discord, telegram, x/twitter, bluesky, masto, etc...) and any information you'd like the devs to know about your issue. Intiface Central logs and config files will be attached automatically."),
+                    border: InputBorder.none, enabledBorder: InputBorder.none, hintText: "Put issue report here"),
               ),
             )),
             SizedBox(
@@ -51,7 +69,11 @@ class SendLogsPage extends StatelessWidget {
                           // We're going to assume the stateful builder runs before we get a return from our capture.
                           // Bold, possibly stupid move.
                           late StateSetter _setState;
-                          Sentry.captureMessage(textController.value.text, withScope: (scope) {
+                          Sentry.captureMessage("""Contact Info: ${contactController.value.text}
+
+Message:
+
+${textController.value.text}""", withScope: (scope) {
                             scope.setTag("ManualLogSubmit", true.toString());
                           }).then((value) {
                             _setState(() {
