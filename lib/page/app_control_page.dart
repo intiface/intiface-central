@@ -13,6 +13,10 @@ class AppControlPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+    var modes = [AppMode.engine];
+    if (configCubit.showRepeaterMode) {
+      modes.add(AppMode.repeater);
+    }
     return BlocBuilder<EngineControlBloc, EngineControlState>(
         buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
         builder: (context, engineState) => BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
@@ -46,8 +50,7 @@ class AppControlPage extends StatelessWidget {
                                           logDebug("Set appMode to ${configCubit.appMode.name}");
                                         }
                                       : null,
-                                  items:
-                                      AppMode.values.map((e) => e.name).map<DropdownMenuItem<String>>((String value) {
+                                  items: modes.map((e) => e.name).map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text("App Mode: ${toBeginningOfSentenceCase(value)!}"),

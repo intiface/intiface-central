@@ -168,6 +168,11 @@ class RestoreWindowLocation extends IntifaceConfigurationState {
   RestoreWindowLocation(this.value);
 }
 
+class ShowRepeaterModeState extends IntifaceConfigurationState {
+  final bool value;
+  ShowRepeaterModeState(this.value);
+}
+
 class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -242,6 +247,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
     displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
+    showRepeaterMode = _prefs.getBool("showRepeaterMode") ?? false;
     repeaterLocalPort = _prefs.getInt("repeaterLocalPort") ?? 12345;
     repeaterRemoteAddress = _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
     // Default for appMode built into getter, since it also requires a type conversion.
@@ -473,6 +479,15 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set appMode(AppMode value) {
     _prefs.setString("appMode", value.name);
     emit(AppModeState(value));
+  }
+
+  bool get showRepeaterMode => _prefs.getBool("showRepeaterMode")!;
+  set showRepeaterMode(bool value) {
+    _prefs.setBool("showRepeaterMode", value);
+    if (!value) {
+      appMode = AppMode.engine;
+    }
+    emit(ShowRepeaterModeState(value));
   }
 
   bool get canUseCrashReporting => const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
