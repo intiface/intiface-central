@@ -42,3 +42,5 @@ Thanks to our Patrons who've donated at the $5 or higher level!
 - fek
 - Rathtolar
 - Falafel
+- Joso Shark
+- ika643
