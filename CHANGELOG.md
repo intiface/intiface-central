@@ -2,15 +2,12 @@
 
 ## Features
 
-- Repeater Mode
+- Repeater Mode (Experimental, Opt-In via Settings)
   - Acts as a simple websocket proxy, allowing bouncing to Buttplug Client/Server connections to
     Mobile/Desktop
 - WINDOWS ONLY - Autoupdate Mechanism
   - When update is available, Intiface Central can download and run installer instead of the user
     having to go through the browser.
-- DESKTOP ONLY - Prerelease Channel Tracking
-  - Allows switching to a Prerelease channel for in-development updates, if updates are available
-    for platform (should be automatic for windows/linux).
 - Massive number of device support updates, see https://github.com/buttplugio/buttplug/blob/buttplug-7.1.14/buttplug/CHANGELOG.md for full list.
 
 ## Bugfixes
