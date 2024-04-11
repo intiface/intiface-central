@@ -1,4 +1,5 @@
-use flutter_rust_bridge::StreamSink;
+use crate::frb_generated::StreamSink;
+
 use tracing::Level;
 use std::{sync::{Arc, atomic::AtomicBool}, thread::JoinHandle, time::Duration};
 use crossbeam_channel::{bounded, Sender};

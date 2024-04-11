@@ -23,7 +23,8 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
-import 'package:intiface_central/ffi.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
+import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/widget/body_widget.dart';
@@ -269,6 +270,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       updateBloc.add(RunUpdate());
     }
 
+    logInfo("Bringing up engine and device control blocs");
+
     var engineControlBloc = EngineControlBloc(engineRepo);
 
     var deviceControlBloc = DeviceManagerBloc(engineControlBloc.stream, engineControlBloc.add);
@@ -280,8 +283,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     /// about bootup as possible before we possibly crash on a native error.
 
     // Bring up the FFI now that we have logging available and crash logging set up.
-    initializeApi();
-
+    logInfo("Bringing up native rust library");
+    await RustLib.init();
+    logInfo("Native rust library loaded");
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
     var apiLog = NativeApiLog();
@@ -302,7 +306,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     });
 
     if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
-      await api!.crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
+      await crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
     }
 
     engineControlBloc.stream.listen((state) async {

@@ -6,7 +6,10 @@ import 'package:url_launcher/url_launcher_string.dart';
 class MarkdownWidget extends StatelessWidget {
   final String _markdownContent;
 
-  const MarkdownWidget({super.key, required String markdownContent, required bool backToSettings})
+  const MarkdownWidget(
+      {super.key,
+      required String markdownContent,
+      required bool backToSettings})
       : _markdownContent = markdownContent;
 
   @override
@@ -24,7 +27,10 @@ class MarkdownWidget extends StatelessWidget {
             },
             extensionSet: md.ExtensionSet(
               md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-              [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+              [
+                md.EmojiSyntax(),
+                ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes
+              ],
             ))));
     return Expanded(child: Column(children: widgets));
   }

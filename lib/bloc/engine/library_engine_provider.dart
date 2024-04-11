@@ -1,5 +1,5 @@
 import 'dart:async';
-import "../../ffi.dart";
+import 'package:intiface_central/src/rust/api/simple.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
 
@@ -11,7 +11,7 @@ class LibraryEngineProvider implements EngineProvider {
   Future<void> start({required EngineOptionsExternal options}) async {
     logInfo("Starting library internal engine with the following arguments: $options");
     try {
-      _stream = api!.runEngine(args: options);
+      _stream = runEngine(args: options);
     } catch (e) {
       logError("Engine start failed!");
       stop();
@@ -29,8 +29,8 @@ class LibraryEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<bool> runtimeStarted() async {
-    return await api!.runtimeStarted();
+  Future<bool> rustRuntimeStarted() async {
+    return await runtimeStarted();
   }
 
   @override
@@ -41,19 +41,19 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    api!.stopEngine();
+    stopEngine();
     logInfo("Engine stopped");
   }
 
   @override
-  void send(String msg) {
-    api!.send(msgJson: msg);
+  void sendToRust(String msg) {
+    send(msgJson: msg);
   }
 
   @override
   void sendBackdoorMessage(String msg) {
     //logInfo("Outgoing: $msg");
-    api!.sendBackendServerMessage(msg: msg);
+    sendBackendServerMessage(msg: msg);
   }
 
   @override

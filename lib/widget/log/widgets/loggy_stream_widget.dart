@@ -31,7 +31,9 @@ class LoggyStreamWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final IntifaceStreamPrinter? printer =
-        Loggy.currentPrinter is IntifaceStreamPrinter ? Loggy.currentPrinter as IntifaceStreamPrinter? : null;
+        Loggy.currentPrinter is IntifaceStreamPrinter
+            ? Loggy.currentPrinter as IntifaceStreamPrinter?
+            : null;
 
     if (printer == null) {
       throw WrongPrinterException();
@@ -42,7 +44,8 @@ class LoggyStreamWidget extends StatelessWidget {
         Expanded(
           child: StreamBuilder<List<LogRecord>>(
             stream: printer.logRecord,
-            builder: (BuildContext context, AsyncSnapshot<List<LogRecord>> records) {
+            builder:
+                (BuildContext context, AsyncSnapshot<List<LogRecord>> records) {
               if (!records.hasData) {
                 return Container();
               }
@@ -50,7 +53,8 @@ class LoggyStreamWidget extends StatelessWidget {
               return ListView(
                 reverse: true,
                 children: records.data!
-                    .where((LogRecord record) => record.level.priority >= logLevel!.priority)
+                    .where((LogRecord record) =>
+                        record.level.priority >= logLevel!.priority)
                     .map((LogRecord record) => _LoggyItemWidget(record))
                     .toList(),
               );
@@ -95,7 +99,9 @@ class _LoggyItemWidget extends StatelessWidget {
                   child: FittedBox(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        (record.object! as RecordMetadata).elapsed.toStringAsFixed(3),
+                        (record.object! as RecordMetadata)
+                            .elapsed
+                            .toStringAsFixed(3),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: logColor,
                               fontWeight: FontWeight.w700,

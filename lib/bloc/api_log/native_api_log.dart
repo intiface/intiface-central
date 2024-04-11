@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
-import 'package:intiface_central/ffi.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 import 'package:loggy/loggy.dart';
 
 class NativeApiLog {
@@ -15,7 +15,7 @@ class NativeApiLog {
   }
 
   NativeApiLog._internal() {
-    _logStream = api!.setupLogging();
+    _logStream = setupLogging();
     _logStream.listen((element) {
       try {
         var logMsg = EngineLogMessage.fromJson(jsonDecode(element));

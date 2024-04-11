@@ -19,7 +19,10 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Unused dynamic array for storing repaint trigger logic.
-    final _ = [context.watch<EngineControlBloc>().state, context.watch<IntifaceConfigurationCubit>().state];
+    final _ = [
+      context.watch<EngineControlBloc>().state,
+      context.watch<IntifaceConfigurationCubit>().state
+    ];
     var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
     List<AbstractSettingsSection> tiles = [];
@@ -37,13 +40,19 @@ class SettingPage extends StatelessWidget {
     List<AbstractSettingsTile> versionTiles = [
       SettingsTile(
           title: TextButton(
-              onPressed: !engineIsRunning ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate()) : null,
+              onPressed: !engineIsRunning
+                  ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
+                  : null,
               child: isDesktop()
                   ? const Text("Check For App and Config Updates")
                   : const Text("Check for Config Updates"))),
-      SettingsTile(title: const Text("App Version"), value: Text(cubit.currentAppVersion)),
+      SettingsTile(
+          title: const Text("App Version"),
+          value: Text(cubit.currentAppVersion)),
     ];
-    if (isDesktop() && canShowUpdate() && cubit.currentAppVersion != cubit.latestAppVersion) {
+    if (isDesktop() &&
+        canShowUpdate() &&
+        cubit.currentAppVersion != cubit.latestAppVersion) {
       if (Platform.isWindows) {
         versionTiles.add(SettingsTile.navigation(
             onPressed: (context) async {
@@ -87,7 +96,8 @@ class SettingPage extends StatelessWidget {
             )));
         versionTiles.add(SettingsTile.navigation(
             onPressed: (context) async {
-              const url = "https://github.com/intiface/intiface-central/releases";
+              const url =
+                  "https://github.com/intiface/intiface-central/releases";
               if (await canLaunchUrlString(url)) {
                 await launchUrlString(url);
               }
@@ -99,7 +109,8 @@ class SettingPage extends StatelessWidget {
       } else {
         versionTiles.add(SettingsTile.navigation(
             onPressed: (context) async {
-              const url = "https://github.com/intiface/intiface-central/releases";
+              const url =
+                  "https://github.com/intiface/intiface-central/releases";
               if (await canLaunchUrlString(url)) {
                 await launchUrlString(url);
               }
@@ -111,7 +122,9 @@ class SettingPage extends StatelessWidget {
       }
     }
     versionTiles.addAll([
-      SettingsTile(title: const Text("Device Config Version"), value: Text(cubit.currentDeviceConfigVersion)),
+      SettingsTile(
+          title: const Text("Device Config Version"),
+          value: Text(cubit.currentDeviceConfigVersion)),
     ]);
 
     var appSettingsTiles = [
@@ -126,19 +139,24 @@ class SettingPage extends StatelessWidget {
       SettingsTile.switchTile(
           initialValue: cubit.checkForUpdateOnStart,
           onToggle: (value) => cubit.checkForUpdateOnStart = value,
-          title: const Text("Check For Updates when Intiface Central Launches")),
+          title:
+              const Text("Check For Updates when Intiface Central Launches")),
       SettingsTile.switchTile(
           initialValue: cubit.showRepeaterMode,
           onToggle: (value) => cubit.showRepeaterMode = value,
           title: const Text("Show Repeater Mode (EXPERIMENTAL)")),
       SettingsTile.switchTile(
           initialValue: cubit.crashReporting,
-          onToggle: cubit.canUseCrashReporting ? ((value) => cubit.crashReporting = value) : null,
+          onToggle: cubit.canUseCrashReporting
+              ? ((value) => cubit.crashReporting = value)
+              : null,
           title: const Text("Crash Reporting")),
       SettingsTile.navigation(
           title: const Text("Send Logs to Developers"),
-          onPressed:
-              cubit.canUseCrashReporting ? ((context) => BlocProvider.of<NavigationCubit>(context).goSendLogs()) : null)
+          onPressed: cubit.canUseCrashReporting
+              ? ((context) =>
+                  BlocProvider.of<NavigationCubit>(context).goSendLogs())
+              : null)
     ];
 
     if (isDesktop()) {
@@ -151,8 +169,10 @@ class SettingPage extends StatelessWidget {
     }
 
     tiles.addAll([
-      SettingsSection(title: const Text("Versions and Updates"), tiles: versionTiles),
-      SettingsSection(title: const Text("App Settings"), tiles: appSettingsTiles)
+      SettingsSection(
+          title: const Text("Versions and Updates"), tiles: versionTiles),
+      SettingsSection(
+          title: const Text("App Settings"), tiles: appSettingsTiles)
     ]);
 
     tiles.add(SettingsSection(title: const Text("Reset Application"), tiles: [
@@ -178,16 +198,20 @@ class SettingPage extends StatelessWidget {
                         TextButton(
                           child: const Text('Ok'),
                           onPressed: () async {
-                            logWarning("Running user device configuration reset");
+                            logWarning(
+                                "Running user device configuration reset");
                             // This is gross and a bug, but until we can check context mounting across asyncs in Flutter
                             // 3.4+, we're stuck.
                             var navigator = Navigator.of(context);
-                            var resetCubit = BlocProvider.of<AppResetCubit>(context);
+                            var resetCubit =
+                                BlocProvider.of<AppResetCubit>(context);
                             // Delete all file assets
-                            if (await IntifacePaths.userDeviceConfigFile.exists()) {
+                            if (await IntifacePaths.userDeviceConfigFile
+                                .exists()) {
                               await IntifacePaths.userDeviceConfigFile.delete();
                             }
-                            logWarning("User device configuration reset finished");
+                            logWarning(
+                                "User device configuration reset finished");
                             navigator.pop();
                             resetCubit.reset();
                           },
@@ -232,7 +256,8 @@ class SettingPage extends StatelessWidget {
                             // This is gross and a bug, but until we can check context mounting across asyncs in Flutter
                             // 3.4+, we're stuck.
                             var navigator = Navigator.of(context);
-                            var resetCubit = BlocProvider.of<AppResetCubit>(context);
+                            var resetCubit =
+                                BlocProvider.of<AppResetCubit>(context);
                             // Delete all file assets
                             if (await IntifacePaths.deviceConfigFile.exists()) {
                               await IntifacePaths.deviceConfigFile.delete();
@@ -240,7 +265,8 @@ class SettingPage extends StatelessWidget {
                             if (await IntifacePaths.newsFile.exists()) {
                               await IntifacePaths.newsFile.delete();
                             }
-                            if (await IntifacePaths.userDeviceConfigFile.exists()) {
+                            if (await IntifacePaths.userDeviceConfigFile
+                                .exists()) {
                               await IntifacePaths.userDeviceConfigFile.delete();
                             }
                             // Reset our configuration
@@ -301,7 +327,9 @@ class SettingPage extends StatelessWidget {
             },
             title: const Text("Use Foreground Process"))
       ];
-      tiles.add(SettingsSection(title: const Text("Advanced Mobile Settings"), tiles: mobileSettings));
+      tiles.add(SettingsSection(
+          title: const Text("Advanced Mobile Settings"),
+          tiles: mobileSettings));
     }
 
     List<Widget> widgets = [
@@ -313,7 +341,8 @@ class SettingPage extends StatelessWidget {
     ];
 
     if (engineIsRunning) {
-      widgets.add(const Text("Some settings may be unavailable while server is running.",
+      widgets.add(const Text(
+          "Some settings may be unavailable while server is running.",
           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
     }
 

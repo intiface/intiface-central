@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
@@ -63,11 +63,11 @@ class EngineRepository {
   }
 
   Future<bool> runtimeStarted() async {
-    return await _provider.runtimeStarted();
+    return await _provider.rustRuntimeStarted();
   }
 
-  void send(String msg) {
-    _provider.send(msg);
+  void sendToRust(String msg) {
+    _provider.sendToRust(msg);
   }
 
   void sendBackdoorMessage(String msg) {

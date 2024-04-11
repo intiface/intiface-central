@@ -8,24 +8,25 @@ pub use buttplug::{
   server::device::configuration::WebsocketSpecifier,
   util::device_configuration::UserConfigDeviceIdentifier,
 };
-use buttplug::{
-  server::device::{protocol::get_default_protocol_map, ServerDeviceIdentifier},
-  util::device_configuration::{
+pub use buttplug::{
+  core::message::DeviceFeature, server::device::{configuration::{ProtocolAttributesIdentifier, ProtocolDeviceFeatures}, protocol::get_default_protocol_map, ServerDeviceIdentifier}, util::device_configuration::{
     load_protocol_configs, load_user_configs, ProtocolConfiguration, ProtocolDefinition,
     UserConfigDefinition, UserDeviceConfig, UserDeviceConfigPair,
-  },
+  }
 };
-use flutter_rust_bridge::{frb, StreamSink};
+pub use buttplug::core::message::{ButtplugDeviceMessageType, DeviceFeatureActuator, DeviceFeatureSensor, FeatureType};
+
+use crate::frb_generated::StreamSink;
+use flutter_rust_bridge::frb;
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
-use std::{
-  collections::HashMap,
-  sync::{
+pub use std::{
+  collections::{HashMap, HashSet}, ops::RangeInclusive, sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
-  }, time::Duration, thread,
+  }, thread, time::Duration
 };
 use tokio::{
   select,
@@ -45,36 +46,6 @@ lazy_static! {
     Arc::new(broadcast::channel(255).0);
   static ref BACKDOOR_INCOMING_BROADCASTER: Arc<broadcast::Sender<String>> =
     Arc::new(broadcast::channel(255).0);
-}
-
-#[frb(mirror(EngineOptionsExternal))]
-pub struct _EngineOptionsExternal {
-  pub device_config_json: Option<String>,
-  pub user_device_config_json: Option<String>,
-  pub server_name: String,
-  pub websocket_use_all_interfaces: bool,
-  pub websocket_port: Option<u16>,
-  pub frontend_websocket_port: Option<u16>,
-  pub frontend_in_process_channel: bool,
-  pub max_ping_time: u32,
-  pub allow_raw_messages: bool,
-  pub use_bluetooth_le: bool,
-  pub use_serial_port: bool,
-  pub use_hid: bool,
-  pub use_lovense_dongle_serial: bool,
-  pub use_lovense_dongle_hid: bool,
-  pub use_xinput: bool,
-  pub use_lovense_connect: bool,
-  pub use_device_websocket_server: bool,
-  pub device_websocket_server_port: Option<u16>,
-  pub crash_main_thread: bool,
-  pub crash_task_thread: bool,
-  pub websocket_client_address: Option<String>,
-  pub broadcast_server_mdns: bool,
-  pub mdns_suffix: Option<String>,
-  pub repeater_mode: bool,
-  pub repeater_local_port: Option<u16>,
-  pub repeater_remote_address: Option<String>,
 }
 
 pub fn runtime_started() -> bool {
@@ -193,7 +164,6 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
         }
       );
       RUN_STATUS.store(false, Ordering::Relaxed);
-      sink_clone.close();
       info!("Exiting main join.");
     }
     .instrument(info_span!("IC main engine task")),
@@ -428,4 +398,105 @@ pub fn crash_reporting(sentry_api_key: String) {
     },
   )));
   info!("Native crash reporting initialized");
+}
+
+pub fn get_user_configs() -> HashMap<ProtocolAttributesIdentifier, ProtocolDeviceFeatures> {
+  HashMap::new()
+}
+
+/*
+#[frb(mirror(ProtocolAttributesIdentifier))]
+pub struct _ProtocolAttributesIdentifier {
+  pub protocol: String,
+  pub attributes_identifier: Option<String>,
+  pub address: Option<String>,
+}
+
+#[frb(mirror(ProtocolDeviceFeatures))]
+pub struct _ProtocolDeviceFeatures {
+  /// Given name of the device this instance represents.
+  name: Option<String>,
+  /// User configured name of the device this instance represents, assuming one exists.
+  display_name: Option<String>,
+  /// Message attributes for this device instance.
+  features: Vec<DeviceFeature>,
+}
+
+#[frb(mirror(FeatureType))]
+pub enum _FeatureType {
+  Unknown,
+  Vibrate,
+  // Single Direction Rotation Speed
+  Rotate,
+  Oscillate,
+  Constrict,
+  Inflate,
+  // For instances where we specify a position to move to ASAP. Usually servos, probably for the
+  // OSR-2/SR-6.
+  Position,
+  // Sensor Types
+  Battery,
+  RSSI,
+  Button,
+  Pressure,
+  // Currently unused but possible sensor features:
+  // Temperature,
+  // Accelerometer,
+  // Gyro,
+  //
+  // Raw Feature, for when raw messages are on
+  Raw,
+}
+
+#[frb(mirror(DeviceFeature))]
+pub struct _DeviceFeature {
+  pub description: String,
+  pub feature_type: FeatureType,
+  pub actuator: Option<DeviceFeatureActuator>,
+  pub sensor: Option<DeviceFeatureSensor>,
+}
+
+#[frb(mirror(DeviceFeatureActuator))]
+pub struct _DeviceFeatureActuator {
+  step_range: RangeInclusive<u32>,
+  step_limit: Option<RangeInclusive<u32>>,
+  messages: HashSet<ButtplugDeviceMessageType>
+}
+
+#[frb(mirror(DeviceFeatureSensor))]
+pub struct _DeviceFeatureSensor {
+  value_range: Vec<RangeInclusive<i32>>,
+  messages: HashSet<ButtplugDeviceMessageType>
+}
+
+*/
+
+#[frb(mirror(EngineOptionsExternal))]
+pub struct _EngineOptionsExternal {
+  pub device_config_json: Option<String>,
+  pub user_device_config_json: Option<String>,
+  pub server_name: String,
+  pub websocket_use_all_interfaces: bool,
+  pub websocket_port: Option<u16>,
+  pub frontend_websocket_port: Option<u16>,
+  pub frontend_in_process_channel: bool,
+  pub max_ping_time: u32,
+  pub allow_raw_messages: bool,
+  pub use_bluetooth_le: bool,
+  pub use_serial_port: bool,
+  pub use_hid: bool,
+  pub use_lovense_dongle_serial: bool,
+  pub use_lovense_dongle_hid: bool,
+  pub use_xinput: bool,
+  pub use_lovense_connect: bool,
+  pub use_device_websocket_server: bool,
+  pub device_websocket_server_port: Option<u16>,
+  pub crash_main_thread: bool,
+  pub crash_task_thread: bool,
+  pub websocket_client_address: Option<String>,
+  pub broadcast_server_mdns: bool,
+  pub mdns_suffix: Option<String>,
+  pub repeater_mode: bool,
+  pub repeater_local_port: Option<u16>,
+  pub repeater_remote_address: Option<String>,
 }

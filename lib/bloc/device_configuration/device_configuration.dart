@@ -10,7 +10,8 @@ class DeviceConfigFileVersion {
   int major = 0;
   int minor = 0;
   Map<String, dynamic> toJson() => _$DeviceConfigFileVersionToJson(this);
-  factory DeviceConfigFileVersion.fromJson(Map<String, dynamic> json) => _$DeviceConfigFileVersionFromJson(json);
+  factory DeviceConfigFileVersion.fromJson(Map<String, dynamic> json) =>
+      _$DeviceConfigFileVersionFromJson(json);
   DeviceConfigFileVersion();
   @override
   String toString() {
@@ -23,7 +24,8 @@ class DeviceConfigFile {
   @JsonKey(name: "version")
   DeviceConfigFileVersion? version;
   Map<String, dynamic> toJson() => _$DeviceConfigFileToJson(this);
-  factory DeviceConfigFile.fromJson(Map<String, dynamic> json) => _$DeviceConfigFileFromJson(json);
+  factory DeviceConfigFile.fromJson(Map<String, dynamic> json) =>
+      _$DeviceConfigFileFromJson(json);
   DeviceConfigFile();
 }
 
@@ -36,11 +38,13 @@ class DeviceConfiguration {
     }
     var configFileJson = await configFile.readAsString();
     try {
-      DeviceConfigFile config = DeviceConfigFile.fromJson(jsonDecode(configFileJson));
+      DeviceConfigFile config =
+          DeviceConfigFile.fromJson(jsonDecode(configFileJson));
       logInfo("Device configuration file version: ${config.version}");
       return config.version.toString();
     } catch (e) {
-      logError("Error loading config file! Deleting config file and letting system pull from repo.");
+      logError(
+          "Error loading config file! Deleting config file and letting system pull from repo.");
       return "0.0";
     }
   }

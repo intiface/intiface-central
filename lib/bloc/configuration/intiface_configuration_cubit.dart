@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';

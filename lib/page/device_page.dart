@@ -12,7 +12,11 @@ class ProtocolDropdownButton extends StatefulWidget {
   final List<String> protocols;
   final ValueNotifier<String> protocol;
   final bool enabled;
-  ProtocolDropdownButton({super.key, required this.protocols, required this.protocol, this.enabled = true}) {
+  ProtocolDropdownButton(
+      {super.key,
+      required this.protocols,
+      required this.protocol,
+      this.enabled = true}) {
     protocols.sort();
   }
 
@@ -70,96 +74,128 @@ class DevicePage extends StatelessWidget {
         builder: (context, engineState) {
           var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
           var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
-          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-          return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
-            return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+          var configCubit =
+              BlocProvider.of<IntifaceConfigurationCubit>(context);
+          return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
+              builder: (context, state) {
+            return BlocBuilder<UserDeviceConfigurationCubit,
+                    UserDeviceConfigurationState>(
                 builder: (context, userConfigState) {
               List<Widget> deviceWidgets = [];
               List<int> connectedIndexes = [];
-              var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+              var userDeviceConfigCubit =
+                  BlocProvider.of<UserDeviceConfigurationCubit>(context);
 
               if (engineState is! EngineStoppedState) {
-                deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
+                deviceWidgets
+                    .add(const ListTile(title: Text("Connected Devices")));
                 for (var deviceCubit in deviceBloc.devices) {
                   var device = deviceCubit.device!;
                   connectedIndexes.add(device.index);
                   var deviceConfig = userDeviceConfigCubit.configs.firstWhere(
                       (element) => element.reservedIndex == device.index,
-                      orElse: () => ExposedWritableUserDeviceConfig.createDefault(device.index));
+                      orElse: () =>
+                          ExposedWritableUserDeviceConfig.createDefault(
+                              device.index));
                   var expansionName = "device-settings-${device.index}";
                   deviceWidgets.add(Card(
-                      child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
-                    ListTile(
-                      title: Text(device.displayName ?? device.name),
-                      subtitle:
-                          Text("Index: ${device.index} - Base Name: ${device.name}\n${deviceConfig.identifierString}"),
-                    ),
-                    DeviceControlWidget(deviceCubit: deviceCubit),
-                    BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                        buildWhen: (previous, current) =>
-                            current is GuiSettingStateUpdate && current.valueName == expansionName,
-                        builder: (context, state) {
-                          return ExpansionPanelList(
-                            children: [
-                              ExpansionPanel(
-                                  headerBuilder: (BuildContext context, bool isExpanded) {
-                                    return const ListTile(
-                                      title: Text("Settings"),
-                                    );
-                                  },
-                                  body: ListView(
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      children: [
-                                        DeviceConfigWidget(identifier: deviceConfig.identifier),
-                                      ]),
-                                  isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false)
-                            ],
-                            expansionCallback: (panelIndex, isExpanded) =>
-                                guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
-                          );
-                        })
-                  ])));
+                      child: ListView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: [
+                        ListTile(
+                          title: Text(device.displayName ?? device.name),
+                          subtitle: Text(
+                              "Index: ${device.index} - Base Name: ${device.name}\n${deviceConfig.identifierString}"),
+                        ),
+                        DeviceControlWidget(deviceCubit: deviceCubit),
+                        BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                            buildWhen: (previous, current) =>
+                                current is GuiSettingStateUpdate &&
+                                current.valueName == expansionName,
+                            builder: (context, state) {
+                              return ExpansionPanelList(
+                                children: [
+                                  ExpansionPanel(
+                                      headerBuilder: (BuildContext context,
+                                          bool isExpanded) {
+                                        return const ListTile(
+                                          title: Text("Settings"),
+                                        );
+                                      },
+                                      body: ListView(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          children: [
+                                            DeviceConfigWidget(
+                                                identifier:
+                                                    deviceConfig.identifier),
+                                          ]),
+                                      isExpanded:
+                                          guiSettingsCubit.getExpansionValue(
+                                                  expansionName) ??
+                                              false)
+                                ],
+                                expansionCallback: (panelIndex, isExpanded) =>
+                                    guiSettingsCubit.setExpansionValue(
+                                        expansionName, isExpanded),
+                              );
+                            })
+                      ])));
                 }
               }
 
-              deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
+              deviceWidgets
+                  .add(const ListTile(title: Text("Disconnected Devices")));
               for (var deviceConfig in userDeviceConfigCubit.configs) {
                 if (connectedIndexes.contains(deviceConfig.reservedIndex)) {
                   continue;
                 }
-                var expansionName = "device-settings-${deviceConfig.reservedIndex}";
-                deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                var expansionName =
+                    "device-settings-${deviceConfig.reservedIndex}";
+                deviceWidgets.add(BlocBuilder<GuiSettingsCubit,
+                        GuiSettingsState>(
                     buildWhen: (previous, current) =>
-                        current is GuiSettingStateUpdate && current.valueName == expansionName,
+                        current is GuiSettingStateUpdate &&
+                        current.valueName == expansionName,
                     builder: (context, state) {
                       return ExpansionPanelList(
                           children: [
                             ExpansionPanel(
-                                headerBuilder: (BuildContext context, bool isExpanded) {
+                                headerBuilder:
+                                    (BuildContext context, bool isExpanded) {
                                   return ListTile(
                                     title: Text(deviceConfig.displayName != null
                                         ? "${deviceConfig.displayName} (${deviceConfig.name})"
                                         : deviceConfig.name),
-                                    subtitle: Text(deviceConfig.identifierString),
+                                    subtitle:
+                                        Text(deviceConfig.identifierString),
                                   );
                                 },
                                 body: ListView(
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     children: [
-                                      DeviceConfigWidget(identifier: deviceConfig.identifier),
+                                      DeviceConfigWidget(
+                                          identifier: deviceConfig.identifier),
                                     ]),
-                                isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? true)
+                                isExpanded: guiSettingsCubit
+                                        .getExpansionValue(expansionName) ??
+                                    true)
                           ],
                           expansionCallback: (panelIndex, isExpanded) =>
-                              guiSettingsCubit.setExpansionValue(expansionName, isExpanded));
+                              guiSettingsCubit.setExpansionValue(
+                                  expansionName, isExpanded));
                     }));
               }
 
-              var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
+              var engineIsRunning =
+                  BlocProvider.of<EngineControlBloc>(context).isRunning;
               List<DataRow> rows = [];
-              for (var websocketConfig in userDeviceConfigCubit.specifiers.entries) {
+              for (var websocketConfig
+                  in userDeviceConfigCubit.specifiers.entries) {
                 if (websocketConfig.value.websocketNames != null) {
                   for (var name in websocketConfig.value.websocketNames!) {
                     rows.add(DataRow(cells: [
@@ -168,7 +204,9 @@ class DevicePage extends StatelessWidget {
                       DataCell(TextButton(
                         onPressed: engineIsRunning
                             ? null
-                            : () => userDeviceConfigCubit.removeWebsocketDeviceName(websocketConfig.key, name),
+                            : () =>
+                                userDeviceConfigCubit.removeWebsocketDeviceName(
+                                    websocketConfig.key, name),
                         child: const Text("Delete"),
                       ))
                     ]));
@@ -188,52 +226,69 @@ class DevicePage extends StatelessWidget {
                 enabled: !engineIsRunning,
               );
               var expansionName = "device-settings-websocketdevices";
-              deviceWidgets.add(const ListTile(title: Text("Advanced Device Config")));
+              deviceWidgets
+                  .add(const ListTile(title: Text("Advanced Device Config")));
               if (configCubit.useDeviceWebsocketServer) {
-                deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                deviceWidgets.add(BlocBuilder<GuiSettingsCubit,
+                        GuiSettingsState>(
                     buildWhen: (previous, current) =>
-                        current is GuiSettingStateUpdate && current.valueName == expansionName,
+                        current is GuiSettingStateUpdate &&
+                        current.valueName == expansionName,
                     builder: (context, state) {
                       return ExpansionPanelList(
                           expansionCallback: (panelIndex, isExpanded) =>
-                              guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
+                              guiSettingsCubit.setExpansionValue(
+                                  expansionName, isExpanded),
                           children: [
                             ExpansionPanel(
-                                isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
-                                headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Websocket Devices (Advanced)")),
+                                isExpanded: guiSettingsCubit
+                                        .getExpansionValue(expansionName) ??
+                                    false,
+                                headerBuilder: (BuildContext context,
+                                        bool isExpanded) =>
+                                    const ListTile(
+                                        title: Text(
+                                            "Websocket Devices (Advanced)")),
                                 body: FractionallySizedBox(
                                     widthFactor: 0.8,
                                     child: Column(
                                       children: [
                                         Visibility(
                                             visible: rows.isNotEmpty,
-                                            child: DataTable(columns: const <DataColumn>[
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Protocol',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                            child: DataTable(
+                                                columns: const <DataColumn>[
+                                                  DataColumn(
+                                                    label: Expanded(
+                                                      child: Text(
+                                                        'Protocol',
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic),
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Device Name',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                                  DataColumn(
+                                                    label: Expanded(
+                                                      child: Text(
+                                                        'Device Name',
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic),
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              )
-                                            ], rows: rows)),
+                                                  DataColumn(
+                                                    label: Expanded(
+                                                      child: Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                                rows: rows)),
                                         FractionallySizedBox(
                                           widthFactor: 0.8,
                                           child: Column(children: [
@@ -248,18 +303,26 @@ class DevicePage extends StatelessWidget {
                                               child: TextField(
                                                 enabled: !engineIsRunning,
                                                 controller: controller,
-                                                decoration: const InputDecoration(hintText: "Name"),
+                                                decoration:
+                                                    const InputDecoration(
+                                                        hintText: "Name"),
                                               ),
                                             ),
                                             TextButton(
                                                 onPressed: engineIsRunning
                                                     ? null
                                                     : () {
-                                                        var name = controller.text;
-                                                        var protocol = protocolDropdown.protocol.value;
-                                                        userDeviceConfigCubit.addWebsocketDeviceName(protocol, name);
+                                                        var name =
+                                                            controller.text;
+                                                        var protocol =
+                                                            protocolDropdown
+                                                                .protocol.value;
+                                                        userDeviceConfigCubit
+                                                            .addWebsocketDeviceName(
+                                                                protocol, name);
                                                       },
-                                                child: const Text("Add Websocket Device"))
+                                                child: const Text(
+                                                    "Add Websocket Device"))
                                           ]),
                                         )
                                       ],
@@ -283,14 +346,16 @@ class DevicePage extends StatelessWidget {
                         ? TextButton(
                             onPressed: engineState is! EngineStoppedState
                                 ? () {
-                                    deviceBloc.add(DeviceManagerStartScanningEvent());
+                                    deviceBloc
+                                        .add(DeviceManagerStartScanningEvent());
                                   }
                                 : null,
                             child: const Text("Start Scanning"))
                         : TextButton(
                             onPressed: engineState is! EngineStoppedState
                                 ? () {
-                                    deviceBloc.add(DeviceManagerStopScanningEvent());
+                                    deviceBloc
+                                        .add(DeviceManagerStopScanningEvent());
                                   }
                                 : null,
                             child: const Text("Stop Scanning"))
@@ -299,7 +364,9 @@ class DevicePage extends StatelessWidget {
                 Expanded(
                     child: SingleChildScrollView(
                         child: ListView(
-                            physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: deviceWidgets)))
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: deviceWidgets)))
               ]));
             });
           });

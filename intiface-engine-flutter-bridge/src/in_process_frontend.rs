@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use flutter_rust_bridge::StreamSink;
+use crate::frb_generated::StreamSink;
 use futures::FutureExt;
 use intiface_engine::{EngineMessage, Frontend, IntifaceError, IntifaceMessage};
 use std::{future::Future, sync::Arc};

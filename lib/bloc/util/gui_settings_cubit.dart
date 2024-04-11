@@ -45,7 +45,8 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
 
   Size getWindowSize() {
     try {
-      return Size(_prefs.getInt(GUI_WINDOW_WIDTH)!.floorToDouble(), _prefs.getInt(GUI_WINDOW_HEIGHT)!.floorToDouble());
+      return Size(_prefs.getInt(GUI_WINDOW_WIDTH)!.floorToDouble(),
+          _prefs.getInt(GUI_WINDOW_HEIGHT)!.floorToDouble());
     } catch (e) {
       return const Size(800, 600);
     }
@@ -59,7 +60,8 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
 
   Offset getWindowPosition() {
     try {
-      return Offset(_prefs.getInt(GUI_WINDOW_POSX)!.floorToDouble(), _prefs.getInt(GUI_WINDOW_POSY)!.floorToDouble());
+      return Offset(_prefs.getInt(GUI_WINDOW_POSX)!.floorToDouble(),
+          _prefs.getInt(GUI_WINDOW_POSY)!.floorToDouble());
     } catch (e) {
       return const Offset(0, 0);
     }

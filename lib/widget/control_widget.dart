@@ -14,7 +14,8 @@ class ControlWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Unused dynamic array for storing repaint trigger logic.
-    final _ = context.select<IntifaceConfigurationCubit, bool>((bloc) => bloc.state is AppModeState);
+    final _ = context.select<IntifaceConfigurationCubit, bool>(
+        (bloc) => bloc.state is AppModeState);
 
     // No easy way to do "only update on certain states" with select, so we still use a BlocBuilder here.
     return BlocBuilder<EngineControlBloc, EngineControlState>(
@@ -33,9 +34,11 @@ class ControlWidget extends StatelessWidget {
           var statusMessage = "Unknown Status";
           var statusIcon = Icons.question_mark;
           var networkCubit = BlocProvider.of<NetworkInfoCubit>(context);
-          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+          var configCubit =
+              BlocProvider.of<IntifaceConfigurationCubit>(context);
           final ColorScheme colors = Theme.of(context).colorScheme;
-          void Function()? buttonAction = () => engineControlBloc.add(EngineControlEventStop());
+          void Function()? buttonAction =
+              () => engineControlBloc.add(EngineControlEventStop());
           if (state is ClientConnectedState) {
             statusMessage = state.clientName;
             statusIcon = Icons.phone_in_talk;
@@ -43,16 +46,22 @@ class ControlWidget extends StatelessWidget {
             statusMessage = "Server running, no client connected";
             statusIcon = Icons.phone_disabled;
             // Once we're in this state the engine is started.
-            buttonAction = () => engineControlBloc.add(EngineControlEventStop());
+            buttonAction =
+                () => engineControlBloc.add(EngineControlEventStop());
           } else if (state is EngineStartedState) {
             statusMessage = "Server started";
             statusIcon = Icons.bedtime;
-            buttonAction = () => engineControlBloc.add(EngineControlEventStop());
+            buttonAction =
+                () => engineControlBloc.add(EngineControlEventStop());
           } else if (state is EngineStoppedState) {
             statusMessage = "Server not running";
             statusIcon = Icons.bedtime;
-            buttonAction = () async => engineControlBloc.add(EngineControlEventStart(
-                options: await BlocProvider.of<IntifaceConfigurationCubit>(context, listen: false).getEngineOptions()));
+            buttonAction = () async => engineControlBloc.add(
+                EngineControlEventStart(
+                    options: await BlocProvider.of<IntifaceConfigurationCubit>(
+                            context,
+                            listen: false)
+                        .getEngineOptions()));
           } else if (state is EngineStartingState) {
             statusIcon = Icons.start;
             statusMessage = "Server starting";
@@ -61,7 +70,9 @@ class ControlWidget extends StatelessWidget {
 
           IconButton controlButton;
 
-          if (isDesktop() && configCubit.useProcessEngine && !IntifacePaths.engineFile.existsSync()) {
+          if (isDesktop() &&
+              configCubit.useProcessEngine &&
+              !IntifacePaths.engineFile.existsSync()) {
             controlButton = IconButton(
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onPrimary,
@@ -87,8 +98,12 @@ class ControlWidget extends StatelessWidget {
                 ),
                 iconSize: 90,
                 onPressed: buttonAction,
-                tooltip: state is EngineStoppedState ? "Start Server" : "Stop Server",
-                icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop));
+                tooltip: state is EngineStoppedState
+                    ? "Start Server"
+                    : "Stop Server",
+                icon: Icon(state is EngineStoppedState
+                    ? Icons.play_arrow
+                    : Icons.stop));
           }
 
           var engineStatus = "Engine Status Unknown";
@@ -105,7 +120,9 @@ class ControlWidget extends StatelessWidget {
               engineStatus = "Engine not running";
             }
           } else if (configCubit.appMode == AppMode.repeater) {
-            if (state is EngineStartedState || state is EngineServerCreatedState || state is ClientDisconnectedState) {
+            if (state is EngineStartedState ||
+                state is EngineServerCreatedState ||
+                state is ClientDisconnectedState) {
               engineStatus = "Repeater running";
             } else if (state is EngineStoppedState) {
               engineStatus = "Repeater not running";
@@ -115,26 +132,33 @@ class ControlWidget extends StatelessWidget {
           }
 
           List<Widget> columnWidgets = [
-            const Text("Status:", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Status:",
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Text(engineStatus)
           ];
 
           if (configCubit.appMode == AppMode.engine) {
             columnWidgets.addAll([
-              const Text("Server Address:", style: TextStyle(fontWeight: FontWeight.bold)),
-              BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+              const Text("Server Address:",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              BlocBuilder<IntifaceConfigurationCubit,
+                      IntifaceConfigurationState>(
                   bloc: configCubit,
                   buildWhen: (previous, current) =>
-                      current is WebsocketServerAllInterfacesState || current is WebsocketServerPortState,
+                      current is WebsocketServerAllInterfacesState ||
+                      current is WebsocketServerPortState,
                   builder: (context, state) => Text(
                       "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}")),
-              BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+              BlocBuilder<IntifaceConfigurationCubit,
+                      IntifaceConfigurationState>(
                   bloc: configCubit,
-                  buildWhen: (previous, current) => current is AllowRawMessagesState,
+                  buildWhen: (previous, current) =>
+                      current is AllowRawMessagesState,
                   builder: (context, state) => Visibility(
                       visible: configCubit.allowRawMessages,
                       child: const Text("Raw Messages Allowed",
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))))
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold))))
             ]);
           }
 
@@ -152,22 +176,30 @@ class ControlWidget extends StatelessWidget {
                     bloc: BlocProvider.of<ErrorNotifierCubit>(context),
                     builder: (context, ErrorNotifierState state) {
                       return Visibility(
-                        visible: state is ErrorNotifierTriggerState ? true : false,
+                        visible:
+                            state is ErrorNotifierTriggerState ? true : false,
                         child: TextButton.icon(
                             label: const Text("Error"),
                             onPressed: () => navCubit.goLogs(),
                             icon: const Icon(Icons.warning),
-                            style: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.red))),
+                            style: ButtonStyle(
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith(
+                                        (s) => Colors.red))),
                       );
                     }),
                 Visibility(
-                  visible:
-                      isDesktop() && canShowUpdate() && configCubit.currentAppVersion != configCubit.latestAppVersion,
+                  visible: isDesktop() &&
+                      canShowUpdate() &&
+                      configCubit.currentAppVersion !=
+                          configCubit.latestAppVersion,
                   child: TextButton.icon(
                       label: const Text("Update"),
                       onPressed: () => navCubit.goSettings(),
                       icon: const Icon(Icons.update, color: Colors.green),
-                      style: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.green))),
+                      style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.resolveWith(
+                              (s) => Colors.green))),
                 ),
                 Visibility(
                   visible: false,
@@ -175,7 +207,9 @@ class ControlWidget extends StatelessWidget {
                       onPressed: () => navCubit.goNews(),
                       icon: const Icon(Icons.newspaper),
                       label: const Text("News"),
-                      style: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith((s) => Colors.blue))),
+                      style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.resolveWith(
+                              (s) => Colors.blue))),
                 )
               ],
             ),

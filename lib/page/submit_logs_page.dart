@@ -29,14 +29,18 @@ class SendLogsPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(3)),
+                  border: Border.all(color: Colors.grey, width: 2),
+                  borderRadius: BorderRadius.circular(3)),
               child: TextField(
                 controller: contactController,
                 minLines: 1,
                 maxLines: 1,
-                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
                 decoration: const InputDecoration(
-                    border: InputBorder.none, enabledBorder: InputBorder.none, hintText: "Put contact info here"),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    hintText: "Put contact info here"),
               ),
             ),
             const SizedBox(height: 5),
@@ -44,14 +48,18 @@ class SendLogsPage extends StatelessWidget {
                 child: Container(
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(3)),
+                  border: Border.all(color: Colors.grey, width: 2),
+                  borderRadius: BorderRadius.circular(3)),
               child: TextField(
                 controller: textController,
                 minLines: 2,
                 maxLines: null,
-                style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
                 decoration: const InputDecoration(
-                    border: InputBorder.none, enabledBorder: InputBorder.none, hintText: "Put issue report here"),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    hintText: "Put issue report here"),
               ),
             )),
             SizedBox(
@@ -69,7 +77,8 @@ class SendLogsPage extends StatelessWidget {
                           // We're going to assume the stateful builder runs before we get a return from our capture.
                           // Bold, possibly stupid move.
                           late StateSetter _setState;
-                          Sentry.captureMessage("""Contact Info: ${contactController.value.text}
+                          Sentry.captureMessage(
+                              """Contact Info: ${contactController.value.text}
 
 Message:
 
@@ -81,7 +90,8 @@ ${textController.value.text}""", withScope: (scope) {
                               sendFinished = true;
                             });
                           }).onError((error, stackTrace) {
-                            contentText = "Error sending logs, please try again.";
+                            contentText =
+                                "Error sending logs, please try again.";
                             sendFinished = true;
                             sendFailed = true;
                           });
@@ -103,7 +113,9 @@ ${textController.value.text}""", withScope: (scope) {
                                         ? () {
                                             Navigator.of(context).pop();
                                             if (!sendFailed) {
-                                              BlocProvider.of<NavigationCubit>(context).goSettings();
+                                              BlocProvider.of<NavigationCubit>(
+                                                      context)
+                                                  .goSettings();
                                             }
                                           }
                                         : null,

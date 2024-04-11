@@ -17,14 +17,18 @@ class LogPage extends StatelessWidget {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
     var expansionName = "gui_log_settings";
-    final List<DropdownMenuEntry<LogLevel>> logLevelEntries = <DropdownMenuEntry<LogLevel>>[];
+    final List<DropdownMenuEntry<LogLevel>> logLevelEntries =
+        <DropdownMenuEntry<LogLevel>>[];
     for (final LogLevel level in LogLevel.values) {
-      logLevelEntries.add(DropdownMenuEntry<LogLevel>(value: level, label: level.name));
+      logLevelEntries
+          .add(DropdownMenuEntry<LogLevel>(value: level, label: level.name));
     }
     return Expanded(
         child: Column(children: [
       BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-          buildWhen: (previous, current) => current is GuiSettingStateUpdate && current.valueName == expansionName,
+          buildWhen: (previous, current) =>
+              current is GuiSettingStateUpdate &&
+              current.valueName == expansionName,
           builder: (context, state) => ExpansionPanelList(
               elevation: 0,
               children: [
@@ -34,23 +38,31 @@ class LogPage extends StatelessWidget {
                         title: Text("Log Options"),
                       );
                     },
-                    body: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
-                      DropdownMenu(
-                          label: const Text("Log Level"),
-                          dropdownMenuEntries: logLevelEntries,
-                          onSelected: (value) => configCubit.displayLogLevel = value!.name),
-                    ]),
-                    isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false)
+                    body: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: [
+                          DropdownMenu(
+                              label: const Text("Log Level"),
+                              dropdownMenuEntries: logLevelEntries,
+                              onSelected: (value) =>
+                                  configCubit.displayLogLevel = value!.name),
+                        ]),
+                    isExpanded:
+                        guiSettingsCubit.getExpansionValue(expansionName) ??
+                            false)
               ],
               expansionCallback: (panelIndex, isExpanded) {
                 guiSettingsCubit.setExpansionValue(expansionName, isExpanded);
               })),
       Expanded(
-          child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+          child: BlocBuilder<IntifaceConfigurationCubit,
+                  IntifaceConfigurationState>(
               buildWhen: (previous, current) => current is DisplayLogLevelState,
               builder: (context, state) {
-                var level = LogLevel.values
-                    .firstWhere((element) => element.name == configCubit.displayLogLevel, orElse: () => LogLevel.info);
+                var level = LogLevel.values.firstWhere(
+                    (element) => element.name == configCubit.displayLogLevel,
+                    orElse: () => LogLevel.info);
                 return LoggyStreamWidget(logLevel: level);
               }))
     ]));

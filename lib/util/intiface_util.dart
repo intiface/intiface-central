@@ -37,14 +37,17 @@ class IntifacePaths {
 
     var docsDir = (await getApplicationSupportDirectory()).path;
 
-    IntifacePaths._configPath = Directory(p.join(docsDir, intifaceConfigDirectoryName));
+    IntifacePaths._configPath =
+        Directory(p.join(docsDir, intifaceConfigDirectoryName));
     await IntifacePaths._configPath.create(recursive: true);
 
-    IntifacePaths._logPath = Directory(p.join(docsDir, intifaceLoggingDirectoryName));
+    IntifacePaths._logPath =
+        Directory(p.join(docsDir, intifaceLoggingDirectoryName));
     await IntifacePaths._logPath.create(recursive: true);
 
     // Take care of eliminating old log files here. Since we store date/time in their name, we can just use that.
-    var logFiles = IntifacePaths.logPath.listSync(followLinks: false, recursive: false);
+    var logFiles =
+        IntifacePaths.logPath.listSync(followLinks: false, recursive: false);
     // Only keep last 5 log files.
     if (logFiles.length >= 5) {
       FileSystemEntity oldestFile = logFiles[0];
@@ -60,22 +63,31 @@ class IntifacePaths {
     final now = DateTime.now();
     var logFilename =
         "intiface-central-${now.year}-${formatter.format(now.month)}-${formatter.format(now.day)}-${formatter.format(now.hour)}-${formatter.format(now.minute)}-${formatter.format(now.second)}.log";
-    IntifacePaths._logFile = File(p.join(IntifacePaths._logPath.path, logFilename));
+    IntifacePaths._logFile =
+        File(p.join(IntifacePaths._logPath.path, logFilename));
     await IntifacePaths._logFile.create();
 
-    IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath.path, deviceConfigFilename));
-    IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath.path, userDeviceConfigFilename));
+    IntifacePaths._deviceConfigFile =
+        File(p.join(IntifacePaths._configPath.path, deviceConfigFilename));
+    IntifacePaths._userDeviceConfigFile =
+        File(p.join(IntifacePaths._configPath.path, userDeviceConfigFilename));
 
-    IntifacePaths._enginePath = Directory(p.join(docsDir, intifaceEngineDirectoryName));
+    IntifacePaths._enginePath =
+        Directory(p.join(docsDir, intifaceEngineDirectoryName));
     await IntifacePaths._enginePath.create(recursive: true);
 
     IntifacePaths._engineFile = File(p.join(
-        IntifacePaths._enginePath.path, Platform.isWindows ? "$intifaceEngineFilename.exe" : intifaceEngineFilename));
+        IntifacePaths._enginePath.path,
+        Platform.isWindows
+            ? "$intifaceEngineFilename.exe"
+            : intifaceEngineFilename));
 
-    IntifacePaths._newsPath = Directory(p.join(docsDir, intifaceNewsDirectoryName));
+    IntifacePaths._newsPath =
+        Directory(p.join(docsDir, intifaceNewsDirectoryName));
     await IntifacePaths._newsPath.create(recursive: true);
 
-    IntifacePaths._newsFile = File(p.join(IntifacePaths._newsPath.path, intifaceNewsFilename));
+    IntifacePaths._newsFile =
+        File(p.join(IntifacePaths._newsPath.path, intifaceNewsFilename));
   }
 }
 

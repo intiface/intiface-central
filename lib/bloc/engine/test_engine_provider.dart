@@ -1,5 +1,5 @@
-import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 
 class TestEngineProvider implements EngineProvider {
   @override
@@ -13,7 +13,7 @@ class TestEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<bool> runtimeStarted() async {
+  Future<bool> rustRuntimeStarted() async {
     throw "Unimplemented";
   }
 
@@ -21,7 +21,7 @@ class TestEngineProvider implements EngineProvider {
   void cycleStream() {}
 
   @override
-  void send(String msg) {}
+  void sendToRust(String msg) {}
 
   @override
   void sendBackdoorMessage(String msg) {}

@@ -1,0 +1,2 @@
+rust_input: intiface-engine-flutter-bridge/src/api/**/*.rs
+dart_output: lib/src/rust

@@ -19,7 +19,9 @@ abstract class DeviceActuatorCubit extends Cubit<DeviceActuatorState> {
   final int stepCount;
   double _currentValue = 0;
 
-  DeviceActuatorCubit(this._device, this.descriptor, this.stepCount, this._index) : super(DeviceActuatorStateInitial());
+  DeviceActuatorCubit(
+      this._device, this.descriptor, this.stepCount, this._index)
+      : super(DeviceActuatorStateInitial());
 
   double get currentValue => _currentValue;
 }
@@ -27,26 +29,33 @@ abstract class DeviceActuatorCubit extends Cubit<DeviceActuatorState> {
 class ScalarActuatorCubit extends DeviceActuatorCubit {
   final ActuatorType actuatorType;
 
-  ScalarActuatorCubit(super.device, super.descriptor, super.stepCount, super.index, this.actuatorType);
+  ScalarActuatorCubit(super.device, super.descriptor, super.stepCount,
+      super.index, this.actuatorType);
 
   void scalar(double value) {
-    var cmd = ScalarCommand.setMap({_index: ScalarComponent(value / stepCount.toDouble(), actuatorType)});
+    var cmd = ScalarCommand.setMap(
+        {_index: ScalarComponent(value / stepCount.toDouble(), actuatorType)});
     _currentValue = value;
     emit(DeviceActuatorStateUpdate(_currentValue));
-    EasyDebounce.debounce("actuator-scalar-${_device.index}-$_index", const Duration(milliseconds: 100), () async {
+    EasyDebounce.debounce("actuator-scalar-${_device.index}-$_index",
+        const Duration(milliseconds: 100), () async {
       await _device.scalar(cmd);
     });
   }
 }
 
 class RotateActuatorCubit extends DeviceActuatorCubit {
-  RotateActuatorCubit(super.device, super.descriptor, super.stepCount, super.index);
+  RotateActuatorCubit(
+      super.device, super.descriptor, super.stepCount, super.index);
 
   void rotate(double value) {
-    var cmd = RotateCommand.setMap({_index: RotateComponent((value / stepCount.toDouble()).abs(), value < 0)});
+    var cmd = RotateCommand.setMap({
+      _index: RotateComponent((value / stepCount.toDouble()).abs(), value < 0)
+    });
     _currentValue = value;
     emit(DeviceActuatorStateUpdate(_currentValue));
-    EasyDebounce.debounce("actuator-rotate-${_device.index}-$_index", const Duration(milliseconds: 100), () async {
+    EasyDebounce.debounce("actuator-rotate-${_device.index}-$_index",
+        const Duration(milliseconds: 100), () async {
       await _device.rotate(cmd);
     });
   }
@@ -58,7 +67,8 @@ class LinearActuatorCubit extends DeviceActuatorCubit {
   double _currentDuration = 3000;
   bool _running = false;
 
-  LinearActuatorCubit(ButtplugClientDevice device, String descriptor, int stepCount, int index)
+  LinearActuatorCubit(
+      ButtplugClientDevice device, String descriptor, int stepCount, int index)
       : super(device, descriptor, stepCount, index) {
     _currentMax = stepCount.toDouble();
   }
@@ -91,12 +101,16 @@ class LinearActuatorCubit extends DeviceActuatorCubit {
     while (_running) {
       ButtplugDeviceCommand<LinearComponent> cmd;
       if (toMin) {
-        cmd = LinearCommand.setMap(
-            {_index: LinearComponent(currentMin / stepCount.toDouble(), _currentDuration.toInt())});
+        cmd = LinearCommand.setMap({
+          _index: LinearComponent(
+              currentMin / stepCount.toDouble(), _currentDuration.toInt())
+        });
         toMin = false;
       } else {
-        cmd = LinearCommand.setMap(
-            {_index: LinearComponent(currentMax / stepCount.toDouble(), _currentDuration.toInt())});
+        cmd = LinearCommand.setMap({
+          _index: LinearComponent(
+              currentMax / stepCount.toDouble(), _currentDuration.toInt())
+        });
         toMin = true;
       }
       await _device.linear(cmd);

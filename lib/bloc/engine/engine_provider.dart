@@ -2,20 +2,20 @@
 // This means our providers ONLY handle start/stop/basic stream comms with our provider types, and the repository
 // operates as a stream transformer.
 
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 
 abstract class EngineProcessMessage {}
 
 abstract class EngineProvider {
   Future<void> start({required EngineOptionsExternal options});
   Future<void> stop();
-  Future<bool> runtimeStarted();
+  Future<bool> rustRuntimeStarted();
   void cycleStream();
 
   void onEngineStart();
   void onEngineStop();
 
-  void send(String msg);
+  void sendToRust(String msg);
   void sendBackdoorMessage(String msg);
   Stream<String> get engineRawMessageStream;
 }

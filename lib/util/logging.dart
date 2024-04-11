@@ -26,7 +26,8 @@ class IntifaceStreamPrinter extends LoggyPrinter {
   IntifaceStreamPrinter(this.childPrinter) : super();
 
   final LoggyPrinter childPrinter;
-  final BehaviorSubject<List<LogRecord>> logRecord = BehaviorSubject<List<LogRecord>>.seeded(<LogRecord>[]);
+  final BehaviorSubject<List<LogRecord>> logRecord =
+      BehaviorSubject<List<LogRecord>>.seeded(<LogRecord>[]);
 
   @override
   void onLog(LogRecord record) {
@@ -44,7 +45,8 @@ class IntifaceStreamPrinter extends LoggyPrinter {
         record.error,
         record.stackTrace,
         record.zone,
-        RecordMetadata(DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0),
+        RecordMetadata(
+            DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0),
         record.callerFrame);
 
     childPrinter.onLog(newRecord);

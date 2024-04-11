@@ -3,9 +3,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:intiface_central/intiface_central_app.dart';
 
+// //
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+// //
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
     await SentryFlutter.init(

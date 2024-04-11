@@ -8,12 +8,14 @@ import 'package:loggy/loggy.dart';
 typedef SendFunc = void Function(EngineControlEvent msg);
 
 class ButtplugBackdoorClientConnector implements ButtplugClientConnector {
-  final _internalServerMessageStream = StreamController<ButtplugServerMessage>();
+  final _internalServerMessageStream =
+      StreamController<ButtplugServerMessage>();
   late final SendFunc _sendFunc;
   late StreamSubscription _outputSubscription;
 
   // We should only be created
-  ButtplugBackdoorClientConnector(Stream<EngineControlState> outputStream, SendFunc sendFunc) {
+  ButtplugBackdoorClientConnector(
+      Stream<EngineControlState> outputStream, SendFunc sendFunc) {
     _outputSubscription = outputStream.listen((event) {
       if (event is ButtplugServerMessageState) {
         _internalServerMessageStream.add(event.message);

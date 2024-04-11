@@ -24,8 +24,15 @@ class NavigationDestination {
   final bool showInMobileRail;
   final bool showInDesktopRail;
 
-  NavigationDestination(this.stateCheck, this.navigate, this.icon, this.selectedIcon, this.title, this.widgetProvider,
-      this.showInMobileRail, this.showInDesktopRail);
+  NavigationDestination(
+      this.stateCheck,
+      this.navigate,
+      this.icon,
+      this.selectedIcon,
+      this.title,
+      this.widgetProvider,
+      this.showInMobileRail,
+      this.showInDesktopRail);
 }
 
 class BodyWidget extends StatelessWidget {
@@ -45,7 +52,8 @@ class BodyWidget extends StatelessWidget {
           'News',
           () => BlocBuilder<UpdateBloc, UpdateState>(
               buildWhen: (previous, current) => current is NewsUpdateRetrieved,
-              builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
+              builder: (context, state) => MarkdownWidget(
+                  markdownContent: assets.newsAsset, backToSettings: false)),
           true,
           true),
       NavigationDestination(
@@ -70,7 +78,9 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateLogs,
           (NavigationCubit cubit) => cubit.goLogs(),
           Icon(Icons.text_snippet_outlined,
-              color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : IconTheme.of(context).color),
+              color: errorNotifierCubit.state is ErrorNotifierTriggerState
+                  ? Colors.red
+                  : IconTheme.of(context).color),
           const Icon(Icons.text_snippet),
           'Log',
           () => const LogPage(),
@@ -80,11 +90,15 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateSettings,
           (NavigationCubit cubit) => cubit.goSettings(),
           Icon(Icons.settings_outlined,
-              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
+              color: isDesktop() &&
+                      configCubit.currentAppVersion !=
+                          configCubit.latestAppVersion
                   ? Colors.green
                   : IconTheme.of(context).color),
           Icon(Icons.settings,
-              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
+              color: isDesktop() &&
+                      configCubit.currentAppVersion !=
+                          configCubit.latestAppVersion
                   ? Colors.green
                   : IconTheme.of(context).color),
           'Settings',
@@ -127,7 +141,8 @@ class BodyWidget extends StatelessWidget {
     }
 
     if (configCubit.useSideNavigationBar) {
-      var navSelectedIndex = destinations[selectedIndex].showInDesktopRail ? selectedIndex : 0;
+      var navSelectedIndex =
+          destinations[selectedIndex].showInDesktopRail ? selectedIndex : 0;
       return Row(children: <Widget>[
         NavigationRail(
             selectedIndex: navSelectedIndex,
@@ -138,9 +153,12 @@ class BodyWidget extends StatelessWidget {
             labelType: NavigationRailLabelType.all,
             destinations: destinations
                 .where((element) => element.showInDesktopRail)
-                .map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title)))
+                .map((v) => NavigationRailDestination(
+                    icon: v.icon, label: Text(v.title)))
                 .toList()),
-        Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
+        Expanded(
+            child: Column(
+                children: [destinations[selectedIndex].widgetProvider()]))
       ]);
     }
     // Weird special case time! If we're showing the bottom bar nav, and we're in one of the widgets that
@@ -148,11 +166,14 @@ class BodyWidget extends StatelessWidget {
     var visualSelectedIndex = selectedIndex;
 
     if (!destinations[selectedIndex].showInMobileRail) {
-      visualSelectedIndex = destinations.where((element) => element.showInMobileRail).length - 1;
+      visualSelectedIndex =
+          destinations.where((element) => element.showInMobileRail).length - 1;
     }
 
     return Column(children: <Widget>[
-      Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
+      Expanded(
+          child:
+              Column(children: [destinations[selectedIndex].widgetProvider()])),
       BottomNavigationBar(
           currentIndex: visualSelectedIndex,
           onTap: (int index) {
@@ -161,7 +182,10 @@ class BodyWidget extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           items: destinations
               .where((element) => element.showInMobileRail)
-              .map((dest) => BottomNavigationBarItem(icon: dest.icon, activeIcon: dest.selectedIcon, label: dest.title))
+              .map((dest) => BottomNavigationBarItem(
+                  icon: dest.icon,
+                  activeIcon: dest.selectedIcon,
+                  label: dest.title))
               .toList())
     ]);
   }
@@ -172,8 +196,10 @@ class BodyWidget extends StatelessWidget {
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
         buildWhen: (previous, current) => current is UseSideNavigationBar,
         builder: (context, configState) =>
-            BlocBuilder<NavigationCubit, NavigationState>(builder: (context, navigationState) {
-              return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(builder: (context, errorState) {
+            BlocBuilder<NavigationCubit, NavigationState>(
+                builder: (context, navigationState) {
+              return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(
+                  builder: (context, errorState) {
                 return _buildMenu(context, navigationState);
               });
             }));

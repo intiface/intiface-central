@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/simple.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/bloc/engine/engine_repository.dart';
 import 'package:loggy/loggy.dart';
@@ -106,7 +106,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             emit(ClientDisconnectedState());
             var msg = IntifaceMessage();
             msg.requestEngineVersion = RequestEngineVersion();
-            _repo.send(jsonEncode(msg));
+            _repo.sendToRust(jsonEncode(msg));
             return state;
           }
           if (engineMessage.engineServerCreated != null) {

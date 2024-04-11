@@ -1,5 +1,5 @@
 use crate::mobile_init::Error;
-use flutter_rust_bridge::StreamSink;
+use crate::frb_generated::StreamSink;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 
