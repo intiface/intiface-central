@@ -1,3 +1,11 @@
+# 1.0.15 (2024/04/20)
+
+## Features
+
+- Update to Buttplug v7.1.16/Intiface Engine v2.0.4
+  - Add hardware support for many JoyHub devices, some Kiiroo, Lioness
+  - Fix bugs with Lovense Solace, some JoyHub devices
+
 # 1.0.14 (2024/03/17)
 
 ## Features
