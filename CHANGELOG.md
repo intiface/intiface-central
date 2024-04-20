@@ -1,3 +1,15 @@
+# v2.5.7 - 2024/04/20 (All Platforms)
+
+## Features
+
+- Massive number of device support updates, including JoyHub, Kiiroo, and Lioness. See
+  https://github.com/buttplugio/buttplug/blob/buttplug-7.1.15/buttplug/CHANGELOG.md for full list.
+
+## Bugfixes
+
+- Fix issue with Lovense Solace running > v30 firmware
+- Fix issues with Motorbunny, Joyhub devices
+
 # v2.5.6 - 2024/03/16 (All Platforms)
 
 ## Features
