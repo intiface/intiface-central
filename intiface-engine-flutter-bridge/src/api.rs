@@ -5,15 +5,12 @@ use crate::{
 };
 use anyhow::Result;
 pub use buttplug::{
-  server::device::configuration::WebsocketSpecifier,
-  util::device_configuration::UserConfigDeviceIdentifier,
-};
-use buttplug::{
-  server::device::{protocol::get_default_protocol_map, ServerDeviceIdentifier},
-  util::device_configuration::{
-    load_protocol_configs, load_user_configs, ProtocolConfiguration, ProtocolDefinition,
-    UserConfigDefinition, UserDeviceConfig, UserDeviceConfigPair,
+  core::message::{ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType, ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw, DeviceFeatureSensor, Endpoint, FeatureType},
+  server::device::{
+    configuration::{ProtocolCommunicationSpecifier, UserDeviceCustomization, UserDeviceDefinition, UserDeviceIdentifier, WebsocketSpecifier},
+    protocol::get_default_protocol_map,
   },
+  util::device_configuration::{load_protocol_configs, save_user_config}
 };
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
@@ -21,11 +18,10 @@ use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
 use std::{
-  collections::HashMap,
-  sync::{
+  collections::HashSet, ops::RangeInclusive, sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
-  }, time::Duration, thread,
+  }, thread, time::Duration
 };
 use tokio::{
   select,
@@ -51,6 +47,7 @@ lazy_static! {
 pub struct _EngineOptionsExternal {
   pub device_config_json: Option<String>,
   pub user_device_config_json: Option<String>,
+  pub user_device_config_path: Option<String>,
   pub server_name: String,
   pub websocket_use_all_interfaces: bool,
   pub websocket_port: Option<u16>,
@@ -246,24 +243,47 @@ pub fn send_backend_server_message(msg: String) {
   }
 }
 
-#[frb(mirror(UserConfigDeviceIdentifier))]
-pub struct _UserConfigDeviceIdentifier {
-  #[allow(dead_code)]
-  address: String,
-  #[allow(dead_code)]
-  protocol: String,
-  #[allow(dead_code)]
-  identifier: Option<String>,
+
+
+// "Exposed" types are mirrors of internal Buttplug types, but with all public members and typing
+// that's amiable to FlutterRustBridge translation. These types can't be directly mirrored because
+// the library itself has private members.
+//
+// "But don't you own the library also?" I mean, yes, I do, but I cannot emotionally handle bringing
+// myself to set the struct members public there just for this application. I hate having ethics.
+
+#[derive(Debug, Clone)]
+pub struct ExposedUserDeviceIdentifier {
+  pub address: String,
+  pub protocol: String,
+  pub identifier: Option<String>,
 }
 
+impl From<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
+  fn from(value: UserDeviceIdentifier) -> Self {
+    Self {
+      address: value.address().clone(),
+      protocol: value.protocol().clone(),
+      identifier: value.identifier().clone()
+    }
+  }
+}
+
+impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
+  fn into(self) -> UserDeviceIdentifier {
+    UserDeviceIdentifier::new(&self.address, &self.protocol, &self.identifier)
+  }
+}
+
+#[derive(Debug, Clone)]
 pub struct ExposedWebsocketSpecifier {
   pub names: Vec<String>,
 }
 
-impl From<&WebsocketSpecifier> for ExposedWebsocketSpecifier {
-  fn from(other: &WebsocketSpecifier) -> Self {
-    ExposedWebsocketSpecifier {
-      names: other.names().iter().cloned().collect(),
+impl From<WebsocketSpecifier> for ExposedWebsocketSpecifier {
+  fn from(value: WebsocketSpecifier) -> Self {
+    Self {
+      names: value.names().iter().cloned().collect()
     }
   }
 }
@@ -274,126 +294,277 @@ impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   }
 }
 
-pub struct ExposedUserDeviceSpecifiers {
-  pub websocket: Option<ExposedWebsocketSpecifier>,
+#[derive(Debug, Clone)]
+pub struct ExposedDeviceFeatureActuator {
+  pub step_range: (u32, u32),
+  pub step_limit: (u32, u32),
+  pub messages: Vec<ButtplugActuatorFeatureMessageType>,
 }
 
-pub struct ExposedUserConfig {
-  pub specifiers: Vec<(String, ExposedUserDeviceSpecifiers)>,
-  pub configurations: Vec<ExposedUserDeviceConfig>,
-}
-
-impl Into<UserConfigDefinition> for ExposedUserConfig {
-  fn into(self) -> UserConfigDefinition {
-    let mut user_config_def = UserConfigDefinition::default();
-    let configs: Vec<UserDeviceConfigPair> =
-      self.configurations.into_iter().map(|x| x.into()).collect();
-    let mut specifier_map: HashMap<String, ProtocolDefinition> = HashMap::new();
-    self
-      .specifiers
-      .into_iter()
-      .for_each(|(protocol, specifiers)| {
-        if let Some(websocket_specifier) = specifiers.websocket {
-          if websocket_specifier.names.len() > 0 {
-            let mut protocol_def = ProtocolDefinition::default();
-            protocol_def.set_websocket(Some(websocket_specifier.into()));
-            specifier_map.insert(protocol, protocol_def);
-          }
-        }
-      });
-    //if !specifier_map.is_empty() {
-    user_config_def.set_specifiers(Some(specifier_map));
-    //}
-    if !configs.is_empty() {
-      user_config_def.set_user_device_configs(Some(configs));
-    }
-    user_config_def
-  }
-}
-
-pub struct ExposedUserDeviceConfig {
-  pub identifier: UserConfigDeviceIdentifier,
-  pub name: String,
-  pub display_name: Option<String>,
-  pub allow: Option<bool>,
-  pub deny: Option<bool>,
-  pub reserved_index: Option<u32>,
-}
-
-impl From<&UserDeviceConfigPair> for ExposedUserDeviceConfig {
-  fn from(value: &UserDeviceConfigPair) -> Self {
+impl From<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
+  fn from(value: DeviceFeatureActuator) -> Self {
     Self {
-      identifier: value.identifier().clone(),
-      name: "".to_owned(),
-      display_name: value.config().display_name().clone(),
-      allow: value.config().allow().clone(),
-      deny: value.config().deny().clone(),
-      reserved_index: value.config().index().clone(),
+      step_range: (*value.step_range().start(), *value.step_range().end()),
+      step_limit: (*value.step_limit().start(), *value.step_limit().end()),
+      messages: value.messages().iter().cloned().collect()
     }
   }
 }
 
-impl Into<UserDeviceConfigPair> for ExposedUserDeviceConfig {
-  fn into(self) -> UserDeviceConfigPair {
-    let mut config = UserDeviceConfig::default();
-    config.set_display_name(self.display_name);
-    config.set_allow(self.allow);
-    config.set_deny(self.deny);
-    config.set_index(self.reserved_index);
-    UserDeviceConfigPair::new(self.identifier, config)
+impl Into<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
+  fn into(self) -> DeviceFeatureActuator {
+    DeviceFeatureActuator::new(
+      &RangeInclusive::new(self.step_range.0, self.step_range.1), 
+      &RangeInclusive::new(self.step_limit.0, self.step_limit.1), 
+      &HashSet::from_iter(self.messages.iter().cloned())
+    )
   }
 }
 
-pub fn get_user_device_configs(
-  device_config_json: String,
-  user_config_json: String,
-) -> ExposedUserConfig {
-  let mut dcm_builder = load_protocol_configs(
-    Some(device_config_json.to_owned()),
-    Some(user_config_json.to_owned()),
-    false,
-  )
-  .unwrap();
-  let dcm = dcm_builder.finish().unwrap();
-  let raw_user_configs = load_user_configs(&user_config_json);
-  let mut config_out = vec![];
-  let mut websocket_specifiers_out = Vec::new();
-  if let Some(user_specifiers) = raw_user_configs.specifiers() {
-    for (protocol, specifiers) in user_specifiers {
-      if let Some(websocket_specifiers) = specifiers.websocket() {
-        websocket_specifiers_out.push((
-          protocol.clone(),
-          ExposedUserDeviceSpecifiers {
-            websocket: Some(ExposedWebsocketSpecifier::from(websocket_specifiers)),
-          },
-        ));
-      }
+#[derive(Debug, Clone)]
+pub struct ExposedDeviceFeatureSensor
+{
+  pub value_range: Vec<(i32, i32)>,
+  pub messages: Vec<ButtplugSensorFeatureMessageType>,
+}
+
+impl From<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
+  fn from(value: DeviceFeatureSensor) -> Self {
+    Self {
+      value_range: value.value_range().iter().map(|val| (*val.start(), *val.end())).collect(),
+      messages: value.messages().iter().cloned().collect()
     }
-  }
-  if let Some(configs) = raw_user_configs.user_device_configs() {
-    for config in configs {
-      let maybe_attrs = dcm.protocol_device_attributes(
-        &ServerDeviceIdentifier::from(config.identifier().clone()),
-        &[],
-      );
-      if let Some(attrs) = maybe_attrs {
-        let mut user_config = ExposedUserDeviceConfig::from(*&config);
-        user_config.name = attrs.name().to_owned();
-        config_out.push(user_config)
-      }
-    }
-  }
-  ExposedUserConfig {
-    specifiers: websocket_specifiers_out,
-    configurations: config_out,
   }
 }
 
-pub fn generate_user_device_config_file(user_config: ExposedUserConfig) -> String {
-  let mut config_file = ProtocolConfiguration::new(2, 0);
-  let user_config_def: UserConfigDefinition = user_config.into();
-  config_file.user_configs = Some(user_config_def);
-  config_file.to_json()
+impl Into<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
+  fn into(self) -> DeviceFeatureSensor {
+    DeviceFeatureSensor::new(
+      &self.value_range.iter().map(|val| RangeInclusive::new(val.0, val.1)).collect(),
+      &HashSet::from_iter(self.messages.iter().cloned())
+    )
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct ExposedDeviceFeature {
+  pub description: String,
+  pub feature_type: FeatureType,
+  pub actuator: Option<ExposedDeviceFeatureActuator>,
+  pub sensor: Option<ExposedDeviceFeatureSensor>,
+  // Leave out raw here, we'll never need it in the UI anyways
+}
+
+impl From<DeviceFeature> for ExposedDeviceFeature {
+  fn from(value: DeviceFeature) -> Self {
+    Self {
+      description: value.description().clone(),
+      feature_type: *value.feature_type(),
+      actuator: value.actuator().clone().and_then(|x| Some(ExposedDeviceFeatureActuator::from(x))),
+      sensor: value.sensor().clone().and_then(|x| Some(ExposedDeviceFeatureSensor::from(x)))
+    }
+  }
+}
+
+impl Into<DeviceFeature> for ExposedDeviceFeature {
+  fn into(self) -> DeviceFeature {
+    DeviceFeature::new(
+      &self.description, 
+      self.feature_type,
+      &self.actuator.and_then(|x| Some(x.into())), 
+      &self.sensor.and_then(|x| Some(x.into())))
+  }
+}
+
+pub struct ExposedUserDeviceCustomization {
+  pub display_name: Option<String>,
+  pub allow: bool,
+  pub deny: bool,
+  pub index: u32,
+}
+
+impl From<UserDeviceCustomization> for ExposedUserDeviceCustomization {
+  fn from(value: UserDeviceCustomization) -> Self {
+    Self {
+      display_name: value.display_name().clone(),
+      allow: value.allow(),
+      deny: value.deny(),
+      index: value.index()
+    }
+  }
+}
+
+impl Into<UserDeviceCustomization> for ExposedUserDeviceCustomization {
+  fn into(self) -> UserDeviceCustomization {
+    UserDeviceCustomization::new(
+      &self.display_name.clone(),
+      self.allow,
+      self.deny,
+      self.index
+    )
+  }
+}
+
+pub struct ExposedUserDeviceDefinition {
+  pub name: String,
+  pub features: Vec<ExposedDeviceFeature>,
+  pub user_config: ExposedUserDeviceCustomization,
+}
+
+impl From<UserDeviceDefinition> for ExposedUserDeviceDefinition {
+  fn from(value: UserDeviceDefinition) -> Self {
+    Self {
+      name: value.name().clone(),
+      features: value.features().iter().cloned().map(|x| x.into()).collect(),
+      user_config: value.user_config().clone().into()
+    }
+  }
+}
+
+impl Into<UserDeviceDefinition> for ExposedUserDeviceDefinition {
+  fn into(self) -> UserDeviceDefinition {
+    UserDeviceDefinition::new(
+      &self.name, 
+      &self.features.iter().cloned().map(|x| x.into()).collect::<Vec<DeviceFeature>>(), 
+      &self.user_config.into())
+  }
+}
+
+#[frb(mirror(FeatureType))]
+pub enum _FeatureType {
+  Unknown,
+  Vibrate,
+  // Single Direction Rotation Speed
+  Rotate,
+  Oscillate,
+  Constrict,
+  Inflate,
+  // For instances where we specify a position to move to ASAP. Usually servos, probably for the
+  // OSR-2/SR-6.
+  Position,
+  // Sensor Types
+  Battery,
+  RSSI,
+  Button,
+  Pressure,
+  // Currently unused but possible sensor features:
+  // Temperature,
+  // Accelerometer,
+  // Gyro,
+  //
+  // Raw Feature, for when raw messages are on
+  Raw,
+}
+
+#[frb(mirror(ButtplugActuatorFeatureMessageType))]
+pub enum _ButtplugActuatorFeatureMessageType {
+  ScalarCmd,
+  RotateCmd,
+  LinearCmd
+}
+
+#[frb(mirror(ButtplugSensorFeatureMessageType))]
+pub enum _ButtplugSensorFeatureMessageType {
+  SensorReadCmd,
+  SensorSubscribeCmd,
+}
+
+#[frb(mirror(Endpoint))]
+pub enum _Endpoint {
+  Command,
+  Firmware,
+  Rx,
+  RxAccel,
+  RxBLEBattery,
+  RxBLEModel,
+  RxPressure,
+  RxTouch,
+  Tx,
+  TxMode,
+  TxShock,
+  TxVibrate,
+  TxVendorControl,
+  Whitelist,
+  Generic0,
+  Generic1,
+  Generic2,
+  Generic3,
+  Generic4,
+  Generic5,
+  Generic6,
+  Generic7,
+  Generic8,
+  Generic9,
+  Generic10,
+  Generic11,
+  Generic12,
+  Generic13,
+  Generic14,
+  Generic15,
+  Generic16,
+  Generic17,
+  Generic18,
+  Generic19,
+  Generic20,
+  Generic21,
+  Generic22,
+  Generic23,
+  Generic24,
+  Generic25,
+  Generic26,
+  Generic27,
+  Generic28,
+  Generic29,
+  Generic30,
+  Generic31,
+}
+
+#[frb(mirror(ButtplugDeviceMessageType))]
+pub enum _ButtplugDeviceMessageType {
+  VibrateCmd,
+  LinearCmd,
+  RotateCmd,
+  StopDeviceCmd,
+  RawWriteCmd,
+  RawReadCmd,
+  RawSubscribeCmd,
+  RawUnsubscribeCmd,
+  BatteryLevelCmd,
+  RSSILevelCmd,
+  ScalarCmd,
+  SensorReadCmd,
+  SensorSubscribeCmd,
+  SensorUnsubscribeCmd,
+  // Deprecated generic commands
+  SingleMotorVibrateCmd,
+  // Deprecated device specific commands
+  FleshlightLaunchFW12Cmd,
+  LovenseCmd,
+  KiirooCmd,
+  VorzeA10CycloneCmd,
+}
+
+// FRB v1.x complains about having HashMaps as return types, so update that when we change over to v2.
+pub fn get_user_communication_specifiers(user_config: String) -> Vec<(String, ExposedWebsocketSpecifier)> {
+  let dcm = load_protocol_configs(&None, &Some(user_config), false).unwrap().finish().unwrap();
+  let mut ws_specs = vec!();
+  for kv in dcm.user_communication_specifiers() {
+    for comm_spec in kv.value() {
+      if let ProtocolCommunicationSpecifier::Websocket(ws) = comm_spec {
+        ws_specs.push((kv.key().to_owned(), ExposedWebsocketSpecifier::from(ws.clone())))
+      }  
+    }
+  }
+  ws_specs
+}
+
+pub fn get_user_device_definitions(user_config: String) -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
+  let dcm = load_protocol_configs(&None, &Some(user_config), false).unwrap().finish().unwrap();
+  dcm
+    .user_device_definitions()
+    .iter()
+    .map(|kv| (kv.key().clone().into(), kv.value().clone().into()))
+    .collect()  
 }
 
 pub fn get_protocol_names() -> Vec<String> {
