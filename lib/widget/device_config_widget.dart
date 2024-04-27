@@ -8,7 +8,7 @@ import 'package:loggy/loggy.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class DeviceConfigWidget extends StatelessWidget {
-  final UserConfigDeviceIdentifier identifier;
+  final ExposedUserDeviceIdentifier identifier;
 
   const DeviceConfigWidget({super.key, required this.identifier});
 
@@ -23,9 +23,9 @@ class DeviceConfigWidget extends StatelessWidget {
             return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
               List<AbstractSettingsSection> tiles = [];
               var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
-              ExposedWritableUserDeviceConfig config;
+              ExposedUserDeviceDefinition config;
               try {
-                config = userDeviceConfigCubit.configs.firstWhere((element) => element.matches(identifier));
+                config = userDeviceConfigCubit.configs[identifier]!;
               } catch (e) {
                 // If we can't find the corresponding device, return nothing.
                 logWarning("Cannot find identifier to render user config");
@@ -36,15 +36,15 @@ class DeviceConfigWidget extends StatelessWidget {
                 SettingsTile.navigation(
                     enabled: !engineIsRunning,
                     title: const Text("Display Name"),
-                    value: Text(config.displayName ?? ""),
+                    value: Text(config.userConfig.displayName ?? ""),
                     onPressed: (context) {
                       final TextEditingController nameController =
-                          TextEditingController(text: config.displayName ?? "");
+                          TextEditingController(text: config.userConfig.displayName ?? "");
                       var nameField = TextField(
                         controller: nameController,
                         onSubmitted: (value) async {
                           Navigator.pop(context);
-                          await userDeviceConfigCubit.updateDisplayName(config.identifier, value);
+                          await userDeviceConfigCubit.updateDisplayName(identifier, value);
                         },
                         decoration: const InputDecoration(hintText: "Display Name Entry"),
                       );
@@ -58,8 +58,7 @@ class DeviceConfigWidget extends StatelessWidget {
                                     child: const Text('Ok'),
                                     onPressed: () async {
                                       Navigator.pop(context);
-                                      await userDeviceConfigCubit.updateDisplayName(
-                                          config.identifier, nameController.text);
+                                      await userDeviceConfigCubit.updateDisplayName(identifier, nameController.text);
                                     },
                                   ),
                                   TextButton(
@@ -73,9 +72,9 @@ class DeviceConfigWidget extends StatelessWidget {
                     }),
                 SettingsTile.switchTile(
                     enabled: !engineIsRunning,
-                    initialValue: !(config.deny ?? false),
+                    initialValue: !config.userConfig.deny,
                     onToggle: (value) async {
-                      await userDeviceConfigCubit.updateDeviceDeny(config.identifier, !value);
+                      await userDeviceConfigCubit.updateDeviceDeny(identifier, !value);
                     },
                     title: const Text("Connect to this device")),
                 CustomSettingsTile(
@@ -83,7 +82,7 @@ class DeviceConfigWidget extends StatelessWidget {
                   onPressed: engineIsRunning
                       ? null
                       : () async {
-                          await userDeviceConfigCubit.removeDeviceConfig(config.identifier);
+                          await userDeviceConfigCubit.removeDeviceConfig(identifier);
                         },
                   child: const Text('Forget Device'),
                 ))

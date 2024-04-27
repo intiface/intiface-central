@@ -139,8 +139,8 @@ class SerializableUserConfigDeviceIdentifier extends Equatable {
       _$SerializableUserConfigDeviceIdentifierFromJson(json);
   const SerializableUserConfigDeviceIdentifier(this.address, this.protocol, this.identifier);
 
-  UserConfigDeviceIdentifier toUserConfigDeviceIdentifier() {
-    return UserConfigDeviceIdentifier(address: address, protocol: protocol, identifier: identifier);
+  ExposedUserDeviceIdentifier toExposedUserDeviceIdentifier() {
+    return ExposedUserDeviceIdentifier(address: address, protocol: protocol, identifier: identifier);
   }
 }
 

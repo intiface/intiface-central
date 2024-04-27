@@ -83,16 +83,19 @@ class DevicePage extends StatelessWidget {
                 for (var deviceCubit in deviceBloc.devices) {
                   var device = deviceCubit.device!;
                   connectedIndexes.add(device.index);
-                  var deviceConfig = userDeviceConfigCubit.configs.firstWhere(
-                      (element) => element.reservedIndex == device.index,
-                      orElse: () => ExposedWritableUserDeviceConfig.createDefault(device.index));
+                  var deviceEntry;
+                  try {
+                    deviceEntry = userDeviceConfigCubit.configs.entries
+                        .firstWhere((element) => element.value.userConfig.index == device.index);
+                  } catch (e) {
+                    continue;
+                  }
                   var expansionName = "device-settings-${device.index}";
                   deviceWidgets.add(Card(
                       child: ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
                     ListTile(
                       title: Text(device.displayName ?? device.name),
-                      subtitle:
-                          Text("Index: ${device.index} - Base Name: ${device.name}\n${deviceConfig.identifierString}"),
+                      subtitle: Text("Index: ${device.index} - Base Name: ${device.name}"),
                     ),
                     DeviceControlWidget(deviceCubit: deviceCubit),
                     BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
@@ -111,7 +114,7 @@ class DevicePage extends StatelessWidget {
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       children: [
-                                        DeviceConfigWidget(identifier: deviceConfig.identifier),
+                                        DeviceConfigWidget(identifier: deviceEntry.key),
                                       ]),
                                   isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false)
                             ],
@@ -124,11 +127,13 @@ class DevicePage extends StatelessWidget {
               }
 
               deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
-              for (var deviceConfig in userDeviceConfigCubit.configs) {
-                if (connectedIndexes.contains(deviceConfig.reservedIndex)) {
+              for (var deviceEntry in userDeviceConfigCubit.configs.entries) {
+                if (connectedIndexes.contains(deviceEntry.value.userConfig.index)) {
                   continue;
                 }
-                var expansionName = "device-settings-${deviceConfig.reservedIndex}";
+                var expansionName = "device-settings-${deviceEntry.value.userConfig.index}";
+                var identifierString =
+                    "${deviceEntry.key.protocol}-${deviceEntry.key.identifier}-${deviceEntry.key.address}";
                 deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
                     buildWhen: (previous, current) =>
                         current is GuiSettingStateUpdate && current.valueName == expansionName,
@@ -138,17 +143,17 @@ class DevicePage extends StatelessWidget {
                             ExpansionPanel(
                                 headerBuilder: (BuildContext context, bool isExpanded) {
                                   return ListTile(
-                                    title: Text(deviceConfig.displayName != null
-                                        ? "${deviceConfig.displayName} (${deviceConfig.name})"
-                                        : deviceConfig.name),
-                                    subtitle: Text(deviceConfig.identifierString),
+                                    title: Text(deviceEntry.value.userConfig.displayName != null
+                                        ? "${deviceEntry.value.userConfig.displayName} (${deviceEntry.value.name})"
+                                        : deviceEntry.value.name),
+                                    subtitle: Text(identifierString),
                                   );
                                 },
                                 body: ListView(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     children: [
-                                      DeviceConfigWidget(identifier: deviceConfig.identifier),
+                                      DeviceConfigWidget(identifier: deviceEntry.key),
                                     ]),
                                 isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? true)
                           ],
@@ -159,6 +164,7 @@ class DevicePage extends StatelessWidget {
 
               var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
               List<DataRow> rows = [];
+              /*
               for (var websocketConfig in userDeviceConfigCubit.specifiers.entries) {
                 if (websocketConfig.value.websocketNames != null) {
                   for (var name in websocketConfig.value.websocketNames!) {
@@ -175,6 +181,7 @@ class DevicePage extends StatelessWidget {
                   }
                 }
               }
+              */
 
               // For now, we'll build these locally. This means we lose data on repaint but that's not actually an issue
               // with this entry.

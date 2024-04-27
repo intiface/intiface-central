@@ -9,117 +9,40 @@ class UserDeviceConfigurationStateInitial extends UserDeviceConfigurationState {
 
 class UserDeviceConfigurationStateUpdated extends UserDeviceConfigurationState {}
 
-class ExposedWritableUserDeviceSpecifier {
-  List<String>? websocketNames;
-
-  ExposedWritableUserDeviceSpecifier(this.websocketNames);
-
-  void addWebsocketDeviceName(String name) {
-    if (websocketNames != null) {
-      if (!websocketNames!.contains(name)) {
-        websocketNames!.add(name);
-      }
-    } else {
-      websocketNames = [name].toList();
-    }
-  }
-
-  void removeWebsocketDeviceName(String name) {
-    if (websocketNames != null) {
-      websocketNames!.remove(name);
-    }
-  }
-
-  static ExposedWritableUserDeviceSpecifier? fromRust(ExposedUserDeviceSpecifiers config) {
-    return ExposedWritableUserDeviceSpecifier(config.websocket!.names.toList());
-  }
-
-  ExposedUserDeviceSpecifiers? toRust() {
-    // For now, assume we'll only use websockets here. This will change once we can also set up serial ports.
-    if (websocketNames == null) {
-      return null;
-    }
-    var websocketSpecifier = ExposedWebsocketSpecifier(names: websocketNames!);
-    return ExposedUserDeviceSpecifiers(websocket: websocketSpecifier);
-  }
-}
-
-class ExposedWritableUserDeviceConfig {
-  UserConfigDeviceIdentifier identifier;
-  String name;
-  String? displayName;
-  bool? allow;
-  bool? deny;
-  int? reservedIndex;
-
-  static ExposedWritableUserDeviceConfig createDefault(index) {
-    return ExposedWritableUserDeviceConfig(
-        const UserConfigDeviceIdentifier(address: "", protocol: ""), "", index, "", false, false);
-  }
-
-  ExposedWritableUserDeviceConfig(
-      this.identifier, this.name, this.reservedIndex, this.displayName, this.allow, this.deny);
-
-  String get identifierString {
-    return "${identifier.protocol}:${identifier.identifier}:${identifier.address}:$reservedIndex";
-  }
-
-  bool matches(UserConfigDeviceIdentifier other) {
-    return identifier.address == other.address &&
-        identifier.protocol == other.protocol &&
-        identifier.identifier == other.identifier;
-  }
-
-  static ExposedWritableUserDeviceConfig fromRust(ExposedUserDeviceConfig config) {
-    return ExposedWritableUserDeviceConfig(
-        config.identifier, config.name, config.reservedIndex, config.displayName, config.allow, config.deny);
-  }
-
-  ExposedUserDeviceConfig toRust() {
-    return ExposedUserDeviceConfig(
-        identifier: identifier,
-        name: name,
-        reservedIndex: reservedIndex,
-        displayName: displayName,
-        allow: allow,
-        deny: deny);
-  }
-}
-
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
-  List<ExposedWritableUserDeviceConfig> _configs = List.empty(growable: true);
+  Map<ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition> _configs = {};
   List<String> _protocols = List.empty(growable: true);
-  final Map<String, ExposedWritableUserDeviceSpecifier> _specifiers = {};
+  Map<String, ExposedWebsocketSpecifier> _specifiers = {};
 
   UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
 
-  List<ExposedWritableUserDeviceConfig> get configs => _configs;
-  Map<String, ExposedWritableUserDeviceSpecifier> get specifiers => _specifiers;
+  Map<ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition> get configs => _configs;
+  Map<String, ExposedWebsocketSpecifier> get specifiers => _specifiers;
   List<String> get protocols => _protocols;
 
   static Future<UserDeviceConfigurationCubit> create() async {
     var cubit = UserDeviceConfigurationCubit._();
+    await cubit.updateFromDisk();
+    return cubit;
+  }
+
+  Future<void> updateFromDisk() async {
     try {
       if (!IntifacePaths.userDeviceConfigFile.existsSync()) {
-        await cubit._saveConfigFile();
+        return;
       }
       if (IntifacePaths.deviceConfigFile.existsSync() && IntifacePaths.userDeviceConfigFile.existsSync()) {
-        var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
-        var jsonConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
-        var config = (await api!.getUserDeviceConfigs(deviceConfigJson: jsonDeviceConfig, userConfigJson: jsonConfig));
-        cubit._configs = config.configurations.map((e) => ExposedWritableUserDeviceConfig.fromRust(e)).toList();
-        for (var k in config.specifiers) {
-          var protocol = k.$1;
-          var specifier = k.$2;
-          var dartSpecifier = ExposedWritableUserDeviceSpecifier.fromRust(specifier);
-          if (dartSpecifier == null) {
-            continue;
-          }
-          cubit._specifiers[protocol] = dartSpecifier;
-        }
-        //.map((k, v) => ExposedWritableUserDeviceSpecifier())
+        //var jsonDeviceConfig = IntifacePaths.deviceConfigFile.readAsStringSync();
+        var userConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
+        // Can't get this out of frb v1 as a map, so we have to convert here.
+        _configs = <ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition>{
+          for (var (k, v) in await api!.getUserDeviceDefinitions(userConfig: userConfig)) k: v
+        };
+        _specifiers = <String, ExposedWebsocketSpecifier>{
+          for (var (k, v) in await api!.getUserCommunicationSpecifiers(userConfig: userConfig)) k: v
+        };
       }
-      cubit._protocols = await api!.getProtocolNames();
+      _protocols = await api!.getProtocolNames();
     } catch (e) {
       logError("Error loading cubit! Deleting configs and creating new ones.");
       logError(e);
@@ -139,127 +62,68 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
         logError("Error deleting user device configs");
         logError(e);
       }
-      await cubit._saveConfigFile();
     }
-    return cubit;
   }
 
   Future<void> addWebsocketDeviceName(String protocol, String name) async {
+    /*
     if (!_specifiers.containsKey(protocol)) {
       _specifiers[protocol] = ExposedWritableUserDeviceSpecifier([name]);
     } else {
       _specifiers[protocol]!.addWebsocketDeviceName(name);
     }
     await _saveConfigFile();
+    */
   }
 
   Future<void> removeWebsocketDeviceName(String protocol, String name) async {
+    /*
     if (_specifiers.containsKey(protocol)) {
       _specifiers[protocol]!.removeWebsocketDeviceName(name);
       await _saveConfigFile();
     }
+    */
   }
 
-  Future<void> updateDeviceAllow(UserConfigDeviceIdentifier deviceIdentifier, bool allow) async {
-    // See if device already exists in config
-    for (var config in _configs) {
-      if (config.matches(deviceIdentifier)) {
-        config.allow = allow;
-        await _saveConfigFile();
-        return;
-      }
-    }
-    ExposedWritableUserDeviceConfig newConfig =
-        ExposedWritableUserDeviceConfig(deviceIdentifier, "", null, null, allow, null);
+  Future<void> updateDeviceAllow(ExposedUserDeviceIdentifier deviceIdentifier, bool allow) async {
+    var def = _configs[deviceIdentifier]!;
+    var newUserConfig = ExposedUserDeviceCustomization(
+        allow: allow, deny: def.userConfig.deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
+    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
     await _updateConfig(deviceIdentifier, newConfig);
   }
 
-  Future<void> updateDeviceDeny(UserConfigDeviceIdentifier deviceIdentifier, bool deny) async {
-    // See if device already exists in config
-    for (var config in _configs) {
-      if (config.matches(deviceIdentifier)) {
-        config.deny = deny;
-        await _saveConfigFile();
-        return;
-      }
-    }
-    ExposedWritableUserDeviceConfig newConfig =
-        ExposedWritableUserDeviceConfig(deviceIdentifier, "", null, null, null, deny);
+  Future<void> updateDeviceDeny(ExposedUserDeviceIdentifier deviceIdentifier, bool deny) async {
+    var def = _configs[deviceIdentifier]!;
+    var newUserConfig = ExposedUserDeviceCustomization(
+        allow: def.userConfig.allow, deny: deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
+    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
     await _updateConfig(deviceIdentifier, newConfig);
   }
 
-  Future<void> updateDeviceIndex(UserConfigDeviceIdentifier deviceIdentifier, int reservedIndex) async {
-    // See if device already exists in config
-    for (var config in _configs) {
-      if (config.matches(deviceIdentifier)) {
-        config.reservedIndex = reservedIndex;
-        await _saveConfigFile();
-        return;
-      }
-    }
-    ExposedWritableUserDeviceConfig newConfig =
-        ExposedWritableUserDeviceConfig(deviceIdentifier, "", reservedIndex, null, null, null);
+  Future<void> updateDisplayName(ExposedUserDeviceIdentifier deviceIdentifier, String displayName) async {
+    var def = _configs[deviceIdentifier]!;
+    var newUserConfig = ExposedUserDeviceCustomization(
+        allow: def.userConfig.allow,
+        deny: def.userConfig.deny,
+        index: def.userConfig.index,
+        displayName: def.userConfig.displayName);
+    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
     await _updateConfig(deviceIdentifier, newConfig);
   }
 
-  Future<void> updateName(UserConfigDeviceIdentifier deviceIdentifier, String name) async {
-    var updatedName = name.trim();
-
-    // See if device already exists in config
-    for (var config in _configs) {
-      if (config.matches(deviceIdentifier)) {
-        config.name = updatedName.isEmpty ? "" : updatedName;
-        await _saveConfigFile();
-        return;
-      }
-    }
-    ExposedWritableUserDeviceConfig newConfig =
-        ExposedWritableUserDeviceConfig(deviceIdentifier, updatedName, null, null, null, null);
-    await _updateConfig(deviceIdentifier, newConfig);
-  }
-
-  Future<void> updateDisplayName(UserConfigDeviceIdentifier deviceIdentifier, String displayName) async {
-    var updatedDisplayName = displayName.trim();
-
-    // See if device already exists in config
-    for (var config in _configs) {
-      if (config.matches(deviceIdentifier)) {
-        config.displayName = updatedDisplayName.isEmpty ? null : updatedDisplayName;
-        await _saveConfigFile();
-        return;
-      }
-    }
-    ExposedWritableUserDeviceConfig newConfig =
-        ExposedWritableUserDeviceConfig(deviceIdentifier, displayName, null, null, null, null);
-    await _updateConfig(deviceIdentifier, newConfig);
-  }
-
-  Future<void> removeDeviceConfig(UserConfigDeviceIdentifier deviceIdentifier) async {
-    _configs.removeWhere((element) => element.matches(deviceIdentifier));
+  Future<void> removeDeviceConfig(ExposedUserDeviceIdentifier deviceIdentifier) async {
+    _configs.remove(deviceIdentifier);
     await _saveConfigFile();
   }
 
   Future<void> _updateConfig(
-      UserConfigDeviceIdentifier deviceIdentifier, ExposedWritableUserDeviceConfig newConfig) async {
-    _configs.removeWhere((element) => element.matches(deviceIdentifier));
-    _configs.add(newConfig);
+      ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition newConfig) async {
+    _configs[deviceIdentifier] = newConfig;
     await _saveConfigFile();
   }
 
   Future<void> _saveConfigFile() async {
-    List<(String, ExposedUserDeviceSpecifiers)> specifierList = [];
-    logInfo(_specifiers);
-    for (var entry in _specifiers.entries) {
-      if (entry.value.toRust() != null) {
-        logInfo(entry.key);
-        specifierList.add((entry.key, entry.value.toRust()!));
-      }
-    }
-    logInfo(specifierList);
-    var jsonString = await api!.generateUserDeviceConfigFile(
-        userConfig:
-            ExposedUserConfig(configurations: _configs.map((e) => e.toRust()).toList(), specifiers: specifierList));
-    await IntifacePaths.userDeviceConfigFile.writeAsString(jsonString);
     emit(UserDeviceConfigurationStateUpdated());
   }
 }

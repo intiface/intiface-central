@@ -28,7 +28,7 @@ class DeviceConnectedState extends EngineControlState {
   final String name;
   final String? displayName;
   final int index;
-  final UserConfigDeviceIdentifier identifier;
+  final ExposedUserDeviceIdentifier identifier;
 
   DeviceConnectedState(this.name, this.displayName, this.index, this.identifier);
 }
@@ -68,7 +68,7 @@ class EngineControlEventBackdoorMessage extends EngineControlEvent {
 class EngineDevice {
   final int index;
   final String name;
-  final UserConfigDeviceIdentifier identifier;
+  final ExposedUserDeviceIdentifier identifier;
 
   const EngineDevice(this.index, this.name, this.identifier);
 }
@@ -128,9 +128,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           if (engineMessage.deviceConnected != null) {
             var deviceInfo = engineMessage.deviceConnected!;
             _devices[deviceInfo.index] =
-                EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier.toUserConfigDeviceIdentifier());
+                EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier.toExposedUserDeviceIdentifier());
             return DeviceConnectedState(deviceInfo.name, deviceInfo.displayName, deviceInfo.index,
-                deviceInfo.identifier.toUserConfigDeviceIdentifier());
+                deviceInfo.identifier.toExposedUserDeviceIdentifier());
           }
           if (engineMessage.deviceDisconnected != null) {
             _devices.remove(engineMessage.deviceDisconnected!.index);
