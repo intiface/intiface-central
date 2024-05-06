@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
+import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
@@ -164,24 +165,18 @@ class DevicePage extends StatelessWidget {
 
               var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
               List<DataRow> rows = [];
-              /*
-              for (var websocketConfig in userDeviceConfigCubit.specifiers.entries) {
-                if (websocketConfig.value.websocketNames != null) {
-                  for (var name in websocketConfig.value.websocketNames!) {
-                    rows.add(DataRow(cells: [
-                      DataCell(Text(websocketConfig.key)),
-                      DataCell(Text(name)),
-                      DataCell(TextButton(
-                        onPressed: engineIsRunning
-                            ? null
-                            : () => userDeviceConfigCubit.removeWebsocketDeviceName(websocketConfig.key, name),
-                        child: const Text("Delete"),
-                      ))
-                    ]));
-                  }
-                }
+              for (var (protocol, websocketSpecifier) in userDeviceConfigCubit.specifiers) {
+                rows.add(DataRow(cells: [
+                  DataCell(Text(protocol)),
+                  DataCell(Text(websocketSpecifier.name)),
+                  DataCell(TextButton(
+                    onPressed: engineIsRunning
+                        ? null
+                        : () => userDeviceConfigCubit.removeWebsocketDeviceName(protocol, websocketSpecifier.name),
+                    child: const Text("Delete"),
+                  ))
+                ]));
               }
-              */
 
               // For now, we'll build these locally. This means we lose data on repaint but that's not actually an issue
               // with this entry.

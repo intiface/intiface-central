@@ -31,20 +31,50 @@ abstract class IntifaceEngineFlutterBridge {
 
   FlutterRustBridgeTaskConstMeta get kSendBackendServerMessageConstMeta;
 
+  Future<void> setupDeviceConfigurationManager(
+      {String? baseConfig, String? userConfig, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kSetupDeviceConfigurationManagerConstMeta;
+
   Future<List<(String, ExposedWebsocketSpecifier)>>
-      getUserCommunicationSpecifiers(
-          {required String userConfig, dynamic hint});
+      getUserCommunicationSpecifiers({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetUserCommunicationSpecifiersConstMeta;
 
   Future<List<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)>>
-      getUserDeviceDefinitions({required String userConfig, dynamic hint});
+      getUserDeviceDefinitions({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetUserDeviceDefinitionsConstMeta;
 
   Future<List<String>> getProtocolNames({dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGetProtocolNamesConstMeta;
+
+  Future<void> addWebsocketSpecifier(
+      {required String protocol, required String name, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAddWebsocketSpecifierConstMeta;
+
+  Future<void> removeWebsocketSpecifier(
+      {required String protocol, required String name, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kRemoveWebsocketSpecifierConstMeta;
+
+  Future<void> updateUserConfig(
+      {required ExposedUserDeviceIdentifier identifier,
+      required ExposedUserDeviceDefinition config,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kUpdateUserConfigConstMeta;
+
+  Future<void> removeUserConfig(
+      {required ExposedUserDeviceIdentifier identifier, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kRemoveUserConfigConstMeta;
+
+  Future<String> getUserConfigStr({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kGetUserConfigStrConstMeta;
 
   Stream<String> setupLogging({dynamic hint});
 
@@ -205,10 +235,10 @@ class ExposedUserDeviceIdentifier {
 }
 
 class ExposedWebsocketSpecifier {
-  final List<String> names;
+  final String name;
 
   const ExposedWebsocketSpecifier({
-    required this.names,
+    required this.name,
   });
 }
 
@@ -327,18 +357,38 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
         argNames: ["msg"],
       );
 
+  Future<void> setupDeviceConfigurationManager(
+      {String? baseConfig, String? userConfig, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(baseConfig);
+    var arg1 = _platform.api2wire_opt_String(userConfig);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner
+          .wire_setup_device_configuration_manager(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kSetupDeviceConfigurationManagerConstMeta,
+      argValues: [baseConfig, userConfig],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta
+      get kSetupDeviceConfigurationManagerConstMeta =>
+          const FlutterRustBridgeTaskConstMeta(
+            debugName: "setup_device_configuration_manager",
+            argNames: ["baseConfig", "userConfig"],
+          );
+
   Future<List<(String, ExposedWebsocketSpecifier)>>
-      getUserCommunicationSpecifiers(
-          {required String userConfig, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(userConfig);
+      getUserCommunicationSpecifiers({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
-          _platform.inner.wire_get_user_communication_specifiers(port_, arg0),
+          _platform.inner.wire_get_user_communication_specifiers(port_),
       parseSuccessData:
           _wire2api_list___record__String_exposed_websocket_specifier,
       parseErrorData: null,
       constMeta: kGetUserCommunicationSpecifiersConstMeta,
-      argValues: [userConfig],
+      argValues: [],
       hint: hint,
     ));
   }
@@ -346,20 +396,19 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
   FlutterRustBridgeTaskConstMeta get kGetUserCommunicationSpecifiersConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_user_communication_specifiers",
-        argNames: ["userConfig"],
+        argNames: [],
       );
 
   Future<List<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)>>
-      getUserDeviceDefinitions({required String userConfig, dynamic hint}) {
-    var arg0 = _platform.api2wire_String(userConfig);
+      getUserDeviceDefinitions({dynamic hint}) {
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) =>
-          _platform.inner.wire_get_user_device_definitions(port_, arg0),
+          _platform.inner.wire_get_user_device_definitions(port_),
       parseSuccessData:
           _wire2api_list___record__exposed_user_device_identifier_exposed_user_device_definition,
       parseErrorData: null,
       constMeta: kGetUserDeviceDefinitionsConstMeta,
-      argValues: [userConfig],
+      argValues: [],
       hint: hint,
     ));
   }
@@ -367,7 +416,7 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
   FlutterRustBridgeTaskConstMeta get kGetUserDeviceDefinitionsConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_user_device_definitions",
-        argNames: ["userConfig"],
+        argNames: [],
       );
 
   Future<List<String>> getProtocolNames({dynamic hint}) {
@@ -384,6 +433,110 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
   FlutterRustBridgeTaskConstMeta get kGetProtocolNamesConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "get_protocol_names",
+        argNames: [],
+      );
+
+  Future<void> addWebsocketSpecifier(
+      {required String protocol, required String name, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(protocol);
+    var arg1 = _platform.api2wire_String(name);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_add_websocket_specifier(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kAddWebsocketSpecifierConstMeta,
+      argValues: [protocol, name],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAddWebsocketSpecifierConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "add_websocket_specifier",
+        argNames: ["protocol", "name"],
+      );
+
+  Future<void> removeWebsocketSpecifier(
+      {required String protocol, required String name, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(protocol);
+    var arg1 = _platform.api2wire_String(name);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_remove_websocket_specifier(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kRemoveWebsocketSpecifierConstMeta,
+      argValues: [protocol, name],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kRemoveWebsocketSpecifierConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "remove_websocket_specifier",
+        argNames: ["protocol", "name"],
+      );
+
+  Future<void> updateUserConfig(
+      {required ExposedUserDeviceIdentifier identifier,
+      required ExposedUserDeviceDefinition config,
+      dynamic hint}) {
+    var arg0 = _platform
+        .api2wire_box_autoadd_exposed_user_device_identifier(identifier);
+    var arg1 =
+        _platform.api2wire_box_autoadd_exposed_user_device_definition(config);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) =>
+          _platform.inner.wire_update_user_config(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kUpdateUserConfigConstMeta,
+      argValues: [identifier, config],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kUpdateUserConfigConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "update_user_config",
+        argNames: ["identifier", "config"],
+      );
+
+  Future<void> removeUserConfig(
+      {required ExposedUserDeviceIdentifier identifier, dynamic hint}) {
+    var arg0 = _platform
+        .api2wire_box_autoadd_exposed_user_device_identifier(identifier);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_remove_user_config(port_, arg0),
+      parseSuccessData: _wire2api_unit,
+      parseErrorData: null,
+      constMeta: kRemoveUserConfigConstMeta,
+      argValues: [identifier],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kRemoveUserConfigConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "remove_user_config",
+        argNames: ["identifier"],
+      );
+
+  Future<String> getUserConfigStr({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_get_user_config_str(port_),
+      parseSuccessData: _wire2api_String,
+      parseErrorData: null,
+      constMeta: kGetUserConfigStrConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kGetUserConfigStrConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "get_user_config_str",
         argNames: [],
       );
 
@@ -607,7 +760,7 @@ class IntifaceEngineFlutterBridgeImpl implements IntifaceEngineFlutterBridge {
     if (arr.length != 1)
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
     return ExposedWebsocketSpecifier(
-      names: _wire2api_StringList(arr[0]),
+      name: _wire2api_String(arr[0]),
     );
   }
 
@@ -703,6 +856,28 @@ bool api2wire_bool(bool raw) {
 }
 
 @protected
+int api2wire_buttplug_actuator_feature_message_type(
+    ButtplugActuatorFeatureMessageType raw) {
+  return api2wire_i32(raw.index);
+}
+
+@protected
+int api2wire_buttplug_sensor_feature_message_type(
+    ButtplugSensorFeatureMessageType raw) {
+  return api2wire_i32(raw.index);
+}
+
+@protected
+int api2wire_feature_type(FeatureType raw) {
+  return api2wire_i32(raw.index);
+}
+
+@protected
+int api2wire_i32(int raw) {
+  return raw;
+}
+
+@protected
 int api2wire_u16(int raw) {
   return raw;
 }
@@ -740,13 +915,111 @@ class IntifaceEngineFlutterBridgePlatform
   }
 
   @protected
+  ffi.Pointer<wire_ExposedDeviceFeatureActuator>
+      api2wire_box_autoadd_exposed_device_feature_actuator(
+          ExposedDeviceFeatureActuator raw) {
+    final ptr = inner.new_box_autoadd_exposed_device_feature_actuator_0();
+    _api_fill_to_wire_exposed_device_feature_actuator(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_ExposedDeviceFeatureSensor>
+      api2wire_box_autoadd_exposed_device_feature_sensor(
+          ExposedDeviceFeatureSensor raw) {
+    final ptr = inner.new_box_autoadd_exposed_device_feature_sensor_0();
+    _api_fill_to_wire_exposed_device_feature_sensor(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_ExposedUserDeviceDefinition>
+      api2wire_box_autoadd_exposed_user_device_definition(
+          ExposedUserDeviceDefinition raw) {
+    final ptr = inner.new_box_autoadd_exposed_user_device_definition_0();
+    _api_fill_to_wire_exposed_user_device_definition(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_ExposedUserDeviceIdentifier>
+      api2wire_box_autoadd_exposed_user_device_identifier(
+          ExposedUserDeviceIdentifier raw) {
+    final ptr = inner.new_box_autoadd_exposed_user_device_identifier_0();
+    _api_fill_to_wire_exposed_user_device_identifier(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
   ffi.Pointer<ffi.Uint16> api2wire_box_autoadd_u16(int raw) {
     return inner.new_box_autoadd_u16_0(api2wire_u16(raw));
   }
 
   @protected
+  ffi.Pointer<wire_list___record__i32_i32> api2wire_list___record__i32_i32(
+      List<(int, int)> raw) {
+    final ans = inner.new_list___record__i32_i32_0(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      _api_fill_to_wire___record__i32_i32(raw[i], ans.ref.ptr[i]);
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_list_buttplug_actuator_feature_message_type>
+      api2wire_list_buttplug_actuator_feature_message_type(
+          List<ButtplugActuatorFeatureMessageType> raw) {
+    final ans =
+        inner.new_list_buttplug_actuator_feature_message_type_0(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      ans.ref.ptr[i] = api2wire_buttplug_actuator_feature_message_type(raw[i]);
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_list_buttplug_sensor_feature_message_type>
+      api2wire_list_buttplug_sensor_feature_message_type(
+          List<ButtplugSensorFeatureMessageType> raw) {
+    final ans =
+        inner.new_list_buttplug_sensor_feature_message_type_0(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      ans.ref.ptr[i] = api2wire_buttplug_sensor_feature_message_type(raw[i]);
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_list_exposed_device_feature>
+      api2wire_list_exposed_device_feature(List<ExposedDeviceFeature> raw) {
+    final ans = inner.new_list_exposed_device_feature_0(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      _api_fill_to_wire_exposed_device_feature(raw[i], ans.ref.ptr[i]);
+    }
+    return ans;
+  }
+
+  @protected
   ffi.Pointer<wire_uint_8_list> api2wire_opt_String(String? raw) {
     return raw == null ? ffi.nullptr : api2wire_String(raw);
+  }
+
+  @protected
+  ffi.Pointer<wire_ExposedDeviceFeatureActuator>
+      api2wire_opt_box_autoadd_exposed_device_feature_actuator(
+          ExposedDeviceFeatureActuator? raw) {
+    return raw == null
+        ? ffi.nullptr
+        : api2wire_box_autoadd_exposed_device_feature_actuator(raw);
+  }
+
+  @protected
+  ffi.Pointer<wire_ExposedDeviceFeatureSensor>
+      api2wire_opt_box_autoadd_exposed_device_feature_sensor(
+          ExposedDeviceFeatureSensor? raw) {
+    return raw == null
+        ? ffi.nullptr
+        : api2wire_box_autoadd_exposed_device_feature_sensor(raw);
   }
 
   @protected
@@ -764,10 +1037,46 @@ class IntifaceEngineFlutterBridgePlatform
 
 // Section: api_fill_to_wire
 
+  void _api_fill_to_wire___record__i32_i32(
+      (int, int) apiObj, wire___record__i32_i32 wireObj) {
+    wireObj.field0 = api2wire_i32(apiObj.$1);
+    wireObj.field1 = api2wire_i32(apiObj.$2);
+  }
+
+  void _api_fill_to_wire___record__u32_u32(
+      (int, int) apiObj, wire___record__u32_u32 wireObj) {
+    wireObj.field0 = api2wire_u32(apiObj.$1);
+    wireObj.field1 = api2wire_u32(apiObj.$2);
+  }
+
   void _api_fill_to_wire_box_autoadd_engine_options_external(
       EngineOptionsExternal apiObj,
       ffi.Pointer<wire_EngineOptionsExternal> wireObj) {
     _api_fill_to_wire_engine_options_external(apiObj, wireObj.ref);
+  }
+
+  void _api_fill_to_wire_box_autoadd_exposed_device_feature_actuator(
+      ExposedDeviceFeatureActuator apiObj,
+      ffi.Pointer<wire_ExposedDeviceFeatureActuator> wireObj) {
+    _api_fill_to_wire_exposed_device_feature_actuator(apiObj, wireObj.ref);
+  }
+
+  void _api_fill_to_wire_box_autoadd_exposed_device_feature_sensor(
+      ExposedDeviceFeatureSensor apiObj,
+      ffi.Pointer<wire_ExposedDeviceFeatureSensor> wireObj) {
+    _api_fill_to_wire_exposed_device_feature_sensor(apiObj, wireObj.ref);
+  }
+
+  void _api_fill_to_wire_box_autoadd_exposed_user_device_definition(
+      ExposedUserDeviceDefinition apiObj,
+      ffi.Pointer<wire_ExposedUserDeviceDefinition> wireObj) {
+    _api_fill_to_wire_exposed_user_device_definition(apiObj, wireObj.ref);
+  }
+
+  void _api_fill_to_wire_box_autoadd_exposed_user_device_identifier(
+      ExposedUserDeviceIdentifier apiObj,
+      ffi.Pointer<wire_ExposedUserDeviceIdentifier> wireObj) {
+    _api_fill_to_wire_exposed_user_device_identifier(apiObj, wireObj.ref);
   }
 
   void _api_fill_to_wire_engine_options_external(
@@ -810,6 +1119,59 @@ class IntifaceEngineFlutterBridgePlatform
         api2wire_opt_box_autoadd_u16(apiObj.repeaterLocalPort);
     wireObj.repeater_remote_address =
         api2wire_opt_String(apiObj.repeaterRemoteAddress);
+  }
+
+  void _api_fill_to_wire_exposed_device_feature(
+      ExposedDeviceFeature apiObj, wire_ExposedDeviceFeature wireObj) {
+    wireObj.description = api2wire_String(apiObj.description);
+    wireObj.feature_type = api2wire_feature_type(apiObj.featureType);
+    wireObj.actuator = api2wire_opt_box_autoadd_exposed_device_feature_actuator(
+        apiObj.actuator);
+    wireObj.sensor =
+        api2wire_opt_box_autoadd_exposed_device_feature_sensor(apiObj.sensor);
+  }
+
+  void _api_fill_to_wire_exposed_device_feature_actuator(
+      ExposedDeviceFeatureActuator apiObj,
+      wire_ExposedDeviceFeatureActuator wireObj) {
+    _api_fill_to_wire___record__u32_u32(apiObj.stepRange, wireObj.step_range);
+    _api_fill_to_wire___record__u32_u32(apiObj.stepLimit, wireObj.step_limit);
+    wireObj.messages =
+        api2wire_list_buttplug_actuator_feature_message_type(apiObj.messages);
+  }
+
+  void _api_fill_to_wire_exposed_device_feature_sensor(
+      ExposedDeviceFeatureSensor apiObj,
+      wire_ExposedDeviceFeatureSensor wireObj) {
+    wireObj.value_range = api2wire_list___record__i32_i32(apiObj.valueRange);
+    wireObj.messages =
+        api2wire_list_buttplug_sensor_feature_message_type(apiObj.messages);
+  }
+
+  void _api_fill_to_wire_exposed_user_device_customization(
+      ExposedUserDeviceCustomization apiObj,
+      wire_ExposedUserDeviceCustomization wireObj) {
+    wireObj.display_name = api2wire_opt_String(apiObj.displayName);
+    wireObj.allow = api2wire_bool(apiObj.allow);
+    wireObj.deny = api2wire_bool(apiObj.deny);
+    wireObj.index = api2wire_u32(apiObj.index);
+  }
+
+  void _api_fill_to_wire_exposed_user_device_definition(
+      ExposedUserDeviceDefinition apiObj,
+      wire_ExposedUserDeviceDefinition wireObj) {
+    wireObj.name = api2wire_String(apiObj.name);
+    wireObj.features = api2wire_list_exposed_device_feature(apiObj.features);
+    _api_fill_to_wire_exposed_user_device_customization(
+        apiObj.userConfig, wireObj.user_config);
+  }
+
+  void _api_fill_to_wire_exposed_user_device_identifier(
+      ExposedUserDeviceIdentifier apiObj,
+      wire_ExposedUserDeviceIdentifier wireObj) {
+    wireObj.address = api2wire_String(apiObj.address);
+    wireObj.protocol = api2wire_String(apiObj.protocol);
+    wireObj.identifier = api2wire_opt_String(apiObj.identifier);
   }
 }
 
@@ -989,41 +1351,56 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
       _wire_send_backend_server_messagePtr
           .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
+  void wire_setup_device_configuration_manager(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> base_config,
+    ffi.Pointer<wire_uint_8_list> user_config,
+  ) {
+    return _wire_setup_device_configuration_manager(
+      port_,
+      base_config,
+      user_config,
+    );
+  }
+
+  late final _wire_setup_device_configuration_managerPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_setup_device_configuration_manager');
+  late final _wire_setup_device_configuration_manager =
+      _wire_setup_device_configuration_managerPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>();
+
   void wire_get_user_communication_specifiers(
     int port_,
-    ffi.Pointer<wire_uint_8_list> user_config,
   ) {
     return _wire_get_user_communication_specifiers(
       port_,
-      user_config,
     );
   }
 
-  late final _wire_get_user_communication_specifiersPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>(
-      'wire_get_user_communication_specifiers');
+  late final _wire_get_user_communication_specifiersPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_get_user_communication_specifiers');
   late final _wire_get_user_communication_specifiers =
       _wire_get_user_communication_specifiersPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+          .asFunction<void Function(int)>();
 
   void wire_get_user_device_definitions(
     int port_,
-    ffi.Pointer<wire_uint_8_list> user_config,
   ) {
     return _wire_get_user_device_definitions(
       port_,
-      user_config,
     );
   }
 
-  late final _wire_get_user_device_definitionsPtr = _lookup<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>(
-      'wire_get_user_device_definitions');
+  late final _wire_get_user_device_definitionsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_get_user_device_definitions');
   late final _wire_get_user_device_definitions =
-      _wire_get_user_device_definitionsPtr
-          .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+      _wire_get_user_device_definitionsPtr.asFunction<void Function(int)>();
 
   void wire_get_protocol_names(
     int port_,
@@ -1038,6 +1415,104 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'wire_get_protocol_names');
   late final _wire_get_protocol_names =
       _wire_get_protocol_namesPtr.asFunction<void Function(int)>();
+
+  void wire_add_websocket_specifier(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> protocol,
+    ffi.Pointer<wire_uint_8_list> name,
+  ) {
+    return _wire_add_websocket_specifier(
+      port_,
+      protocol,
+      name,
+    );
+  }
+
+  late final _wire_add_websocket_specifierPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_add_websocket_specifier');
+  late final _wire_add_websocket_specifier =
+      _wire_add_websocket_specifierPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_remove_websocket_specifier(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> protocol,
+    ffi.Pointer<wire_uint_8_list> name,
+  ) {
+    return _wire_remove_websocket_specifier(
+      port_,
+      protocol,
+      name,
+    );
+  }
+
+  late final _wire_remove_websocket_specifierPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+                  ffi.Pointer<wire_uint_8_list>)>>(
+      'wire_remove_websocket_specifier');
+  late final _wire_remove_websocket_specifier =
+      _wire_remove_websocket_specifierPtr.asFunction<
+          void Function(int, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_update_user_config(
+    int port_,
+    ffi.Pointer<wire_ExposedUserDeviceIdentifier> identifier,
+    ffi.Pointer<wire_ExposedUserDeviceDefinition> config,
+  ) {
+    return _wire_update_user_config(
+      port_,
+      identifier,
+      config,
+    );
+  }
+
+  late final _wire_update_user_configPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64,
+                  ffi.Pointer<wire_ExposedUserDeviceIdentifier>,
+                  ffi.Pointer<wire_ExposedUserDeviceDefinition>)>>(
+      'wire_update_user_config');
+  late final _wire_update_user_config = _wire_update_user_configPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_ExposedUserDeviceIdentifier>,
+          ffi.Pointer<wire_ExposedUserDeviceDefinition>)>();
+
+  void wire_remove_user_config(
+    int port_,
+    ffi.Pointer<wire_ExposedUserDeviceIdentifier> identifier,
+  ) {
+    return _wire_remove_user_config(
+      port_,
+      identifier,
+    );
+  }
+
+  late final _wire_remove_user_configPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Int64, ffi.Pointer<wire_ExposedUserDeviceIdentifier>)>>(
+      'wire_remove_user_config');
+  late final _wire_remove_user_config = _wire_remove_user_configPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_ExposedUserDeviceIdentifier>)>();
+
+  void wire_get_user_config_str(
+    int port_,
+  ) {
+    return _wire_get_user_config_str(
+      port_,
+    );
+  }
+
+  late final _wire_get_user_config_strPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_get_user_config_str');
+  late final _wire_get_user_config_str =
+      _wire_get_user_config_strPtr.asFunction<void Function(int)>();
 
   void wire_setup_logging(
     int port_,
@@ -1097,6 +1572,58 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
       _new_box_autoadd_engine_options_external_0Ptr
           .asFunction<ffi.Pointer<wire_EngineOptionsExternal> Function()>();
 
+  ffi.Pointer<wire_ExposedDeviceFeatureActuator>
+      new_box_autoadd_exposed_device_feature_actuator_0() {
+    return _new_box_autoadd_exposed_device_feature_actuator_0();
+  }
+
+  late final _new_box_autoadd_exposed_device_feature_actuator_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_ExposedDeviceFeatureActuator>
+              Function()>>('new_box_autoadd_exposed_device_feature_actuator_0');
+  late final _new_box_autoadd_exposed_device_feature_actuator_0 =
+      _new_box_autoadd_exposed_device_feature_actuator_0Ptr.asFunction<
+          ffi.Pointer<wire_ExposedDeviceFeatureActuator> Function()>();
+
+  ffi.Pointer<wire_ExposedDeviceFeatureSensor>
+      new_box_autoadd_exposed_device_feature_sensor_0() {
+    return _new_box_autoadd_exposed_device_feature_sensor_0();
+  }
+
+  late final _new_box_autoadd_exposed_device_feature_sensor_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_ExposedDeviceFeatureSensor>
+              Function()>>('new_box_autoadd_exposed_device_feature_sensor_0');
+  late final _new_box_autoadd_exposed_device_feature_sensor_0 =
+      _new_box_autoadd_exposed_device_feature_sensor_0Ptr.asFunction<
+          ffi.Pointer<wire_ExposedDeviceFeatureSensor> Function()>();
+
+  ffi.Pointer<wire_ExposedUserDeviceDefinition>
+      new_box_autoadd_exposed_user_device_definition_0() {
+    return _new_box_autoadd_exposed_user_device_definition_0();
+  }
+
+  late final _new_box_autoadd_exposed_user_device_definition_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_ExposedUserDeviceDefinition>
+              Function()>>('new_box_autoadd_exposed_user_device_definition_0');
+  late final _new_box_autoadd_exposed_user_device_definition_0 =
+      _new_box_autoadd_exposed_user_device_definition_0Ptr.asFunction<
+          ffi.Pointer<wire_ExposedUserDeviceDefinition> Function()>();
+
+  ffi.Pointer<wire_ExposedUserDeviceIdentifier>
+      new_box_autoadd_exposed_user_device_identifier_0() {
+    return _new_box_autoadd_exposed_user_device_identifier_0();
+  }
+
+  late final _new_box_autoadd_exposed_user_device_identifier_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_ExposedUserDeviceIdentifier>
+              Function()>>('new_box_autoadd_exposed_user_device_identifier_0');
+  late final _new_box_autoadd_exposed_user_device_identifier_0 =
+      _new_box_autoadd_exposed_user_device_identifier_0Ptr.asFunction<
+          ffi.Pointer<wire_ExposedUserDeviceIdentifier> Function()>();
+
   ffi.Pointer<ffi.Uint16> new_box_autoadd_u16_0(
     int value,
   ) {
@@ -1110,6 +1637,75 @@ class IntifaceEngineFlutterBridgeWire implements FlutterRustBridgeWireBase {
           'new_box_autoadd_u16_0');
   late final _new_box_autoadd_u16_0 = _new_box_autoadd_u16_0Ptr
       .asFunction<ffi.Pointer<ffi.Uint16> Function(int)>();
+
+  ffi.Pointer<wire_list___record__i32_i32> new_list___record__i32_i32_0(
+    int len,
+  ) {
+    return _new_list___record__i32_i32_0(
+      len,
+    );
+  }
+
+  late final _new_list___record__i32_i32_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_list___record__i32_i32> Function(
+              ffi.Int32)>>('new_list___record__i32_i32_0');
+  late final _new_list___record__i32_i32_0 = _new_list___record__i32_i32_0Ptr
+      .asFunction<ffi.Pointer<wire_list___record__i32_i32> Function(int)>();
+
+  ffi.Pointer<wire_list_buttplug_actuator_feature_message_type>
+      new_list_buttplug_actuator_feature_message_type_0(
+    int len,
+  ) {
+    return _new_list_buttplug_actuator_feature_message_type_0(
+      len,
+    );
+  }
+
+  late final _new_list_buttplug_actuator_feature_message_type_0Ptr = _lookup<
+          ffi.NativeFunction<
+              ffi.Pointer<wire_list_buttplug_actuator_feature_message_type>
+                  Function(ffi.Int32)>>(
+      'new_list_buttplug_actuator_feature_message_type_0');
+  late final _new_list_buttplug_actuator_feature_message_type_0 =
+      _new_list_buttplug_actuator_feature_message_type_0Ptr.asFunction<
+          ffi.Pointer<wire_list_buttplug_actuator_feature_message_type>
+              Function(int)>();
+
+  ffi.Pointer<wire_list_buttplug_sensor_feature_message_type>
+      new_list_buttplug_sensor_feature_message_type_0(
+    int len,
+  ) {
+    return _new_list_buttplug_sensor_feature_message_type_0(
+      len,
+    );
+  }
+
+  late final _new_list_buttplug_sensor_feature_message_type_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_list_buttplug_sensor_feature_message_type> Function(
+              ffi.Int32)>>('new_list_buttplug_sensor_feature_message_type_0');
+  late final _new_list_buttplug_sensor_feature_message_type_0 =
+      _new_list_buttplug_sensor_feature_message_type_0Ptr.asFunction<
+          ffi.Pointer<wire_list_buttplug_sensor_feature_message_type> Function(
+              int)>();
+
+  ffi.Pointer<wire_list_exposed_device_feature>
+      new_list_exposed_device_feature_0(
+    int len,
+  ) {
+    return _new_list_exposed_device_feature_0(
+      len,
+    );
+  }
+
+  late final _new_list_exposed_device_feature_0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<wire_list_exposed_device_feature> Function(
+              ffi.Int32)>>('new_list_exposed_device_feature_0');
+  late final _new_list_exposed_device_feature_0 =
+      _new_list_exposed_device_feature_0Ptr.asFunction<
+          ffi.Pointer<wire_list_exposed_device_feature> Function(int)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,
@@ -1236,6 +1832,106 @@ final class wire_EngineOptionsExternal extends ffi.Struct {
   external ffi.Pointer<ffi.Uint16> repeater_local_port;
 
   external ffi.Pointer<wire_uint_8_list> repeater_remote_address;
+}
+
+final class wire_ExposedUserDeviceIdentifier extends ffi.Struct {
+  external ffi.Pointer<wire_uint_8_list> address;
+
+  external ffi.Pointer<wire_uint_8_list> protocol;
+
+  external ffi.Pointer<wire_uint_8_list> identifier;
+}
+
+final class wire___record__u32_u32 extends ffi.Struct {
+  @ffi.Uint32()
+  external int field0;
+
+  @ffi.Uint32()
+  external int field1;
+}
+
+final class wire_list_buttplug_actuator_feature_message_type
+    extends ffi.Struct {
+  external ffi.Pointer<ffi.Int32> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_ExposedDeviceFeatureActuator extends ffi.Struct {
+  external wire___record__u32_u32 step_range;
+
+  external wire___record__u32_u32 step_limit;
+
+  external ffi.Pointer<wire_list_buttplug_actuator_feature_message_type>
+      messages;
+}
+
+final class wire___record__i32_i32 extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+
+  @ffi.Int32()
+  external int field1;
+}
+
+final class wire_list___record__i32_i32 extends ffi.Struct {
+  external ffi.Pointer<wire___record__i32_i32> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_list_buttplug_sensor_feature_message_type extends ffi.Struct {
+  external ffi.Pointer<ffi.Int32> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_ExposedDeviceFeatureSensor extends ffi.Struct {
+  external ffi.Pointer<wire_list___record__i32_i32> value_range;
+
+  external ffi.Pointer<wire_list_buttplug_sensor_feature_message_type> messages;
+}
+
+final class wire_ExposedDeviceFeature extends ffi.Struct {
+  external ffi.Pointer<wire_uint_8_list> description;
+
+  @ffi.Int32()
+  external int feature_type;
+
+  external ffi.Pointer<wire_ExposedDeviceFeatureActuator> actuator;
+
+  external ffi.Pointer<wire_ExposedDeviceFeatureSensor> sensor;
+}
+
+final class wire_list_exposed_device_feature extends ffi.Struct {
+  external ffi.Pointer<wire_ExposedDeviceFeature> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_ExposedUserDeviceCustomization extends ffi.Struct {
+  external ffi.Pointer<wire_uint_8_list> display_name;
+
+  @ffi.Bool()
+  external bool allow;
+
+  @ffi.Bool()
+  external bool deny;
+
+  @ffi.Uint32()
+  external int index;
+}
+
+final class wire_ExposedUserDeviceDefinition extends ffi.Struct {
+  external ffi.Pointer<wire_uint_8_list> name;
+
+  external ffi.Pointer<wire_list_exposed_device_feature> features;
+
+  external wire_ExposedUserDeviceCustomization user_config;
 }
 
 typedef DartPostCObjectFnType = ffi.Pointer<

@@ -87,26 +87,40 @@ fn wire_send_backend_server_message_impl(
     },
   )
 }
-fn wire_get_user_communication_specifiers_impl(
+fn wire_setup_device_configuration_manager_impl(
   port_: MessagePort,
-  user_config: impl Wire2Api<String> + UnwindSafe,
+  base_config: impl Wire2Api<Option<String>> + UnwindSafe,
+  user_config: impl Wire2Api<Option<String>> + UnwindSafe,
 ) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "setup_device_configuration_manager",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_base_config = base_config.wire2api();
+      let api_user_config = user_config.wire2api();
+      move |task_callback| {
+        Result::<_, ()>::Ok(setup_device_configuration_manager(
+          api_base_config,
+          api_user_config,
+        ))
+      }
+    },
+  )
+}
+fn wire_get_user_communication_specifiers_impl(port_: MessagePort) {
   FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<(String, ExposedWebsocketSpecifier)>, _>(
     WrapInfo {
       debug_name: "get_user_communication_specifiers",
       port: Some(port_),
       mode: FfiCallMode::Normal,
     },
-    move || {
-      let api_user_config = user_config.wire2api();
-      move |task_callback| Result::<_, ()>::Ok(get_user_communication_specifiers(api_user_config))
-    },
+    move || move |task_callback| Result::<_, ()>::Ok(get_user_communication_specifiers()),
   )
 }
-fn wire_get_user_device_definitions_impl(
-  port_: MessagePort,
-  user_config: impl Wire2Api<String> + UnwindSafe,
-) {
+fn wire_get_user_device_definitions_impl(port_: MessagePort) {
   FLUTTER_RUST_BRIDGE_HANDLER
     .wrap::<_, _, _, Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)>, _>(
       WrapInfo {
@@ -114,10 +128,7 @@ fn wire_get_user_device_definitions_impl(
         port: Some(port_),
         mode: FfiCallMode::Normal,
       },
-      move || {
-        let api_user_config = user_config.wire2api();
-        move |task_callback| Result::<_, ()>::Ok(get_user_device_definitions(api_user_config))
-      },
+      move || move |task_callback| Result::<_, ()>::Ok(get_user_device_definitions()),
     )
 }
 fn wire_get_protocol_names_impl(port_: MessagePort) {
@@ -128,6 +139,86 @@ fn wire_get_protocol_names_impl(port_: MessagePort) {
       mode: FfiCallMode::Normal,
     },
     move || move |task_callback| Result::<_, ()>::Ok(get_protocol_names()),
+  )
+}
+fn wire_add_websocket_specifier_impl(
+  port_: MessagePort,
+  protocol: impl Wire2Api<String> + UnwindSafe,
+  name: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "add_websocket_specifier",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_protocol = protocol.wire2api();
+      let api_name = name.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(add_websocket_specifier(api_protocol, api_name))
+    },
+  )
+}
+fn wire_remove_websocket_specifier_impl(
+  port_: MessagePort,
+  protocol: impl Wire2Api<String> + UnwindSafe,
+  name: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "remove_websocket_specifier",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_protocol = protocol.wire2api();
+      let api_name = name.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(remove_websocket_specifier(api_protocol, api_name))
+    },
+  )
+}
+fn wire_update_user_config_impl(
+  port_: MessagePort,
+  identifier: impl Wire2Api<ExposedUserDeviceIdentifier> + UnwindSafe,
+  config: impl Wire2Api<ExposedUserDeviceDefinition> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "update_user_config",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_identifier = identifier.wire2api();
+      let api_config = config.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(update_user_config(api_identifier, api_config))
+    },
+  )
+}
+fn wire_remove_user_config_impl(
+  port_: MessagePort,
+  identifier: impl Wire2Api<ExposedUserDeviceIdentifier> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "remove_user_config",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_identifier = identifier.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(remove_user_config(api_identifier))
+    },
+  )
+}
+fn wire_get_user_config_str_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, String, _>(
+    WrapInfo {
+      debug_name: "get_user_config_str",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || move |task_callback| Result::<_, ()>::Ok(get_user_config_str()),
   )
 }
 fn wire_setup_logging_impl(port_: MessagePort) {
@@ -229,6 +320,57 @@ where
 
 impl Wire2Api<bool> for bool {
   fn wire2api(self) -> bool {
+    self
+  }
+}
+
+impl Wire2Api<ButtplugActuatorFeatureMessageType> for i32 {
+  fn wire2api(self) -> ButtplugActuatorFeatureMessageType {
+    match self {
+      0 => ButtplugActuatorFeatureMessageType::ScalarCmd,
+      1 => ButtplugActuatorFeatureMessageType::RotateCmd,
+      2 => ButtplugActuatorFeatureMessageType::LinearCmd,
+      _ => unreachable!(
+        "Invalid variant for ButtplugActuatorFeatureMessageType: {}",
+        self
+      ),
+    }
+  }
+}
+impl Wire2Api<ButtplugSensorFeatureMessageType> for i32 {
+  fn wire2api(self) -> ButtplugSensorFeatureMessageType {
+    match self {
+      0 => ButtplugSensorFeatureMessageType::SensorReadCmd,
+      1 => ButtplugSensorFeatureMessageType::SensorSubscribeCmd,
+      _ => unreachable!(
+        "Invalid variant for ButtplugSensorFeatureMessageType: {}",
+        self
+      ),
+    }
+  }
+}
+
+impl Wire2Api<FeatureType> for i32 {
+  fn wire2api(self) -> FeatureType {
+    match self {
+      0 => FeatureType::Unknown,
+      1 => FeatureType::Vibrate,
+      2 => FeatureType::Rotate,
+      3 => FeatureType::Oscillate,
+      4 => FeatureType::Constrict,
+      5 => FeatureType::Inflate,
+      6 => FeatureType::Position,
+      7 => FeatureType::Battery,
+      8 => FeatureType::RSSI,
+      9 => FeatureType::Button,
+      10 => FeatureType::Pressure,
+      11 => FeatureType::Raw,
+      _ => unreachable!("Invalid variant for FeatureType: {}", self),
+    }
+  }
+}
+impl Wire2Api<i32> for i32 {
+  fn wire2api(self) -> i32 {
     self
   }
 }
@@ -393,7 +535,7 @@ impl rust2dart::IntoIntoDart<ExposedUserDeviceIdentifier> for ExposedUserDeviceI
 
 impl support::IntoDart for ExposedWebsocketSpecifier {
   fn into_dart(self) -> support::DartAbi {
-    vec![self.names.into_into_dart().into_dart()].into_dart()
+    vec![self.name.into_into_dart().into_dart()].into_dart()
   }
 }
 impl support::IntoDartExceptPrimitive for ExposedWebsocketSpecifier {}

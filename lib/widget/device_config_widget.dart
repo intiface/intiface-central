@@ -44,7 +44,7 @@ class DeviceConfigWidget extends StatelessWidget {
                         controller: nameController,
                         onSubmitted: (value) async {
                           Navigator.pop(context);
-                          await userDeviceConfigCubit.updateDisplayName(identifier, value);
+                          await userDeviceConfigCubit.updateDisplayName(identifier, config, value);
                         },
                         decoration: const InputDecoration(hintText: "Display Name Entry"),
                       );
@@ -58,7 +58,8 @@ class DeviceConfigWidget extends StatelessWidget {
                                     child: const Text('Ok'),
                                     onPressed: () async {
                                       Navigator.pop(context);
-                                      await userDeviceConfigCubit.updateDisplayName(identifier, nameController.text);
+                                      await userDeviceConfigCubit.updateDisplayName(
+                                          identifier, config, nameController.text);
                                     },
                                   ),
                                   TextButton(
@@ -74,7 +75,7 @@ class DeviceConfigWidget extends StatelessWidget {
                     enabled: !engineIsRunning,
                     initialValue: !config.userConfig.deny,
                     onToggle: (value) async {
-                      await userDeviceConfigCubit.updateDeviceDeny(identifier, !value);
+                      await userDeviceConfigCubit.updateDeviceDeny(identifier, config, !value);
                     },
                     title: const Text("Connect to this device")),
                 CustomSettingsTile(

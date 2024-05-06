@@ -4,10 +4,11 @@ use crate::{
   mobile_init,
 };
 use anyhow::Result;
+use buttplug::server::device::configuration::DeviceConfigurationManagerBuilder;
 pub use buttplug::{
   core::message::{ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType, ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw, DeviceFeatureSensor, Endpoint, FeatureType},
   server::device::{
-    configuration::{ProtocolCommunicationSpecifier, UserDeviceCustomization, UserDeviceDefinition, UserDeviceIdentifier, WebsocketSpecifier},
+    configuration::{ProtocolCommunicationSpecifier, UserDeviceCustomization, UserDeviceDefinition, UserDeviceIdentifier, WebsocketSpecifier, DeviceConfigurationManager},
     protocol::get_default_protocol_map,
   },
   util::device_configuration::{load_protocol_configs, save_user_config}
@@ -18,9 +19,9 @@ use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
 use std::{
-  collections::HashSet, ops::RangeInclusive, sync::{
+  collections::HashSet, fs, ops::RangeInclusive, sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+    Arc, Mutex, RwLock,
   }, thread, time::Duration
 };
 use tokio::{
@@ -41,6 +42,19 @@ lazy_static! {
     Arc::new(broadcast::channel(255).0);
   static ref BACKDOOR_INCOMING_BROADCASTER: Arc<broadcast::Sender<String>> =
     Arc::new(broadcast::channel(255).0);
+  // This is a weird wrapping, but there's a reason for it. The DCM has internal mutability, but we
+  // also want to be able to completely replace it (if the user clears configurations and starts
+  // over, as is possible with central). However, we also want to share the DCM with the Buttplug
+  // Server while it's running. Therefore, we pull Read versions of the lock while the server is
+  // running, which means we can't stop the Arc and start over until we're clear of the owning
+  // process.
+  //
+  // The cavaet here is that, if the engine task/isolate panics, we'll be stuck with a poisoned read
+  // lock. While this probably shouldn't happen, it does. A lot. So we'll need to check for an
+  // active runtime whenever we try to get write locks, and clear poisoning if there's no runtime
+  // active.
+  static ref DEVICE_CONFIG_MANAGER: Arc<RwLock<Arc<DeviceConfigurationManager>>> = 
+    Arc::new(RwLock::new(Arc::new(load_protocol_configs(&None, &None, false).unwrap().finish().unwrap())));
 }
 
 #[frb(mirror(EngineOptionsExternal))]
@@ -79,7 +93,6 @@ pub fn runtime_started() -> bool {
 }
 
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
-
   if RUN_STATUS.load(Ordering::Relaxed) {
     return Err(anyhow::Error::msg("Server already running!"));
   }
@@ -95,9 +108,12 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
     .expect("Runtime should work, otherwise we can't function.");
 
   if ENGINE_NOTIFIER.get().is_none() {
+    info!("Creating notifier");
     ENGINE_NOTIFIER
       .set(Arc::new(Notify::new()))
       .expect("We already checked creation so this shouldn't fail");
+  } else {
+    info!("Notifier already created");
   }
 
   let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(
@@ -118,9 +134,13 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   let outgoing_sink = sink.clone();
   let sink_clone = sink.clone();
 
+  // TODO This is not doing what its supposed to. We're taking our Arc from the read guard, then
+  // just dropping the read guard.
+  let dcm = (*DEVICE_CONFIG_MANAGER.read().unwrap()).clone();
   runtime.spawn(
     async move {
       info!("Entering main join.");
+
       tokio::join!(
         // Backdoor server task
         async move {
@@ -174,7 +194,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
         // Main engine task.
         async move {
           info!("Entering main engine waiter task");
-          if let Err(e) = engine.run(&options, Some(frontend)).await {
+          if let Err(e) = engine.run(&options, Some(frontend), &Some(dcm)).await {
             error!("Error running engine: {:?}", e);
           }
           info!("Exiting main engine waiter task");
@@ -277,20 +297,20 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
 
 #[derive(Debug, Clone)]
 pub struct ExposedWebsocketSpecifier {
-  pub names: Vec<String>,
+  pub name: String,
 }
 
 impl From<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   fn from(value: WebsocketSpecifier) -> Self {
     Self {
-      names: value.names().iter().cloned().collect()
+      name: value.name().clone()
     }
   }
 }
 
 impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   fn into(self) -> WebsocketSpecifier {
-    WebsocketSpecifier::new(&self.names)
+    WebsocketSpecifier::new(&self.name)
   }
 }
 
@@ -544,9 +564,14 @@ pub enum _ButtplugDeviceMessageType {
   VorzeA10CycloneCmd,
 }
 
-// FRB v1.x complains about having HashMaps as return types, so update that when we change over to v2.
-pub fn get_user_communication_specifiers(user_config: String) -> Vec<(String, ExposedWebsocketSpecifier)> {
-  let dcm = load_protocol_configs(&None, &Some(user_config), false).unwrap().finish().unwrap();
+pub fn setup_device_configuration_manager(base_config: Option<String>, user_config: Option<String>) {
+  if let Ok(mut dcm) = DEVICE_CONFIG_MANAGER.try_write() {
+    *dcm = Arc::new(load_protocol_configs(&base_config, &user_config, false).unwrap().finish().unwrap());
+  }
+}
+
+pub fn get_user_communication_specifiers() -> Vec<(String, ExposedWebsocketSpecifier)> {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
   let mut ws_specs = vec!();
   for kv in dcm.user_communication_specifiers() {
     for comm_spec in kv.value() {
@@ -558,8 +583,8 @@ pub fn get_user_communication_specifiers(user_config: String) -> Vec<(String, Ex
   ws_specs
 }
 
-pub fn get_user_device_definitions(user_config: String) -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
-  let dcm = load_protocol_configs(&None, &Some(user_config), false).unwrap().finish().unwrap();
+pub fn get_user_device_definitions() -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
   dcm
     .user_device_definitions()
     .iter()
@@ -573,6 +598,31 @@ pub fn get_protocol_names() -> Vec<String> {
     .into_iter()
     .cloned()
     .collect()
+}
+
+pub fn add_websocket_specifier(protocol: String, name: String) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.add_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)));
+}
+
+pub fn remove_websocket_specifier(protocol: String, name: String) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.remove_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)));
+}
+
+pub fn update_user_config(identifier: ExposedUserDeviceIdentifier, config: ExposedUserDeviceDefinition) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.add_user_device_definition(&identifier.into(), &config.into());
+}
+
+pub fn remove_user_config(identifier: ExposedUserDeviceIdentifier) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.remove_user_device_definition(&identifier.into());
+}
+
+pub fn get_user_config_str() -> String {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  save_user_config(&dcm).unwrap()
 }
 
 pub fn setup_logging(sink: StreamSink<String>) {
