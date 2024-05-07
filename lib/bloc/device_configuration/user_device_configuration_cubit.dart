@@ -89,8 +89,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: allow, deny: def.userConfig.deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
     var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
-    await api!.updateUserConfig(identifier: deviceIdentifier, config: newConfig);
-    await _saveConfigFile();
+    await updateDefinition(deviceIdentifier, newConfig);
   }
 
   Future<void> updateDeviceDeny(
@@ -98,8 +97,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: def.userConfig.allow, deny: deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
     var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
-    await api!.updateUserConfig(identifier: deviceIdentifier, config: newConfig);
-    await _saveConfigFile();
+    await updateDefinition(deviceIdentifier, newConfig);
   }
 
   Future<void> updateDisplayName(
@@ -107,7 +105,20 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: def.userConfig.allow, deny: def.userConfig.deny, index: def.userConfig.index, displayName: displayName);
     var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
-    await api!.updateUserConfig(identifier: deviceIdentifier, config: newConfig);
+    await updateDefinition(deviceIdentifier, newConfig);
+  }
+
+  Future<void> updateFeature(ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition def, int index,
+      ExposedDeviceFeature feature) async {
+    var newFeatureArray = def.features;
+    newFeatureArray[index] = feature;
+    var newDeviceDefinition =
+        ExposedUserDeviceDefinition(name: def.name, features: newFeatureArray, userConfig: def.userConfig);
+    await updateDefinition(deviceIdentifier, newDeviceDefinition);
+  }
+
+  Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition def) async {
+    await api!.updateUserConfig(identifier: deviceIdentifier, config: def);
     await _saveConfigFile();
   }
 
