@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/widget/actuator_feature_config_widget.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
@@ -139,6 +140,12 @@ class DevicePage extends StatelessWidget {
                     buildWhen: (previous, current) =>
                         current is GuiSettingStateUpdate && current.valueName == expansionName,
                     builder: (context, state) {
+                      var listWidgets = [
+                        DeviceConfigWidget(identifier: deviceEntry.key),
+                        ActuatorFeatureConfigWidget(
+                            deviceIdentifier: deviceEntry.key, deviceDefinition: deviceEntry.value)
+                      ];
+
                       return ExpansionPanelList(
                           children: [
                             ExpansionPanel(
@@ -153,9 +160,7 @@ class DevicePage extends StatelessWidget {
                                 body: ListView(
                                     physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
-                                    children: [
-                                      DeviceConfigWidget(identifier: deviceEntry.key),
-                                    ]),
+                                    children: listWidgets),
                                 isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? true)
                           ],
                           expansionCallback: (panelIndex, isExpanded) =>

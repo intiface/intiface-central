@@ -5,7 +5,6 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
-import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class ControlWidget extends StatelessWidget {

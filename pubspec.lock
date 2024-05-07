@@ -382,6 +382,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.18+2"
+  flutter_multi_slider:
+    dependency: "direct main"
+    description:
+      name: flutter_multi_slider
+      sha256: d341a32179755cd15dec95940f5410b16a8a3455439767f5870b97e354712603
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   flutter_rust_bridge:
     dependency: "direct main"
     description:
