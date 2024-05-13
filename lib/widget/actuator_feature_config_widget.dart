@@ -48,6 +48,9 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                           onChanged: engineIsRunning
                               ? null
                               : ((value) async {
+                                  if (value[0].toInt() == value[1].toInt()) {
+                                    return;
+                                  }
                                   var featureActuator = ExposedDeviceFeatureActuator(
                                       stepRange: actuator.stepRange,
                                       stepLimit: (value[0].toInt(), value[1].toInt()),
@@ -68,7 +71,7 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                 ListTile(
                   title: Text(
                       "Feature: ${feature.description.isEmpty ? feature.featureType.name : "${feature.description} - ${feature.featureType.name}"}"),
-                  subtitle: Text("Position Limit - Min: ${actuator.stepLimit} Max: ${actuator.stepLimit.$2}"),
+                  subtitle: Text("Position Limit - Min: ${actuator.stepLimit.$1} Max: ${actuator.stepLimit.$2}"),
                 ),
                 BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
                     builder: (context, state) => MultiSlider(
@@ -78,6 +81,9 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                           onChanged: engineIsRunning
                               ? null
                               : ((value) async {
+                                  if (value[0].toInt() == value[1].toInt()) {
+                                    return;
+                                  }
                                   var featureActuator = ExposedDeviceFeatureActuator(
                                       stepRange: actuator.stepRange,
                                       stepLimit: (value[0].toInt(), value[1].toInt()),

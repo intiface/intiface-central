@@ -16,8 +16,10 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   Map<ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition> _configs = {};
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];
+  List<(String, ExposedSerialSpecifier)> _serialSpecifiers = [];
   Map<ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition> get configs => _configs;
   List<(String, ExposedWebsocketSpecifier)> get specifiers => _specifiers;
+  List<(String, ExposedSerialSpecifier)> get serialSpecifiers => _serialSpecifiers;
   List<String> get protocols => _protocols;
 
   static Future<UserDeviceConfigurationCubit> create() async {
@@ -67,7 +69,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> update() async {
     _protocols = await api!.getProtocolNames();
-    _specifiers = await api!.getUserCommunicationSpecifiers();
+    _specifiers = await api!.getUserWebsocketCommunicationSpecifiers();
+    _serialSpecifiers = await api!.getUserSerialCommunicationSpecifiers();
     _configs = <ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition>{
       for (var (k, v) in await api!.getUserDeviceDefinitions()) k: v
     };
@@ -81,6 +84,18 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> removeWebsocketDeviceName(String protocol, String name) async {
     await api!.removeWebsocketSpecifier(protocol: protocol, name: name);
+    await _saveConfigFile();
+  }
+
+  Future<void> addSerialPort(
+      String protocol, String port, int baudRate, int dataBits, int stopBits, String parity) async {
+    await api!.addSerialSpecifier(
+        protocol: protocol, port: port, baudRate: baudRate, dataBits: dataBits, stopBits: stopBits, parity: parity);
+    await _saveConfigFile();
+  }
+
+  Future<void> removeSerialPort(String protocol, String port) async {
+    await api!.removeSerialSpecifier(protocol: protocol, port: port);
     await _saveConfigFile();
   }
 

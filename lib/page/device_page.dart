@@ -2,61 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
-import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/widget/actuator_feature_config_widget.dart';
+import 'package:intiface_central/widget/add_serial_device_widget.dart';
+import 'package:intiface_central/widget/add_websocket_device_widget.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
-
-class ProtocolDropdownButton extends StatefulWidget {
-  final List<String> protocols;
-  final ValueNotifier<String> protocol;
-  final bool enabled;
-  ProtocolDropdownButton({super.key, required this.protocols, required this.protocol, this.enabled = true}) {
-    protocols.sort();
-  }
-
-  @override
-  State<ProtocolDropdownButton> createState() => _ProtocolDropdownButtonState();
-}
-
-class _ProtocolDropdownButtonState extends State<ProtocolDropdownButton> {
-  String? dropdownValue;
-
-  _ProtocolDropdownButtonState();
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      hint: const Text("Protocol Type"),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: widget.enabled
-          ? (String? value) {
-              // This is called when the user selects an item.
-              setState(() {
-                dropdownValue = value!;
-              });
-              widget.protocol.value = value!;
-            }
-          : null,
-      items: widget.protocols.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
@@ -168,116 +121,42 @@ class DevicePage extends StatelessWidget {
                     }));
               }
 
-              var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
-              List<DataRow> rows = [];
-              for (var (protocol, websocketSpecifier) in userDeviceConfigCubit.specifiers) {
-                rows.add(DataRow(cells: [
-                  DataCell(Text(protocol)),
-                  DataCell(Text(websocketSpecifier.name)),
-                  DataCell(TextButton(
-                    onPressed: engineIsRunning
-                        ? null
-                        : () => userDeviceConfigCubit.removeWebsocketDeviceName(protocol, websocketSpecifier.name),
-                    child: const Text("Delete"),
-                  ))
-                ]));
-              }
+              var expansionName = "device-settings-advanceddeviceconfig";
 
-              // For now, we'll build these locally. This means we lose data on repaint but that's not actually an issue
-              // with this entry.
-              TextEditingController controller = TextEditingController();
-              var sortedNames = userDeviceConfigCubit.protocols;
-              sortedNames.sort();
-              var valueNotifier = ValueNotifier("");
-              var protocolDropdown = ProtocolDropdownButton(
-                protocols: sortedNames,
-                protocol: valueNotifier,
-                enabled: !engineIsRunning,
-              );
-              var expansionName = "device-settings-websocketdevices";
               deviceWidgets.add(const ListTile(title: Text("Advanced Device Config")));
-              if (configCubit.useDeviceWebsocketServer) {
-                deviceWidgets.add(BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                    buildWhen: (previous, current) =>
-                        current is GuiSettingStateUpdate && current.valueName == expansionName,
-                    builder: (context, state) {
-                      return ExpansionPanelList(
-                          expansionCallback: (panelIndex, isExpanded) =>
-                              guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
-                          children: [
-                            ExpansionPanel(
+              if (configCubit.useDeviceWebsocketServer || configCubit.useSerialPort) {
+                deviceWidgets.add(BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+                    builder: (context, state) => BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                        buildWhen: (previous, current) =>
+                            current is GuiSettingStateUpdate && current.valueName == expansionName,
+                        builder: (context, state) {
+                          var configWidgetList = <ExpansionPanel>[];
+                          if (configCubit.useDeviceWebsocketServer) {
+                            configWidgetList.add(
+                              ExpansionPanel(
+                                  isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
+                                  headerBuilder: (BuildContext context, bool isExpanded) =>
+                                      const ListTile(title: Text("Websocket Devices (Advanced)")),
+                                  body: const AddWebsocketDeviceWidget()),
+                            );
+                          }
+                          if (configCubit.useSerialPort) {
+                            configWidgetList.add(ExpansionPanel(
                                 isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
                                 headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Websocket Devices (Advanced)")),
-                                body: FractionallySizedBox(
-                                    widthFactor: 0.8,
-                                    child: Column(
-                                      children: [
-                                        Visibility(
-                                            visible: rows.isNotEmpty,
-                                            child: DataTable(columns: const <DataColumn>[
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Protocol',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Device Name',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              ),
-                                              DataColumn(
-                                                label: Expanded(
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(fontStyle: FontStyle.italic),
-                                                  ),
-                                                ),
-                                              )
-                                            ], rows: rows)),
-                                        FractionallySizedBox(
-                                          widthFactor: 0.8,
-                                          child: Column(children: [
-                                            const Text("Add Websocket Device",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                )),
-                                            protocolDropdown,
-                                            SizedBox(
-                                              width: 150,
-                                              child: TextField(
-                                                enabled: !engineIsRunning,
-                                                controller: controller,
-                                                decoration: const InputDecoration(hintText: "Name"),
-                                              ),
-                                            ),
-                                            TextButton(
-                                                onPressed: engineIsRunning
-                                                    ? null
-                                                    : () {
-                                                        var name = controller.text;
-                                                        var protocol = protocolDropdown.protocol.value;
-                                                        userDeviceConfigCubit.addWebsocketDeviceName(protocol, name);
-                                                      },
-                                                child: const Text("Add Websocket Device"))
-                                          ]),
-                                        )
-                                      ],
-                                    )))
-                          ]);
-                    }));
+                                    const ListTile(title: Text("Serial Devices (Advanced)")),
+                                body: const AddSerialDeviceWidget()));
+                          }
+                          return ExpansionPanelList(
+                              expansionCallback: (panelIndex, isExpanded) =>
+                                  guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
+                              children: configWidgetList);
+                        })));
               } else {
                 deviceWidgets.add(const FractionallySizedBox(
                     widthFactor: 0.8,
                     child: Text(
-                      "Advanced device managers (Websocket, Serial Port, etc...) can be turned on in Advanced Settings section of the settings panel.",
+                      "Advanced device managers (Websocket, Serial Port, etc...) can be turned on in Advanced Settings section of the App Modes panel.",
                       textAlign: TextAlign.center,
                     )));
               }
