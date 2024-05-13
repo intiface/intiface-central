@@ -36,8 +36,13 @@ pub extern "C" fn wire_setup_device_configuration_manager(
 }
 
 #[no_mangle]
-pub extern "C" fn wire_get_user_communication_specifiers(port_: i64) {
-  wire_get_user_communication_specifiers_impl(port_)
+pub extern "C" fn wire_get_user_websocket_communication_specifiers(port_: i64) {
+  wire_get_user_websocket_communication_specifiers_impl(port_)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_get_user_serial_communication_specifiers(port_: i64) {
+  wire_get_user_serial_communication_specifiers_impl(port_)
 }
 
 #[no_mangle]
@@ -66,6 +71,30 @@ pub extern "C" fn wire_remove_websocket_specifier(
   name: *mut wire_uint_8_list,
 ) {
   wire_remove_websocket_specifier_impl(port_, protocol, name)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_add_serial_specifier(
+  port_: i64,
+  protocol: *mut wire_uint_8_list,
+  port: *mut wire_uint_8_list,
+  baud_rate: u32,
+  data_bits: u8,
+  stop_bits: u8,
+  parity: *mut wire_uint_8_list,
+) {
+  wire_add_serial_specifier_impl(
+    port_, protocol, port, baud_rate, data_bits, stop_bits, parity,
+  )
+}
+
+#[no_mangle]
+pub extern "C" fn wire_remove_serial_specifier(
+  port_: i64,
+  protocol: *mut wire_uint_8_list,
+  port: *mut wire_uint_8_list,
+) {
+  wire_remove_serial_specifier_impl(port_, protocol, port)
 }
 
 #[no_mangle]

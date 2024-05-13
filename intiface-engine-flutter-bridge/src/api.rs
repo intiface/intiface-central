@@ -4,7 +4,7 @@ use crate::{
   mobile_init,
 };
 use anyhow::Result;
-use buttplug::server::device::configuration::DeviceConfigurationManagerBuilder;
+use buttplug::server::device::configuration::{DeviceConfigurationManagerBuilder, SerialSpecifier};
 pub use buttplug::{
   core::message::{ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType, ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw, DeviceFeatureSensor, Endpoint, FeatureType},
   server::device::{
@@ -295,6 +295,34 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
   }
 }
 
+
+#[derive(Debug, Clone)]
+pub struct ExposedSerialSpecifier {
+  pub baud_rate: u32,
+  pub data_bits: u8,
+  pub stop_bits: u8,
+  pub parity: String,
+  pub port: String,
+}
+
+impl From<SerialSpecifier> for ExposedSerialSpecifier {
+  fn from(value: SerialSpecifier) -> Self {
+    Self {
+      port: value.port().clone(),
+      parity: value.parity().clone().into(),
+      baud_rate: value.baud_rate().clone(),
+      data_bits: value.data_bits().clone(),
+      stop_bits: value.stop_bits().clone()
+    }
+  }
+}
+
+impl Into<SerialSpecifier> for ExposedSerialSpecifier {
+  fn into(self) -> SerialSpecifier {
+    SerialSpecifier::new(&self.port, self.baud_rate, self.data_bits, self.stop_bits, self.parity.chars().next().unwrap())
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct ExposedWebsocketSpecifier {
   pub name: String,
@@ -570,7 +598,7 @@ pub fn setup_device_configuration_manager(base_config: Option<String>, user_conf
   }
 }
 
-pub fn get_user_communication_specifiers() -> Vec<(String, ExposedWebsocketSpecifier)> {
+pub fn get_user_websocket_communication_specifiers() -> Vec<(String, ExposedWebsocketSpecifier)> {
   let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
   let mut ws_specs = vec!();
   for kv in dcm.user_communication_specifiers() {
@@ -581,6 +609,19 @@ pub fn get_user_communication_specifiers() -> Vec<(String, ExposedWebsocketSpeci
     }
   }
   ws_specs
+}
+
+pub fn get_user_serial_communication_specifiers() -> Vec<(String, ExposedSerialSpecifier)> {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  let mut port_specs = vec!();
+  for kv in dcm.user_communication_specifiers() {
+    for comm_spec in kv.value() {
+      if let ProtocolCommunicationSpecifier::Serial(port) = comm_spec {
+        port_specs.push((kv.key().to_owned(), ExposedSerialSpecifier::from(port.clone())))
+      }  
+    }
+  }
+  port_specs
 }
 
 pub fn get_user_device_definitions() -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
@@ -608,6 +649,16 @@ pub fn add_websocket_specifier(protocol: String, name: String) {
 pub fn remove_websocket_specifier(protocol: String, name: String) {
   let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
   dcm.remove_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)));
+}
+
+pub fn add_serial_specifier(protocol: String, port: String, baud_rate: u32, data_bits: u8, stop_bits: u8, parity: String) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.add_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new(&port, baud_rate, data_bits, stop_bits, parity.chars().next().unwrap())));
+}
+
+pub fn remove_serial_specifier(protocol: String, port: String) {
+  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  dcm.remove_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new_from_name(&port)));
 }
 
 pub fn update_user_config(identifier: ExposedUserDeviceIdentifier, config: ExposedUserDeviceDefinition) {

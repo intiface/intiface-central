@@ -137,7 +137,9 @@ void wire_setup_device_configuration_manager(int64_t port_,
                                              struct wire_uint_8_list *base_config,
                                              struct wire_uint_8_list *user_config);
 
-void wire_get_user_communication_specifiers(int64_t port_);
+void wire_get_user_websocket_communication_specifiers(int64_t port_);
+
+void wire_get_user_serial_communication_specifiers(int64_t port_);
 
 void wire_get_user_device_definitions(int64_t port_);
 
@@ -150,6 +152,18 @@ void wire_add_websocket_specifier(int64_t port_,
 void wire_remove_websocket_specifier(int64_t port_,
                                      struct wire_uint_8_list *protocol,
                                      struct wire_uint_8_list *name);
+
+void wire_add_serial_specifier(int64_t port_,
+                               struct wire_uint_8_list *protocol,
+                               struct wire_uint_8_list *port,
+                               uint32_t baud_rate,
+                               uint8_t data_bits,
+                               uint8_t stop_bits,
+                               struct wire_uint_8_list *parity);
+
+void wire_remove_serial_specifier(int64_t port_,
+                                  struct wire_uint_8_list *protocol,
+                                  struct wire_uint_8_list *port);
 
 void wire_update_user_config(int64_t port_,
                              struct wire_ExposedUserDeviceIdentifier *identifier,
@@ -197,11 +211,14 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_stop_engine);
     dummy_var ^= ((int64_t) (void*) wire_send_backend_server_message);
     dummy_var ^= ((int64_t) (void*) wire_setup_device_configuration_manager);
-    dummy_var ^= ((int64_t) (void*) wire_get_user_communication_specifiers);
+    dummy_var ^= ((int64_t) (void*) wire_get_user_websocket_communication_specifiers);
+    dummy_var ^= ((int64_t) (void*) wire_get_user_serial_communication_specifiers);
     dummy_var ^= ((int64_t) (void*) wire_get_user_device_definitions);
     dummy_var ^= ((int64_t) (void*) wire_get_protocol_names);
     dummy_var ^= ((int64_t) (void*) wire_add_websocket_specifier);
     dummy_var ^= ((int64_t) (void*) wire_remove_websocket_specifier);
+    dummy_var ^= ((int64_t) (void*) wire_add_serial_specifier);
+    dummy_var ^= ((int64_t) (void*) wire_remove_serial_specifier);
     dummy_var ^= ((int64_t) (void*) wire_update_user_config);
     dummy_var ^= ((int64_t) (void*) wire_remove_user_config);
     dummy_var ^= ((int64_t) (void*) wire_get_user_config_str);

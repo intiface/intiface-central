@@ -110,14 +110,24 @@ fn wire_setup_device_configuration_manager_impl(
     },
   )
 }
-fn wire_get_user_communication_specifiers_impl(port_: MessagePort) {
+fn wire_get_user_websocket_communication_specifiers_impl(port_: MessagePort) {
   FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<(String, ExposedWebsocketSpecifier)>, _>(
     WrapInfo {
-      debug_name: "get_user_communication_specifiers",
+      debug_name: "get_user_websocket_communication_specifiers",
       port: Some(port_),
       mode: FfiCallMode::Normal,
     },
-    move || move |task_callback| Result::<_, ()>::Ok(get_user_communication_specifiers()),
+    move || move |task_callback| Result::<_, ()>::Ok(get_user_websocket_communication_specifiers()),
+  )
+}
+fn wire_get_user_serial_communication_specifiers_impl(port_: MessagePort) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, Vec<(String, ExposedSerialSpecifier)>, _>(
+    WrapInfo {
+      debug_name: "get_user_serial_communication_specifiers",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || move |task_callback| Result::<_, ()>::Ok(get_user_serial_communication_specifiers()),
   )
 }
 fn wire_get_user_device_definitions_impl(port_: MessagePort) {
@@ -174,6 +184,59 @@ fn wire_remove_websocket_specifier_impl(
       let api_protocol = protocol.wire2api();
       let api_name = name.wire2api();
       move |task_callback| Result::<_, ()>::Ok(remove_websocket_specifier(api_protocol, api_name))
+    },
+  )
+}
+fn wire_add_serial_specifier_impl(
+  port_: MessagePort,
+  protocol: impl Wire2Api<String> + UnwindSafe,
+  port: impl Wire2Api<String> + UnwindSafe,
+  baud_rate: impl Wire2Api<u32> + UnwindSafe,
+  data_bits: impl Wire2Api<u8> + UnwindSafe,
+  stop_bits: impl Wire2Api<u8> + UnwindSafe,
+  parity: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "add_serial_specifier",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_protocol = protocol.wire2api();
+      let api_port = port.wire2api();
+      let api_baud_rate = baud_rate.wire2api();
+      let api_data_bits = data_bits.wire2api();
+      let api_stop_bits = stop_bits.wire2api();
+      let api_parity = parity.wire2api();
+      move |task_callback| {
+        Result::<_, ()>::Ok(add_serial_specifier(
+          api_protocol,
+          api_port,
+          api_baud_rate,
+          api_data_bits,
+          api_stop_bits,
+          api_parity,
+        ))
+      }
+    },
+  )
+}
+fn wire_remove_serial_specifier_impl(
+  port_: MessagePort,
+  protocol: impl Wire2Api<String> + UnwindSafe,
+  port: impl Wire2Api<String> + UnwindSafe,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (), _>(
+    WrapInfo {
+      debug_name: "remove_serial_specifier",
+      port: Some(port_),
+      mode: FfiCallMode::Normal,
+    },
+    move || {
+      let api_protocol = protocol.wire2api();
+      let api_port = port.wire2api();
+      move |task_callback| Result::<_, ()>::Ok(remove_serial_specifier(api_protocol, api_port))
     },
   )
 }
@@ -476,6 +539,25 @@ impl support::IntoDart for ExposedDeviceFeatureSensor {
 }
 impl support::IntoDartExceptPrimitive for ExposedDeviceFeatureSensor {}
 impl rust2dart::IntoIntoDart<ExposedDeviceFeatureSensor> for ExposedDeviceFeatureSensor {
+  fn into_into_dart(self) -> Self {
+    self
+  }
+}
+
+impl support::IntoDart for ExposedSerialSpecifier {
+  fn into_dart(self) -> support::DartAbi {
+    vec![
+      self.baud_rate.into_into_dart().into_dart(),
+      self.data_bits.into_into_dart().into_dart(),
+      self.stop_bits.into_into_dart().into_dart(),
+      self.parity.into_into_dart().into_dart(),
+      self.port.into_into_dart().into_dart(),
+    ]
+    .into_dart()
+  }
+}
+impl support::IntoDartExceptPrimitive for ExposedSerialSpecifier {}
+impl rust2dart::IntoIntoDart<ExposedSerialSpecifier> for ExposedSerialSpecifier {
   fn into_into_dart(self) -> Self {
     self
   }
