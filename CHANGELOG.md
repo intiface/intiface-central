@@ -9,6 +9,7 @@
     v2.6.1)
   - As usual, a bunch of device support additions also
 - Serial Port devices can now be added via the GUI
+- Device actuator maximum/minimum can now be set in Devices Panel
 
 # v2.5.7 - 2024/04/20 (All Platforms)
 
