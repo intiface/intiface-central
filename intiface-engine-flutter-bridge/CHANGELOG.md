@@ -1,3 +1,10 @@
+# 1.1.0 (2024/05/15)
+
+## Features
+
+- Update to Buttplug v3/Intiface Engine v3
+  - Expands local API to allow for config management in native code
+
 # 1.0.15 (2024/04/20)
 
 ## Features
