@@ -6,6 +6,7 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
+import 'package:loggy/loggy.dart';
 
 class ControlWidget extends StatelessWidget {
   const ControlWidget({super.key});
@@ -27,8 +28,6 @@ class ControlWidget extends StatelessWidget {
           var engineControlBloc = BlocProvider.of<EngineControlBloc>(context);
           var navCubit = BlocProvider.of<NavigationCubit>(context);
 
-          var state = context.read<EngineControlBloc>().state;
-
           var statusMessage = "Unknown Status";
           var statusIcon = Icons.question_mark;
           var networkCubit = BlocProvider.of<NetworkInfoCubit>(context);
@@ -38,7 +37,7 @@ class ControlWidget extends StatelessWidget {
           if (state is ClientConnectedState) {
             statusMessage = state.clientName;
             statusIcon = Icons.phone_in_talk;
-          } else if (state is ClientDisconnectedState) {
+          } else if (state is ClientDisconnectedState || state is EngineServerCreatedState) {
             statusMessage = "Server running, no client connected";
             statusIcon = Icons.phone_disabled;
             // Once we're in this state the engine is started.
@@ -102,6 +101,8 @@ class ControlWidget extends StatelessWidget {
               engineStatus = "Engine starting...";
             } else if (state is EngineStoppedState) {
               engineStatus = "Engine not running";
+            } else {
+              logWarning("Engine Status $state unknown");
             }
           } else if (configCubit.appMode == AppMode.repeater) {
             if (state is EngineStartedState || state is EngineServerCreatedState || state is ClientDisconnectedState) {
