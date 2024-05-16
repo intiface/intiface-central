@@ -229,7 +229,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     configCubit.currentAppVersion = packageInfo.version;
 
-    var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
+    var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
     var networkCubit = await NetworkInfoCubit.create();
@@ -255,7 +255,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       if (state is DeviceConfigUpdateRetrieved) {
         configCubit.currentDeviceConfigEtag = state.version;
         // Load the file and pull internal version while we're at it.
-        var deviceConfigVersion = await DeviceConfiguration.getFileVersion();
+        var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
         configCubit.currentDeviceConfigVersion = deviceConfigVersion;
       }
       if (isDesktop()) {

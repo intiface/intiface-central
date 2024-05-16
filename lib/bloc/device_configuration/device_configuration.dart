@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -28,20 +29,31 @@ class DeviceConfigFile {
 }
 
 class DeviceConfiguration {
-  static Future<String> getFileVersion() async {
-    var configFile = IntifacePaths.deviceConfigFile;
+  static Future<String> _getConfigFileVersion(File configFile) async {
     if (!await configFile.exists()) {
-      logInfo("Device configuration file does not exist, returning 0.0.");
+      logInfo("Device configuration ${configFile.path} does not exist, returning 0.0.");
       return "0.0";
     }
     var configFileJson = await configFile.readAsString();
     try {
       DeviceConfigFile config = DeviceConfigFile.fromJson(jsonDecode(configFileJson));
-      logInfo("Device configuration file version: ${config.version}");
+      logInfo("${configFile.path} version: ${config.version}");
+      if (config.version!.major != 3) {
+        logWarning("${configFile.path} is not v3, removing and letting system pull from repo.");
+        return "0.0";
+      }
       return config.version.toString();
     } catch (e) {
-      logError("Error loading config file! Deleting config file and letting system pull from repo.");
+      logError("Error loading ${configFile.path}! Deleting if exists and letting system pull from repo.");
       return "0.0";
     }
+  }
+
+  static Future<String> getBaseConfigFileVersion() async {
+    return await DeviceConfiguration._getConfigFileVersion(IntifacePaths.deviceConfigFile);
+  }
+
+  static Future<String> getUserConfigFileVersion() async {
+    return await DeviceConfiguration._getConfigFileVersion(IntifacePaths.userDeviceConfigFile);
   }
 }

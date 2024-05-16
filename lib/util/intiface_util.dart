@@ -3,8 +3,8 @@ import 'package:path/path.dart' as p;
 import 'dart:io';
 import 'package:intl/intl.dart';
 
-const String userDeviceConfigFilename = 'buttplug-user-device-config.json';
-const String deviceConfigFilename = 'buttplug-device-config.json';
+const String userDeviceConfigFilename = 'buttplug-user-device-config-v3.json';
+const String deviceConfigFilename = 'buttplug-device-config-v3.json';
 const String intifaceNewsFilename = 'intiface.news.md';
 const String intifaceAppDirectoryName = 'IntifaceCentralFlutter';
 const String intifaceConfigDirectoryName = 'config';
