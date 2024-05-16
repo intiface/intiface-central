@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface® Central
 
 publish_to: 'none'
-version: 2.5.7+25
+version: 2.6.0+26
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

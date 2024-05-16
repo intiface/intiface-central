@@ -1,3 +1,15 @@
+# v2.6.0 - 2024/05/15 (All Platforms)
+
+## Features
+
+- Update to Buttplug v8/Intiface Engine v3
+  - Completely overhauls configuration system
+  - User configurations should no longer be removed, even if they don't show up in the UI yet
+  - Opens up development of many new features (included simulated devices, hopefully coming in
+    v2.6.1)
+  - As usual, a bunch of device support additions also
+- Serial Port devices can now be added via the GUI
+
 # v2.5.7 - 2024/04/20 (All Platforms)
 
 ## Features
