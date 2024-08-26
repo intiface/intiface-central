@@ -160,6 +160,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
             backdoor_server
           } else {
             // If we somehow *don't* have a server here, something has gone very wrong. Just die.
+            error!("No backdoor server available!");
             return;
           };
           let backdoor_server_stream = backdoor_server.event_stream();
@@ -169,19 +170,17 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
               msg = backdoor_incoming.recv() => {
                 match msg {
                   Ok(msg) => {
-                    //let runtime = RUNTIME.get().expect("Runtime not initialized");
-                    let sink = outgoing_sink.clone();
                     let backdoor_server_clone = backdoor_server.clone();
-                    tokio::spawn(async move {
-                      sink.add(backdoor_server_clone.parse_message(&msg).await);
-                    });
+                    backdoor_server_clone.parse_message(&msg).await;
                   }
                   Err(_) => break
                 }
               },
               outgoing = backdoor_server_stream.next() => {
                 match outgoing {
-                  Some(msg) => { sink.add(msg); }
+                  Some(msg) => {
+                    let _ = sink.add(msg);
+                  },
                   None => break
                 }
               },
@@ -240,7 +239,7 @@ pub fn stop_engine() {
   // don't run to completion, the runtime won't shutdown properly and everything will stall. Running
   // runtime_shutdown() doesn't work here because these are all tasks that may be stalled at the OS
   // level so we don't have enough info. Waiting on this is not the optimal way to do it, but I also
-  // don't have a good way to know when shutdown is finished right now. So waiting it is. 1s isn't
+  // don't have a good way to know when shutdown is finished right now. So waiting it is. This isn't
   // super noticable from an UX standpoint.
   thread::sleep(Duration::from_millis(500));
   let runtime;

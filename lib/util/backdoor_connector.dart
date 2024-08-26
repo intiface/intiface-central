@@ -35,22 +35,6 @@ class ButtplugBackdoorClientConnector implements ButtplugClientConnector {
 
   @override
   void send(ButtplugClientMessageUnion message) {
-    // We'll need to catch handshake messages, because any message we let through will go directly to the DeviceManager,
-    // bypassing the Server. So we'll handle server replies ourselves to make the client happy.
-
-    if (message.requestServerInfo != null) {
-      logInfo("Got backdoor RSI message, sending internal reply");
-      var serverInfo = ServerInfo();
-      serverInfo.id = message.id;
-      serverInfo.maxPingTime = 0;
-      serverInfo.messageVersion = 3;
-      serverInfo.serverName = "Backdoor Server";
-      var serverMessage = ButtplugServerMessage();
-      serverMessage.serverInfo = serverInfo;
-      _internalServerMessageStream.add(serverMessage);
-      return;
-    }
-
     var msgJson = jsonEncode([message.toJson()]);
     var msgEvent = EngineControlEventBackdoorMessage(msgJson);
     _sendFunc(msgEvent);
