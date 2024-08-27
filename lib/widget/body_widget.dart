@@ -70,7 +70,7 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateLogs,
           (NavigationCubit cubit) => cubit.goLogs(),
           Icon(Icons.text_snippet_outlined,
-              color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : IconTheme.of(context).color),
+              color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : null),
           const Icon(Icons.text_snippet),
           'Log',
           () => const LogPage(),
@@ -82,11 +82,11 @@ class BodyWidget extends StatelessWidget {
           Icon(Icons.settings_outlined,
               color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
                   ? Colors.green
-                  : IconTheme.of(context).color),
+                  : null),
           Icon(Icons.settings,
               color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
                   ? Colors.green
-                  : IconTheme.of(context).color),
+                  : null),
           'Settings',
           () => const SettingPage(),
           true,
