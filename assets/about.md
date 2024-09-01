@@ -25,7 +25,7 @@ Find us on:
 - [Discord](https://discord.buttplug.io)
 - [Youtube](https://youtube.buttplug.io)
 
-Want to help fund our work? Here's where you can donate to the project (and get merch like stickers)!
+Want to help fund our work? Here's where you can donate to the project!
 
 - [Patreon](https://patreon.com/qdot)
 - [Github Sponsors](https://github.com/sponsors/qdot)
