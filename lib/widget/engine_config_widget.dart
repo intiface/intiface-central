@@ -22,13 +22,15 @@ class EngineConfigWidget extends StatelessWidget {
       context.watch<GuiSettingsCubit>().state,
     ];
 
+    var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var portController = TextEditingController();
     portController.text = configCubit.repeaterLocalPort.toString();
-    var remoteAddressController = TextEditingController();
-    remoteAddressController.text = configCubit.repeaterRemoteAddress;
 
-    var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+    var serverNameController = TextEditingController(text: cubit.serverName);
+    var websocketPortController = TextEditingController(text: cubit.websocketServerPort.toString());
+
     var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
     List<AbstractSettingsSection> tiles = [];
 
@@ -51,13 +53,26 @@ class EngineConfigWidget extends StatelessWidget {
                   builder: (context) => AlertDialog(
                         title: const Text('Server Name'),
                         content: TextField(
-                          controller: TextEditingController(text: cubit.serverName),
+                          controller: serverNameController,
                           onSubmitted: (value) {
                             cubit.serverName = value;
                             Navigator.pop(context);
                           },
                           decoration: const InputDecoration(hintText: "Server Name Entry"),
                         ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              cubit.serverName = serverNameController.text;
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
                       ));
             }),
         SettingsTile.navigation(
@@ -71,7 +86,7 @@ class EngineConfigWidget extends StatelessWidget {
                         title: const Text('Server Port'),
                         content: TextField(
                           keyboardType: TextInputType.number,
-                          controller: TextEditingController(text: cubit.websocketServerPort.toString()),
+                          controller: websocketPortController,
                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                           onSubmitted: (value) {
                             var newPort = int.tryParse(value);
@@ -82,6 +97,22 @@ class EngineConfigWidget extends StatelessWidget {
                           },
                           decoration: const InputDecoration(hintText: "Server Port Entry"),
                         ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              var newPort = int.tryParse(websocketPortController.text);
+                              if (newPort != null && newPort > 1024 && newPort < 65536) {
+                                cubit.websocketServerPort = newPort;
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
                       ));
             }),
         SettingsTile.switchTile(

@@ -17,8 +17,9 @@ class RepeaterConfigWidget extends StatelessWidget {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var portController = TextEditingController();
     portController.text = configCubit.repeaterLocalPort.toString();
-    var remoteAddressController = TextEditingController();
-    remoteAddressController.text = configCubit.repeaterRemoteAddress;
+
+    var repeaterAddressController = TextEditingController(text: configCubit.repeaterRemoteAddress);
+    var repeaterPortController = TextEditingController(text: configCubit.repeaterRemoteAddress);
     return Expanded(
         child: BlocBuilder<EngineControlBloc, EngineControlState>(
             buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
@@ -42,7 +43,7 @@ class RepeaterConfigWidget extends StatelessWidget {
                                         title: const Text('Local Port'),
                                         content: TextField(
                                           keyboardType: TextInputType.number,
-                                          controller: TextEditingController(text: cubit.repeaterLocalPort.toString()),
+                                          controller: repeaterPortController,
                                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                           onSubmitted: (value) {
                                             var newPort = int.tryParse(value);
@@ -53,6 +54,22 @@ class RepeaterConfigWidget extends StatelessWidget {
                                           },
                                           decoration: const InputDecoration(hintText: "Local Port"),
                                         ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              var newPort = int.tryParse(repeaterPortController.text);
+                                              if (newPort != null && newPort > 1024 && newPort < 65536) {
+                                                cubit.repeaterLocalPort = newPort;
+                                              }
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       ));
                             }),
                         SettingsTile.navigation(
@@ -66,7 +83,7 @@ class RepeaterConfigWidget extends StatelessWidget {
                                         title: const Text('Remote Server Address'),
                                         content: TextField(
                                           //keyboardType: TextInputType.number,
-                                          controller: TextEditingController(text: cubit.repeaterRemoteAddress),
+                                          controller: repeaterAddressController,
                                           //inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                           onSubmitted: (value) {
                                             configCubit.repeaterRemoteAddress = value;
@@ -74,6 +91,19 @@ class RepeaterConfigWidget extends StatelessWidget {
                                           },
                                           decoration: const InputDecoration(hintText: "Remote Server Address"),
                                         ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              configCubit.repeaterRemoteAddress = repeaterAddressController.text;
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       ));
                             }),
 /*                            
