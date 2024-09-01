@@ -15,7 +15,7 @@ dependencies:
 # buttplug: 
 #   path: /Users/qdot/code/buttplug_dart
   cupertino_icons: ^1.0.6
-  device_info_plus: ^9.1.0
+  device_info_plus: ^10.1.2
   easy_debounce: ^2.0.3
   equatable: ^2.0.5
   # Needed for rust ffigen
@@ -46,7 +46,7 @@ dependencies:
   settings_ui: ^2.0.2
   shared_preferences: ^2.2.2
   tuple: ^2.0.2
-  url_launcher: ^6.2.1
+  url_launcher: ^6.3.0
   version: ^3.0.2
   web_socket_channel: ^2.4.0
   window_manager: ^0.3.7
