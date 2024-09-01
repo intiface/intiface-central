@@ -19,7 +19,7 @@ The Intiface® word mark is a registered trademark of Nonpolynomial Labs, LLC
 Find us on:
 
 - [Discourse Forum](https://discuss.buttplug.io)
-- [Twitter](https://twitter.com/buttplugio)
+- [Twitter/X](https://x.com/buttplugio)
 - [Mastodon](https://buttplug.zone/@buttplugio)
 - [Bluesky](https://bsky.app/profile/buttplug.io)
 - [Discord](https://discord.buttplug.io)
