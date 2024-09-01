@@ -1,3 +1,18 @@
+# v2.6.1 - 2024/09/01 (All Platforms)
+
+## Features
+
+- Update to Buttplug v9/Intiface Engine v3.0.1
+  - Mostly internal changes, but a lot of them (including a complete rewrite of our message
+    downgrade system and starting developing on our new message spec version)
+  - 3 months worth of device updates, including Lovense Mini Sex Machine, tons of galaku/joyhub
+    devices, etc.
+
+## Bugfixes
+
+- Repeater will now automatically prefix protocols with "ws://" if user does not.
+- "Index is 1 but array size is 1" error should be resolved
+
 # v2.6.0 - 2024/05/15 (All Platforms)
 
 ## Features

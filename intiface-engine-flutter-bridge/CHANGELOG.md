@@ -1,8 +1,16 @@
+# 1.1.1 (2024/09/01)
+
+## Features
+
+- Update to Buttplug v9/Intiface Engine v3.0.1
+  - Starts development of Buttplug v4 message spec, currently opaque to Central but testing the
+    machinery of the library.
+
 # 1.1.0 (2024/05/15)
 
 ## Features
 
-- Update to Buttplug v3/Intiface Engine v3
+- Update to Buttplug v8/Intiface Engine v3
   - Expands local API to allow for config management in native code
 
 # 1.0.15 (2024/04/20)
