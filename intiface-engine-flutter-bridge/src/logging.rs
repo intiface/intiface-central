@@ -1,7 +1,11 @@
-use flutter_rust_bridge::StreamSink;
-use tracing::Level;
-use std::{sync::{Arc, atomic::AtomicBool}, thread::JoinHandle, time::Duration};
 use crossbeam_channel::{bounded, Sender};
+use flutter_rust_bridge::StreamSink;
+use std::{
+  sync::{atomic::AtomicBool, Arc},
+  thread::JoinHandle,
+  time::Duration,
+};
+use tracing::Level;
 use tracing_subscriber::{
   filter::{EnvFilter, LevelFilter},
   layer::SubscriberExt,
@@ -45,7 +49,7 @@ impl MakeWriter<'_> for BroadcastWriter {
 
 pub struct FlutterTracingWriter {
   thread_handle: Option<JoinHandle<()>>,
-  cancel: Arc<AtomicBool>
+  cancel: Arc<AtomicBool>,
 }
 
 impl FlutterTracingWriter {
@@ -108,12 +112,14 @@ impl FlutterTracingWriter {
     });
     Self {
       thread_handle: Some(handle),
-      cancel
+      cancel,
     }
   }
 
   pub fn stop(&mut self) {
-    self.cancel.store(true, std::sync::atomic::Ordering::Relaxed);
+    self
+      .cancel
+      .store(true, std::sync::atomic::Ordering::Relaxed);
     let thread = self.thread_handle.take().unwrap();
     let _ = thread.join();
   }

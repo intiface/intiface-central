@@ -1,17 +1,22 @@
 use crate::{
-  in_process_frontend::FlutterIntifaceEngineFrontend,
-  logging::FlutterTracingWriter,
-  mobile_init,
+  in_process_frontend::FlutterIntifaceEngineFrontend, logging::FlutterTracingWriter, mobile_init,
 };
 use anyhow::Result;
 use buttplug::server::device::configuration::{DeviceConfigurationManagerBuilder, SerialSpecifier};
 pub use buttplug::{
-  core::message::{ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType, ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw, DeviceFeatureSensor, Endpoint, FeatureType},
+  core::message::{
+    ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType,
+    ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw,
+    DeviceFeatureSensor, Endpoint, FeatureType,
+  },
   server::device::{
-    configuration::{ProtocolCommunicationSpecifier, UserDeviceCustomization, UserDeviceDefinition, UserDeviceIdentifier, WebsocketSpecifier, DeviceConfigurationManager},
+    configuration::{
+      DeviceConfigurationManager, ProtocolCommunicationSpecifier, UserDeviceCustomization,
+      UserDeviceDefinition, UserDeviceIdentifier, WebsocketSpecifier,
+    },
     protocol::get_default_protocol_map,
   },
-  util::device_configuration::{load_protocol_configs, save_user_config}
+  util::device_configuration::{load_protocol_configs, save_user_config},
 };
 use flutter_rust_bridge::{frb, StreamSink};
 use futures::{pin_mut, StreamExt};
@@ -19,14 +24,20 @@ use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
 use std::{
-  collections::HashSet, fs, ops::RangeInclusive, sync::{
+  collections::HashSet,
+  fs,
+  ops::RangeInclusive,
+  sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex, RwLock,
-  }, thread, time::Duration
+  },
+  thread,
+  time::Duration,
 };
 use tokio::{
+  runtime::Runtime,
   select,
-  sync::{broadcast, Notify}, runtime::Runtime,
+  sync::{broadcast, Notify},
 };
 use tracing_futures::Instrument;
 
@@ -53,7 +64,7 @@ lazy_static! {
   // lock. While this probably shouldn't happen, it does. A lot. So we'll need to check for an
   // active runtime whenever we try to get write locks, and clear poisoning if there's no runtime
   // active.
-  static ref DEVICE_CONFIG_MANAGER: Arc<RwLock<Arc<DeviceConfigurationManager>>> = 
+  static ref DEVICE_CONFIG_MANAGER: Arc<RwLock<Arc<DeviceConfigurationManager>>> =
     Arc::new(RwLock::new(Arc::new(load_protocol_configs(&None, &None, false).unwrap().finish().unwrap())));
 }
 
@@ -198,7 +209,8 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
           }
           info!("Exiting main engine waiter task");
           notify_clone_clone.notify_waiters();
-        }.instrument(info_span!("IC main engine task")),
+        }
+        .instrument(info_span!("IC main engine task")),
         // Our notifier needs to run in a task by itself, because we don't want our engine future to get
         // cancelled, so we can't select between it and the notifier. It needs to shutdown gracefully.
         async move {
@@ -262,8 +274,6 @@ pub fn send_backend_server_message(msg: String) {
   }
 }
 
-
-
 // "Exposed" types are mirrors of internal Buttplug types, but with all public members and typing
 // that's amiable to FlutterRustBridge translation. These types can't be directly mirrored because
 // the library itself has private members.
@@ -283,7 +293,7 @@ impl From<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
     Self {
       address: value.address().clone(),
       protocol: value.protocol().clone(),
-      identifier: value.identifier().clone()
+      identifier: value.identifier().clone(),
     }
   }
 }
@@ -293,7 +303,6 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
     UserDeviceIdentifier::new(&self.address, &self.protocol, &self.identifier)
   }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct ExposedSerialSpecifier {
@@ -311,14 +320,20 @@ impl From<SerialSpecifier> for ExposedSerialSpecifier {
       parity: value.parity().clone().into(),
       baud_rate: value.baud_rate().clone(),
       data_bits: value.data_bits().clone(),
-      stop_bits: value.stop_bits().clone()
+      stop_bits: value.stop_bits().clone(),
     }
   }
 }
 
 impl Into<SerialSpecifier> for ExposedSerialSpecifier {
   fn into(self) -> SerialSpecifier {
-    SerialSpecifier::new(&self.port, self.baud_rate, self.data_bits, self.stop_bits, self.parity.chars().next().unwrap())
+    SerialSpecifier::new(
+      &self.port,
+      self.baud_rate,
+      self.data_bits,
+      self.stop_bits,
+      self.parity.chars().next().unwrap(),
+    )
   }
 }
 
@@ -330,7 +345,7 @@ pub struct ExposedWebsocketSpecifier {
 impl From<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   fn from(value: WebsocketSpecifier) -> Self {
     Self {
-      name: value.name().clone()
+      name: value.name().clone(),
     }
   }
 }
@@ -353,7 +368,7 @@ impl From<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
     Self {
       step_range: (*value.step_range().start(), *value.step_range().end()),
       step_limit: (*value.step_limit().start(), *value.step_limit().end()),
-      messages: value.messages().iter().cloned().collect()
+      messages: value.messages().iter().cloned().collect(),
     }
   }
 }
@@ -361,16 +376,15 @@ impl From<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
 impl Into<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
   fn into(self) -> DeviceFeatureActuator {
     DeviceFeatureActuator::new(
-      &RangeInclusive::new(self.step_range.0, self.step_range.1), 
-      &RangeInclusive::new(self.step_limit.0, self.step_limit.1), 
-      &HashSet::from_iter(self.messages.iter().cloned())
+      &RangeInclusive::new(self.step_range.0, self.step_range.1),
+      &RangeInclusive::new(self.step_limit.0, self.step_limit.1),
+      &HashSet::from_iter(self.messages.iter().cloned()),
     )
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct ExposedDeviceFeatureSensor
-{
+pub struct ExposedDeviceFeatureSensor {
   pub value_range: Vec<(i32, i32)>,
   pub messages: Vec<ButtplugSensorFeatureMessageType>,
 }
@@ -378,8 +392,12 @@ pub struct ExposedDeviceFeatureSensor
 impl From<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
   fn from(value: DeviceFeatureSensor) -> Self {
     Self {
-      value_range: value.value_range().iter().map(|val| (*val.start(), *val.end())).collect(),
-      messages: value.messages().iter().cloned().collect()
+      value_range: value
+        .value_range()
+        .iter()
+        .map(|val| (*val.start(), *val.end()))
+        .collect(),
+      messages: value.messages().iter().cloned().collect(),
     }
   }
 }
@@ -387,8 +405,12 @@ impl From<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
 impl Into<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
   fn into(self) -> DeviceFeatureSensor {
     DeviceFeatureSensor::new(
-      &self.value_range.iter().map(|val| RangeInclusive::new(val.0, val.1)).collect(),
-      &HashSet::from_iter(self.messages.iter().cloned())
+      &self
+        .value_range
+        .iter()
+        .map(|val| RangeInclusive::new(val.0, val.1))
+        .collect(),
+      &HashSet::from_iter(self.messages.iter().cloned()),
     )
   }
 }
@@ -407,8 +429,14 @@ impl From<DeviceFeature> for ExposedDeviceFeature {
     Self {
       description: value.description().clone(),
       feature_type: *value.feature_type(),
-      actuator: value.actuator().clone().and_then(|x| Some(ExposedDeviceFeatureActuator::from(x))),
-      sensor: value.sensor().clone().and_then(|x| Some(ExposedDeviceFeatureSensor::from(x)))
+      actuator: value
+        .actuator()
+        .clone()
+        .and_then(|x| Some(ExposedDeviceFeatureActuator::from(x))),
+      sensor: value
+        .sensor()
+        .clone()
+        .and_then(|x| Some(ExposedDeviceFeatureSensor::from(x))),
     }
   }
 }
@@ -416,10 +444,11 @@ impl From<DeviceFeature> for ExposedDeviceFeature {
 impl Into<DeviceFeature> for ExposedDeviceFeature {
   fn into(self) -> DeviceFeature {
     DeviceFeature::new(
-      &self.description, 
+      &self.description,
       self.feature_type,
-      &self.actuator.and_then(|x| Some(x.into())), 
-      &self.sensor.and_then(|x| Some(x.into())))
+      &self.actuator.and_then(|x| Some(x.into())),
+      &self.sensor.and_then(|x| Some(x.into())),
+    )
   }
 }
 
@@ -436,7 +465,7 @@ impl From<UserDeviceCustomization> for ExposedUserDeviceCustomization {
       display_name: value.display_name().clone(),
       allow: value.allow(),
       deny: value.deny(),
-      index: value.index()
+      index: value.index(),
     }
   }
 }
@@ -447,7 +476,7 @@ impl Into<UserDeviceCustomization> for ExposedUserDeviceCustomization {
       &self.display_name.clone(),
       self.allow,
       self.deny,
-      self.index
+      self.index,
     )
   }
 }
@@ -463,7 +492,7 @@ impl From<UserDeviceDefinition> for ExposedUserDeviceDefinition {
     Self {
       name: value.name().clone(),
       features: value.features().iter().cloned().map(|x| x.into()).collect(),
-      user_config: value.user_config().clone().into()
+      user_config: value.user_config().clone().into(),
     }
   }
 }
@@ -471,9 +500,15 @@ impl From<UserDeviceDefinition> for ExposedUserDeviceDefinition {
 impl Into<UserDeviceDefinition> for ExposedUserDeviceDefinition {
   fn into(self) -> UserDeviceDefinition {
     UserDeviceDefinition::new(
-      &self.name, 
-      &self.features.iter().cloned().map(|x| x.into()).collect::<Vec<DeviceFeature>>(), 
-      &self.user_config.into())
+      &self.name,
+      &self
+        .features
+        .iter()
+        .cloned()
+        .map(|x| x.into())
+        .collect::<Vec<DeviceFeature>>(),
+      &self.user_config.into(),
+    )
   }
 }
 
@@ -507,7 +542,7 @@ pub enum _FeatureType {
 pub enum _ButtplugActuatorFeatureMessageType {
   ScalarCmd,
   RotateCmd,
-  LinearCmd
+  LinearCmd,
 }
 
 #[frb(mirror(ButtplugSensorFeatureMessageType))]
@@ -591,45 +626,66 @@ pub enum _ButtplugDeviceMessageType {
   VorzeA10CycloneCmd,
 }
 
-pub fn setup_device_configuration_manager(base_config: Option<String>, user_config: Option<String>) {
+pub fn setup_device_configuration_manager(
+  base_config: Option<String>,
+  user_config: Option<String>,
+) {
   if let Ok(mut dcm) = DEVICE_CONFIG_MANAGER.try_write() {
-    *dcm = Arc::new(load_protocol_configs(&base_config, &user_config, false).unwrap().finish().unwrap());
+    *dcm = Arc::new(
+      load_protocol_configs(&base_config, &user_config, false)
+        .unwrap()
+        .finish()
+        .unwrap(),
+    );
   }
 }
 
 pub fn get_user_websocket_communication_specifiers() -> Vec<(String, ExposedWebsocketSpecifier)> {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  let mut ws_specs = vec!();
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  let mut ws_specs = vec![];
   for kv in dcm.user_communication_specifiers() {
     for comm_spec in kv.value() {
       if let ProtocolCommunicationSpecifier::Websocket(ws) = comm_spec {
-        ws_specs.push((kv.key().to_owned(), ExposedWebsocketSpecifier::from(ws.clone())))
-      }  
+        ws_specs.push((
+          kv.key().to_owned(),
+          ExposedWebsocketSpecifier::from(ws.clone()),
+        ))
+      }
     }
   }
   ws_specs
 }
 
 pub fn get_user_serial_communication_specifiers() -> Vec<(String, ExposedSerialSpecifier)> {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  let mut port_specs = vec!();
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  let mut port_specs = vec![];
   for kv in dcm.user_communication_specifiers() {
     for comm_spec in kv.value() {
       if let ProtocolCommunicationSpecifier::Serial(port) = comm_spec {
-        port_specs.push((kv.key().to_owned(), ExposedSerialSpecifier::from(port.clone())))
-      }  
+        port_specs.push((
+          kv.key().to_owned(),
+          ExposedSerialSpecifier::from(port.clone()),
+        ))
+      }
     }
   }
   port_specs
 }
 
-pub fn get_user_device_definitions() -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+pub fn get_user_device_definitions(
+) -> Vec<(ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition)> {
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
   dcm
     .user_device_definitions()
     .iter()
     .map(|kv| (kv.key().clone().into(), kv.value().clone().into()))
-    .collect()  
+    .collect()
 }
 
 pub fn get_protocol_names() -> Vec<String> {
@@ -641,37 +697,79 @@ pub fn get_protocol_names() -> Vec<String> {
 }
 
 pub fn add_websocket_specifier(protocol: String, name: String) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  dcm.add_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)));
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  dcm.add_user_communication_specifier(
+    &protocol,
+    &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)),
+  );
 }
 
 pub fn remove_websocket_specifier(protocol: String, name: String) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  dcm.remove_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)));
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  dcm.remove_user_communication_specifier(
+    &protocol,
+    &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)),
+  );
 }
 
-pub fn add_serial_specifier(protocol: String, port: String, baud_rate: u32, data_bits: u8, stop_bits: u8, parity: String) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  dcm.add_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new(&port, baud_rate, data_bits, stop_bits, parity.chars().next().unwrap())));
+pub fn add_serial_specifier(
+  protocol: String,
+  port: String,
+  baud_rate: u32,
+  data_bits: u8,
+  stop_bits: u8,
+  parity: String,
+) {
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  dcm.add_user_communication_specifier(
+    &protocol,
+    &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new(
+      &port,
+      baud_rate,
+      data_bits,
+      stop_bits,
+      parity.chars().next().unwrap(),
+    )),
+  );
 }
 
 pub fn remove_serial_specifier(protocol: String, port: String) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
-  dcm.remove_user_communication_specifier(&protocol, &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new_from_name(&port)));
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
+  dcm.remove_user_communication_specifier(
+    &protocol,
+    &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new_from_name(&port)),
+  );
 }
 
-pub fn update_user_config(identifier: ExposedUserDeviceIdentifier, config: ExposedUserDeviceDefinition) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+pub fn update_user_config(
+  identifier: ExposedUserDeviceIdentifier,
+  config: ExposedUserDeviceDefinition,
+) {
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
   dcm.add_user_device_definition(&identifier.into(), &config.into());
 }
 
 pub fn remove_user_config(identifier: ExposedUserDeviceIdentifier) {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
   dcm.remove_user_device_definition(&identifier.into());
 }
 
 pub fn get_user_config_str() -> String {
-  let dcm = DEVICE_CONFIG_MANAGER.try_read().expect("We should have a reader at this point");
+  let dcm = DEVICE_CONFIG_MANAGER
+    .try_read()
+    .expect("We should have a reader at this point");
   save_user_config(&dcm).unwrap()
 }
 

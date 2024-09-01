@@ -15,7 +15,6 @@ pub enum Error {
 
   //#[error("Cannot initialize RUNTIME")]
   //Runtime,
-
   #[cfg(target_os = "android")]
   #[error("Java vm not initialized")]
   JavaVM,
