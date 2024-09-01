@@ -46,7 +46,7 @@ dependencies:
   settings_ui: ^2.0.2
   shared_preferences: ^2.2.2
   tuple: ^2.0.2
-  url_launcher: ^6.3.0
+  url_launcher: ^6.2.1
   version: ^3.0.2
   web_socket_channel: ^2.4.0
   window_manager: ^0.3.7
