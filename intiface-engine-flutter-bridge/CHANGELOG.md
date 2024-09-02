@@ -1,3 +1,10 @@
+# 1.1.2 (2024/09/02)
+
+## Bugfixes
+
+- Update to Buttplug 9.0.1
+  - Fixes issue with message ids not always being set on spec version upgrade/downgrade
+
 # 1.1.1 (2024/09/01)
 
 ## Features
