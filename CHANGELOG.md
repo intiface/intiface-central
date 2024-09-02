@@ -1,3 +1,15 @@
+# v2.6.2 - 2024/09/02 (All Platforms)
+
+## Features
+
+- Update Android to adaptive icon (Thanks t895!)
+  - Actually came out in v2.6.1 but I forgot to tag it there.
+
+## Bugfixes
+
+- Fix permissions issues with Foreground Task on Android 14
+- Fix issue with message ids not being set in upgrade/downgrade cases (Fix in Buttplug v9.0.1)
+
 # v2.6.1 - 2024/09/01 (All Platforms)
 
 ## Features
