@@ -22,7 +22,6 @@ void startCallback() {
 }
 
 class IntifaceEngineTaskHandler extends TaskHandler {
-  SendPort? _sendPort;
   final ReceivePort _serverMessageReceivePort;
   final ReceivePort _backdoorMessageReceivePort;
   final ReceivePort _shutdownReceivePort;
@@ -36,7 +35,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     message.message = outgoingMessage;
     var engineMessage = EngineMessage();
     engineMessage.engineProviderLog = message;
-    _sendPort!.send(jsonEncode(engineMessage));
+    FlutterForegroundTask.sendDataToMain(jsonEncode(engineMessage));
   }
 
   IntifaceEngineTaskHandler()
@@ -54,8 +53,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-    _sendPort = sendPort;
+  Future<void> onStart(DateTime timestamp) async {
     _sendProviderLog("Info", "Trying to start engine in foreground service.");
 
     // Due to the way the foregrounding package we're using works, we can't store the options across the foregrounding
@@ -87,7 +85,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     _stream!.listen((element) {
       try {
         // Send first
-        _sendPort!.send(element);
+        FlutterForegroundTask.sendDataToMain(element);
         // Then check to see if this is a EngineStopped message.
         // Try parsing the JSON first to make sure it's even valid JSON.
         var jsonElement = jsonDecode(element);
@@ -111,18 +109,18 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       await _serverExited.future;
       _sendProviderLog("INFO", "Engine shutdown successful");
       // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.
-      _sendPort!.send(false);
+      FlutterForegroundTask.sendDataToMain(false);
     });
   }
 
   @override
-  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
+  Future<void> onRepeatEvent(DateTime timestamp) async {
     // Send data to the main isolate.
     //sendPort?.send(timestamp);
   }
 
   @override
-  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
+  Future<void> onDestroy(DateTime timestamp) async {
     _sendProviderLog("INFO", "Shutting down foreground task");
     IsolateNameServer.removePortNameMapping(_kMainServerPortName);
     IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
@@ -196,24 +194,29 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     _backdoorSendPort!.send(msg);
   }
 
-  Future<bool> _startForegroundTask() async {
-    bool reqResult;
+  Future<ServiceRequestResult> _startForegroundTask() async {
+    ServiceRequestResult reqResult;
     if (await FlutterForegroundTask.isRunningService) {
       reqResult = await FlutterForegroundTask.restartService();
     } else {
       reqResult = await FlutterForegroundTask.startService(
         notificationTitle: 'Intiface Engine is running',
         notificationText: 'Tap to return to the app',
+        notificationIcon: const NotificationIconData(
+          resType: ResourceType.mipmap,
+          resPrefix: ResourcePrefix.ic,
+          name: 'launcher',
+        ),
+        notificationButtons: [
+          const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
+        ],
         callback: startCallback,
       );
     }
 
-    ReceivePort? receivePort;
-    if (reqResult) {
-      receivePort = FlutterForegroundTask.receivePort;
-    }
+    _registerReceivePort();
 
-    return _registerReceivePort(receivePort);
+    return reqResult;
   }
 
   void _closeReceivePort() {
@@ -221,24 +224,19 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     _receivePort = null;
   }
 
-  bool _registerReceivePort(ReceivePort? receivePort) {
-    _closeReceivePort();
-
-    if (receivePort != null) {
-      _receivePort = receivePort;
-      _receivePort?.listen((message) {
-        if (message is String) {
-          _processMessageStream.add(message);
-        } else if (message is bool) {
-          logInfo("Shutdown complete message received, stopping foreground task.");
-          FlutterForegroundTask.stopService().then((_) => logInfo("Foreground task shutdown complete."));
-        }
-      });
-
-      return true;
+  void _onReceiveTaskData(message) {
+    if (message is String) {
+      _processMessageStream.add(message);
+    } else if (message is bool) {
+      logInfo("Shutdown complete message received, stopping foreground task.");
+      FlutterForegroundTask.stopService().then((_) => logInfo("Foreground task shutdown complete."));
     }
+  }
 
-    return false;
+  void _registerReceivePort() {
+    // Remove the task if it already exists, just to make sure to clear things out.
+    FlutterForegroundTask.removeTaskDataCallback(_onReceiveTaskData);
+    FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
   }
 
   @override

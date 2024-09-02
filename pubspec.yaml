@@ -21,7 +21,7 @@ dependencies:
   # Needed for rust ffigen
   ffi: ^2.1.0
   flutter_bloc: ^8.1.6
-  flutter_foreground_task: ^6.1.2
+  flutter_foreground_task: ^8.7.0
   flutter_local_notifications: ^17.2.2
   flutter_loggy: ^2.0.2
   flutter_markdown: ^0.6.18

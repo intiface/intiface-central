@@ -327,10 +327,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_foreground_task
-      sha256: "6cf10a27f5e344cd2ecad0752d3a5f4ec32846d82fda8753b3fe2480ebb832a3"
+      sha256: "4962ffefe4352435900eb25734925f1ad002abf48e13c1ca22c9c63391be4f94"
       url: "https://pub.dev"
     source: hosted
-    version: "6.5.0"
+    version: "8.7.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:

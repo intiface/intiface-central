@@ -200,21 +200,14 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
             channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
             channelImportance: NotificationChannelImportance.LOW,
             priority: NotificationPriority.LOW,
-            iconData: const NotificationIconData(
-              resType: ResourceType.mipmap,
-              resPrefix: ResourcePrefix.ic,
-              name: 'launcher',
-            ),
-            buttons: [
-              const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
-            ],
           ),
           iosNotificationOptions: const IOSNotificationOptions(),
-          foregroundTaskOptions: const ForegroundTaskOptions(
-            interval: 1000,
+          foregroundTaskOptions: ForegroundTaskOptions(
+            eventAction: ForegroundTaskEventAction.repeat(1000),
             allowWifiLock: true,
           ),
         );
+        FlutterForegroundTask.initCommunicationPort();
       }
     }
     var errorNotifierCubit = ErrorNotifierCubit();
