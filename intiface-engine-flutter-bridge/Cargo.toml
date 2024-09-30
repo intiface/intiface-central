@@ -1,6 +1,6 @@
 [package]
 name = "intiface_engine_flutter_bridge"
-version = "1.1.2"
+version = "1.1.3"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
 license = "BSD-3-Clause"
@@ -10,11 +10,11 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = "3.0.2"
+intiface-engine = "3.0.3"
 # intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
 # buttplug = { path = "../../buttplug/buttplug" }
-buttplug = "9.0.1"
+buttplug = "9.0.2"
 flutter_rust_bridge = "1.82.6"
 log = "0.4.22"
 lazy_static = "1.5.0"

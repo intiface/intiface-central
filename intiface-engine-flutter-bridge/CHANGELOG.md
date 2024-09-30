@@ -1,3 +1,10 @@
+# 1.1.3 (2024/09/29)
+
+## Features
+
+- Update to Buttplug 9.0.2
+  - Adds more device functionality
+
 # 1.1.2 (2024/09/02)
 
 ## Bugfixes
