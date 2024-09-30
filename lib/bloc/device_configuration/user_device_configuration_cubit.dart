@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/ffi.dart';
@@ -41,7 +39,6 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       if (IntifacePaths.userDeviceConfigFile.existsSync()) {
         userConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
       }
-      // TODO This should throw if loading doesn't work.
       await api!.setupDeviceConfigurationManager(baseConfig: deviceConfig, userConfig: userConfig);
     } catch (e) {
       logError("Error loading cubit! Deleting configs and creating new ones.");

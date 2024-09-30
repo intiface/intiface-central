@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
-import 'package:loggy/loggy.dart';
 
 typedef SendFunc = void Function(EngineControlEvent msg);
 
