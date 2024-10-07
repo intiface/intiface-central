@@ -1,3 +1,18 @@
+# v2.6.4 - 2024/10/06 (All Platforms)
+
+## Features
+
+- Update to Buttplug v9.0.4/Intiface Engine v3.0.4
+   - Lovense Solace Pro linear movement support
+   - Lovense Solace stop fix
+   - Many device updates
+
+# v2.6.3 - 2024/09/29 (Android Only)
+
+## Bugfixes
+
+- Remove about page message linking to Patreon, due to Google Play Store restrictions
+
 # v2.6.2 - 2024/09/02 (All Platforms)
 
 ## Features
