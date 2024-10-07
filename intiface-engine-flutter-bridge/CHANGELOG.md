@@ -1,3 +1,12 @@
+# 1.1.4 (2024/10/06)
+
+## Features
+
+- Update to Buttplug 9.0.4/Intiface Engine v3.0.4
+  - Lovense Solace Pro Linear movement capabilities
+  - Lovense Solace stop bugfix
+  - More device functionality
+
 # 1.1.3 (2024/09/29)
 
 ## Features
