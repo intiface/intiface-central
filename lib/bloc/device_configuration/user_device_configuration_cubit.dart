@@ -28,9 +28,6 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> loadConfig() async {
     try {
-      if (!IntifacePaths.userDeviceConfigFile.existsSync()) {
-        return;
-      }
       String? deviceConfig;
       String? userConfig;
       if (IntifacePaths.deviceConfigFile.existsSync()) {

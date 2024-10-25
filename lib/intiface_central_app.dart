@@ -275,9 +275,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     // Bring up the FFI now that we have logging available and crash logging set up.
     initializeApi();
 
+    // Setup logging before initializing the DCM
+    var apiLog = NativeApiLog();
+
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
 
-    var apiLog = NativeApiLog();
     apiLog.logMessageStream.listen((message) {
       var level = message.level;
       if (level == "DEBUG") {
