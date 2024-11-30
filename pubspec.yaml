@@ -52,6 +52,7 @@ dependencies:
   window_manager: ^0.3.7
   multicast_dns: ^0.3.2+6
   flutter_multi_slider: ^2.0.0
+  discord_rich_presence: ^1.1.1
 
 dev_dependencies:
   build_runner: ^2.4.6

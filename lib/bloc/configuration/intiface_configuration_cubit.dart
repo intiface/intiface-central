@@ -168,6 +168,11 @@ class RestoreWindowLocation extends IntifaceConfigurationState {
   RestoreWindowLocation(this.value);
 }
 
+class UseDiscordRichPresence extends IntifaceConfigurationState {
+  final bool value;
+  UseDiscordRichPresence(this.value);
+}
+
 class ShowRepeaterModeState extends IntifaceConfigurationState {
   final bool value;
   ShowRepeaterModeState(this.value);
@@ -215,6 +220,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useSideNavigationBar = _prefs.getBool("useSideNavigationBar") ?? isDesktop();
     useLightTheme = _prefs.getBool("useLightTheme") ?? true;
     restoreWindowLocation = _prefs.getBool("restoreWindowLocation") ?? true;
+    useDiscordRichPresence = _prefs.getBool("useDiscordRichPresence") ?? false;
 
     // True on all platforms
     useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
@@ -295,6 +301,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set restoreWindowLocation(bool value) {
     _prefs.setBool("restoreWindowLocation", value);
     emit(RestoreWindowLocation(value));
+  }
+
+  bool get useDiscordRichPresence => _prefs.getBool("useDiscordRichPresence")!;
+  set useDiscordRichPresence(bool value) {
+    _prefs.setBool("useDiscordRichPresence", value);
+    emit(UseDiscordRichPresence(value));
   }
 
   String get serverName => _prefs.getString("serverName")!;

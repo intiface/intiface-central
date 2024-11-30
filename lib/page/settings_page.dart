@@ -148,6 +148,13 @@ class SettingPage extends StatelessWidget {
               initialValue: cubit.restoreWindowLocation,
               onToggle: (value) => cubit.restoreWindowLocation = value,
               title: const Text("Restore Window Location on Start")));
+
+      appSettingsTiles.insert(
+          3,
+          SettingsTile.switchTile(
+              initialValue: cubit.useDiscordRichPresence,
+              onToggle: (value) => cubit.useDiscordRichPresence = value,
+              title: const Text("Enable Discord Rich Presence")));
     }
 
     tiles.addAll([
