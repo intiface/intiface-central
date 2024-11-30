@@ -1,9 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:buttplug/client/client_device.dart';
-import 'package:buttplug/messages/enums.dart';
 import 'package:discord_rich_presence/discord_rich_presence.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
-import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
 
 class DiscordEvent {}
 
