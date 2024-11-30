@@ -19,6 +19,7 @@ import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/bloc/update/update_repository.dart';
 import 'package:intiface_central/bloc/util/app_reset_cubit.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/bloc/util/discord_cubit.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
@@ -298,6 +299,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       await api!.crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
     }
 
+    var discordBloc = DiscordBloc();
+
     engineControlBloc.stream.listen((state) async {
       if (state is ProviderLogMessageState) {
         // TODO Turn level into an enum
@@ -318,15 +321,35 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       }
       if (state is EngineServerCreatedState) {
         deviceControlBloc.add(DeviceManagerEngineStartedEvent());
+        if (isDesktop() && configCubit.useDiscordRichPresence) {
+          discordBloc.add(DiscordEngineStartedEvent());
+        }
       }
       if (state is EngineStoppedState) {
         deviceControlBloc.add(DeviceManagerEngineStoppedEvent());
+        if (isDesktop() && configCubit.useDiscordRichPresence) {
+          discordBloc.add(DiscordEngineStoppedEvent());
+        }
       }
       if (state is DeviceConnectedState) {
         logInfo("Updating device ${state.name} index to ${state.index}");
         await userConfigCubit.update();
       }
     });
+
+    if (isDesktop()) {
+      deviceControlBloc.stream.listen((state) async {
+        if (!configCubit.useDiscordRichPresence) return;
+
+        if (state is DeviceManagerDeviceOnlineState) {
+          discordBloc.add(DiscordDeviceAddedEvent((state).device));
+        }
+
+        if (state is DeviceManagerDeviceOfflineState) {
+          discordBloc.add(DiscordDeviceRemovedEvent((state).device));
+        }
+      });
+    }
 
     if (kDebugMode) {
       // Make sure the engine is stopped, just in case we've reloaded.
@@ -363,6 +386,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       BlocProvider(create: (context) => errorNotifierCubit),
       BlocProvider(create: (context) => userConfigCubit),
       BlocProvider(create: (context) => guiSettingsCubit),
+      // Discord RPC won't work on mobile
+      if (isDesktop()) BlocProvider(create: (context) => discordBloc), 
     ], child: const IntifaceCentralView());
   }
 
