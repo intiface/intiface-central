@@ -61,6 +61,7 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
       var client = ButtplugClient("Backdoor Client");
       // This is infallible due to our connector.
       await client.connect(connector);
+
       // Hook up our event listeners so we register new online devices as we get device added messages.
       client.eventStream.listen((event) {
         if (event is DeviceAddedEvent) {
