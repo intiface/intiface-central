@@ -28,7 +28,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.24.1
+          flutter-version: 3.27.1
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - run: flutter config --enable-windows-desktop
@@ -64,7 +64,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.19.6
+          flutter-version: 3.27.1
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - run: |
