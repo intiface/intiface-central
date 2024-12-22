@@ -1,3 +1,10 @@
+# 1.1.5 (2024/12/21)
+
+## Features
+
+- Update to Buttplug 9.0.5/Intiface Engine 3.0.5
+  - Tons of device updates and a few protocol fixes. That's it.
+
 # 1.1.4 (2024/10/06)
 
 ## Features
