@@ -2,7 +2,7 @@
 
 ## Features
 
-- Update to Buttplug 9.0.5/Intiface Engine 3.0.5
+- Update to Buttplug 9.0.6/Intiface Engine 3.0.6
   - Tons of device updates and a few protocol fixes. That's it.
 
 # 1.1.4 (2024/10/06)

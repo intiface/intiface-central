@@ -384,9 +384,9 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
 name = "buttplug"
-version = "9.0.5"
+version = "9.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71c1c5ac806d611c5c8234657d065d4eb4c791712b4864f2eb37a67836bf0a7e"
+checksum = "20cc2fac9fafc7eb905f19b941309a425801094f0d8df9aebc8748c8d150bc72"
 dependencies = [
  "aes",
  "ahash",
@@ -1684,9 +1684,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "3.0.5"
+version = "3.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d7d0db4ed27b350276675ee76d89bd42a43915a4757064d47d887d10d0a63b9"
+checksum = "d9edcabbb67b2ee247535942f36d1a99f253d6bf7e2c56a64326608a662298cf"
 dependencies = [
  "anyhow",
  "argh",
@@ -2484,8 +2484,8 @@ version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0f3e5beed80eb580c68e2c600937ac2c4eedabdfd5ef1e5b7ea4f3fba84497b"
 dependencies = [
- "heck 0.4.1",
- "itertools 0.10.5",
+ "heck 0.5.0",
+ "itertools 0.13.0",
  "log",
  "multimap",
  "once_cell",
@@ -2505,7 +2505,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "157c5a9d7ea5c2ed2d9fb8f495b64759f7816c7eaea54ba3978f0d63000162e3"
 dependencies = [
  "anyhow",
- "itertools 0.10.5",
+ "itertools 0.13.0",
  "proc-macro2",
  "quote",
  "syn 2.0.90",
