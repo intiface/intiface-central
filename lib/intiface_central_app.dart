@@ -301,7 +301,12 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       await api!.crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
     }
 
-    var discordBloc = DiscordBloc();
+    DiscordBloc discordBloc = DiscordBloc();
+    if (isDesktop() && configCubit.useDiscordRichPresence) {
+      logInfo("Discord Rich Presence on.");
+    } else {
+      logInfo("Discord Rich Presence off.");
+    }
 
     engineControlBloc.stream.listen((state) async {
       if (state is ProviderLogMessageState) {
@@ -389,7 +394,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       BlocProvider(create: (context) => userConfigCubit),
       BlocProvider(create: (context) => guiSettingsCubit),
       // Discord RPC won't work on mobile
-      if (isDesktop()) BlocProvider(create: (context) => discordBloc), 
+      if (isDesktop()) BlocProvider(create: (context) => discordBloc),
     ], child: const IntifaceCentralView());
   }
 
