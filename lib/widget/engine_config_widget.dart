@@ -131,17 +131,22 @@ class EngineConfigWidget extends StatelessWidget {
           title: const Text("Bluetooth LE")),
     ];
     if (isDesktop()) {
+      if (Platform.isWindows) {
+        deviceSettings.addAll([
+          SettingsTile.switchTile(
+              enabled: !engineIsRunning,
+              initialValue: cubit.useXInput,
+              onToggle: (value) => cubit.useXInput = value,
+              title: const Text("XBox Compatible Gamepads (XInput)")),
+          SettingsTile.switchTile(
+              enabled: !engineIsRunning,
+              initialValue: cubit.useHID,
+              onToggle: (value) => cubit.useHID = value,
+              title: const Text("HID Devices (Joycon, etc...)"))
+        ]);
+      }
+
       deviceSettings.addAll([
-        SettingsTile.switchTile(
-            enabled: !engineIsRunning,
-            initialValue: cubit.useXInput,
-            onToggle: (value) => cubit.useXInput = value,
-            title: const Text("XBox Compatible Gamepads (XInput)")),
-        SettingsTile.switchTile(
-            enabled: !engineIsRunning,
-            initialValue: cubit.useHID,
-            onToggle: (value) => cubit.useHID = value,
-            title: const Text("HID Devices (Joycon, etc...)")),
         SettingsTile.switchTile(
             enabled: !engineIsRunning,
             initialValue: cubit.useLovenseConnectService,

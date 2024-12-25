@@ -356,7 +356,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseSerialPortState(value));
   }
 
-  bool get useHID => _prefs.getBool("useHID")!;
+  bool get useHID {
+    if (Platform.isWindows) return _prefs.getBool("useHID")!;
+    return false;
+  }
+
   set useHID(bool value) {
     _prefs.setBool("useHID", value);
     emit(UseHIDState(value));
@@ -380,7 +384,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseLovenseConnectServiceState(value));
   }
 
-  bool get useXInput => _prefs.getBool("useXInput")!;
+  bool get useXInput {
+    if (Platform.isWindows) return _prefs.getBool("useXInput")!;
+    return false;
+  }
+
   set useXInput(bool value) {
     _prefs.setBool("useXInput", value);
     emit(UseXInputState(value));
