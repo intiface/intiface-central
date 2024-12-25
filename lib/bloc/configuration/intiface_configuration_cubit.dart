@@ -303,7 +303,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(RestoreWindowLocation(value));
   }
 
-  bool get useDiscordRichPresence => _prefs.getBool("useDiscordRichPresence")!;
+  bool get useDiscordRichPresence {
+    if (isDesktop()) return _prefs.getBool("useDiscordRichPresence")!;
+    return false;
+  }
+
   set useDiscordRichPresence(bool value) {
     _prefs.setBool("useDiscordRichPresence", value);
     emit(UseDiscordRichPresence(value));
