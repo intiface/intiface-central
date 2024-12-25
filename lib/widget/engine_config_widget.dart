@@ -225,7 +225,7 @@ class EngineConfigWidget extends StatelessWidget {
           title: const Text("Device Websocket Server")),
     ];
 
-    if (!Platform.isIOS && !Platform.isAndroid) {
+    if (!isMobile()) {
       advancedManagers.addAll([
         SettingsTile.switchTile(
             enabled: !engineIsRunning,
