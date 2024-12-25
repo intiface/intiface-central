@@ -16,9 +16,9 @@ For developers, it allows their application to connect to and control sex toys, 
 
 - **Windows:**
   - Use the [latest github release](https://intiface.com/central)
-  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and Microsoft Store
-    support coming soon.
-- **macOS:** Use the [latest github release](https://intiface.com/central)
+  - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) support coming soon.
+- **macOS:**
+  - Use the [latest github release](https://intiface.com/central)
   - [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) and macOS App Store
     support coming soon.
 - **Linux:**
@@ -29,14 +29,18 @@ For developers, it allows their application to connect to and control sex toys, 
     coming soon, for now Ubuntu 20.04 builds seem to work.
   - **All others:** Recommended to build yourself using instructions below (Flatpak coming
     soon)[https://github.com/intiface/intiface-central/issues/62]
-- **Android:** Use the [Google Play Store](https://play.google.com/store/apps/details?id=com.nonpolynomial.intiface_central&hl=en_US&gl=US)
-- **iOS:** Use the [Apple App Store](https://apps.apple.com/us/app/intiface-central/id6444728067)
+- **Android:** 
+  - Use the [Google Play Store](https://play.google.com/store/apps/details?id=com.nonpolynomial.intiface_central&hl=en_US&gl=US)
+  - For countires where the Play Store is not available, APKs are now included in [Github
+    Releases](https://github.com/intiface/intiface-central/releases) for sideloading.
+- **iOS:** 
+  - Use the [Apple App Store](https://apps.apple.com/us/app/intiface-central/id6444728067)
 
 ## How to Build
 
 Building Intiface Central will require the following tools:
 
-- Flutter SDK (3.13 or greater) and it's requirements for your platform (XCode for iOS/macOS,
+- Flutter SDK (3.27.1 or greater) and it's requirements for your platform (XCode for iOS/macOS,
   Android SDK/JDK etc for Android, etc...)
 - Rust (Latest version)
 
@@ -91,7 +95,7 @@ latest and greatest hardware. We have multiple ways to donate!
 
 Intiface® is a registered trademark of Nonpolynomial Labs, LLC.
 
-Intiface Central and its components are Copyright Nonpolynomial Labs, LLC, 2022-2023
+Intiface Central and its components are Copyright Nonpolynomial Labs, LLC, 2022-2024
 
 Intiface Central is covered under a dual GPL 3/Commercial license. For inquiries
 about commercial licensing, or other questions pertaining to licenses around Buttplug/Intiface,

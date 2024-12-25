@@ -1,3 +1,21 @@
+# v2.6.5 - 2024/12/25 (All Platforms)
+
+## Features
+
+- Update to Buttplug v9.0.6/Intiface Engine v3.0.6
+  - Support for 35 new devices, including Lovense Osci 3/Gush 2 support and Kiiroo ProWand (and like
+    15 new joyhub toys. lol.)
+- Discord Rich Presence Capabilities
+  - OFF BY DEFAULT, Desktop Intiface Central only
+  - Allows discord to show status of intiface central and connected hardware on the user's bio
+
+## Bugfixes
+
+- Fix state addressing in Scalar/Rotate devices
+- Various protocol fixes
+- XInput/Joycon options no longer show up on Linux/macOS (as they only work on Windows)
+- Device config now loads properly even if user config doesn't exist
+
 # v2.6.4 - 2024/10/06 (All Platforms)
 
 ## Features
