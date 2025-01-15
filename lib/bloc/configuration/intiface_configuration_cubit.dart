@@ -360,10 +360,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseSerialPortState(value));
   }
 
-  bool get useHID {
-    if (Platform.isWindows) return _prefs.getBool("useHID")!;
-    return false;
-  }
+  bool get useHID => _prefs.getBool("useHID")!;
 
   set useHID(bool value) {
     _prefs.setBool("useHID", value);
