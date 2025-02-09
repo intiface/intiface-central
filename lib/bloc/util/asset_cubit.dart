@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intiface_central/util/intiface_util.dart';
@@ -20,7 +22,10 @@ class AssetCubit extends Cubit<AssetEvent> {
     var newsAsset = await IntifacePaths.newsFile.exists()
         ? await IntifacePaths.newsFile.readAsString()
         : await rootBundle.loadString('assets/news.md');
-    var aboutAsset = await rootBundle.loadString('assets/about.md');
+
+    var aboutAsset = Platform.isAndroid
+        ? await rootBundle.loadString('assets/about-android.md')
+        : await rootBundle.loadString('assets/about.md');
     return AssetCubit(newsAsset, aboutAsset);
   }
 

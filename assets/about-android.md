@@ -23,13 +23,9 @@ Find us on:
 - [Discord](https://discord.buttplug.io)
 - [Youtube](https://youtube.buttplug.io)
 
-If you're interested in helping out the project, check out the links below!
+Check out our [linktree-ish type page](https://links.buttplug.io) if you're interested in helping out the project.
 
-- [Patreon](https://patreon.com/qdot)
-- [Github Sponsors](https://github.com/sponsors/qdot)
-- [Ko-Fi](https://ko-fi.com/qdot76367)
-
-Thanks to our Patrons who've donated at the $5 or higher level!
+Thanks to our Crowdfunding Patrons who've donated at the $5 or higher level!
 
 - Mario
 - JimMcBubbles
