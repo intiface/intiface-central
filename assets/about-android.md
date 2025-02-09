@@ -23,7 +23,7 @@ Find us on:
 - [Youtube](https://youtube.buttplug.io)
 - [Twitch](https://twitch.buttplug.io)
 
-Check out our [linktree-ish type page](https://links.buttplug.io) if you're interested in helping out the project.
+[Check out our links page](https://links.buttplug.io) if you're interested in helping out the project.
 
 Thanks to our Crowdfunding Patrons who've donated at the $5 or higher level!
 
