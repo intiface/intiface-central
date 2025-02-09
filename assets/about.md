@@ -17,11 +17,11 @@ The Intiface® word mark is a registered trademark of Nonpolynomial Labs, LLC
 
 Find us on:
 
-- [Discourse Forum](https://discuss.buttplug.io)
 - [Bluesky](https://bsky.app/profile/buttplug.io)
 - [Mastodon](https://buttplug.zone/@buttplugio)
 - [Discord](https://discord.buttplug.io)
 - [Youtube](https://youtube.buttplug.io)
+- [Twitch](https://twitch.buttplug.io)
 
 If you're interested in helping out the project, check out the links below!
 
