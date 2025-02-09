@@ -1,3 +1,11 @@
+# 1.1.6 (2025/02/08)
+
+## Features
+
+- Update to Buttplug 9.0.7/Intiface Engine 3.0.7
+  - Tons of device updates
+  - Renamed lovense devices should now still connect
+
 # 1.1.5 (2024/12/21)
 
 ## Features
