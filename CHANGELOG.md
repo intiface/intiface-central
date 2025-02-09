@@ -1,3 +1,16 @@
+# v2.6.6 - 2025/02/08 (All Platforms)
+
+## Features
+
+- Update to Buttplug v9.0.7/Intiface Engine v3.0.7
+  - Support for a bunch of new devices
+  - Renamed lovense devices should still connect now
+
+## Bugfixes
+
+- Use a different about tab text for Android so we don't get taken off the store for payment link
+  violations.
+
 # v2.6.5 - 2024/12/25 (All Platforms)
 
 ## Features
