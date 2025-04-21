@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bloc: ^8.1.4
+  bloc: ^9.0.0
   buttplug: ^0.0.4
 # buttplug: 
 #   path: /Users/qdot/code/buttplug_dart
@@ -20,8 +20,8 @@ dependencies:
   equatable: ^2.0.5
   # Needed for rust ffigen
   ffi: ^2.1.0
-  flutter_bloc: ^8.1.6
-  flutter_foreground_task: ^8.7.0
+  flutter_bloc: ^9.1.0
+  flutter_foreground_task: 8.7.0
   flutter_local_notifications: ^17.2.2
   flutter_loggy: ^2.0.2
   flutter_markdown: ^0.6.18
@@ -33,7 +33,7 @@ dependencies:
   loggy: ^2.0.3
   markdown: ^7.1.1
   network_info_plus: ^4.1.0
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.3.0
   path_provider: ^2.1.1
   path: ^1.8.3
   percent_indicator: ^4.2.3
