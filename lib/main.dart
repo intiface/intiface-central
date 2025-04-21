@@ -16,7 +16,7 @@ Future<void> main() async {
         // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
         // We recommend adjusting this value in production.
         options.tracesSampleRate = 0.0;
-        options.beforeSend = (event, {hint}) {
+        options.beforeSend = (event, hint) {
           for (var proc in IntifaceCentralApp.eventProcessors) {
             if (!proc(event, hint: hint)) {
               return null;
