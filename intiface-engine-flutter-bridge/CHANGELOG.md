@@ -1,3 +1,11 @@
+# 1.1.7 (2025/04/25)
+
+## Features
+
+- Update to Buttplug 9.0.8/Intiface Engine 3.0.8
+  - Tons of device updates
+  - Bugfixes for serial port devices, device limits
+
 # 1.1.6 (2025/02/08)
 
 ## Features

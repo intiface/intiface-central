@@ -1,6 +1,6 @@
 [package]
 name = "intiface_engine_flutter_bridge"
-version = "1.1.6"
+version = "1.1.7"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
 license = "BSD-3-Clause"
