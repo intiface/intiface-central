@@ -42,7 +42,7 @@ jobs:
         run: |
           iscc .\intiface-central-installer.iss
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-installer
           path: |
@@ -86,7 +86,7 @@ jobs:
           zip -u $ZIP com.nonpolynomial.intiface_central.metainfo.xml
           cd $ROOT
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.os }}-zip
           path: ./intiface-central-linux-${{ matrix.os }}-x64.zip
@@ -112,7 +112,7 @@ jobs:
 #      - name: Zip Release
 #        run: zip -r intiface-central-macos-universal.zip build/macos/Build/Products/Release/intiface_central.app
 #      - name: Archive production artifacts
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: macos-zip
 #          path: ./intiface-central-macos-universal.zip
@@ -176,13 +176,13 @@ jobs:
 #      - run: flutter build appbundle
 #        name: flutter build appbundle --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}"
 #      - name: Archive production artifacts (APK)
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: Android APK
 #          path: |
 #            build/app/outputs/flutter-apk/*.apk
 #      - name: Archive production artifacts (appbundle)
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: Android App Bundle
 #          path: |
