@@ -69,7 +69,7 @@ jobs:
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - run: |
          sudo apt-get update -y
-         sudo apt-get install -y ninja-build libudev-dev libgtk-3-dev
+         sudo apt-get install -y ninja-build libudev-dev libgtk-3-dev libcurl4-openssl-dev
       - run: flutter config --enable-linux-desktop
         name: flutter config
       - run: flutter build linux --release --dart-define="SENTRY_DSN=${{ secrets.SENTRY_DSN }}" --dart-define="DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
