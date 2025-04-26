@@ -146,7 +146,7 @@ class EngineConfigWidget extends StatelessWidget {
             enabled: !engineIsRunning,
             initialValue: cubit.useHID,
             onToggle: (value) => cubit.useHID = value,
-            title: const Text("HID Devices (Joycon, etc...)"))
+            title: const Text("HID Devices (Joycon, etc...)")),
         SettingsTile.switchTile(
             enabled: !engineIsRunning,
             initialValue: cubit.useLovenseConnectService,
