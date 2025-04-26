@@ -135,3 +135,9 @@ app.*.symbols
 
 # Random executables for testing
 *.exe
+
+# Sentry files
+.sentry-native
+
+# New android build system files
+**/.cxx
