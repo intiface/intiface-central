@@ -20,6 +20,8 @@ class NavigationStateHelp extends NavigationState {}
 
 class NavigationStateSendLogs extends NavigationState {}
 
+class NavigationStateExit extends NavigationState {}
+
 class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationStateNews());
 
@@ -53,5 +55,9 @@ class NavigationCubit extends Cubit<NavigationState> {
 
   void goSendLogs() {
     emit(NavigationStateSendLogs());
+  }
+
+  void goExit() {
+    emit(NavigationStateExit());
   }
 }
