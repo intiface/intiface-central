@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
@@ -80,13 +82,11 @@ class BodyWidget extends StatelessWidget {
           (state) => state is NavigationStateSettings,
           (NavigationCubit cubit) => cubit.goSettings(),
           Icon(Icons.settings_outlined,
-              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
-                  ? Colors.green
-                  : null),
+              color:
+                  isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion ? Colors.green : null),
           Icon(Icons.settings,
-              color: isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion
-                  ? Colors.green
-                  : null),
+              color:
+                  isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion ? Colors.green : null),
           'Settings',
           () => const SettingPage(),
           true,
@@ -103,6 +103,18 @@ class BodyWidget extends StatelessWidget {
           () => const AboutHelpPage(),
           false,
           true),
+    ];
+
+    if (const String.fromEnvironment('IS_STEAM_DECK').isNotEmpty) {
+      destinations.addAll([
+        NavigationDestination((state) => state is NavigationStateExit, (NavigationCubit cubit) => cubit.goExit(),
+            const Icon(Icons.exit_to_app), const Icon(Icons.exit_to_app), 'Exit', () => exit(0), false, true)
+      ]);
+    }
+
+    // Log sending always needs to be added to destinations last, as it's never shown on any UI bars. If we put it
+    // before other selection fields, it screws up our ordering.
+    destinations.addAll([
       NavigationDestination(
           (state) => state is NavigationStateSendLogs,
           (NavigationCubit cubit) => cubit.goSendLogs(),
@@ -112,7 +124,7 @@ class BodyWidget extends StatelessWidget {
           () => const SendLogsPage(),
           false,
           false),
-    ];
+    ]);
 
     var navCubit = BlocProvider.of<NavigationCubit>(context);
     var selectedIndex = 0;
