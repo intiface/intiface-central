@@ -17,41 +17,119 @@
   <url type="help">https://discuss.buttplug.io/</url>
   <launchable type="desktop-id">com.nonpolynomial.intiface_central.desktop</launchable>
   <project_license>GPL-3.0</project_license>
-	<developer id="com.nonpolyomial">
-		<name>Nonpolynomial Labs, LLC</name>
-	</developer>
+  <developer id="com.nonpolyomial">
+    <name>Nonpolynomial Labs, LLC</name>
+  </developer>
 
   <releases>
+    <release version="2.6.7" date="2025-04-26">
+      <url type="details">https://github.com/intiface/intiface-central/blob/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/CHANGELOG.md#v267---20250425-all-platforms</url>
+      <description>
+        <b>Features</b>
+        <ul>
+          <li>Lovense Devices can now be detected via advertised service instead of name
+            <ul>
+              <li>This means if you rename your toy in the lovense app, we'll (hopefully) still find it.</li>
+            </ul>
+          </li>
+          <li>Added Device Support
+            <ul>
+              <li>TryFun Meta 2, Black Hole Plus</li>
+              <li>OhMiBox Nex|2</li>
+              <li>Sexverse LG389</li>
+              <li>Galaku Zaku Aircraft Cup</li>
+              <li>JoyHub Pearlconch L, Troi, Tanmouth, Marcela</li>
+              <li>Libo Miao</li>
+              <li>Svakom Vick Neo 2</li>
+              <li>Svakom Iker Neo</li>
+              <li>metaXsire Tay 6</li>
+              <li>metaXsire HH010</li>
+              <li>Joyhub Vince</li>
+              <li>Joyhub Maynor</li>
+              <li>Joyhub Dallin</li>
+              <li>Joyhub Melody</li>
+              <li>Joyhub Pathfinder</li>
+              <li>Joyhub Scarlett</li>
+              <li>JoyHub Verax 4</li>
+              <li>JoyHub Palmyra</li>
+              <li>JoyHub Maiden</li>
+              <li>JoyHub Viele 3</li>
+              <li>JoyHub Xylia</li>
+              <li>JoyHub Tarik</li>
+              <li>JoyHub Urica Guard 2</li>
+              <li>JoyHub Ryden</li>
+              <li>JoyHub Viva</li>
+              <li>Svakom Emma Neo 2</li>
+              <li>Svakom Mini Emma Neo</li>
+              <li>Svakom Coco Pro</li>
+              <li>metaXsire Zeus</li>
+              <li>Tracy's Dog Craybit Pro</li>
+              <li>Nexus Revo Stealth</li>
+              <li>Luvmazer Finger Magic</li>
+              <li>Fox M70-2</li>
+              <li>PrettyLove (new identifier)</li>
+              <li>Joyroid Loob</li>
+              <li>Bananasome Rocket X7</li>
+              <li>Omobo ViVegg Vibrator</li>
+              <li>Kisstoy Lost (Vibrating)</li>
+              <li>Kisstoy Lost (Sucking)</li>
+              <li>Kisstoy Lost (Insertable)</li>
+              <li>Kiiroo Spot</li>
+            </ul>
+          </li>
+        </ul>
+        <b>Bugfixes</b>
+        <ul>
+          <li>ScalarCmd devices now properly heed user set device limits</li>
+          <li>Disconnecting a serial device in use now fires disconnect event
+            <ul>
+              <li>Versus what it used to do, which was an unbounded, very fast memory leak</li>
+            </ul>
+          </li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.6.5" date="2024-12-25"/>
+    <release version="2.6.4" date="2024-10-12"/>
+    <release version="2.6.2" date="2024-09-02"/>
+    <release version="2.6.0" date="2024-05-15"/>
+    <release version="2.5.7" date="2024-04-20"/>
+    <release version="2.5.6" date="2024-03-25"/>
     <release version="2.5.5" date="2024-01-29"/>
     <release version="2.5.3" date="2023-11-17"/>
     <release version="2.4.5" date="2023-10-09"/>
     <release version="2.4.4" date="2023-10-06"/>
     <release version="2.4.3" date="2023-07-23"/>
     <release version="2.3.0" date="2023-02-20"/>
+    <release version="2.2.0" date="2023-01-20"/>
   </releases>
 
-	<screenshots>
-		<screenshot type="default">
-			<image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/news.png</image>
-		</screenshot>
-		<screenshot>
-			<image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/devices.png</image>
-		</screenshot>
-		<screenshot>
-			<image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/log.png</image>
-		</screenshot>
-		<screenshot>
-			<image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/settings.png</image>
-		</screenshot>
-		<screenshot>
-			<image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/help.png</image>
-		</screenshot>
-	</screenshots>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/news.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/devices.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/log.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/settings.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/intiface/intiface-central/7fdc88ec7ceb096ad5afe62cab3f2eb53a363f59/linux/screenshots/help.png</image>
+    </screenshot>
+  </screenshots>
 
   <content_rating type="oars-1.1">
     <content_attribute id="sex-themes">moderate</content_attribute>
   </content_rating>
-	<categories>
-		<category>Utility</category>
-	</categories>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <branding>
+    <color type="primary" scheme_preference="light">#b79bf2</color>
+    <color type="primary" scheme_preference="dark">#251f32</color>
+  </branding>
 </component>
