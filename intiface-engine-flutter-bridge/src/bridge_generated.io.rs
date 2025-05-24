@@ -315,6 +315,8 @@ impl Wire2Api<ExposedDeviceFeature> for wire_ExposedDeviceFeature {
   fn wire2api(self) -> ExposedDeviceFeature {
     ExposedDeviceFeature {
       description: self.description.wire2api(),
+      id: self.id.wire2api(),
+      base_id: self.base_id.wire2api(),
       feature_type: self.feature_type.wire2api(),
       actuator: self.actuator.wire2api(),
       sensor: self.sensor.wire2api(),
@@ -352,6 +354,8 @@ impl Wire2Api<ExposedUserDeviceDefinition> for wire_ExposedUserDeviceDefinition 
   fn wire2api(self) -> ExposedUserDeviceDefinition {
     ExposedUserDeviceDefinition {
       name: self.name.wire2api(),
+      id: self.id.wire2api(),
+      base_id: self.base_id.wire2api(),
       features: self.features.wire2api(),
       user_config: self.user_config.wire2api(),
     }
@@ -468,6 +472,8 @@ pub struct wire_EngineOptionsExternal {
 #[derive(Clone)]
 pub struct wire_ExposedDeviceFeature {
   description: *mut wire_uint_8_list,
+  id: *mut wire_uint_8_list,
+  base_id: *mut wire_uint_8_list,
   feature_type: i32,
   actuator: *mut wire_ExposedDeviceFeatureActuator,
   sensor: *mut wire_ExposedDeviceFeatureSensor,
@@ -501,6 +507,8 @@ pub struct wire_ExposedUserDeviceCustomization {
 #[derive(Clone)]
 pub struct wire_ExposedUserDeviceDefinition {
   name: *mut wire_uint_8_list,
+  id: *mut wire_uint_8_list,
+  base_id: *mut wire_uint_8_list,
   features: *mut wire_list_exposed_device_feature,
   user_config: wire_ExposedUserDeviceCustomization,
 }
@@ -634,6 +642,8 @@ impl NewWithNullPtr for wire_ExposedDeviceFeature {
   fn new_with_null_ptr() -> Self {
     Self {
       description: core::ptr::null_mut(),
+      id: core::ptr::null_mut(),
+      base_id: core::ptr::null_mut(),
       feature_type: Default::default(),
       actuator: core::ptr::null_mut(),
       sensor: core::ptr::null_mut(),
@@ -699,6 +709,8 @@ impl NewWithNullPtr for wire_ExposedUserDeviceDefinition {
   fn new_with_null_ptr() -> Self {
     Self {
       name: core::ptr::null_mut(),
+      id: core::ptr::null_mut(),
+      base_id: core::ptr::null_mut(),
       features: core::ptr::null_mut(),
       user_config: Default::default(),
     }
