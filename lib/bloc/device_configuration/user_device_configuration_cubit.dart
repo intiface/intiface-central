@@ -97,7 +97,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition def, bool allow) async {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: allow, deny: def.userConfig.deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
-    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
+    var newConfig = ExposedUserDeviceDefinition(
+        name: def.name, id: def.id, baseId: def.baseId, features: def.features, userConfig: newUserConfig);
     await updateDefinition(deviceIdentifier, newConfig);
   }
 
@@ -105,7 +106,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition def, bool deny) async {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: def.userConfig.allow, deny: deny, index: def.userConfig.index, displayName: def.userConfig.displayName);
-    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
+    var newConfig = ExposedUserDeviceDefinition(
+        name: def.name, id: def.id, baseId: def.baseId, features: def.features, userConfig: newUserConfig);
     await updateDefinition(deviceIdentifier, newConfig);
   }
 
@@ -113,7 +115,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       ExposedUserDeviceIdentifier deviceIdentifier, ExposedUserDeviceDefinition def, String displayName) async {
     var newUserConfig = ExposedUserDeviceCustomization(
         allow: def.userConfig.allow, deny: def.userConfig.deny, index: def.userConfig.index, displayName: displayName);
-    var newConfig = ExposedUserDeviceDefinition(name: def.name, features: def.features, userConfig: newUserConfig);
+    var newConfig = ExposedUserDeviceDefinition(
+        name: def.name, id: def.id, baseId: def.baseId, features: def.features, userConfig: newUserConfig);
     await updateDefinition(deviceIdentifier, newConfig);
   }
 
@@ -121,8 +124,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       ExposedDeviceFeature feature) async {
     var newFeatureArray = def.features;
     newFeatureArray[index] = feature;
-    var newDeviceDefinition =
-        ExposedUserDeviceDefinition(name: def.name, features: newFeatureArray, userConfig: def.userConfig);
+    var newDeviceDefinition = ExposedUserDeviceDefinition(
+        name: def.name, id: def.id, baseId: def.baseId, features: newFeatureArray, userConfig: def.userConfig);
     await updateDefinition(deviceIdentifier, newDeviceDefinition);
   }
 

@@ -32,8 +32,7 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
             }
             var actuator = feature.actuator!;
             var userConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
-            if (actuator.messages.contains(ButtplugActuatorFeatureMessageType.ScalarCmd) ||
-                actuator.messages.contains(ButtplugActuatorFeatureMessageType.RotateCmd)) {
+            if (actuator.messages.contains(ButtplugActuatorFeatureMessageType.ValueCmd)) {
               actuatorList.addAll([
                 ListTile(
                   title: Text(
@@ -57,6 +56,7 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                                       messages: actuator.messages);
                                   var newFeature = ExposedDeviceFeature(
                                       description: feature.description,
+                                      id: feature.id,
                                       featureType: feature.featureType,
                                       actuator: featureActuator,
                                       sensor: feature.sensor);
@@ -66,7 +66,7 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                         ))
               ]);
             }
-            if (actuator.messages.contains(ButtplugActuatorFeatureMessageType.LinearCmd)) {
+            if (actuator.messages.contains(ButtplugActuatorFeatureMessageType.ValueWithParameterCmd)) {
               actuatorList.addAll([
                 ListTile(
                   title: Text(
@@ -90,6 +90,7 @@ class ActuatorFeatureConfigWidget extends StatelessWidget {
                                       messages: actuator.messages);
                                   var newFeature = ExposedDeviceFeature(
                                       description: feature.description,
+                                      id: feature.id,
                                       featureType: feature.featureType,
                                       actuator: featureActuator,
                                       sensor: feature.sensor);
