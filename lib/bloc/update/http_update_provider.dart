@@ -54,7 +54,7 @@ class NewsUpdateProvider extends HttpUpdateProvider {
 class DeviceConfigUpdateProvider extends HttpUpdateProvider {
   DeviceConfigUpdateProvider(String expectedVersion)
       : super(IntifacePaths.deviceConfigFile,
-            "https://intiface-engine-device-config.intiface.com/buttplug-device-config-v3.json", expectedVersion);
+            "https://intiface-engine-device-config.intiface.com/buttplug-device-config-v4.json", expectedVersion);
 
   @override
   Future<UpdateState?> update() async {
