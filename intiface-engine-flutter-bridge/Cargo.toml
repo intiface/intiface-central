@@ -10,11 +10,11 @@ edition = "2021"
 exclude = [".vscode/**"]
 
 [dependencies]
-intiface-engine = "3.0.9"
-# intiface-engine = { path = "../../intiface-engine" }
+# intiface-engine = "3.0.8"
+intiface-engine = { path = "../../intiface-engine" }
 # THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
-# buttplug = { path = "../../buttplug/buttplug" }
-buttplug = "9.0.9"
+buttplug = { path = "../../buttplug/buttplug" }
+# buttplug = "9.0.8"
 flutter_rust_bridge = "1.82.6"
 log = "0.4.27"
 lazy_static = "1.5.0"
@@ -37,6 +37,7 @@ tracing-subscriber = "0.3.19"
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
 sentry = { version = "0.37.0", default-features = false, features = ["backtrace", "contexts", "panic", "debug-images", "reqwest", "rustls"] }
 crossbeam-channel = "0.5.15"
+uuid = "1.17.0"
 
 [target.'cfg(target_os = "android")'.dependencies]
 # THESE VERSIONS ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE

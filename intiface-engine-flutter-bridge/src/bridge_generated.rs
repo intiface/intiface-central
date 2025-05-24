@@ -339,9 +339,8 @@ pub struct mirror_FeatureType(FeatureType);
 
 const _: fn() = || {
   match None::<ButtplugActuatorFeatureMessageType>.unwrap() {
-    ButtplugActuatorFeatureMessageType::ScalarCmd => {}
-    ButtplugActuatorFeatureMessageType::RotateCmd => {}
-    ButtplugActuatorFeatureMessageType::LinearCmd => {}
+    ButtplugActuatorFeatureMessageType::ValueCmd => {}
+    ButtplugActuatorFeatureMessageType::ValueWithParameterCmd => {}
   }
   match None::<ButtplugSensorFeatureMessageType>.unwrap() {
     ButtplugSensorFeatureMessageType::SensorReadCmd => {}
@@ -360,6 +359,8 @@ const _: fn() = || {
     FeatureType::Button => {}
     FeatureType::Pressure => {}
     FeatureType::Raw => {}
+    FeatureType::RotateWithDirection => {}
+    FeatureType::PositionWithDuration => {}
   }
 };
 // Section: allocate functions
@@ -390,9 +391,8 @@ impl Wire2Api<bool> for bool {
 impl Wire2Api<ButtplugActuatorFeatureMessageType> for i32 {
   fn wire2api(self) -> ButtplugActuatorFeatureMessageType {
     match self {
-      0 => ButtplugActuatorFeatureMessageType::ScalarCmd,
-      1 => ButtplugActuatorFeatureMessageType::RotateCmd,
-      2 => ButtplugActuatorFeatureMessageType::LinearCmd,
+      0 => ButtplugActuatorFeatureMessageType::ValueCmd,
+      1 => ButtplugActuatorFeatureMessageType::ValueWithParameterCmd,
       _ => unreachable!(
         "Invalid variant for ButtplugActuatorFeatureMessageType: {}",
         self
@@ -428,6 +428,8 @@ impl Wire2Api<FeatureType> for i32 {
       9 => FeatureType::Button,
       10 => FeatureType::Pressure,
       11 => FeatureType::Raw,
+      12 => FeatureType::RotateWithDirection,
+      13 => FeatureType::PositionWithDuration,
       _ => unreachable!("Invalid variant for FeatureType: {}", self),
     }
   }
@@ -459,9 +461,8 @@ impl Wire2Api<u8> for u8 {
 impl support::IntoDart for mirror_ButtplugActuatorFeatureMessageType {
   fn into_dart(self) -> support::DartAbi {
     match self.0 {
-      ButtplugActuatorFeatureMessageType::ScalarCmd => 0,
-      ButtplugActuatorFeatureMessageType::RotateCmd => 1,
-      ButtplugActuatorFeatureMessageType::LinearCmd => 2,
+      ButtplugActuatorFeatureMessageType::ValueCmd => 0,
+      ButtplugActuatorFeatureMessageType::ValueWithParameterCmd => 1,
     }
     .into_dart()
   }
@@ -497,6 +498,8 @@ impl support::IntoDart for ExposedDeviceFeature {
   fn into_dart(self) -> support::DartAbi {
     vec![
       self.description.into_into_dart().into_dart(),
+      self.id.into_into_dart().into_dart(),
+      self.base_id.into_dart(),
       self.feature_type.into_into_dart().into_dart(),
       self.actuator.into_dart(),
       self.sensor.into_dart(),
@@ -585,6 +588,8 @@ impl support::IntoDart for ExposedUserDeviceDefinition {
   fn into_dart(self) -> support::DartAbi {
     vec![
       self.name.into_into_dart().into_dart(),
+      self.id.into_into_dart().into_dart(),
+      self.base_id.into_dart(),
       self.features.into_into_dart().into_dart(),
       self.user_config.into_into_dart().into_dart(),
     ]
@@ -642,6 +647,8 @@ impl support::IntoDart for mirror_FeatureType {
       FeatureType::Button => 9,
       FeatureType::Pressure => 10,
       FeatureType::Raw => 11,
+      FeatureType::RotateWithDirection => 12,
+      FeatureType::PositionWithDuration => 13,
     }
     .into_dart()
   }

@@ -2,10 +2,10 @@ use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend, logging::FlutterTracingWriter, mobile_init,
 };
 use anyhow::Result;
-use buttplug::server::device::configuration::{DeviceConfigurationManagerBuilder, SerialSpecifier};
+use buttplug::server::{device::configuration::{DeviceConfigurationManagerBuilder, SerialSpecifier}, message::server_device_feature::ServerDeviceFeature};
 pub use buttplug::{
   core::message::{
-    ButtplugActuatorFeatureMessageType, ButtplugDeviceMessageType,
+    ButtplugActuatorFeatureMessageType,
     ButtplugSensorFeatureMessageType, DeviceFeature, DeviceFeatureActuator, DeviceFeatureRaw,
     DeviceFeatureSensor, Endpoint, FeatureType,
   },
@@ -23,6 +23,7 @@ use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
+use uuid::Uuid;
 use std::{
   collections::HashSet,
   fs,
@@ -418,17 +419,21 @@ impl Into<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
 #[derive(Debug, Clone)]
 pub struct ExposedDeviceFeature {
   pub description: String,
+  pub id: String,
+  pub base_id: Option<String>,
   pub feature_type: FeatureType,
   pub actuator: Option<ExposedDeviceFeatureActuator>,
   pub sensor: Option<ExposedDeviceFeatureSensor>,
   // Leave out raw here, we'll never need it in the UI anyways
 }
 
-impl From<DeviceFeature> for ExposedDeviceFeature {
-  fn from(value: DeviceFeature) -> Self {
+impl From<ServerDeviceFeature> for ExposedDeviceFeature {
+  fn from(value: ServerDeviceFeature) -> Self {
     Self {
       description: value.description().clone(),
       feature_type: *value.feature_type(),
+      id: value.id().to_string().to_owned(),
+      base_id: value.base_id().and_then(|x| Some(x.to_string().to_owned())),
       actuator: value
         .actuator()
         .clone()
@@ -441,10 +446,12 @@ impl From<DeviceFeature> for ExposedDeviceFeature {
   }
 }
 
-impl Into<DeviceFeature> for ExposedDeviceFeature {
-  fn into(self) -> DeviceFeature {
-    DeviceFeature::new(
+impl Into<ServerDeviceFeature> for ExposedDeviceFeature {
+  fn into(self) -> ServerDeviceFeature {
+    ServerDeviceFeature::new(
       &self.description,
+      &Uuid::try_parse(&self.id).unwrap(),
+      &self.base_id.and_then(|x| Some(Uuid::try_parse(&x).unwrap())),
       self.feature_type,
       &self.actuator.and_then(|x| Some(x.into())),
       &self.sensor.and_then(|x| Some(x.into())),
@@ -483,6 +490,8 @@ impl Into<UserDeviceCustomization> for ExposedUserDeviceCustomization {
 
 pub struct ExposedUserDeviceDefinition {
   pub name: String,
+  pub id: String,
+  pub base_id: Option<String>,
   pub features: Vec<ExposedDeviceFeature>,
   pub user_config: ExposedUserDeviceCustomization,
 }
@@ -491,6 +500,8 @@ impl From<UserDeviceDefinition> for ExposedUserDeviceDefinition {
   fn from(value: UserDeviceDefinition) -> Self {
     Self {
       name: value.name().clone(),
+      id: value.id().to_string().to_owned(),
+      base_id: value.base_id().and_then(|x| Some(x.to_string().to_owned())),
       features: value.features().iter().cloned().map(|x| x.into()).collect(),
       user_config: value.user_config().clone().into(),
     }
@@ -501,12 +512,14 @@ impl Into<UserDeviceDefinition> for ExposedUserDeviceDefinition {
   fn into(self) -> UserDeviceDefinition {
     UserDeviceDefinition::new(
       &self.name,
+      &Uuid::try_parse(&self.id).unwrap(),
+      &self.base_id.and_then(|x| Some(Uuid::try_parse(&x).unwrap())),
       &self
         .features
         .iter()
         .cloned()
         .map(|x| x.into())
-        .collect::<Vec<DeviceFeature>>(),
+        .collect::<Vec<ServerDeviceFeature>>(),
       &self.user_config.into(),
     )
   }
@@ -536,13 +549,14 @@ pub enum _FeatureType {
   //
   // Raw Feature, for when raw messages are on
   Raw,
+  RotateWithDirection,
+  PositionWithDuration
 }
 
 #[frb(mirror(ButtplugActuatorFeatureMessageType))]
 pub enum _ButtplugActuatorFeatureMessageType {
-  ScalarCmd,
-  RotateCmd,
-  LinearCmd,
+  ValueCmd,
+  ValueWithParameterCmd,
 }
 
 #[frb(mirror(ButtplugSensorFeatureMessageType))]
@@ -611,8 +625,8 @@ pub enum _ButtplugDeviceMessageType {
   RawReadCmd,
   RawSubscribeCmd,
   RawUnsubscribeCmd,
-  BatteryLevelCmd,
-  RSSILevelCmd,
+  ValueCmd,
+  ValueWithParameterCmd,
   ScalarCmd,
   SensorReadCmd,
   SensorSubscribeCmd,

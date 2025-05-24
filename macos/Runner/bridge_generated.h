@@ -88,6 +88,8 @@ typedef struct wire_ExposedDeviceFeatureSensor {
 
 typedef struct wire_ExposedDeviceFeature {
   struct wire_uint_8_list *description;
+  struct wire_uint_8_list *id;
+  struct wire_uint_8_list *base_id;
   int32_t feature_type;
   struct wire_ExposedDeviceFeatureActuator *actuator;
   struct wire_ExposedDeviceFeatureSensor *sensor;
@@ -107,6 +109,8 @@ typedef struct wire_ExposedUserDeviceCustomization {
 
 typedef struct wire_ExposedUserDeviceDefinition {
   struct wire_uint_8_list *name;
+  struct wire_uint_8_list *id;
+  struct wire_uint_8_list *base_id;
   struct wire_list_exposed_device_feature *features;
   struct wire_ExposedUserDeviceCustomization user_config;
 } wire_ExposedUserDeviceDefinition;
@@ -202,6 +206,8 @@ struct wire_list_exposed_device_feature *new_list_exposed_device_feature_0(int32
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
+
+jint JNI_OnLoad(JavaVM vm, const void *_res);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
