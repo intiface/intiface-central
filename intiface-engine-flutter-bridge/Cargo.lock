@@ -385,7 +385,7 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
 name = "buttplug"
-version = "9.0.8"
+version = "10.0.0"
 dependencies = [
  "aes",
  "ahash",

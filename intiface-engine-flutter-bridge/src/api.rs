@@ -2,7 +2,7 @@ use crate::{
   in_process_frontend::FlutterIntifaceEngineFrontend, logging::FlutterTracingWriter, mobile_init,
 };
 use anyhow::Result;
-use buttplug::server::{device::configuration::{DeviceConfigurationManagerBuilder, SerialSpecifier}, message::server_device_feature::ServerDeviceFeature};
+use buttplug::server::{device::configuration::SerialSpecifier, message::server_device_feature::{ServerDeviceFeature, ServerDeviceFeatureActuator, ServerDeviceFeatureSensor}};
 pub use buttplug::{
   core::message::{
     ButtplugActuatorFeatureMessageType,
@@ -26,7 +26,6 @@ use sentry::ClientInitGuard;
 use uuid::Uuid;
 use std::{
   collections::HashSet,
-  fs,
   ops::RangeInclusive,
   sync::{
     atomic::{AtomicBool, Ordering},
@@ -364,8 +363,8 @@ pub struct ExposedDeviceFeatureActuator {
   pub messages: Vec<ButtplugActuatorFeatureMessageType>,
 }
 
-impl From<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
-  fn from(value: DeviceFeatureActuator) -> Self {
+impl From<ServerDeviceFeatureActuator> for ExposedDeviceFeatureActuator {
+  fn from(value: ServerDeviceFeatureActuator) -> Self {
     Self {
       step_range: (*value.step_range().start(), *value.step_range().end()),
       step_limit: (*value.step_limit().start(), *value.step_limit().end()),
@@ -374,9 +373,9 @@ impl From<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
   }
 }
 
-impl Into<DeviceFeatureActuator> for ExposedDeviceFeatureActuator {
-  fn into(self) -> DeviceFeatureActuator {
-    DeviceFeatureActuator::new(
+impl Into<ServerDeviceFeatureActuator> for ExposedDeviceFeatureActuator {
+  fn into(self) -> ServerDeviceFeatureActuator {
+    ServerDeviceFeatureActuator::new(
       &RangeInclusive::new(self.step_range.0, self.step_range.1),
       &RangeInclusive::new(self.step_limit.0, self.step_limit.1),
       &HashSet::from_iter(self.messages.iter().cloned()),
@@ -390,8 +389,8 @@ pub struct ExposedDeviceFeatureSensor {
   pub messages: Vec<ButtplugSensorFeatureMessageType>,
 }
 
-impl From<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
-  fn from(value: DeviceFeatureSensor) -> Self {
+impl From<ServerDeviceFeatureSensor> for ExposedDeviceFeatureSensor {
+  fn from(value: ServerDeviceFeatureSensor) -> Self {
     Self {
       value_range: value
         .value_range()
@@ -403,9 +402,9 @@ impl From<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
   }
 }
 
-impl Into<DeviceFeatureSensor> for ExposedDeviceFeatureSensor {
-  fn into(self) -> DeviceFeatureSensor {
-    DeviceFeatureSensor::new(
+impl Into<ServerDeviceFeatureSensor> for ExposedDeviceFeatureSensor {
+  fn into(self) -> ServerDeviceFeatureSensor {
+    ServerDeviceFeatureSensor::new(
       &self
         .value_range
         .iter()
@@ -431,7 +430,7 @@ impl From<ServerDeviceFeature> for ExposedDeviceFeature {
   fn from(value: ServerDeviceFeature) -> Self {
     Self {
       description: value.description().clone(),
-      feature_type: *value.feature_type(),
+      feature_type: value.feature_type(),
       id: value.id().to_string().to_owned(),
       base_id: value.base_id().and_then(|x| Some(x.to_string().to_owned())),
       actuator: value
