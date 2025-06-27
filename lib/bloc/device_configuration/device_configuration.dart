@@ -11,7 +11,8 @@ class DeviceConfigFileVersion {
   int major = 0;
   int minor = 0;
   Map<String, dynamic> toJson() => _$DeviceConfigFileVersionToJson(this);
-  factory DeviceConfigFileVersion.fromJson(Map<String, dynamic> json) => _$DeviceConfigFileVersionFromJson(json);
+  factory DeviceConfigFileVersion.fromJson(Map<String, dynamic> json) =>
+      _$DeviceConfigFileVersionFromJson(json);
   DeviceConfigFileVersion();
   @override
   String toString() {
@@ -24,36 +25,49 @@ class DeviceConfigFile {
   @JsonKey(name: "version")
   DeviceConfigFileVersion? version;
   Map<String, dynamic> toJson() => _$DeviceConfigFileToJson(this);
-  factory DeviceConfigFile.fromJson(Map<String, dynamic> json) => _$DeviceConfigFileFromJson(json);
+  factory DeviceConfigFile.fromJson(Map<String, dynamic> json) =>
+      _$DeviceConfigFileFromJson(json);
   DeviceConfigFile();
 }
 
 class DeviceConfiguration {
   static Future<String> _getConfigFileVersion(File configFile) async {
     if (!await configFile.exists()) {
-      logInfo("Device configuration ${configFile.path} does not exist, returning 0.0.");
+      logInfo(
+        "Device configuration ${configFile.path} does not exist, returning 0.0.",
+      );
       return "0.0";
     }
     var configFileJson = await configFile.readAsString();
     try {
-      DeviceConfigFile config = DeviceConfigFile.fromJson(jsonDecode(configFileJson));
+      DeviceConfigFile config = DeviceConfigFile.fromJson(
+        jsonDecode(configFileJson),
+      );
       logInfo("${configFile.path} version: ${config.version}");
       if (config.version!.major != 4) {
-        logWarning("${configFile.path} is not v4, removing and letting system pull from repo.");
+        logWarning(
+          "${configFile.path} is not v4, removing and letting system pull from repo.",
+        );
         return "0.0";
       }
       return config.version.toString();
     } catch (e) {
-      logError("Error loading ${configFile.path}! Deleting if exists and letting system pull from repo.");
+      logError(
+        "Error loading ${configFile.path}! Deleting if exists and letting system pull from repo.",
+      );
       return "0.0";
     }
   }
 
   static Future<String> getBaseConfigFileVersion() async {
-    return await DeviceConfiguration._getConfigFileVersion(IntifacePaths.deviceConfigFile);
+    return await DeviceConfiguration._getConfigFileVersion(
+      IntifacePaths.deviceConfigFile,
+    );
   }
 
   static Future<String> getUserConfigFileVersion() async {
-    return await DeviceConfiguration._getConfigFileVersion(IntifacePaths.userDeviceConfigFile);
+    return await DeviceConfiguration._getConfigFileVersion(
+      IntifacePaths.userDeviceConfigFile,
+    );
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 

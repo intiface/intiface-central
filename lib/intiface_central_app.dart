@@ -24,7 +24,6 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
-import 'package:intiface_central/ffi.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/widget/body_widget.dart';
@@ -35,6 +34,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:intiface_central/src/rust/frb_generated.dart';
+import 'package:intiface_central/src/rust/api/util.dart';
 
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
   IntifaceCentralApp._create({required this.guiSettingsCubit});
@@ -119,10 +120,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       String windowTitle = kDebugMode ? "Intiface® Central $packageVersion DEBUG" : "Intiface® Central $packageVersion";
 
       WindowOptions windowOptions = const WindowOptions(
-          //center: true,
-          //title: windowTitle,
-          //backgroundColor: Colors.transparent,
-          );
+        //center: true,
+        //title: windowTitle,
+        //backgroundColor: Colors.transparent,
+      );
 
       windowManager.setTitle(windowTitle);
 
@@ -136,7 +137,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       var windowInBounds = false;
       for (var display in displays) {
         logInfo(
-            "Testing window position $windowPosition against ${display.name} (${display.size} ${display.visiblePosition})");
+          "Testing window position $windowPosition against ${display.name} (${display.size} ${display.visiblePosition})",
+        );
         if (display.visiblePosition!.dx < windowPosition.dx &&
             (display.visiblePosition!.dx + display.size.width) > windowPosition.dx &&
             display.visiblePosition!.dy < windowPosition.dy &&
@@ -188,10 +190,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           ].request();
         }
       }
-      await [
-        Permission.bluetoothConnect,
-        Permission.bluetoothScan,
-      ].request();
+      await [Permission.bluetoothConnect, Permission.bluetoothScan].request();
 
       if (configCubit.useForegroundProcess) {
         FlutterForegroundTask.init(
@@ -274,7 +273,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     /// about bootup as possible before we possibly crash on a native error.
 
     // Bring up the FFI now that we have logging available and crash logging set up.
-    initializeApi();
+    // initializeApi();
+    await RustLib.init();
 
     // Setup logging before initializing the DCM
     var apiLog = NativeApiLog();
@@ -298,7 +298,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     });
 
     if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
-      await api!.crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
+      await crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
     }
 
     DiscordBloc discordBloc = DiscordBloc();
@@ -340,7 +340,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       }
       if (state is DeviceConnectedState) {
         logInfo("Updating device ${state.name} index to ${state.index}");
-        await userConfigCubit.update();
+        //await userConfigCubit.update();
       }
     });
 
@@ -382,44 +382,50 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       return true;
     });
 
-    return MultiBlocProvider(providers: [
-      BlocProvider(create: (context) => engineControlBloc),
-      BlocProvider(create: (context) => deviceControlBloc),
-      BlocProvider(create: (context) => NavigationCubit()),
-      BlocProvider(create: (context) => updateBloc),
-      BlocProvider(create: (context) => assetCubit),
-      BlocProvider(create: (context) => configCubit),
-      BlocProvider(create: (context) => networkCubit),
-      BlocProvider(create: (context) => errorNotifierCubit),
-      BlocProvider(create: (context) => userConfigCubit),
-      BlocProvider(create: (context) => guiSettingsCubit),
-      // Discord RPC won't work on mobile
-      if (isDesktop()) BlocProvider(create: (context) => discordBloc),
-    ], child: const IntifaceCentralView());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => engineControlBloc),
+        BlocProvider(create: (context) => deviceControlBloc),
+        BlocProvider(create: (context) => NavigationCubit()),
+        BlocProvider(create: (context) => updateBloc),
+        BlocProvider(create: (context) => assetCubit),
+        BlocProvider(create: (context) => configCubit),
+        BlocProvider(create: (context) => networkCubit),
+        BlocProvider(create: (context) => errorNotifierCubit),
+        BlocProvider(create: (context) => userConfigCubit),
+        BlocProvider(create: (context) => guiSettingsCubit),
+        // Discord RPC won't work on mobile
+        if (isDesktop()) BlocProvider(create: (context) => discordBloc),
+      ],
+      child: const IntifaceCentralView(),
+    );
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => AppResetCubit(),
-        child: BlocBuilder<AppResetCubit, AppResetState>(builder: (context, state) {
+      create: (context) => AppResetCubit(),
+      child: BlocBuilder<AppResetCubit, AppResetState>(
+        builder: (context, state) {
           return FutureBuilder(
-              future: buildApp(),
-              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                }
-                return const MaterialApp(
-                    title: 'Intiface Central',
-                    debugShowCheckedModeBanner: false,
-                    home: Scaffold(
-                      body: Center(
-                        child: Image(image: AssetImage('assets/icons/intiface_central_icon.png')),
-                      ),
-                    ));
-              });
-        }));
+            future: buildApp(),
+            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              }
+              return const MaterialApp(
+                title: 'Intiface Central',
+                debugShowCheckedModeBanner: false,
+                home: Scaffold(
+                  body: Center(child: Image(image: AssetImage('assets/icons/intiface_central_icon.png'))),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -429,17 +435,21 @@ class IntifaceCentralView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logInfo(
-        "Using theme ${BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark}");
+      "Using theme ${BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark}",
+    );
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseLightThemeState || current is ConfigurationResetState,
-        builder: (context, state) => MaterialApp(
-            title: 'Intiface Central',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue, useMaterial3: true),
-            darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue, useMaterial3: true),
-            themeMode:
-                BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark,
-            home: const IntifaceCentralPage()));
+      buildWhen: (previous, current) => current is UseLightThemeState || current is ConfigurationResetState,
+      builder: (context, state) => MaterialApp(
+        title: 'Intiface Central',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue, useMaterial3: true),
+        darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue, useMaterial3: true),
+        themeMode: BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme
+            ? ThemeMode.light
+            : ThemeMode.dark,
+        home: const IntifaceCentralPage(),
+      ),
+    );
   }
 }
 
@@ -449,12 +459,12 @@ class IntifaceCentralPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-            buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
-            builder: (context, state) {
-              var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
-              List<Widget> widgets = [const ControlWidget()];
-              /*
+      child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
+        buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
+        builder: (context, state) {
+          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
+          List<Widget> widgets = [const ControlWidget()];
+          /*
               if (isDesktop()) {
                 widgets.addAll([
                   const Divider(height: 2),
@@ -474,10 +484,12 @@ class IntifaceCentralPage extends StatelessWidget {
                 ]);
               }
               */
-              if (!isDesktop() || !useCompactDisplay) {
-                widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
-              }
-              return Scaffold(body: Column(children: widgets));
-            }));
+          if (!isDesktop() || !useCompactDisplay) {
+            widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
+          }
+          return Scaffold(body: Column(children: widgets));
+        },
+      ),
+    );
   }
 }

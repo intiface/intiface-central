@@ -2,7 +2,7 @@
 // This means our providers ONLY handle start/stop/basic stream comms with our provider types, and the repository
 // operates as a stream transformer.
 
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/runtime.dart';
 
 abstract class EngineProcessMessage {}
 

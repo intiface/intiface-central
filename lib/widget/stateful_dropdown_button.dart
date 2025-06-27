@@ -5,8 +5,13 @@ class StatefulDropdownButton<T> extends StatefulWidget {
   final String label;
   final ValueNotifier<T> valueNotifier;
   final bool enabled;
-  const StatefulDropdownButton(
-      {super.key, required this.label, required this.values, required this.valueNotifier, this.enabled = true});
+  const StatefulDropdownButton({
+    super.key,
+    required this.label,
+    required this.values,
+    required this.valueNotifier,
+    this.enabled = true,
+  });
 
   @override
   State<StatefulDropdownButton> createState() => _StatefulDropdownButtonState();
@@ -25,24 +30,18 @@ class _StatefulDropdownButtonState<T> extends State<StatefulDropdownButton<T>> {
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
+      underline: Container(height: 2, color: Colors.deepPurpleAccent),
       onChanged: widget.enabled
           ? (T? value) {
               // This is called when the user selects an item.
               setState(() {
-                dropdownValue = value!;
+                dropdownValue = value as T;
               });
-              widget.valueNotifier.value = value!;
+              widget.valueNotifier.value = value as T;
             }
           : null,
       items: widget.values.map<DropdownMenuItem<T>>((T value) {
-        return DropdownMenuItem<T>(
-          value: value,
-          child: Text(value.toString()),
-        );
+        return DropdownMenuItem<T>(value: value, child: Text(value.toString()));
       }).toList(),
     );
   }

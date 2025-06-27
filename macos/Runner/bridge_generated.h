@@ -55,16 +55,20 @@ typedef struct wire___record__u32_u32 {
   uint32_t field1;
 } wire___record__u32_u32;
 
-typedef struct wire_list_buttplug_actuator_feature_message_type {
-  int32_t *ptr;
-  int32_t len;
-} wire_list_buttplug_actuator_feature_message_type;
-
-typedef struct wire_ExposedDeviceFeatureActuator {
+typedef struct wire_ExposedDeviceFeatureOutput {
   struct wire___record__u32_u32 step_range;
   struct wire___record__u32_u32 step_limit;
-  struct wire_list_buttplug_actuator_feature_message_type *messages;
-} wire_ExposedDeviceFeatureActuator;
+} wire_ExposedDeviceFeatureOutput;
+
+typedef struct wire_ExposedDeviceFeatureOutputPair {
+  int32_t output_type;
+  struct wire_ExposedDeviceFeatureOutput output;
+} wire_ExposedDeviceFeatureOutputPair;
+
+typedef struct wire_list_exposed_device_feature_output_pair {
+  struct wire_ExposedDeviceFeatureOutputPair *ptr;
+  int32_t len;
+} wire_list_exposed_device_feature_output_pair;
 
 typedef struct wire___record__i32_i32 {
   int32_t field0;
@@ -76,23 +80,33 @@ typedef struct wire_list___record__i32_i32 {
   int32_t len;
 } wire_list___record__i32_i32;
 
-typedef struct wire_list_buttplug_sensor_feature_message_type {
+typedef struct wire_list_input_command_type {
   int32_t *ptr;
   int32_t len;
-} wire_list_buttplug_sensor_feature_message_type;
+} wire_list_input_command_type;
 
-typedef struct wire_ExposedDeviceFeatureSensor {
+typedef struct wire_ExposedDeviceFeatureInput {
   struct wire_list___record__i32_i32 *value_range;
-  struct wire_list_buttplug_sensor_feature_message_type *messages;
-} wire_ExposedDeviceFeatureSensor;
+  struct wire_list_input_command_type *input_commands;
+} wire_ExposedDeviceFeatureInput;
+
+typedef struct wire_ExposedDeviceFeatureInputPair {
+  int32_t input_type;
+  struct wire_ExposedDeviceFeatureInput input;
+} wire_ExposedDeviceFeatureInputPair;
+
+typedef struct wire_list_exposed_device_feature_input_pair {
+  struct wire_ExposedDeviceFeatureInputPair *ptr;
+  int32_t len;
+} wire_list_exposed_device_feature_input_pair;
 
 typedef struct wire_ExposedDeviceFeature {
   struct wire_uint_8_list *description;
   struct wire_uint_8_list *id;
   struct wire_uint_8_list *base_id;
   int32_t feature_type;
-  struct wire_ExposedDeviceFeatureActuator *actuator;
-  struct wire_ExposedDeviceFeatureSensor *sensor;
+  struct wire_list_exposed_device_feature_output_pair *output;
+  struct wire_list_exposed_device_feature_input_pair *input;
 } wire_ExposedDeviceFeature;
 
 typedef struct wire_list_exposed_device_feature {
@@ -111,6 +125,7 @@ typedef struct wire_ExposedUserDeviceDefinition {
   struct wire_uint_8_list *name;
   struct wire_uint_8_list *id;
   struct wire_uint_8_list *base_id;
+  struct wire_uint_8_list *protocol_variant;
   struct wire_list_exposed_device_feature *features;
   struct wire_ExposedUserDeviceCustomization user_config;
 } wire_ExposedUserDeviceDefinition;
@@ -185,10 +200,6 @@ void wire_crash_reporting(int64_t port_, struct wire_uint_8_list *sentry_api_key
 
 struct wire_EngineOptionsExternal *new_box_autoadd_engine_options_external_0(void);
 
-struct wire_ExposedDeviceFeatureActuator *new_box_autoadd_exposed_device_feature_actuator_0(void);
-
-struct wire_ExposedDeviceFeatureSensor *new_box_autoadd_exposed_device_feature_sensor_0(void);
-
 struct wire_ExposedUserDeviceDefinition *new_box_autoadd_exposed_user_device_definition_0(void);
 
 struct wire_ExposedUserDeviceIdentifier *new_box_autoadd_exposed_user_device_identifier_0(void);
@@ -197,15 +208,19 @@ uint16_t *new_box_autoadd_u16_0(uint16_t value);
 
 struct wire_list___record__i32_i32 *new_list___record__i32_i32_0(int32_t len);
 
-struct wire_list_buttplug_actuator_feature_message_type *new_list_buttplug_actuator_feature_message_type_0(int32_t len);
-
-struct wire_list_buttplug_sensor_feature_message_type *new_list_buttplug_sensor_feature_message_type_0(int32_t len);
-
 struct wire_list_exposed_device_feature *new_list_exposed_device_feature_0(int32_t len);
+
+struct wire_list_exposed_device_feature_input_pair *new_list_exposed_device_feature_input_pair_0(int32_t len);
+
+struct wire_list_exposed_device_feature_output_pair *new_list_exposed_device_feature_output_pair_0(int32_t len);
+
+struct wire_list_input_command_type *new_list_input_command_type_0(int32_t len);
 
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 
 void free_WireSyncReturn(WireSyncReturn ptr);
+
+jint JNI_OnLoad(JavaVM vm, const void *_res);
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
@@ -230,15 +245,14 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) wire_shutdown_logging);
     dummy_var ^= ((int64_t) (void*) wire_crash_reporting);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_engine_options_external_0);
-    dummy_var ^= ((int64_t) (void*) new_box_autoadd_exposed_device_feature_actuator_0);
-    dummy_var ^= ((int64_t) (void*) new_box_autoadd_exposed_device_feature_sensor_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_exposed_user_device_definition_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_exposed_user_device_identifier_0);
     dummy_var ^= ((int64_t) (void*) new_box_autoadd_u16_0);
     dummy_var ^= ((int64_t) (void*) new_list___record__i32_i32_0);
-    dummy_var ^= ((int64_t) (void*) new_list_buttplug_actuator_feature_message_type_0);
-    dummy_var ^= ((int64_t) (void*) new_list_buttplug_sensor_feature_message_type_0);
     dummy_var ^= ((int64_t) (void*) new_list_exposed_device_feature_0);
+    dummy_var ^= ((int64_t) (void*) new_list_exposed_device_feature_input_pair_0);
+    dummy_var ^= ((int64_t) (void*) new_list_exposed_device_feature_output_pair_0);
+    dummy_var ^= ((int64_t) (void*) new_list_input_command_type_0);
     dummy_var ^= ((int64_t) (void*) new_uint_8_list_0);
     dummy_var ^= ((int64_t) (void*) free_WireSyncReturn);
     dummy_var ^= ((int64_t) (void*) store_dart_post_cobject);
