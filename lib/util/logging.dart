@@ -26,7 +26,8 @@ class IntifaceStreamPrinter extends LoggyPrinter {
   IntifaceStreamPrinter(this.childPrinter) : super();
 
   final LoggyPrinter childPrinter;
-  final BehaviorSubject<List<LogRecord>> logRecord = BehaviorSubject<List<LogRecord>>.seeded(<LogRecord>[]);
+  final BehaviorSubject<List<LogRecord>> logRecord =
+      BehaviorSubject<List<LogRecord>>.seeded(<LogRecord>[]);
 
   @override
   void onLog(LogRecord record) {
@@ -38,20 +39,20 @@ class IntifaceStreamPrinter extends LoggyPrinter {
     }
 
     LogRecord newRecord = LogRecord(
-        record.level,
-        record.message,
-        record.loggerName,
-        record.error,
-        record.stackTrace,
-        record.zone,
-        RecordMetadata(DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0),
-        record.callerFrame);
+      record.level,
+      record.message,
+      record.loggerName,
+      record.error,
+      record.stackTrace,
+      record.zone,
+      RecordMetadata(
+        DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0,
+      ),
+      record.callerFrame,
+    );
 
     childPrinter.onLog(newRecord);
-    logRecord.add(<LogRecord>[
-      newRecord,
-      ...existingRecord,
-    ]);
+    logRecord.add(<LogRecord>[newRecord, ...existingRecord]);
   }
 
   void dispose() {
@@ -121,9 +122,6 @@ class MultiPrinter extends LoggyPrinter {
 void initLogging(MultiPrinter multiPrinter) {
   Loggy.initLoggy(
     logPrinter: IntifaceStreamPrinter(multiPrinter),
-    logOptions: const LogOptions(
-      LogLevel.all,
-      stackTraceLevel: LogLevel.error,
-    ),
+    logOptions: const LogOptions(LogLevel.all, stackTraceLevel: LogLevel.error),
   );
 }

@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/bridge_generated.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/bloc/engine/engine_repository.dart';
+import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:loggy/loggy.dart';
 
 abstract class EngineControlState {}
@@ -96,56 +97,66 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       await _repo.start(options: event.options);
       _isRunning = true;
       emit(EngineStartingState());
-      return emit.forEach(_repo.messageStream, onData: (EngineOutput message) {
-        if (message.engineMessage != null) {
-          var engineMessage = message.engineMessage!;
-          if (engineMessage.engineStarted != null) {
-            // Query for message version.
-            logDebug("Got engine started, sending message version request");
-            emit(EngineStartedState());
-            emit(ClientDisconnectedState());
-            var msg = IntifaceMessage();
-            msg.requestEngineVersion = RequestEngineVersion();
-            _repo.send(jsonEncode(msg));
-            return state;
+      return emit.forEach(
+        _repo.messageStream,
+        onData: (EngineOutput message) {
+          if (message.engineMessage != null) {
+            var engineMessage = message.engineMessage!;
+            if (engineMessage.engineStarted != null) {
+              // Query for message version.
+              logDebug("Got engine started, sending message version request");
+              emit(EngineStartedState());
+              emit(ClientDisconnectedState());
+              var msg = IntifaceMessage();
+              msg.requestEngineVersion = RequestEngineVersion();
+              _repo.send(jsonEncode(msg));
+              return state;
+            }
+            if (engineMessage.engineServerCreated != null) {
+              return EngineServerCreatedState();
+            }
+            if (engineMessage.engineProviderLog != null) {
+              return ProviderLogMessageState(engineMessage.engineProviderLog!);
+            }
+            if (engineMessage.messageVersion != null) {
+              logDebug("Got message version return");
+              return state;
+            }
+            if (engineMessage.clientConnected != null) {
+              return ClientConnectedState(engineMessage.clientConnected!.clientName);
+            }
+            if (engineMessage.clientDisconnected != null) {
+              return ClientDisconnectedState();
+            }
+            if (engineMessage.deviceConnected != null) {
+              var deviceInfo = engineMessage.deviceConnected!;
+              _devices[deviceInfo.index] = EngineDevice(
+                deviceInfo.index,
+                deviceInfo.name,
+                deviceInfo.identifier.toExposedUserDeviceIdentifier(),
+              );
+              return DeviceConnectedState(
+                deviceInfo.name,
+                deviceInfo.displayName,
+                deviceInfo.index,
+                deviceInfo.identifier.toExposedUserDeviceIdentifier(),
+              );
+            }
+            if (engineMessage.deviceDisconnected != null) {
+              _devices.remove(engineMessage.deviceDisconnected!.index);
+              return DeviceDisconnectedState(engineMessage.deviceDisconnected!.index);
+            }
+            if (engineMessage.engineStopped != null) {
+              logInfo("Received EngineStopped message");
+              _isRunning = false;
+              return EngineStoppedState();
+            }
+          } else if (message.buttplugServerMessage != null) {
+            return ButtplugServerMessageState(message.buttplugServerMessage!);
           }
-          if (engineMessage.engineServerCreated != null) {
-            return EngineServerCreatedState();
-          }
-          if (engineMessage.engineProviderLog != null) {
-            return ProviderLogMessageState(engineMessage.engineProviderLog!);
-          }
-          if (engineMessage.messageVersion != null) {
-            logDebug("Got message version return");
-            return state;
-          }
-          if (engineMessage.clientConnected != null) {
-            return ClientConnectedState(engineMessage.clientConnected!.clientName);
-          }
-          if (engineMessage.clientDisconnected != null) {
-            return ClientDisconnectedState();
-          }
-          if (engineMessage.deviceConnected != null) {
-            var deviceInfo = engineMessage.deviceConnected!;
-            _devices[deviceInfo.index] =
-                EngineDevice(deviceInfo.index, deviceInfo.name, deviceInfo.identifier.toExposedUserDeviceIdentifier());
-            return DeviceConnectedState(deviceInfo.name, deviceInfo.displayName, deviceInfo.index,
-                deviceInfo.identifier.toExposedUserDeviceIdentifier());
-          }
-          if (engineMessage.deviceDisconnected != null) {
-            _devices.remove(engineMessage.deviceDisconnected!.index);
-            return DeviceDisconnectedState(engineMessage.deviceDisconnected!.index);
-          }
-          if (engineMessage.engineStopped != null) {
-            logInfo("Received EngineStopped message");
-            _isRunning = false;
-            return EngineStoppedState();
-          }
-        } else if (message.buttplugServerMessage != null) {
-          return ButtplugServerMessageState(message.buttplugServerMessage!);
-        }
-        return state;
-      });
+          return state;
+        },
+      );
     });
     on<EngineControlEventBackdoorMessage>((event, emit) async {
       _repo.sendBackdoorMessage(event.message);

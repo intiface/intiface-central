@@ -30,7 +30,10 @@ class DiscordNotReadyState extends DiscordState {}
 class DiscordReadyState extends DiscordState {}
 
 class DiscordBloc extends Bloc<DiscordEvent, DiscordState> {
-  final String _clientId = const String.fromEnvironment("DISCORD_CLIENT_ID", defaultValue: "");
+  final String _clientId = const String.fromEnvironment(
+    "DISCORD_CLIENT_ID",
+    defaultValue: "",
+  );
   final List<DeviceCubit> _devices = [];
 
   Client? _discordClient;
@@ -70,7 +73,9 @@ class DiscordBloc extends Bloc<DiscordEvent, DiscordState> {
   }
 
   Future<void> updateDiscordStatus() async {
-    final List<DeviceCubit> connectedDevices = _devices.where((device) => device.device?.connected ?? false).toList();
+    final List<DeviceCubit> connectedDevices = _devices
+        .where((device) => device.device?.connected ?? false)
+        .toList();
     String details = "No toys connected.";
 
     if (connectedDevices.length == 1) {

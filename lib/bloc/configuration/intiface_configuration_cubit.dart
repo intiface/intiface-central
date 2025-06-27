@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -247,8 +247,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
     useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
     // Default to true on mobile.
-    useForegroundProcess =
-        (Platform.isAndroid || Platform.isIOS) ? (_prefs.getBool("useForegroundProcess3") ?? true) : false;
+    useForegroundProcess = (Platform.isAndroid || Platform.isIOS)
+        ? (_prefs.getBool("useForegroundProcess3") ?? true)
+        : false;
 
     broadcastServerMdns = _prefs.getBool("broadcastServerMdns") ?? false;
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
@@ -525,30 +526,30 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     }
 
     return EngineOptionsExternal(
-        serverName: serverName,
-        deviceConfigJson: deviceConfigFile,
-        userDeviceConfigJson: userDeviceConfigFile,
-        userDeviceConfigPath: IntifacePaths.userDeviceConfigFile.path,
-        websocketUseAllInterfaces: websocketServerAllInterfaces,
-        websocketPort: websocketServerPort,
-        frontendInProcessChannel: isMobile(),
-        maxPingTime: serverMaxPingTime,
-        allowRawMessages: allowRawMessages,
-        useBluetoothLe: useBluetoothLE,
-        useSerialPort: isDesktop() ? useSerialPort : false,
-        useHid: isDesktop() ? useHID : false,
-        useLovenseDongleSerial: isDesktop() ? useLovenseSerialDongle : false,
-        useLovenseDongleHid: isDesktop() ? useLovenseHIDDongle : false,
-        useXinput: isDesktop() ? useXInput : false,
-        useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
-        useDeviceWebsocketServer: useDeviceWebsocketServer,
-        crashMainThread: false,
-        crashTaskThread: false,
-        broadcastServerMdns: broadcastServerMdns,
-        mdnsSuffix: mdnsSuffix,
-        // If we're getting options from config, the repeater won't have anything to do with it.
-        repeaterMode: appMode == AppMode.repeater,
-        repeaterLocalPort: repeaterLocalPort,
-        repeaterRemoteAddress: repeaterRemoteAddress);
+      serverName: serverName,
+      deviceConfigJson: deviceConfigFile,
+      userDeviceConfigJson: userDeviceConfigFile,
+      userDeviceConfigPath: IntifacePaths.userDeviceConfigFile.path,
+      websocketUseAllInterfaces: websocketServerAllInterfaces,
+      websocketPort: websocketServerPort,
+      frontendInProcessChannel: isMobile(),
+      maxPingTime: serverMaxPingTime,
+      useBluetoothLe: useBluetoothLE,
+      useSerialPort: isDesktop() ? useSerialPort : false,
+      useHid: isDesktop() ? useHID : false,
+      useLovenseDongleSerial: isDesktop() ? useLovenseSerialDongle : false,
+      useLovenseDongleHid: isDesktop() ? useLovenseHIDDongle : false,
+      useXinput: isDesktop() ? useXInput : false,
+      useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
+      useDeviceWebsocketServer: useDeviceWebsocketServer,
+      crashMainThread: false,
+      crashTaskThread: false,
+      broadcastServerMdns: broadcastServerMdns,
+      mdnsSuffix: mdnsSuffix,
+      // If we're getting options from config, the repeater won't have anything to do with it.
+      repeaterMode: appMode == AppMode.repeater,
+      repeaterLocalPort: repeaterLocalPort,
+      repeaterRemoteAddress: repeaterRemoteAddress,
+    );
   }
 }

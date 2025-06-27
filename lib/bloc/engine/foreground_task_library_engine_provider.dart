@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
+import 'dart:isolate';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
-import "../../ffi.dart";
+import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
+import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -39,10 +41,9 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   IntifaceEngineTaskHandler()
-      : _serverMessageReceivePort = ReceivePort(),
-        _backdoorMessageReceivePort = ReceivePort(),
-        _shutdownReceivePort = ReceivePort() {
-    initializeApi();
+    : _serverMessageReceivePort = ReceivePort(),
+      _backdoorMessageReceivePort = ReceivePort(),
+      _shutdownReceivePort = ReceivePort() {
     // Once we've started everything up, register our receive port
     final serverSendPort = _serverMessageReceivePort.sendPort;
     final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
@@ -55,6 +56,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   @override
   Future<void> onStart(DateTime timestamp) async {
     _sendProviderLog("Info", "Trying to start engine in foreground service.");
+    await RustLib.init();
 
     // Due to the way the foregrounding package we're using works, we can't store the options across the foregrounding
     // process boundary. Trying to encode to/decode from JSON also isn't easily possible because EngineOptionsExternal
@@ -76,7 +78,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
     _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
     try {
-      _stream = api!.runEngine(args: engineOptions);
+      _stream = runEngine(args: engineOptions);
     } catch (e) {
       _sendProviderLog("ERROR", "Engine start failed!");
       return;
@@ -98,14 +100,14 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       }
     });
     _serverMessageReceivePort.listen((element) async {
-      await api!.send(msgJson: element);
+      await sendRuntimeMsg(msgJson: element);
     });
     _backdoorMessageReceivePort.listen((element) async {
-      await api!.sendBackendServerMessage(msg: element);
+      await sendBackendServerMessage(msg: element);
     });
     _shutdownReceivePort.listen((element) async {
       _sendProviderLog("INFO", "Engine shutdown request received");
-      await api!.stopEngine();
+      await stopEngine();
       await _serverExited.future;
       _sendProviderLog("INFO", "Engine shutdown successful");
       // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.
@@ -152,7 +154,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   Future<bool> runtimeStarted() async {
-    return await api!.runtimeStarted();
+    return await runtimeStarted();
   }
 
   @override
@@ -207,9 +209,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
           resPrefix: ResourcePrefix.ic,
           name: 'launcher',
         ),
-        notificationButtons: [
-          const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
-        ],
+        notificationButtons: [const NotificationButton(id: 'stopServerButton', text: 'Stop Server')],
         callback: startCallback,
       );
     }

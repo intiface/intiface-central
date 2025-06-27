@@ -21,17 +21,16 @@ class WrongPrinterException implements Exception {
 /// );
 /// ```
 class LoggyStreamWidget extends StatelessWidget {
-  const LoggyStreamWidget({
-    this.logLevel = LogLevel.all,
-    super.key,
-  });
+  const LoggyStreamWidget({this.logLevel = LogLevel.all, super.key});
 
   final LogLevel? logLevel;
 
   @override
   Widget build(BuildContext context) {
     final IntifaceStreamPrinter? printer =
-        Loggy.currentPrinter is IntifaceStreamPrinter ? Loggy.currentPrinter as IntifaceStreamPrinter? : null;
+        Loggy.currentPrinter is IntifaceStreamPrinter
+        ? Loggy.currentPrinter as IntifaceStreamPrinter?
+        : null;
 
     if (printer == null) {
       throw WrongPrinterException();
@@ -42,19 +41,23 @@ class LoggyStreamWidget extends StatelessWidget {
         Expanded(
           child: StreamBuilder<List<LogRecord>>(
             stream: printer.logRecord,
-            builder: (BuildContext context, AsyncSnapshot<List<LogRecord>> records) {
-              if (!records.hasData) {
-                return Container();
-              }
+            builder:
+                (BuildContext context, AsyncSnapshot<List<LogRecord>> records) {
+                  if (!records.hasData) {
+                    return Container();
+                  }
 
-              return ListView(
-                reverse: true,
-                children: records.data!
-                    .where((LogRecord record) => record.level.priority >= logLevel!.priority)
-                    .map((LogRecord record) => _LoggyItemWidget(record))
-                    .toList(),
-              );
-            },
+                  return ListView(
+                    reverse: true,
+                    children: records.data!
+                        .where(
+                          (LogRecord record) =>
+                              record.level.priority >= logLevel!.priority,
+                        )
+                        .map((LogRecord record) => _LoggyItemWidget(record))
+                        .toList(),
+                  );
+                },
           ),
         ),
       ],
@@ -63,7 +66,7 @@ class LoggyStreamWidget extends StatelessWidget {
 }
 
 class _LoggyItemWidget extends StatelessWidget {
-  const _LoggyItemWidget(this.record, {super.key});
+  const _LoggyItemWidget(this.record);
 
   final LogRecord record;
 
@@ -82,34 +85,39 @@ class _LoggyItemWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: logColor),
-                    ),
-                  )),
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: logColor),
+                  ),
+                ),
+              ),
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: FittedBox(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        (record.object! as RecordMetadata).elapsed.toStringAsFixed(3),
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: logColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12.0,
-                            ),
-                        //),
-                      ))),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: FittedBox(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    (record.object! as RecordMetadata).elapsed.toStringAsFixed(
+                      3,
+                    ),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: logColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12.0,
+                    ),
+                    //),
+                  ),
+                ),
+              ),
               Expanded(
                 child: Text(
                   record.message,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: _getTextWeight(),
-                        fontSize: 12.0,
-                      ),
+                    fontWeight: _getTextWeight(),
+                    fontSize: 12.0,
+                  ),
                 ),
               ),
             ],

@@ -26,29 +26,58 @@ class DeviceCubit extends Cubit<DeviceState> {
     if (_clientDevice!.messageAttributes.scalarCmd != null) {
       int i = 0;
       for (var attr in _clientDevice!.messageAttributes.scalarCmd!) {
-        _actuators
-            .add(ScalarActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i, attr.actuatorType));
+        _actuators.add(
+          ScalarActuatorCubit(
+            _clientDevice!,
+            attr.featureDescriptor,
+            attr.stepCount,
+            i,
+            attr.actuatorType,
+          ),
+        );
         ++i;
       }
     }
     if (_clientDevice!.messageAttributes.rotateCmd != null) {
       int i = 0;
       for (var attr in _clientDevice!.messageAttributes.rotateCmd!) {
-        _actuators.add(RotateActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i));
+        _actuators.add(
+          RotateActuatorCubit(
+            _clientDevice!,
+            attr.featureDescriptor,
+            attr.stepCount,
+            i,
+          ),
+        );
         ++i;
       }
     }
     if (_clientDevice!.messageAttributes.linearCmd != null) {
       var i = 0;
       for (var attr in _clientDevice!.messageAttributes.linearCmd!) {
-        _actuators.add(LinearActuatorCubit(_clientDevice!, attr.featureDescriptor, attr.stepCount, i));
+        _actuators.add(
+          LinearActuatorCubit(
+            _clientDevice!,
+            attr.featureDescriptor,
+            attr.stepCount,
+            i,
+          ),
+        );
         ++i;
       }
     }
     if (_clientDevice!.messageAttributes.sensorReadCmd != null) {
       var i = 0;
       for (var attr in _clientDevice!.messageAttributes.sensorReadCmd!) {
-        _sensors.add(SensorReadBloc(_clientDevice!, attr.featureDescriptor, attr.sensorRange, i, attr.sensorType));
+        _sensors.add(
+          SensorReadBloc(
+            _clientDevice!,
+            attr.featureDescriptor,
+            attr.sensorRange,
+            i,
+            attr.sensorType,
+          ),
+        );
         ++i;
       }
     }

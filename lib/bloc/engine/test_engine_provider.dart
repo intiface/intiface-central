@@ -1,4 +1,4 @@
-import 'package:intiface_central/bridge_generated.dart';
+import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 
 class TestEngineProvider implements EngineProvider {

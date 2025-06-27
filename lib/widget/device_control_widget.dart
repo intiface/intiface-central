@@ -11,72 +11,89 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class DeviceControlWidget extends StatelessWidget {
   final DeviceCubit _deviceCubit;
 
-  const DeviceControlWidget({Key? key, required deviceCubit})
-      : _deviceCubit = deviceCubit,
-        super(key: key);
+  const DeviceControlWidget({super.key, required deviceCubit})
+    : _deviceCubit = deviceCubit;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EngineControlBloc, EngineControlState>(
-        buildWhen: (previous, current) =>
-            current is DeviceConnectedState ||
-            current is DeviceDisconnectedState ||
-            current is ClientDisconnectedState ||
-            current is EngineStoppedState,
-        builder: (context, engineState) {
-          return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(builder: (context, state) {
+      buildWhen: (previous, current) =>
+          current is DeviceConnectedState ||
+          current is DeviceDisconnectedState ||
+          current is ClientDisconnectedState ||
+          current is EngineStoppedState,
+      builder: (context, engineState) {
+        return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
+          builder: (context, state) {
             List<Widget> actuatorList = [];
             for (var actuator in _deviceCubit.actuators) {
               if (actuator is ScalarActuatorCubit) {
                 actuatorList.addAll([
                   ListTile(
                     title: Text(actuator.actuatorType.name),
-                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
+                    subtitle: Text(
+                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
+                    ),
                   ),
                   BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
-                      bloc: actuator,
-                      buildWhen: (previous, current) => current is DeviceActuatorStateUpdate,
-                      builder: (context, state) => Slider(
-                            max: actuator.stepCount.toDouble(),
-                            value: actuator.currentValue.floorToDouble(),
-                            divisions: actuator.stepCount,
-                            onChanged: ((value) async {
-                              actuator.scalar(value);
-                            }),
-                          ))
+                    bloc: actuator,
+                    buildWhen: (previous, current) =>
+                        current is DeviceActuatorStateUpdate,
+                    builder: (context, state) => Slider(
+                      max: actuator.stepCount.toDouble(),
+                      value: actuator.currentValue.floorToDouble(),
+                      divisions: actuator.stepCount,
+                      onChanged: ((value) async {
+                        actuator.scalar(value);
+                      }),
+                    ),
+                  ),
                 ]);
               } else if (actuator is RotateActuatorCubit) {
                 actuatorList.addAll([
                   ListTile(
                     title: const Text("Rotation"),
-                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
+                    subtitle: Text(
+                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
+                    ),
                   ),
                   BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
-                      bloc: actuator,
-                      buildWhen: (previous, current) => current is DeviceActuatorStateUpdate,
-                      builder: (context, state) => Slider(
-                            max: actuator.stepCount.toDouble(),
-                            value: actuator.currentValue.floorToDouble(),
-                            divisions: actuator.stepCount,
-                            onChanged: ((value) async {
-                              actuator.rotate(value);
-                            }),
-                          ))
+                    bloc: actuator,
+                    buildWhen: (previous, current) =>
+                        current is DeviceActuatorStateUpdate,
+                    builder: (context, state) => Slider(
+                      max: actuator.stepCount.toDouble(),
+                      value: actuator.currentValue.floorToDouble(),
+                      divisions: actuator.stepCount,
+                      onChanged: ((value) async {
+                        actuator.rotate(value);
+                      }),
+                    ),
+                  ),
                 ]);
               } else if (actuator is LinearActuatorCubit) {
                 actuatorList.addAll([
                   ListTile(
                     title: const Text("Linear"),
-                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
+                    subtitle: Text(
+                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
+                    ),
                   ),
                   BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
-                      bloc: actuator,
-                      buildWhen: (previous, current) => current is DeviceActuatorStateUpdate,
-                      builder: (context, state) {
-                        return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
+                    bloc: actuator,
+                    buildWhen: (previous, current) =>
+                        current is DeviceActuatorStateUpdate,
+                    builder: (context, state) {
+                      return ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: [
                           RangeSlider(
                             max: actuator.stepCount.toDouble(),
-                            values: RangeValues(actuator.currentMin, actuator.currentMax),
+                            values: RangeValues(
+                              actuator.currentMin,
+                              actuator.currentMax,
+                            ),
                             divisions: actuator.stepCount,
                             onChanged: ((values) async {
                               actuator.position(values.start, values.end);
@@ -89,9 +106,14 @@ class DeviceControlWidget extends StatelessWidget {
                               actuator.duration(value);
                             }),
                           ),
-                          TextButton(child: const Text("Toggle Oscillation"), onPressed: () => actuator.toggleRunning())
-                        ]);
-                      })
+                          TextButton(
+                            child: const Text("Toggle Oscillation"),
+                            onPressed: () => actuator.toggleRunning(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ]);
               } else {
                 actuatorList.add(const ListTile(title: Text("Unknown")));
@@ -103,33 +125,48 @@ class DeviceControlWidget extends StatelessWidget {
                 actuatorList.addAll([
                   ListTile(
                     title: Text(sensor.sensorType.name),
-                    subtitle: Text("Description: ${sensor.descriptor} - Sensor Range: ${sensor.sensorRange}"),
+                    subtitle: Text(
+                      "Description: ${sensor.descriptor} - Sensor Range: ${sensor.sensorRange}",
+                    ),
                   ),
                   BlocBuilder<DeviceSensorBloc, DeviceSensorState>(
-                      bloc: sensor,
-                      buildWhen: (DeviceSensorState previous, DeviceSensorState current) =>
-                          current is DeviceSensorStateUpdate,
-                      builder: (context, state) {
-                        if (sensor.sensorType == SensorType.Battery) {
-                          double percentage = sensor.currentData[0] / 100.0;
-                          return LinearPercentIndicator(
-                            percent: percentage,
-                            animation: true,
-                            lineHeight: 20.0,
-                            animationDuration: 1000,
-                            backgroundColor: Colors.grey,
-                            progressColor: Colors.blue,
-                            center: Text("${(percentage * 100).toInt()}%"),
-                          );
-                        }
-                        return Text("${sensor.currentData}");
-                      }),
-                  TextButton(child: const Text("Read Sensor"), onPressed: () => sensor.add(DeviceReadSensorEventRead()))
+                    bloc: sensor,
+                    buildWhen:
+                        (
+                          DeviceSensorState previous,
+                          DeviceSensorState current,
+                        ) => current is DeviceSensorStateUpdate,
+                    builder: (context, state) {
+                      if (sensor.sensorType == SensorType.Battery) {
+                        double percentage = sensor.currentData[0] / 100.0;
+                        return LinearPercentIndicator(
+                          percent: percentage,
+                          animation: true,
+                          lineHeight: 20.0,
+                          animationDuration: 1000,
+                          backgroundColor: Colors.grey,
+                          progressColor: Colors.blue,
+                          center: Text("${(percentage * 100).toInt()}%"),
+                        );
+                      }
+                      return Text("${sensor.currentData}");
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("Read Sensor"),
+                    onPressed: () => sensor.add(DeviceReadSensorEventRead()),
+                  ),
                 ]);
               }
             }
-            return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: actuatorList);
-          });
-        });
+            return ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: actuatorList,
+            );
+          },
+        );
+      },
+    );
   }
 }

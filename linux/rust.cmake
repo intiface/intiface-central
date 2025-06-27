@@ -14,11 +14,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Corrosion)
 
-corrosion_import_crate(MANIFEST_PATH ../intiface-engine-flutter-bridge/Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH ../rust/Cargo.toml)
 
 # Flutter-specific
 
-set(CRATE_NAME "intiface_engine_flutter_bridge")
+set(CRATE_NAME "rust_lib_intiface_central")
 
 target_link_libraries(${BINARY_NAME} PRIVATE ${CRATE_NAME})
 

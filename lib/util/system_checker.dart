@@ -1,6 +1,6 @@
 class SystemCheckerReturn {
-  bool _isError = false;
-  String _errorString;
+  final bool _isError;
+  final String _errorString;
 
   SystemCheckerReturn(this._isError, this._errorString);
   get errorString => _errorString;

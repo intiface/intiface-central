@@ -39,13 +39,12 @@ class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
               Divider(color: Colors.grey.shade600),
               _CollapsableButton(widget.record),
               AnimatedCrossFade(
-                firstChild: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                ),
+                firstChild: SizedBox(width: MediaQuery.of(context).size.width),
                 secondChild: _StackList(widget.record),
                 duration: const Duration(milliseconds: 250),
-                crossFadeState:
-                    _shownRecords.contains(widget.record) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                crossFadeState: _shownRecords.contains(widget.record)
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
               ),
             ],
           ),
@@ -56,7 +55,7 @@ class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
 }
 
 class _StackList extends StatelessWidget {
-  const _StackList(this.record, {super.key});
+  const _StackList(this.record);
 
   final LogRecord record;
 
@@ -66,47 +65,48 @@ class _StackList extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: stackLines.map(
-        (String stackTraceLine) {
-          final List<String> value = stackTraceLine.replaceAll(RegExp(' +'), '  ').replaceAll(')', '').split('(');
+      children: stackLines.map((String stackTraceLine) {
+        final List<String> value = stackTraceLine
+            .replaceAll(RegExp(' +'), '  ')
+            .replaceAll(')', '')
+            .split('(');
 
-          /// Lines that have no connection to the app will be different color.
-          final bool isFlutter = (value.last).startsWith('package:flutter') || (value.last).startsWith('dart:');
+        /// Lines that have no connection to the app will be different color.
+        final bool isFlutter =
+            (value.last).startsWith('package:flutter') ||
+            (value.last).startsWith('dart:');
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                value.first,
-                textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      color: isFlutter ? Colors.blueGrey : Colors.redAccent,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                    ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              value.first,
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                color: isFlutter ? Colors.blueGrey : Colors.redAccent,
+                fontWeight: FontWeight.w600,
+                fontSize: 16.0,
               ),
-              Text(
-                value.last,
-                textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: isFlutter ? Colors.blueGrey : Colors.redAccent,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12.0,
-                    ),
+            ),
+            Text(
+              value.last,
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: isFlutter ? Colors.blueGrey : Colors.redAccent,
+                fontWeight: FontWeight.w400,
+                fontSize: 12.0,
               ),
-              const SizedBox(
-                height: 4.0,
-              ),
-            ],
-          );
-        },
-      ).toList(),
+            ),
+            const SizedBox(height: 4.0),
+          ],
+        );
+      }).toList(),
     );
   }
 }
 
 class _CollapsableButton extends StatelessWidget {
-  const _CollapsableButton(this.record, {super.key});
+  const _CollapsableButton(this.record);
 
   final LogRecord record;
 
@@ -119,10 +119,10 @@ class _CollapsableButton extends StatelessWidget {
           child: Text(
             '▼ ${MaterialLocalizations.of(context).collapsedIconTapHint.toUpperCase()} ▼',
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16.0,
-                ),
+              color: Colors.redAccent,
+              fontWeight: FontWeight.w900,
+              fontSize: 16.0,
+            ),
           ),
         ),
       ),
@@ -132,15 +132,17 @@ class _CollapsableButton extends StatelessWidget {
           child: Text(
             '▲ ${MaterialLocalizations.of(context).expandedIconTapHint.toUpperCase()} ▲',
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16.0,
-                ),
+              color: Colors.redAccent,
+              fontWeight: FontWeight.w900,
+              fontSize: 16.0,
+            ),
           ),
         ),
       ),
       duration: const Duration(milliseconds: 250),
-      crossFadeState: _shownRecords.contains(record) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      crossFadeState: _shownRecords.contains(record)
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
     );
   }
 }

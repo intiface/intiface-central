@@ -26,8 +26,16 @@ class NavigationDestination {
   final bool showInMobileRail;
   final bool showInDesktopRail;
 
-  NavigationDestination(this.stateCheck, this.navigate, this.icon, this.selectedIcon, this.title, this.widgetProvider,
-      this.showInMobileRail, this.showInDesktopRail);
+  NavigationDestination(
+    this.stateCheck,
+    this.navigate,
+    this.icon,
+    this.selectedIcon,
+    this.title,
+    this.widgetProvider,
+    this.showInMobileRail,
+    this.showInDesktopRail,
+  );
 }
 
 class BodyWidget extends StatelessWidget {
@@ -40,75 +48,107 @@ class BodyWidget extends StatelessWidget {
 
     var destinations = [
       NavigationDestination(
-          (state) => state is NavigationStateNews,
-          (NavigationCubit cubit) => cubit.goNews(),
-          const Icon(Icons.newspaper_outlined),
-          const Icon(Icons.newspaper),
-          'News',
-          () => BlocBuilder<UpdateBloc, UpdateState>(
-              buildWhen: (previous, current) => current is NewsUpdateRetrieved,
-              builder: (context, state) => MarkdownWidget(markdownContent: assets.newsAsset, backToSettings: false)),
-          true,
-          true),
+        (state) => state is NavigationStateNews,
+        (NavigationCubit cubit) => cubit.goNews(),
+        const Icon(Icons.newspaper_outlined),
+        const Icon(Icons.newspaper),
+        'News',
+        () => BlocBuilder<UpdateBloc, UpdateState>(
+          buildWhen: (previous, current) => current is NewsUpdateRetrieved,
+          builder: (context, state) => MarkdownWidget(
+            markdownContent: assets.newsAsset,
+            backToSettings: false,
+          ),
+        ),
+        true,
+        true,
+      ),
       NavigationDestination(
-          (state) => state is NavigationStateAppControl,
-          (NavigationCubit cubit) => cubit.goAppControl(),
-          const Icon(Icons.play_circle_outlined),
-          const Icon(Icons.play_circle),
-          'App Modes',
-          () => const AppControlPage(),
-          true,
-          true),
+        (state) => state is NavigationStateAppControl,
+        (NavigationCubit cubit) => cubit.goAppControl(),
+        const Icon(Icons.play_circle_outlined),
+        const Icon(Icons.play_circle),
+        'App Modes',
+        () => const AppControlPage(),
+        true,
+        true,
+      ),
       NavigationDestination(
-          (state) => state is NavigationStateDeviceControl,
-          (NavigationCubit cubit) => cubit.goDeviceControl(),
-          const Icon(Icons.vibration_outlined),
-          const Icon(Icons.vibration),
-          'Devices',
-          () => const DevicePage(),
-          true,
-          true),
+        (state) => state is NavigationStateDeviceControl,
+        (NavigationCubit cubit) => cubit.goDeviceControl(),
+        const Icon(Icons.vibration_outlined),
+        const Icon(Icons.vibration),
+        'Devices',
+        () => const DevicePage(),
+        true,
+        true,
+      ),
       NavigationDestination(
-          (state) => state is NavigationStateLogs,
-          (NavigationCubit cubit) => cubit.goLogs(),
-          Icon(Icons.text_snippet_outlined,
-              color: errorNotifierCubit.state is ErrorNotifierTriggerState ? Colors.red : null),
-          const Icon(Icons.text_snippet),
-          'Log',
-          () => const LogPage(),
-          true,
-          true),
+        (state) => state is NavigationStateLogs,
+        (NavigationCubit cubit) => cubit.goLogs(),
+        Icon(
+          Icons.text_snippet_outlined,
+          color: errorNotifierCubit.state is ErrorNotifierTriggerState
+              ? Colors.red
+              : null,
+        ),
+        const Icon(Icons.text_snippet),
+        'Log',
+        () => const LogPage(),
+        true,
+        true,
+      ),
       NavigationDestination(
-          (state) => state is NavigationStateSettings,
-          (NavigationCubit cubit) => cubit.goSettings(),
-          Icon(Icons.settings_outlined,
-              color:
-                  isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion ? Colors.green : null),
-          Icon(Icons.settings,
-              color:
-                  isDesktop() && configCubit.currentAppVersion != configCubit.latestAppVersion ? Colors.green : null),
-          'Settings',
-          () => const SettingPage(),
-          true,
-          true),
+        (state) => state is NavigationStateSettings,
+        (NavigationCubit cubit) => cubit.goSettings(),
+        Icon(
+          Icons.settings_outlined,
+          color:
+              isDesktop() &&
+                  configCubit.currentAppVersion != configCubit.latestAppVersion
+              ? Colors.green
+              : null,
+        ),
+        Icon(
+          Icons.settings,
+          color:
+              isDesktop() &&
+                  configCubit.currentAppVersion != configCubit.latestAppVersion
+              ? Colors.green
+              : null,
+        ),
+        'Settings',
+        () => const SettingPage(),
+        true,
+        true,
+      ),
 
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to
       // hide our About/Help in the Settings widget on mobile, and we never want the Send Logs page shown.
       NavigationDestination(
-          (state) => state is NavigationStateAbout,
-          (NavigationCubit cubit) => cubit.goAbout(),
-          const Icon(Icons.help_outlined),
-          const Icon(Icons.help),
-          'Help / About',
-          () => const AboutHelpPage(),
-          false,
-          true),
+        (state) => state is NavigationStateAbout,
+        (NavigationCubit cubit) => cubit.goAbout(),
+        const Icon(Icons.help_outlined),
+        const Icon(Icons.help),
+        'Help / About',
+        () => const AboutHelpPage(),
+        false,
+        true,
+      ),
     ];
 
     if (const String.fromEnvironment('IS_STEAM_DECK').isNotEmpty) {
       destinations.addAll([
-        NavigationDestination((state) => state is NavigationStateExit, (NavigationCubit cubit) => cubit.goExit(),
-            const Icon(Icons.exit_to_app), const Icon(Icons.exit_to_app), 'Exit', () => exit(0), false, true)
+        NavigationDestination(
+          (state) => state is NavigationStateExit,
+          (NavigationCubit cubit) => cubit.goExit(),
+          const Icon(Icons.exit_to_app),
+          const Icon(Icons.exit_to_app),
+          'Exit',
+          () => exit(0),
+          false,
+          true,
+        ),
       ]);
     }
 
@@ -116,14 +156,15 @@ class BodyWidget extends StatelessWidget {
     // before other selection fields, it screws up our ordering.
     destinations.addAll([
       NavigationDestination(
-          (state) => state is NavigationStateSendLogs,
-          (NavigationCubit cubit) => cubit.goSendLogs(),
-          const Icon(Icons.help_outlined),
-          const Icon(Icons.help),
-          'Send Logs',
-          () => const SendLogsPage(),
-          false,
-          false),
+        (state) => state is NavigationStateSendLogs,
+        (NavigationCubit cubit) => cubit.goSendLogs(),
+        const Icon(Icons.help_outlined),
+        const Icon(Icons.help),
+        'Send Logs',
+        () => const SendLogsPage(),
+        false,
+        false,
+      ),
     ]);
 
     var navCubit = BlocProvider.of<NavigationCubit>(context);
@@ -139,9 +180,12 @@ class BodyWidget extends StatelessWidget {
     }
 
     if (configCubit.useSideNavigationBar) {
-      var navSelectedIndex = destinations[selectedIndex].showInDesktopRail ? selectedIndex : 0;
-      return Row(children: <Widget>[
-        NavigationRail(
+      var navSelectedIndex = destinations[selectedIndex].showInDesktopRail
+          ? selectedIndex
+          : 0;
+      return Row(
+        children: <Widget>[
+          NavigationRail(
             selectedIndex: navSelectedIndex,
             groupAlignment: -1.0,
             onDestinationSelected: (int index) {
@@ -150,22 +194,39 @@ class BodyWidget extends StatelessWidget {
             labelType: NavigationRailLabelType.all,
             destinations: destinations
                 .where((element) => element.showInDesktopRail)
-                .map((v) => NavigationRailDestination(icon: v.icon, label: Text(v.title)))
-                .toList()),
-        Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()]))
-      ]);
+                .map(
+                  (v) => NavigationRailDestination(
+                    icon: v.icon,
+                    label: Text(v.title),
+                  ),
+                )
+                .toList(),
+          ),
+          Expanded(
+            child: Column(
+              children: [destinations[selectedIndex].widgetProvider()],
+            ),
+          ),
+        ],
+      );
     }
     // Weird special case time! If we're showing the bottom bar nav, and we're in one of the widgets that
     // isn't shown there, assume we're actually in the settings widget.
     var visualSelectedIndex = selectedIndex;
 
     if (!destinations[selectedIndex].showInMobileRail) {
-      visualSelectedIndex = destinations.where((element) => element.showInMobileRail).length - 1;
+      visualSelectedIndex =
+          destinations.where((element) => element.showInMobileRail).length - 1;
     }
 
-    return Column(children: <Widget>[
-      Expanded(child: Column(children: [destinations[selectedIndex].widgetProvider()])),
-      BottomNavigationBar(
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            children: [destinations[selectedIndex].widgetProvider()],
+          ),
+        ),
+        BottomNavigationBar(
           currentIndex: visualSelectedIndex,
           onTap: (int index) {
             destinations[index].navigate(navCubit);
@@ -173,21 +234,34 @@ class BodyWidget extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           items: destinations
               .where((element) => element.showInMobileRail)
-              .map((dest) => BottomNavigationBarItem(icon: dest.icon, activeIcon: dest.selectedIcon, label: dest.title))
-              .toList())
-    ]);
+              .map(
+                (dest) => BottomNavigationBarItem(
+                  icon: dest.icon,
+                  activeIcon: dest.selectedIcon,
+                  label: dest.title,
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     // This is so gross and should be handled as a stream. :c
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseSideNavigationBar,
-        builder: (context, configState) =>
-            BlocBuilder<NavigationCubit, NavigationState>(builder: (context, navigationState) {
-              return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(builder: (context, errorState) {
-                return _buildMenu(context, navigationState);
-              });
-            }));
+      buildWhen: (previous, current) => current is UseSideNavigationBar,
+      builder: (context, configState) =>
+          BlocBuilder<NavigationCubit, NavigationState>(
+            builder: (context, navigationState) {
+              return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(
+                builder: (context, errorState) {
+                  return _buildMenu(context, navigationState);
+                },
+              );
+            },
+          ),
+    );
   }
 }
