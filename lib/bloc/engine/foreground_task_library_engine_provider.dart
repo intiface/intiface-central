@@ -112,6 +112,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       _sendProviderLog("INFO", "Engine shutdown successful");
       // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.
       FlutterForegroundTask.sendDataToMain(false);
+      RustLib.dispose();
     });
   }
 
