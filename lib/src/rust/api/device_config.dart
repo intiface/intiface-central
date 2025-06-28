@@ -5,9 +5,17 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:uuid/uuid.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `ExposedBaseDeviceDefinition`, `ExposedDeviceFeatureInput`, `ExposedDeviceFeatureOutput`, `ExposedDeviceFeature`, `ExposedServerBaseDeviceFeatureOutput`, `ExposedServerUserDeviceFeatureOutput`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `into`, `into`, `into`, `into`, `into`, `into`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`
+
+Future<void> updateUserConfig({
+  required ExposedUserDeviceIdentifier identifier,
+  required ExposedDeviceDefinition config,
+}) => RustLib.instance.api.crateApiDeviceConfigUpdateUserConfig(
+  identifier: identifier,
+  config: config,
+);
 
 Future<void> removeUserConfig({
   required ExposedUserDeviceIdentifier identifier,
@@ -17,6 +25,40 @@ Future<void> removeUserConfig({
 
 Future<String> getUserConfigStr() =>
     RustLib.instance.api.crateApiDeviceConfigGetUserConfigStr();
+
+Future<Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition>>
+getUserDeviceDefinitions() =>
+    RustLib.instance.api.crateApiDeviceConfigGetUserDeviceDefinitions();
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedDeviceDefinition>>
+abstract class ExposedDeviceDefinition implements RustOpaqueInterface {
+  UuidValue get id;
+
+  String get name;
+
+  void setUserConfig({required ExposedUserDeviceCustomization config});
+
+  ExposedUserDeviceCustomization get userConfig;
+}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>
+abstract class ExposedUserDeviceIdentifier implements RustOpaqueInterface {
+  String get address;
+
+  String? get identifier;
+
+  factory ExposedUserDeviceIdentifier({
+    required String address,
+    required String protocol,
+    String? identifier,
+  }) => RustLib.instance.api.crateApiDeviceConfigExposedUserDeviceIdentifierNew(
+    address: address,
+    protocol: protocol,
+    identifier: identifier,
+  );
+
+  String get protocol;
+}
 
 class ExposedUserDeviceCustomization {
   final String? displayName;
@@ -51,29 +93,4 @@ class ExposedUserDeviceCustomization {
           deny == other.deny &&
           index == other.index &&
           messageGapMs == other.messageGapMs;
-}
-
-class ExposedUserDeviceIdentifier {
-  final String address;
-  final String protocol;
-  final String? identifier;
-
-  const ExposedUserDeviceIdentifier({
-    required this.address,
-    required this.protocol,
-    this.identifier,
-  });
-
-  @override
-  int get hashCode =>
-      address.hashCode ^ protocol.hashCode ^ identifier.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ExposedUserDeviceIdentifier &&
-          runtimeType == other.runtimeType &&
-          address == other.address &&
-          protocol == other.protocol &&
-          identifier == other.identifier;
 }

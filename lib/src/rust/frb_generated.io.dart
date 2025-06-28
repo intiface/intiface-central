@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -21,14 +22,73 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_ExposedDeviceDefinitionPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinitionPtr;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_ExposedUserDeviceIdentifierPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
+
+  @protected
+  ExposedDeviceDefinition
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    dynamic raw,
+  );
+
+  @protected
+  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition>
+  dco_decode_Map_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition_None(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    dynamic raw,
+  );
 
   @protected
   RustStreamSink<String> dco_decode_StreamSink_String_Sse(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
+
+  @protected
+  UuidValue dco_decode_Uuid(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
@@ -39,8 +99,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  ExposedUserDeviceIdentifier
-  dco_decode_box_autoadd_exposed_user_device_identifier(dynamic raw);
+  ExposedUserDeviceCustomization
+  dco_decode_box_autoadd_exposed_user_device_customization(dynamic raw);
 
   @protected
   int dco_decode_box_autoadd_u_16(dynamic raw);
@@ -60,11 +120,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  ExposedUserDeviceIdentifier dco_decode_exposed_user_device_identifier(
-    dynamic raw,
-  );
-
-  @protected
   ExposedWebsocketSpecifier dco_decode_exposed_websocket_specifier(dynamic raw);
 
   @protected
@@ -72,6 +127,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<(ExposedUserDeviceIdentifier, ExposedDeviceDefinition)>
+  dco_decode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    dynamic raw,
+  );
 
   @protected
   List<(String, ExposedSerialSpecifier)>
@@ -89,6 +150,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  (ExposedUserDeviceIdentifier, ExposedDeviceDefinition)
+  dco_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    dynamic raw,
+  );
 
   @protected
   (String, ExposedSerialSpecifier)
@@ -111,7 +178,58 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  BigInt dco_decode_usize(dynamic raw);
+
+  @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
+
+  @protected
+  ExposedDeviceDefinition
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition>
+  sse_decode_Map_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition_None(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedDeviceDefinition
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedUserDeviceIdentifier
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    SseDeserializer deserializer,
+  );
 
   @protected
   RustStreamSink<String> sse_decode_StreamSink_String_Sse(
@@ -122,6 +240,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  UuidValue sse_decode_Uuid(SseDeserializer deserializer);
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
@@ -130,8 +251,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  ExposedUserDeviceIdentifier
-  sse_decode_box_autoadd_exposed_user_device_identifier(
+  ExposedUserDeviceCustomization
+  sse_decode_box_autoadd_exposed_user_device_customization(
     SseDeserializer deserializer,
   );
 
@@ -157,11 +278,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  ExposedUserDeviceIdentifier sse_decode_exposed_user_device_identifier(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ExposedWebsocketSpecifier sse_decode_exposed_websocket_specifier(
     SseDeserializer deserializer,
   );
@@ -171,6 +287,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<(ExposedUserDeviceIdentifier, ExposedDeviceDefinition)>
+  sse_decode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<(String, ExposedSerialSpecifier)>
@@ -192,6 +314,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  (ExposedUserDeviceIdentifier, ExposedDeviceDefinition)
+  sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    SseDeserializer deserializer,
+  );
 
   @protected
   (String, ExposedSerialSpecifier)
@@ -218,11 +346,70 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ExposedDeviceDefinition self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ExposedDeviceDefinition self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ExposedDeviceDefinition self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Map_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition_None(
+    Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ExposedDeviceDefinition self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier self,
     SseSerializer serializer,
   );
 
@@ -236,6 +423,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Uuid(UuidValue self, SseSerializer serializer);
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
@@ -245,8 +435,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_box_autoadd_exposed_user_device_identifier(
-    ExposedUserDeviceIdentifier self,
+  void sse_encode_box_autoadd_exposed_user_device_customization(
+    ExposedUserDeviceCustomization self,
     SseSerializer serializer,
   );
 
@@ -275,12 +465,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_exposed_user_device_identifier(
-    ExposedUserDeviceIdentifier self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_exposed_websocket_specifier(
     ExposedWebsocketSpecifier self,
     SseSerializer serializer,
@@ -292,6 +476,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    List<(ExposedUserDeviceIdentifier, ExposedDeviceDefinition)> self,
     SseSerializer serializer,
   );
 
@@ -315,6 +506,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+
+  @protected
+  void
+  sse_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
+    (ExposedUserDeviceIdentifier, ExposedDeviceDefinition) self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_record_string_exposed_serial_specifier(
@@ -341,6 +539,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_unit(void self, SseSerializer serializer);
 
   @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
 }
 
@@ -357,4 +558,72 @@ class RustLibWire implements BaseWire {
   /// The symbols are looked up in [dynamicLibrary].
   RustLibWire(ffi.DynamicLibrary dynamicLibrary)
     : _lookup = dynamicLibrary.lookup;
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinitionPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_intiface_central_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinitionPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinitionPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_intiface_central_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinitionPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_intiface_central_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_intiface_central_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }

@@ -340,7 +340,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       }
       if (state is DeviceConnectedState) {
         logInfo("Updating device ${state.name} index to ${state.index}");
-        //await userConfigCubit.update();
+        await userConfigCubit.update();
       }
     });
 

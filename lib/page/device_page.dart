@@ -34,13 +34,12 @@ class DevicePage extends StatelessWidget {
                 List<Widget> deviceWidgets = [];
                 List<int> connectedIndexes = [];
                 var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
-                /*
                 if (engineState is! EngineStoppedState) {
                   deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
                   for (var deviceCubit in deviceBloc.devices) {
                     var device = deviceCubit.device!;
                     connectedIndexes.add(device.index);
-                    MapEntry<ExposedUserDeviceIdentifier, ExposedUserDeviceDefinition> deviceEntry;
+                    MapEntry<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> deviceEntry;
                     try {
                       deviceEntry = userDeviceConfigCubit.configs.entries.firstWhere(
                         (element) => element.value.userConfig.index == device.index,
@@ -89,9 +88,7 @@ class DevicePage extends StatelessWidget {
                     );
                   }
                 }
-                */
 
-                /*
                 deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
                 for (var deviceEntry in userDeviceConfigCubit.configs.entries) {
                   if (connectedIndexes.contains(deviceEntry.value.userConfig.index)) {
@@ -141,7 +138,7 @@ class DevicePage extends StatelessWidget {
                     ),
                   );
                 }
-*/
+
                 var expansionName = "device-settings-advanceddeviceconfig";
 
                 deviceWidgets.add(const ListTile(title: Text("Advanced Device Config")));
