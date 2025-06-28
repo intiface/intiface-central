@@ -1,18 +1,9 @@
-
-// "Exposed" types are mirrors of internal Buttplug types, but with all public members and typing
-// that's amiable to FlutterRustBridge translation. These types can't be directly mirrored because
-// the library itself has private members.
-//
-// "But don't you own the library also?" I mean, yes, I do, but I cannot emotionally handle bringing
-// myself to set the struct members public there just for this application. I hate having ethics.
-
-use std::{collections::{HashMap, HashSet}, ops::RangeInclusive, time::Duration};
+use std::collections::HashMap;
 
 use buttplug::util::device_configuration::save_user_config;
-pub use buttplug::{core::message::{FeatureType, InputCommandType, InputType, OutputType}, server::device::{configuration::{BaseDeviceDefinition, DeviceDefinition, UserDeviceCustomization, UserDeviceDefinition, UserDeviceIdentifier}, server_device_feature::{ServerBaseDeviceFeatureOutput, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerUserDeviceFeatureOutput}}};
+pub use buttplug::{core::message::{FeatureType, OutputType}, server::device::configuration::{DeviceDefinition, UserDeviceCustomization, UserDeviceIdentifier}};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
-use log::*;
 
 use crate::api::DEVICE_CONFIG_MANAGER;
 
@@ -20,10 +11,9 @@ use crate::api::DEVICE_CONFIG_MANAGER;
 // Identifiers
 //
 
-#[frb(unignore)]
+#[frb(unignore, ignore_all)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExposedUserDeviceIdentifier {
-  #[frb(ignore)]
   identifier: UserDeviceIdentifier
 }
 
@@ -71,7 +61,7 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
 // Definitions
 //
 
-#[frb(unignore)]
+#[frb(unignore, ignore_all)]
 #[derive(Debug, Clone)]
 pub struct ExposedDeviceDefinition {
   #[frb(ignore)]
@@ -111,6 +101,76 @@ impl ExposedDeviceDefinition {
   #[frb(sync)]
   pub fn set_user_config(&mut self, config: ExposedUserDeviceCustomization) {
     *self.definition.user_device_mut().user_config_mut() = config.into();
+  }
+
+  #[frb(sync)]
+  pub fn outputs(&self) -> Vec<ExposedFeatureOutput> {
+    let mut outputs = Vec::new();
+    for (index, feature) in self.definition.features().iter().enumerate() {
+      if let Some(output_map) = feature.output() {
+        for (output_type, output) in output_map {
+          outputs.push(ExposedFeatureOutput {
+            feature_index_: index as u32,
+            feature_uuid_: feature.id(),
+            feature_type_: feature.feature_type(),
+            description_: feature.description().clone(),
+            output_type_: *output_type,
+            step_range_: (*output.base_feature().step_range().start(), *output.base_feature().step_range().end()),
+            step_limit_: (*output.step_limit().start(), *output.step_limit().end())
+          });
+        }
+      }
+    }
+    outputs
+  }
+}
+
+#[frb(unignore, opaque, ignore_all)]
+#[derive(Debug, Clone)]
+pub struct ExposedFeatureOutput {
+  feature_index_: u32,
+  feature_uuid_: Uuid,
+  feature_type_: FeatureType,
+  description_: String,
+  output_type_: OutputType,
+  step_range_: (u32, u32),
+  step_limit_: (u32, u32),
+}
+
+impl ExposedFeatureOutput {
+  #[frb(sync, getter)]
+  pub fn feature_index(&self) -> u32 {
+    self.feature_index_
+  }
+
+  #[frb(sync, getter)]
+  pub fn feature_uuid(&self) -> Uuid {
+    self.feature_uuid_
+  }
+
+  #[frb(sync, getter)]
+  pub fn feature_type(&self) -> FeatureType {
+    self.feature_type_
+  }
+
+  #[frb(sync, getter)]
+  pub fn description(&self) -> String {
+    self.description_.clone()
+  }
+
+  #[frb(sync, getter)]
+  pub fn output_type(&self) -> OutputType {
+    self.output_type_
+  }
+
+  #[frb(sync, getter)]
+  pub fn step_range(&self) -> (u32, u32) {
+    self.step_range_.clone()
+  }
+
+  #[frb(sync, getter)]
+  pub fn step_limit(&self) -> (u32, u32) {
+    self.step_limit_.clone()
   }
 }
 

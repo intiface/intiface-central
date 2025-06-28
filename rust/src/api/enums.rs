@@ -2,14 +2,14 @@
 pub use buttplug::core::message::{InputCommandType, InputType, OutputType, FeatureType};
 use flutter_rust_bridge::frb;
 
-#[frb(mirror(InputCommandType))]
+#[frb(mirror(InputCommandType), unignore)]
 pub enum _InputCommandType {
   Read,
   Subscribe,
   Unsubscribe,
 }
 
-#[frb(mirror(InputType))]
+#[frb(mirror(InputType), unignore)]
 pub enum _InputType {
   Unknown,
   Battery,
@@ -21,7 +21,7 @@ pub enum _InputType {
   // Gyro,
 }
 
-#[frb(mirror(OutputType))]
+#[frb(mirror(OutputType), unignore)]
 pub enum _OutputType {
   Unknown,
   Vibrate,
@@ -40,7 +40,7 @@ pub enum _OutputType {
   PositionWithDuration,
 }
 
-#[frb(mirror(FeatureType))]
+#[frb(mirror(FeatureType), unignore)]
 pub enum _FeatureType {
   Unknown,
   Vibrate,

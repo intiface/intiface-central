@@ -4,10 +4,11 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import 'enums.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`
 
 Future<void> updateUserConfig({
   required ExposedUserDeviceIdentifier identifier,
@@ -36,9 +37,28 @@ abstract class ExposedDeviceDefinition implements RustOpaqueInterface {
 
   String get name;
 
+  List<ExposedFeatureOutput> outputs();
+
   void setUserConfig({required ExposedUserDeviceCustomization config});
 
   ExposedUserDeviceCustomization get userConfig;
+}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedFeatureOutput>>
+abstract class ExposedFeatureOutput implements RustOpaqueInterface {
+  String get description;
+
+  int get featureIndex;
+
+  FeatureType get featureType;
+
+  UuidValue get featureUuid;
+
+  OutputType get outputType;
+
+  (int, int) get stepLimit;
+
+  (int, int) get stepRange;
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>

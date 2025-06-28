@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
-import 'package:intiface_central/widget/actuator_feature_config_widget.dart';
+import 'package:intiface_central/widget/feature_output_config_widget.dart';
 import 'package:intiface_central/widget/add_serial_device_widget.dart';
 import 'package:intiface_central/widget/add_websocket_device_widget.dart';
 import 'package:intiface_central/widget/device_config_widget.dart';
@@ -104,7 +104,7 @@ class DevicePage extends StatelessWidget {
                       builder: (context, state) {
                         var listWidgets = [
                           DeviceConfigWidget(identifier: deviceEntry.key),
-                          ActuatorFeatureConfigWidget(
+                          FeatureOutputConfigWidget(
                             deviceIdentifier: deviceEntry.key,
                             deviceDefinition: deviceEntry.value,
                           ),

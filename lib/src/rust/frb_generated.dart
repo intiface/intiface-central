@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/device_config.dart';
+import 'api/enums.dart';
 import 'api/runtime.dart';
 import 'api/specifiers.dart';
 import 'api/util.dart';
@@ -66,7 +67,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.10.0';
 
   @override
-  int get rustContentHash => -1713113312;
+  int get rustContentHash => 747276514;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -85,6 +86,11 @@ abstract class RustLibApi extends BaseApi {
     required ExposedDeviceDefinition that,
   });
 
+  List<ExposedFeatureOutput>
+  crateApiDeviceConfigExposedDeviceDefinitionOutputs({
+    required ExposedDeviceDefinition that,
+  });
+
   void crateApiDeviceConfigExposedDeviceDefinitionSetUserConfig({
     required ExposedDeviceDefinition that,
     required ExposedUserDeviceCustomization config,
@@ -93,6 +99,34 @@ abstract class RustLibApi extends BaseApi {
   ExposedUserDeviceCustomization
   crateApiDeviceConfigExposedDeviceDefinitionUserConfig({
     required ExposedDeviceDefinition that,
+  });
+
+  String crateApiDeviceConfigExposedFeatureOutputDescription({
+    required ExposedFeatureOutput that,
+  });
+
+  int crateApiDeviceConfigExposedFeatureOutputFeatureIndex({
+    required ExposedFeatureOutput that,
+  });
+
+  FeatureType crateApiDeviceConfigExposedFeatureOutputFeatureType({
+    required ExposedFeatureOutput that,
+  });
+
+  UuidValue crateApiDeviceConfigExposedFeatureOutputFeatureUuid({
+    required ExposedFeatureOutput that,
+  });
+
+  OutputType crateApiDeviceConfigExposedFeatureOutputOutputType({
+    required ExposedFeatureOutput that,
+  });
+
+  (int, int) crateApiDeviceConfigExposedFeatureOutputStepLimit({
+    required ExposedFeatureOutput that,
+  });
+
+  (int, int) crateApiDeviceConfigExposedFeatureOutputStepRange({
+    required ExposedFeatureOutput that,
   });
 
   String crateApiDeviceConfigExposedUserDeviceIdentifierAddress({
@@ -193,6 +227,15 @@ abstract class RustLibApi extends BaseApi {
   get rust_arc_decrement_strong_count_ExposedDeviceDefinitionPtr;
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_ExposedFeatureOutput;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_ExposedFeatureOutput;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_ExposedFeatureOutputPtr;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_ExposedUserDeviceIdentifier;
 
   RustArcDecrementStrongCountFnType
@@ -273,6 +316,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  List<ExposedFeatureOutput>
+  crateApiDeviceConfigExposedDeviceDefinitionOutputs({
+    required ExposedDeviceDefinition that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDeviceConfigExposedDeviceDefinitionOutputsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedDeviceDefinitionOutputsConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedDeviceDefinition_outputs",
+        argNames: ["that"],
+      );
+
+  @override
   void crateApiDeviceConfigExposedDeviceDefinitionSetUserConfig({
     required ExposedDeviceDefinition that,
     required ExposedUserDeviceCustomization config,
@@ -289,7 +366,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             config,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -323,7 +400,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_exposed_user_device_customization,
@@ -345,6 +422,234 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String crateApiDeviceConfigExposedFeatureOutputDescription({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedFeatureOutputDescriptionConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputDescriptionConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_description",
+        argNames: ["that"],
+      );
+
+  @override
+  int crateApiDeviceConfigExposedFeatureOutputFeatureIndex({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedFeatureOutputFeatureIndexConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputFeatureIndexConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_feature_index",
+        argNames: ["that"],
+      );
+
+  @override
+  FeatureType crateApiDeviceConfigExposedFeatureOutputFeatureType({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_feature_type,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedFeatureOutputFeatureTypeConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputFeatureTypeConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_feature_type",
+        argNames: ["that"],
+      );
+
+  @override
+  UuidValue crateApiDeviceConfigExposedFeatureOutputFeatureUuid({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_Uuid,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedFeatureOutputFeatureUuidConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputFeatureUuidConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_feature_uuid",
+        argNames: ["that"],
+      );
+
+  @override
+  OutputType crateApiDeviceConfigExposedFeatureOutputOutputType({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_output_type,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDeviceConfigExposedFeatureOutputOutputTypeConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputOutputTypeConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_output_type",
+        argNames: ["that"],
+      );
+
+  @override
+  (int, int) crateApiDeviceConfigExposedFeatureOutputStepLimit({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_record_u_32_u_32,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDeviceConfigExposedFeatureOutputStepLimitConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputStepLimitConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_step_limit",
+        argNames: ["that"],
+      );
+
+  @override
+  (int, int) crateApiDeviceConfigExposedFeatureOutputStepRange({
+    required ExposedFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_record_u_32_u_32,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiDeviceConfigExposedFeatureOutputStepRangeConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedFeatureOutputStepRangeConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedFeatureOutput_step_range",
+        argNames: ["that"],
+      );
+
+  @override
   String crateApiDeviceConfigExposedUserDeviceIdentifierAddress({
     required ExposedUserDeviceIdentifier that,
   }) {
@@ -356,7 +661,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -389,7 +694,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_opt_String,
@@ -424,7 +729,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_String(address, serializer);
           sse_encode_String(protocol, serializer);
           sse_encode_opt_String(identifier, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -457,7 +762,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -500,7 +805,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 17,
             port: port_,
           );
         },
@@ -542,7 +847,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 18,
             port: port_,
           );
         },
@@ -573,7 +878,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 19,
             port: port_,
           );
         },
@@ -602,7 +907,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 20,
             port: port_,
           );
         },
@@ -629,7 +934,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 21,
             port: port_,
           );
         },
@@ -657,7 +962,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 14,
+            funcId: 22,
             port: port_,
           );
         },
@@ -689,7 +994,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 15,
+            funcId: 23,
             port: port_,
           );
         },
@@ -723,7 +1028,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 24,
             port: port_,
           );
         },
@@ -761,7 +1066,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 25,
             port: port_,
           );
         },
@@ -797,7 +1102,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 18,
+            funcId: 26,
             port: port_,
           );
         },
@@ -832,7 +1137,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 27,
             port: port_,
           );
         },
@@ -868,7 +1173,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 20,
+              funcId: 28,
               port: port_,
             );
           },
@@ -897,7 +1202,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 21,
+            funcId: 29,
             port: port_,
           );
         },
@@ -925,7 +1230,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 22,
+            funcId: 30,
             port: port_,
           );
         },
@@ -956,7 +1261,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 23,
+            funcId: 31,
             port: port_,
           );
         },
@@ -988,7 +1293,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 24,
+            funcId: 32,
             port: port_,
           );
         },
@@ -1022,7 +1327,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 25,
+              funcId: 33,
               port: port_,
             );
           },
@@ -1051,7 +1356,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 26,
+            funcId: 34,
             port: port_,
           );
         },
@@ -1078,7 +1383,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 27,
+            funcId: 35,
             port: port_,
           );
         },
@@ -1116,7 +1421,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 28,
+            funcId: 36,
             port: port_,
           );
         },
@@ -1146,6 +1451,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedDeviceDefinition;
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_ExposedFeatureOutput => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_ExposedFeatureOutput => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_ExposedUserDeviceIdentifier => wire
       .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier;
 
@@ -1168,6 +1481,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return ExposedDeviceDefinitionImpl.frbInternalDcoDecode(
       raw as List<dynamic>,
     );
+  }
+
+  @protected
+  ExposedFeatureOutput
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1204,6 +1526,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedFeatureOutput
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   ExposedUserDeviceIdentifier
   dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     dynamic raw,
@@ -1236,6 +1567,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return ExposedDeviceDefinitionImpl.frbInternalDcoDecode(
       raw as List<dynamic>,
     );
+  }
+
+  @protected
+  ExposedFeatureOutput
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1380,6 +1720,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  FeatureType dco_decode_feature_type(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FeatureType.values[raw as int];
+  }
+
+  @protected
+  int dco_decode_i_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  InputType dco_decode_input_type(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return InputType.values[raw as int];
+  }
+
+  @protected
+  List<ExposedFeatureOutput>
+  dco_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(
+          dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput,
+        )
+        .toList();
+  }
+
+  @protected
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
@@ -1441,6 +1812,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OutputType dco_decode_output_type(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return OutputType.values[raw as int];
+  }
+
+  @protected
   (ExposedUserDeviceIdentifier, ExposedDeviceDefinition)
   dco_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
     dynamic raw,
@@ -1486,6 +1863,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       dco_decode_String(arr[0]),
       dco_decode_exposed_websocket_specifier(arr[1]),
     );
+  }
+
+  @protected
+  (int, int) dco_decode_record_u_32_u_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (dco_decode_u_32(arr[0]), dco_decode_u_32(arr[1]));
   }
 
   @protected
@@ -1538,6 +1925,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedFeatureOutput
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   ExposedUserDeviceIdentifier
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     SseDeserializer deserializer,
@@ -1568,6 +1967,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return ExposedDeviceDefinitionImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  ExposedFeatureOutput
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -1605,6 +2016,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return ExposedDeviceDefinitionImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  ExposedFeatureOutput
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return ExposedFeatureOutputImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -1792,6 +2215,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  FeatureType sse_decode_feature_type(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return FeatureType.values[inner];
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  InputType sse_decode_input_type(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return InputType.values[inner];
+  }
+
+  @protected
+  List<ExposedFeatureOutput>
+  sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ExposedFeatureOutput>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(
+        sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+          deserializer,
+        ),
+      );
+    }
+    return ans_;
+  }
+
+  @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1895,6 +2357,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OutputType sse_decode_output_type(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return OutputType.values[inner];
+  }
+
+  @protected
   (ExposedUserDeviceIdentifier, ExposedDeviceDefinition)
   sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
     SseDeserializer deserializer,
@@ -1934,6 +2403,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (int, int) sse_decode_record_u_32_u_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_u_32(deserializer);
+    var var_field1 = sse_decode_u_32(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
   int sse_decode_u_16(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint16();
@@ -1963,12 +2440,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
-  }
-
-  @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
     SseSerializer serializer,
@@ -1986,6 +2457,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as ExposedDeviceDefinitionImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    ExposedFeatureOutput self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ExposedFeatureOutputImpl).frbInternalSseEncode(move: true),
       serializer,
     );
   }
@@ -2033,6 +2517,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    ExposedFeatureOutput self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ExposedFeatureOutputImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     ExposedUserDeviceIdentifier self,
     SseSerializer serializer,
@@ -2068,6 +2565,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as ExposedDeviceDefinitionImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    ExposedFeatureOutput self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as ExposedFeatureOutputImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -2222,6 +2732,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_feature_type(FeatureType self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
+  }
+
+  @protected
+  void sse_encode_input_type(InputType self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void
+  sse_encode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+    List<ExposedFeatureOutput> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedFeatureOutput(
+        item,
+        serializer,
+      );
+    }
+  }
+
+  @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
@@ -2311,6 +2855,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_output_type(OutputType self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
   void
   sse_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_device_definition(
     (ExposedUserDeviceIdentifier, ExposedDeviceDefinition) self,
@@ -2348,6 +2898,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_record_u_32_u_32((int, int) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.$1, serializer);
+    sse_encode_u_32(self.$2, serializer);
+  }
+
+  @protected
   void sse_encode_u_16(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint16(self);
@@ -2374,12 +2931,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_usize(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
   }
 }
 
@@ -2417,6 +2968,9 @@ class ExposedDeviceDefinitionImpl extends RustOpaque
   String get name => RustLib.instance.api
       .crateApiDeviceConfigExposedDeviceDefinitionName(that: this);
 
+  List<ExposedFeatureOutput> outputs() => RustLib.instance.api
+      .crateApiDeviceConfigExposedDeviceDefinitionOutputs(that: this);
+
   void setUserConfig({required ExposedUserDeviceCustomization config}) =>
       RustLib.instance.api
           .crateApiDeviceConfigExposedDeviceDefinitionSetUserConfig(
@@ -2426,6 +2980,56 @@ class ExposedDeviceDefinitionImpl extends RustOpaque
 
   ExposedUserDeviceCustomization get userConfig => RustLib.instance.api
       .crateApiDeviceConfigExposedDeviceDefinitionUserConfig(that: this);
+}
+
+@sealed
+class ExposedFeatureOutputImpl extends RustOpaque
+    implements ExposedFeatureOutput {
+  // Not to be used by end users
+  ExposedFeatureOutputImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  ExposedFeatureOutputImpl.frbInternalSseDecode(
+    BigInt ptr,
+    int externalSizeOnNative,
+  ) : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount: RustLib
+        .instance
+        .api
+        .rust_arc_increment_strong_count_ExposedFeatureOutput,
+    rustArcDecrementStrongCount: RustLib
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_ExposedFeatureOutput,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_ExposedFeatureOutputPtr,
+  );
+
+  String get description => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputDescription(that: this);
+
+  int get featureIndex => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputFeatureIndex(that: this);
+
+  FeatureType get featureType => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputFeatureType(that: this);
+
+  UuidValue get featureUuid => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputFeatureUuid(that: this);
+
+  OutputType get outputType => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputOutputType(that: this);
+
+  (int, int) get stepLimit => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputStepLimit(that: this);
+
+  (int, int) get stepRange => RustLib.instance.api
+      .crateApiDeviceConfigExposedFeatureOutputStepRange(that: this);
 }
 
 @sealed
