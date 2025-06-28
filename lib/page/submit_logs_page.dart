@@ -74,14 +74,9 @@ class SendLogsPage extends StatelessWidget {
                         var contentText = "Sending logs...";
                         var sendFinished = false;
                         var sendFailed = false;
-                        // We're going to assume the stateful builder runs before we get a return from our capture.
-                        // Bold, possibly stupid move.
-                        late StateSetter setState;
 
                         var builder = StatefulBuilder(
                           builder: (context, setState) {
-                            setState = setState;
-
                             Sentry.captureMessage(
                                   """Contact Info: ${contactController.value.text}
 
