@@ -274,7 +274,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     // Bring up the FFI now that we have logging available and crash logging set up.
     // initializeApi();
-    await RustLib.init();
+    try {
+      await RustLib.init();
+    } catch (e) {
+      logError("Rust API already initialized! Error: $e");
+      RustLib.dispose();
+      await RustLib.init();
+    }
 
     // Setup logging before initializing the DCM
     var apiLog = NativeApiLog();

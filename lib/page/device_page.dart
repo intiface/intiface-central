@@ -11,6 +11,7 @@ import 'package:intiface_central/widget/device_control_widget.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:loggy/loggy.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
