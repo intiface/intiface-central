@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:intiface_central/intiface_central_app.dart';
@@ -24,6 +25,10 @@ Future<void> main() async {
       };
     }, appRunner: () async => runApp(await IntifaceCentralApp.create()));
   } else {
-    runApp(await IntifaceCentralApp.create());
+    try {
+      runApp(await IntifaceCentralApp.create());
+    } catch (e) {
+      logError("Error while running app! $e");
+    }
   }
 }

@@ -157,26 +157,6 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await updateDefinition(deviceIdentifier, def);
   }
 
-  /*
-  Future<void> updateFeature(
-    ExposedUserDeviceIdentifier deviceIdentifier,
-    ExposedDeviceDefinition def,
-    int index,
-    ExposedDeviceFeature feature,
-  ) async {
-    var newFeatureArray = def.features;
-    newFeatureArray[index] = feature;
-    var newDeviceDefinition = ExposedDeviceDefinition(
-      name: def.name,
-      id: def.id,
-      baseId: def.baseId,
-      features: newFeatureArray,
-      userConfig: def.userConfig,
-    );
-    await updateDefinition(deviceIdentifier, newDeviceDefinition);
-  }
-  */
-
   Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedDeviceDefinition def) async {
     await updateUserConfig(identifier: deviceIdentifier, config: def);
     await _saveConfigFile();

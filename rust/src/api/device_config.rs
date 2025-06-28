@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::RangeInclusive};
 
-use buttplug::util::device_configuration::save_user_config;
+use buttplug::{server::device::server_device_feature::ServerUserDeviceFeatureOutput, util::device_configuration::save_user_config};
 pub use buttplug::{core::message::{FeatureType, OutputType}, server::device::configuration::{DeviceDefinition, UserDeviceCustomization, UserDeviceIdentifier}};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
@@ -64,7 +64,6 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
 #[frb(unignore, ignore_all)]
 #[derive(Debug, Clone)]
 pub struct ExposedDeviceDefinition {
-  #[frb(ignore)]
   definition: DeviceDefinition,
 }
 
@@ -101,6 +100,14 @@ impl ExposedDeviceDefinition {
   #[frb(sync)]
   pub fn set_user_config(&mut self, config: ExposedUserDeviceCustomization) {
     *self.definition.user_device_mut().user_config_mut() = config.into();
+  }
+
+  #[frb(sync)]
+  pub fn update_output(&mut self, user_output: ExposedFeatureOutput) {
+    let feature_id = user_output.feature_uuid_;
+    let output_type = user_output.output_type();
+    let rust_type = user_output.into();
+    self.definition.update_user_output(feature_id, output_type, rust_type);
   }
 
   #[frb(sync)]
@@ -143,7 +150,7 @@ impl ExposedFeatureOutput {
     self.feature_index_
   }
 
-  #[frb(sync, getter)]
+  #[frb(ignore)]
   pub fn feature_uuid(&self) -> Uuid {
     self.feature_uuid_
   }
@@ -171,6 +178,17 @@ impl ExposedFeatureOutput {
   #[frb(sync, getter)]
   pub fn step_limit(&self) -> (u32, u32) {
     self.step_limit_.clone()
+  }
+
+  #[frb(sync)]
+  pub fn set_step_limit(&mut self, limit: (u32, u32)) {
+    self.step_limit_ = limit;
+  }
+}
+
+impl Into<ServerUserDeviceFeatureOutput> for ExposedFeatureOutput {
+  fn into(self) -> ServerUserDeviceFeatureOutput {
+    ServerUserDeviceFeatureOutput::new(Some(RangeInclusive::<u32>::new(self.step_limit_.0, self.step_limit_.1)), None, None)
   }
 }
 

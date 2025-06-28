@@ -5,6 +5,8 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
+import 'package:intiface_central/util/debouncer.dart';
+import 'package:loggy/loggy.dart';
 
 class FeatureOutputConfigWidget extends StatelessWidget {
   final ExposedUserDeviceIdentifier _deviceIdentifier;
@@ -29,12 +31,15 @@ class FeatureOutputConfigWidget extends StatelessWidget {
         for (var output in _deviceDefinition.outputs()) {
           var userConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
           if (output.outputType != OutputType.positionWithDuration) {
+            Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
             outputList.addAll([
               ListTile(
                 title: Text(
                   "Feature: ${output.description.isEmpty ? output.featureType.name : "${output.description} - ${output.featureType.name}"}",
                 ),
-                subtitle: Text("Step Limit - Min: ${output.stepLimit} Max: ${output.stepLimit.$2}"),
+                subtitle: Text(
+                  "Step Range - Min: ${output.stepRange.$1} Max: ${output.stepRange.$2} Step Limit - Min: ${output.stepLimit.$1} Max: ${output.stepLimit.$2}",
+                ),
               ),
               BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
                 builder: (context, state) => MultiSlider(
@@ -47,25 +52,11 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                           if (value[0].toInt() == value[1].toInt()) {
                             return;
                           }
-                          /*
-                          var featureOutput = ExposedDeviceFeatureOutput(
-                            stepRange: output.stepRange,
-                            stepLimit: (value[0].toInt(), value[1].toInt()),
-                          );
-                          var newOutput = List<ExposedDeviceFeatureOutputPair>.from(feature.output!);
-                          newOutput.removeWhere((x) => x.outputType == output.outputType);
-                          newOutput.add(
-                            ExposedDeviceFeatureOutputPair(outputType: output.outputType, output: featureOutput),
-                          );
-                          var newFeature = ExposedDeviceFeature(
-                            description: feature.description,
-                            id: feature.id,
-                            featureType: feature.featureType,
-                            output: newOutput,
-                            input: feature.input,
-                          );
-                          await userConfigCubit.updateFeature(_deviceIdentifier, _deviceDefinition, index, newFeature);
-                          */
+                          output.setStepLimit(limit: (value[0].toInt(), value[1].toInt()));
+                          d.run(() async {
+                            _deviceDefinition.updateOutput(userOutput: output);
+                            await userConfigCubit.updateDefinition(_deviceIdentifier, _deviceDefinition);
+                          });
                         }),
                 ),
               ),
@@ -90,25 +81,9 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                           if (value[0].toInt() == value[1].toInt()) {
                             return;
                           }
-                          /*
-                          var featureOutput = ExposedDeviceFeatureOutput(
-                            stepRange: output.stepRange,
-                            stepLimit: (value[0].toInt(), value[1].toInt()),
-                          );
-                          var newOutput = List<ExposedDeviceFeatureOutputPair>.from(feature.output!);
-                          newOutput.removeWhere((x) => x.outputType == output.outputType);
-                          newOutput.add(
-                            ExposedDeviceFeatureOutputPair(outputType: output.outputType, output: featureOutput),
-                          );
-                          var newFeature = ExposedDeviceFeature(
-                            description: feature.description,
-                            id: feature.id,
-                            featureType: feature.featureType,
-                            output: newOutput,
-                            input: feature.input,
-                          );
-                          await userConfigCubit.updateFeature(_deviceIdentifier, _deviceDefinition, index, newFeature);
-                          */
+                          output.setStepLimit(limit: (value[0].toInt(), value[1].toInt()));
+                          _deviceDefinition.updateOutput(userOutput: output);
+                          await userConfigCubit.updateDefinition(_deviceIdentifier, _deviceDefinition);
                         }),
                 ),
               ),

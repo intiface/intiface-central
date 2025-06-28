@@ -8,7 +8,8 @@ import 'enums.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`, `into`
+// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `feature_uuid`
 
 Future<void> updateUserConfig({
   required ExposedUserDeviceIdentifier identifier,
@@ -41,6 +42,8 @@ abstract class ExposedDeviceDefinition implements RustOpaqueInterface {
 
   void setUserConfig({required ExposedUserDeviceCustomization config});
 
+  void updateOutput({required ExposedFeatureOutput userOutput});
+
   ExposedUserDeviceCustomization get userConfig;
 }
 
@@ -52,9 +55,9 @@ abstract class ExposedFeatureOutput implements RustOpaqueInterface {
 
   FeatureType get featureType;
 
-  UuidValue get featureUuid;
-
   OutputType get outputType;
+
+  void setStepLimit({required (int, int) limit});
 
   (int, int) get stepLimit;
 
