@@ -19,8 +19,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   }
 */
 
-  //Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> _configs = {};
-  //Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> get configs => _configs;
+  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> _configs = {};
+  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> get configs => _configs;
 
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];
@@ -74,11 +74,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     _protocols = await getProtocolNames();
     _specifiers = await getUserWebsocketCommunicationSpecifiers();
     _serialSpecifiers = await getUserSerialCommunicationSpecifiers();
-    /*
-    _configs = <ExposedUserDeviceIdentifier, ExposedDeviceDefinition>{
-      for (var (k, v) in await getUserDeviceDefinitions()) k: v,
-    };
-    */
+    _configs = await getUserDeviceDefinitions();
     emit(UserDeviceConfigurationStateUpdated());
   }
 
@@ -116,7 +112,6 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await _saveConfigFile();
   }
 
-  /*
   Future<void> updateDeviceAllow(
     ExposedUserDeviceIdentifier deviceIdentifier,
     ExposedDeviceDefinition def,
@@ -128,14 +123,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       index: def.userConfig.index,
       displayName: def.userConfig.displayName,
     );
-    var newConfig = ExposedDeviceDefinition(
-      name: def.name,
-      id: def.id,
-      baseId: def.baseId,
-      features: def.features,
-      userConfig: newUserConfig,
-    );
-    await updateDefinition(deviceIdentifier, newConfig);
+    def.setUserConfig(config: newUserConfig);
+    await updateDefinition(deviceIdentifier, def);
   }
 
   Future<void> updateDeviceDeny(
@@ -149,14 +138,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       index: def.userConfig.index,
       displayName: def.userConfig.displayName,
     );
-    var newConfig = ExposedDeviceDefinition(
-      name: def.name,
-      id: def.id,
-      baseId: def.baseId,
-      features: def.features,
-      userConfig: newUserConfig,
-    );
-    await updateDefinition(deviceIdentifier, newConfig);
+    def.setUserConfig(config: newUserConfig);
+    await updateDefinition(deviceIdentifier, def);
   }
 
   Future<void> updateDisplayName(
@@ -170,16 +153,11 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       index: def.userConfig.index,
       displayName: displayName,
     );
-    var newConfig = ExposedDeviceDefinition(
-      name: def.name,
-      id: def.id,
-      baseId: def.baseId,
-      features: def.features,
-      userConfig: newUserConfig,
-    );
-    await updateDefinition(deviceIdentifier, newConfig);
+    def.setUserConfig(config: newUserConfig);
+    await updateDefinition(deviceIdentifier, def);
   }
 
+  /*
   Future<void> updateFeature(
     ExposedUserDeviceIdentifier deviceIdentifier,
     ExposedDeviceDefinition def,
@@ -197,12 +175,13 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     );
     await updateDefinition(deviceIdentifier, newDeviceDefinition);
   }
+  */
 
   Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedDeviceDefinition def) async {
     await updateUserConfig(identifier: deviceIdentifier, config: def);
     await _saveConfigFile();
   }
-*/
+
   Future<void> removeDeviceConfig(ExposedUserDeviceIdentifier deviceIdentifier) async {
     await removeUserConfig(identifier: deviceIdentifier);
     await _saveConfigFile();

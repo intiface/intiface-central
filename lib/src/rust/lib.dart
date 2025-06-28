@@ -9,8 +9,5 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<BaseDeviceDefinition>>
 abstract class BaseDeviceDefinition implements RustOpaqueInterface {}
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceDefinition>>
-abstract class ExposedUserDeviceDefinition implements RustOpaqueInterface {}
-
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ServerDeviceFeature>>
 abstract class ServerDeviceFeature implements RustOpaqueInterface {}

@@ -24,8 +24,7 @@ class DeviceConfigWidget extends StatelessWidget {
               builder: (context, state) {
                 List<AbstractSettingsSection> tiles = [];
                 var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
-                /*
-                ExposedUserDeviceDefinition config;
+                ExposedDeviceDefinition config;
                 try {
                   config = userDeviceConfigCubit.configs[identifier]!;
                 } catch (e) {
@@ -102,7 +101,6 @@ class DeviceConfigWidget extends StatelessWidget {
                     ],
                   ),
                 );
-                */
                 return SettingsList(sections: tiles, shrinkWrap: true);
               },
             );
