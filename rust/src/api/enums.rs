@@ -1,5 +1,5 @@
 
-pub use buttplug::core::message::{InputCommandType, InputType, OutputType, FeatureType};
+pub use buttplug_core::message::{InputCommandType, InputType, OutputType, FeatureType};
 use flutter_rust_bridge::frb;
 
 #[frb(mirror(InputCommandType), unignore)]
@@ -13,7 +13,7 @@ pub enum _InputCommandType {
 pub enum _InputType {
   Unknown,
   Battery,
-  RSSI,
+  Rssi,
   Button,
   Pressure,
   // Temperature,
@@ -31,7 +31,7 @@ pub enum _OutputType {
   RotateWithDirection,
   Oscillate,
   Constrict,
-  Inflate,
+  Spray,
   Heater,
   Led,
   // For instances where we specify a position to move to ASAP. Usually servos, probably for the
@@ -48,13 +48,13 @@ pub enum _FeatureType {
   Rotate,
   Oscillate,
   Constrict,
-  Inflate,
+  Spray,
   // For instances where we specify a position to move to ASAP. Usually servos, probably for the
   // OSR-2/SR-6.
   Position,
   // Sensor Types
   Battery,
-  RSSI,
+  Rssi,
   Button,
   Pressure,
   // Currently unused but possible sensor features:

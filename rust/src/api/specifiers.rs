@@ -1,8 +1,8 @@
 use std::sync::Arc;
 use super::DEVICE_CONFIG_MANAGER;
 
-use buttplug::{server::device::{configuration::ProtocolCommunicationSpecifier, protocol::get_default_protocol_map}, util::device_configuration::load_protocol_configs};
-pub use buttplug::{server::device::configuration::{SerialSpecifier, WebsocketSpecifier}};
+use buttplug_server_device_config::{ProtocolCommunicationSpecifier, SerialSpecifier, WebsocketSpecifier, load_protocol_configs}; 
+use buttplug_server::device::protocol_impl::get_default_protocol_map;
 
 #[derive(Debug, Clone)]
 pub struct ExposedSerialSpecifier {

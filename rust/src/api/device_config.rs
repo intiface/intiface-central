@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
-use buttplug::{server::device::server_device_feature::ServerUserDeviceFeatureOutput, util::device_configuration::save_user_config};
-pub use buttplug::{core::message::{FeatureType, OutputType}, server::device::configuration::{DeviceDefinition, UserDeviceCustomization, UserDeviceIdentifier}};
+pub use buttplug_core::message::{FeatureType, OutputType};
+use buttplug_server_device_config::{DeviceDefinition, UserDeviceCustomization, UserDeviceIdentifier, ServerUserDeviceFeatureOutput, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
