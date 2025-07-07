@@ -5,7 +5,7 @@ pub mod specifiers;
 pub mod util;
 
 use std::sync::{Arc, RwLock};
-use buttplug::{server::device::configuration::DeviceConfigurationManager, util::device_configuration::load_protocol_configs};
+use buttplug_server_device_config::{DeviceConfigurationManager, load_protocol_configs};
 use lazy_static::lazy_static;
 
 lazy_static! {

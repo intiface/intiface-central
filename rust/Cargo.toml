@@ -14,10 +14,10 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = { version = "=2.10.0", features = ["uuid"] }
-# intiface-engine = "3.0.8"
-intiface-engine = { path = "../../intiface-engine" }
-# THIS MUST ALWAYS MATCH THE VERSION USED BY INTIFACE ENGINE
-buttplug = { path = "../../buttplug/buttplug" }
+buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
+buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
+buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
+intiface-engine = { path = "../../buttplug/crates/intiface_engine" }
 # buttplug = "9.0.8"
 log = "0.4.27"
 lazy_static = "1.5.0"
