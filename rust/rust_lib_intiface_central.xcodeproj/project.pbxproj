@@ -1,0 +1,285 @@
+// !$*UTF8*$!
+{
+	/* generated with cargo-xcode 1.11.0 */
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 53;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CA00AF5599183312A545FA2C /* Cargo.toml in Sources */ = {isa = PBXBuildFile; fileRef = CAF9C11981863EF4668187A5 /* Cargo.toml */; settings = {COMPILER_FLAGS = "--lib"; }; };
+		CA01AF559918E0C840EADD69 /* Cargo.toml in Sources */ = {isa = PBXBuildFile; fileRef = CAF9C11981863EF4668187A5 /* Cargo.toml */; settings = {COMPILER_FLAGS = "--lib"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		CAF4C1198186AC6C1400ACA8 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			dependencyFile = "$(DERIVED_FILE_DIR)/$(ARCHS)-$(EXECUTABLE_NAME).d";
+			filePatterns = "*/Cargo.toml";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 0;
+			name = "Cargo project build";
+			outputFiles = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_NAME)",
+			);
+			runOncePerArchitecture = 0;
+			script = "# generated with cargo-xcode 1.11.0\nset -euo pipefail;\nexport PATH=\"$HOME/.cargo/bin:$PATH:/usr/local/bin:/opt/homebrew/bin\";\n# don't use ios/watchos linker for build scripts and proc macros\nexport CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER=/usr/bin/ld\nexport CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER=/usr/bin/ld\nexport NO_COLOR=1\n\ncase \"$PLATFORM_NAME\" in\n \"macosx\")\n  CARGO_XCODE_TARGET_OS=darwin\n  if [ \"${IS_MACCATALYST-NO}\" = YES ]; then\n   CARGO_XCODE_TARGET_OS=ios-macabi\n  fi\n  ;;\n \"iphoneos\") CARGO_XCODE_TARGET_OS=ios ;;\n \"iphonesimulator\") CARGO_XCODE_TARGET_OS=ios-sim ;;\n \"appletvos\" | \"appletvsimulator\") CARGO_XCODE_TARGET_OS=tvos ;;\n \"watchos\") CARGO_XCODE_TARGET_OS=watchos ;;\n \"watchsimulator\") CARGO_XCODE_TARGET_OS=watchos-sim ;;\n \"xros\") CARGO_XCODE_TARGET_OS=visionos ;;\n \"xrsimulator\") CARGO_XCODE_TARGET_OS=visionos-sim ;;\n *)\n  CARGO_XCODE_TARGET_OS=\"$PLATFORM_NAME\"\n  echo >&2 \"warning: cargo-xcode needs to be updated to handle $PLATFORM_NAME\"\n  ;;\nesac\n\nCARGO_XCODE_TARGET_TRIPLES=\"\"\nCARGO_XCODE_TARGET_FLAGS=\"\"\nLIPO_ARGS=\"\"\nfor arch in $ARCHS; do\n if [[ \"$arch\" == \"arm64\" ]]; then arch=aarch64; fi\n if [[ \"$arch\" == \"i386\" && \"$CARGO_XCODE_TARGET_OS\" != \"ios\" ]]; then arch=i686; fi\n triple=\"${arch}-apple-$CARGO_XCODE_TARGET_OS\"\n CARGO_XCODE_TARGET_TRIPLES+=\" $triple\"\n CARGO_XCODE_TARGET_FLAGS+=\" --target=$triple\"\n LIPO_ARGS+=\"$CARGO_TARGET_DIR/$triple/$CARGO_XCODE_BUILD_PROFILE/$CARGO_XCODE_CARGO_FILE_NAME\n\"\ndone\n\necho >&2 \"Cargo $CARGO_XCODE_BUILD_PROFILE $ACTION for $PLATFORM_NAME $ARCHS =$CARGO_XCODE_TARGET_TRIPLES; using ${SDK_NAMES:-}. \\$PATH is:\"\ntr >&2 : '\\n' <<<\"$PATH\"\n\nif command -v rustup &> /dev/null; then\n for triple in $CARGO_XCODE_TARGET_TRIPLES; do\n  if ! rustup target list --installed | grep -Eq \"^$triple$\"; then\n   echo >&2 \"warning: this build requires rustup toolchain for $triple, but it isn't installed (will try rustup next)\"\n   rustup target add \"$triple\" || {\n    echo >&2 \"warning: can't install $triple, will try nightly -Zbuild-std\";\n    OTHER_INPUT_FILE_FLAGS+=\" -Zbuild-std\";\n    if [ -z \"${RUSTUP_TOOLCHAIN:-}\" ]; then\n     export RUSTUP_TOOLCHAIN=nightly\n    fi\n    break;\n   }\n  fi\n done\nfi\n\nif [ \"$CARGO_XCODE_BUILD_PROFILE\" = release ]; then\n OTHER_INPUT_FILE_FLAGS=\"$OTHER_INPUT_FILE_FLAGS --release\"\nfi\n\nif [ \"$ACTION\" = clean ]; then\n cargo clean --verbose --manifest-path=\"$SCRIPT_INPUT_FILE\" $CARGO_XCODE_TARGET_FLAGS $OTHER_INPUT_FILE_FLAGS;\n rm -f \"$SCRIPT_OUTPUT_FILE_0\"\n exit 0\nfi\n\n{ cargo build --manifest-path=\"$SCRIPT_INPUT_FILE\" --features=\"${CARGO_XCODE_FEATURES:-}\" $CARGO_XCODE_TARGET_FLAGS $OTHER_INPUT_FILE_FLAGS --verbose --message-format=short 2>&1 | sed -E 's/^([^ :]+:[0-9]+:[0-9]+: error)/\\1: /' >&2; } || { echo >&2 \"$SCRIPT_INPUT_FILE: error: cargo-xcode project build failed; $CARGO_XCODE_TARGET_TRIPLES\"; exit 1; }\n\ntr '\\n' '\\0' <<<\"$LIPO_ARGS\" | xargs -0 lipo -create -output \"$SCRIPT_OUTPUT_FILE_0\"\n\nif [ ${LD_DYLIB_INSTALL_NAME:+1} ]; then\n install_name_tool -id \"$LD_DYLIB_INSTALL_NAME\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n\nDEP_FILE_DST=\"$DERIVED_FILE_DIR/${ARCHS}-${EXECUTABLE_NAME}.d\"\necho \"\" > \"$DEP_FILE_DST\"\nfor triple in $CARGO_XCODE_TARGET_TRIPLES; do\n BUILT_SRC=\"$CARGO_TARGET_DIR/$triple/$CARGO_XCODE_BUILD_PROFILE/$CARGO_XCODE_CARGO_FILE_NAME\"\n\n # cargo generates a dep file, but for its own path, so append our rename to it\n DEP_FILE_SRC=\"$CARGO_TARGET_DIR/$triple/$CARGO_XCODE_BUILD_PROFILE/$CARGO_XCODE_CARGO_DEP_FILE_NAME\"\n if [ -f \"$DEP_FILE_SRC\" ]; then\n  cat \"$DEP_FILE_SRC\" >> \"$DEP_FILE_DST\"\n fi\n echo >> \"$DEP_FILE_DST\" \"${SCRIPT_OUTPUT_FILE_0/ /\\\\ /}: ${BUILT_SRC/ /\\\\ /}\"\ndone\ncat \"$DEP_FILE_DST\"\n\necho \"success: $ACTION of $SCRIPT_OUTPUT_FILE_0 for $CARGO_XCODE_TARGET_TRIPLES\"\n";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXFileReference section */
+		CA003ACDB6B2F8F50C9319C7 /* librust_lib_intiface_central_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librust_lib_intiface_central_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA010B3A20D7BF7821A2B37A /* rust_lib_intiface_central.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rust_lib_intiface_central.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAF9C11981863EF4668187A5 /* Cargo.toml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cargo.toml; path = Cargo.toml; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		CAF0C1198186D65BC3C892A8 = {
+			isa = PBXGroup;
+			children = (
+				CAF9C11981863EF4668187A5 /* Cargo.toml */,
+				CAF1C119818622869D176AE5 /* Products */,
+				CAF2C119818698AF0B5890DB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CAF1C119818622869D176AE5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA003ACDB6B2F8F50C9319C7 /* librust_lib_intiface_central_static.a */,
+				CA010B3A20D7BF7821A2B37A /* rust_lib_intiface_central.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CAF2C119818698AF0B5890DB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CA003ACDB6B23312A545FA2C /* rust_lib_intiface_central.a (static library) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA0026310B2A3312A545FA2C /* Build configuration list for PBXNativeTarget "rust_lib_intiface_central.a (static library)" */;
+			buildPhases = (
+				CA00E976E5363312A545FA2C /* Sources */,
+			);
+			buildRules = (
+				CAF4C1198186AC6C1400ACA8 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "rust_lib_intiface_central.a (static library)";
+			productName = librust_lib_intiface_central_static.a;
+			productReference = CA003ACDB6B2F8F50C9319C7 /* librust_lib_intiface_central_static.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		CA010B3A20D7E0C840EADD69 /* rust_lib_intiface_central.dylib (cdylib) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA0126310B2AE0C840EADD69 /* Build configuration list for PBXNativeTarget "rust_lib_intiface_central.dylib (cdylib)" */;
+			buildPhases = (
+				CA01E976E536E0C840EADD69 /* Sources */,
+			);
+			buildRules = (
+				CAF4C1198186AC6C1400ACA8 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "rust_lib_intiface_central.dylib (cdylib)";
+			productName = rust_lib_intiface_central.dylib;
+			productReference = CA010B3A20D7BF7821A2B37A /* rust_lib_intiface_central.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CAF3C1198186E04653AD465F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1510;
+				TargetAttributes = {
+					CA003ACDB6B23312A545FA2C = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					CA010B3A20D7E0C840EADD69 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CAF6C119818680E02D6C7F57 /* Build configuration list for PBXProject "rust_lib_intiface_central" */;
+			compatibilityVersion = "Xcode 11.4";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CAF0C1198186D65BC3C892A8;
+			productRefGroup = CAF1C119818622869D176AE5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CA003ACDB6B23312A545FA2C /* rust_lib_intiface_central.a (static library) */,
+				CA010B3A20D7E0C840EADD69 /* rust_lib_intiface_central.dylib (cdylib) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CA00E976E5363312A545FA2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA00AF5599183312A545FA2C /* Cargo.toml in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CA01E976E536E0C840EADD69 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA01AF559918E0C840EADD69 /* Cargo.toml in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CA0076631A393312A545FA2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.a;
+				INSTALL_GROUP = "";
+				INSTALL_MODE_FLAG = "";
+				INSTALL_OWNER = "";
+				PRODUCT_NAME = rust_lib_intiface_central_static;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+			};
+			name = Release;
+		};
+		CA004693F3E33312A545FA2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.a;
+				INSTALL_GROUP = "";
+				INSTALL_MODE_FLAG = "";
+				INSTALL_OWNER = "";
+				PRODUCT_NAME = rust_lib_intiface_central_static;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+			};
+			name = Debug;
+		};
+		CA0176631A39E0C840EADD69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
+				DYLIB_COMPATIBILITY_VERSION = 2;
+				PRODUCT_NAME = rust_lib_intiface_central;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+			};
+			name = Release;
+		};
+		CA014693F3E3E0C840EADD69 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
+				DYLIB_COMPATIBILITY_VERSION = 2;
+				PRODUCT_NAME = rust_lib_intiface_central;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+			};
+			name = Debug;
+		};
+		CAF781B727CF3CC16B37690B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
+				CARGO_XCODE_BUILD_PROFILE = release;
+				CARGO_XCODE_FEATURES = "";
+				CURRENT_PROJECT_VERSION = 2.0;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_NAME = rust_lib_intiface_central;
+				RUSTUP_TOOLCHAIN = "";
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = YES;
+			};
+			name = Release;
+		};
+		CAF881B727CF228BE02872F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
+				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
+				CARGO_XCODE_BUILD_PROFILE = debug;
+				CARGO_XCODE_FEATURES = "";
+				CURRENT_PROJECT_VERSION = 2.0;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				MARKETING_VERSION = 2.0.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = rust_lib_intiface_central;
+				RUSTUP_TOOLCHAIN = "";
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CA0026310B2A3312A545FA2C /* Build configuration list for PBXNativeTarget "rust_lib_intiface_central.a (static library)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA0076631A393312A545FA2C /* Release */,
+				CA004693F3E33312A545FA2C /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CA0126310B2AE0C840EADD69 /* Build configuration list for PBXNativeTarget "rust_lib_intiface_central.dylib (cdylib)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA0176631A39E0C840EADD69 /* Release */,
+				CA014693F3E3E0C840EADD69 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAF6C119818680E02D6C7F57 /* Build configuration list for PBXProject "rust_lib_intiface_central" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAF781B727CF3CC16B37690B /* Release */,
+				CAF881B727CF228BE02872F8 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CAF3C1198186E04653AD465F /* Project object */;
+}
