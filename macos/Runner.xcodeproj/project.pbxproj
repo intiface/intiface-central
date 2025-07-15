@@ -26,11 +26,10 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		421C9CE32AE0C2440034A4E4 /* libintiface_engine_flutter_bridge.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */; };
-		421C9CE52AE0C2630034A4E4 /* libintiface_engine_flutter_bridge.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42827740290498DC00870167 /* CoreBluetooth.framework */; };
 		4282774329049A0600870167 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 4282774229049A0100870167 /* bridge_generated.h */; };
 		44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423AB11368150DFF42A5D089 /* Pods_Runner.framework */; };
+		C1523AB72E261181009AD8FC /* librust_lib_intiface_central_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E979FE2E25F6F4006AB3B0 /* librust_lib_intiface_central_static.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,26 +40,26 @@
 			remoteGlobalIDString = 33CC111A2044C6BA0003C045;
 			remoteInfo = FLX;
 		};
-		421C9CE12AE0C23A0034A4E4 /* PBXContainerItemProxy */ = {
+		C1D457F52E26197000CFBB0F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+			containerPortal = C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA010B3A20D7BF7821A2B37A;
+			remoteInfo = "rust_lib_intiface_central.dylib (cdylib)";
+		};
+		C1D457FD2E261A4C00CFBB0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = CA60785075725D1998A4805E;
-			remoteInfo = "intiface_engine_flutter_bridge-cdylib";
+			remoteGlobalIDString = CA010B3A20D7E0C840EADD69;
+			remoteInfo = "rust_lib_intiface_central.dylib (cdylib)";
 		};
-		42827739290498A200870167 /* PBXContainerItemProxy */ = {
+		C1E979FD2E25F6F4006AB3B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+			containerPortal = C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = CA608063A6AA60A9C18B421C;
-			remoteInfo = "intiface_engine_flutter_bridge-staticlib";
-		};
-		4282773B290498A200870167 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA606D7ECEF230764F8FA018;
-			remoteInfo = "intiface_engine_flutter_bridge-cdylib";
+			remoteGlobalIDString = CA013ACDB6B2F8F50C9319C7;
+			remoteInfo = "rust_lib_intiface_central.a (static library)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -81,7 +80,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				421C9CE52AE0C2630034A4E4 /* libintiface_engine_flutter_bridge.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,13 +103,13 @@
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		423AB11368150DFF42A5D089 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = intiface_engine_flutter_bridge.xcodeproj; path = "../../intiface-engine-flutter-bridge/intiface_engine_flutter_bridge.xcodeproj"; sourceTree = "<group>"; };
 		42827740290498DC00870167 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		4282774229049A0100870167 /* bridge_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge_generated.h; sourceTree = "<group>"; };
 		44F317B819D4051D6EA424E9 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		BA22D8CE960456C4C0FBDE8C /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = rust_lib_intiface_central.xcodeproj; path = ../rust/rust_lib_intiface_central.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,7 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				421C9CE32AE0C2440034A4E4 /* libintiface_engine_flutter_bridge.dylib in Frameworks */,
+				C1523AB72E261181009AD8FC /* librust_lib_intiface_central_static.a in Frameworks */,
 				42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */,
 				44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */,
 			);
@@ -184,13 +182,13 @@
 			isa = PBXGroup;
 			children = (
 				4282774229049A0100870167 /* bridge_generated.h */,
-				42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */,
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
 				33E51914231749380026EE4D /* Release.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
+				C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -205,11 +203,11 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		42827735290498A200870167 /* Products */ = {
+		C1E979F72E25F6F4006AB3B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4282773A290498A200870167 /* libintiface_engine_flutter_bridge_static.a */,
-				4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */,
+				C1E979FE2E25F6F4006AB3B0 /* librust_lib_intiface_central_static.a */,
+				C1D457F62E26197000CFBB0F /* rust_lib_intiface_central.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,7 +240,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				421C9CE22AE0C23A0034A4E4 /* PBXTargetDependency */,
+				C1D457FE2E261A4C00CFBB0F /* PBXTargetDependency */,
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
 			);
 			name = Runner;
@@ -289,8 +287,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 42827735290498A200870167 /* Products */;
-					ProjectRef = 42827734290498A200870167 /* intiface_engine_flutter_bridge.xcodeproj */;
+					ProductGroup = C1E979F72E25F6F4006AB3B0 /* Products */;
+					ProjectRef = C1E979F42E25F6B6006AB3B0 /* rust_lib_intiface_central.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -302,18 +300,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		4282773A290498A200870167 /* libintiface_engine_flutter_bridge_static.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libintiface_engine_flutter_bridge_static.a;
-			remoteRef = 42827739290498A200870167 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		4282773C290498A200870167 /* libintiface_engine_flutter_bridge.dylib */ = {
+		C1D457F62E26197000CFBB0F /* rust_lib_intiface_central.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = libintiface_engine_flutter_bridge.dylib;
-			remoteRef = 4282773B290498A200870167 /* PBXContainerItemProxy */;
+			path = rust_lib_intiface_central.dylib;
+			remoteRef = C1D457F52E26197000CFBB0F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C1E979FE2E25F6F4006AB3B0 /* librust_lib_intiface_central_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = librust_lib_intiface_central_static.a;
+			remoteRef = C1E979FD2E25F6F4006AB3B0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -434,10 +432,10 @@
 			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
-		421C9CE22AE0C23A0034A4E4 /* PBXTargetDependency */ = {
+		C1D457FE2E261A4C00CFBB0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "intiface_engine_flutter_bridge-cdylib";
-			targetProxy = 421C9CE12AE0C23A0034A4E4 /* PBXContainerItemProxy */;
+			name = "rust_lib_intiface_central.dylib (cdylib)";
+			targetProxy = C1D457FD2E261A4C00CFBB0F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
