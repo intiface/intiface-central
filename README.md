@@ -23,6 +23,7 @@ For developers, it allows their application to connect to and control sex toys, 
     support coming soon.
 - **Linux:**
   - **Ubuntu 20.04/22.04:** Use the [latest github release](https://intiface.com/central)
+    - Execute `run_intiface_central`, or use the provided `.desktop` launcher
   - **Arch:** [Use the intiface-central-bin package in AUR](https://aur.archlinux.org/packages/intiface-central-bin) (Maintained by community)
   - **Alpine:** [Use the intiface-central package in the Alpine repo](https://pkgs.alpinelinux.org/package/edge/testing/x86_64/intiface-central)
   - **Steam Deck:** [Steam](https://store.steampowered.com/app/2273160/Intiface_Central/) support
