@@ -1,3 +1,10 @@
+# 1.1.8 (2025/09/06)
+
+## Features
+
+- Update to Buttplug 9.0.9/Intiface Engine 3.0.9
+  - Tons of device updates (Kiiroo Keon Wifi, etc)
+
 # 1.1.7 (2025/04/25)
 
 ## Features
