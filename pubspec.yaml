@@ -41,8 +41,8 @@ dependencies:
   plugin_platform_interface: ^2.1.6
   rxdart: ^0.27.7
   screen_retriever: ^0.1.9
-  sentry_flutter: ^8.14.2
-  sentry: ^8.14.2
+  sentry_flutter: ^9.6.0
+  sentry: ^9.6.0
   settings_ui: ^2.0.2
   shared_preferences: ^2.2.2
   tuple: ^2.0.2
