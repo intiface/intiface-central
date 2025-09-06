@@ -13,7 +13,7 @@ exclude = [".vscode/**"]
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-flutter_rust_bridge = { version = "=2.10.0", features = ["uuid"] }
+flutter_rust_bridge = { version = "=2.11.1", features = ["uuid"] }
 buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
 buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
 buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
