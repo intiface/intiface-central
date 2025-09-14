@@ -29,7 +29,6 @@ pub use intiface_engine::{EngineOptionsExternal, IntifaceEngine, IntifaceMessage
 static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
 lazy_static! {
   static ref RUNTIME: Arc<Mutex<Option<Runtime>>> = Arc::new(Mutex::new(None));
-  static ref LOGGER: Arc<Mutex<Option<FlutterTracingWriter>>> = Arc::new(Mutex::new(None));
   static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> =
     Arc::new(broadcast::channel(255).0);
