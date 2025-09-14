@@ -29,7 +29,7 @@ dependencies:
   flutter_spinkit: ^5.2.0
   github: ^9.20.0
   intl: ^0.18.1
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   loggy: ^2.0.3
   markdown: ^7.1.1
   network_info_plus: ^4.1.0

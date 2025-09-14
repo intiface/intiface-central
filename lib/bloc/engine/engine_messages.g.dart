@@ -8,7 +8,9 @@ part of 'engine_messages.dart';
 
 RequestEngineVersion _$RequestEngineVersionFromJson(
   Map<String, dynamic> json,
-) => RequestEngineVersion()..expectedVersion = json['expected_version'] as int;
+) =>
+    RequestEngineVersion()
+      ..expectedVersion = (json['expected_version'] as num).toInt();
 
 Map<String, dynamic> _$RequestEngineVersionToJson(
   RequestEngineVersion instance,
@@ -29,19 +31,11 @@ IntifaceMessage _$IntifaceMessageFromJson(Map<String, dynamic> json) =>
           ? null
           : Stop.fromJson(json['Stop'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$IntifaceMessageToJson(IntifaceMessage instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('RequestEngineVersion', instance.requestEngineVersion?.toJson());
-  writeNotNull('Stop', instance.stop?.toJson());
-  return val;
-}
+Map<String, dynamic> _$IntifaceMessageToJson(IntifaceMessage instance) =>
+    <String, dynamic>{
+      'RequestEngineVersion': ?instance.requestEngineVersion?.toJson(),
+      'Stop': ?instance.stop?.toJson(),
+    };
 
 EngineVersion _$EngineVersionFromJson(Map<String, dynamic> json) =>
     EngineVersion()..version = json['version'] as String;
@@ -152,26 +146,16 @@ _$SerializableUserConfigDeviceIdentifierFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SerializableUserConfigDeviceIdentifierToJson(
   SerializableUserConfigDeviceIdentifier instance,
-) {
-  final val = <String, dynamic>{
-    'address': instance.address,
-    'protocol': instance.protocol,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('identifier', instance.identifier);
-  return val;
-}
+) => <String, dynamic>{
+  'address': instance.address,
+  'protocol': instance.protocol,
+  'identifier': ?instance.identifier,
+};
 
 DeviceConnected _$DeviceConnectedFromJson(Map<String, dynamic> json) =>
     DeviceConnected(
       name: json['name'] as String,
-      index: json['index'] as int,
+      index: (json['index'] as num).toInt(),
       identifier: SerializableUserConfigDeviceIdentifier.fromJson(
         json['identifier'] as Map<String, dynamic>,
       ),
@@ -187,7 +171,7 @@ Map<String, dynamic> _$DeviceConnectedToJson(DeviceConnected instance) =>
     };
 
 DeviceDisconnected _$DeviceDisconnectedFromJson(Map<String, dynamic> json) =>
-    DeviceDisconnected()..index = json['index'] as int;
+    DeviceDisconnected()..index = (json['index'] as num).toInt();
 
 Map<String, dynamic> _$DeviceDisconnectedToJson(DeviceDisconnected instance) =>
     <String, dynamic>{'index': instance.index};
