@@ -446,6 +446,7 @@ dependencies = [
  "async-stream",
  "buttplug_derive",
  "cfg-if",
+ "derive_builder",
  "displaydoc",
  "futures",
  "futures-util",

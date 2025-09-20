@@ -6,24 +6,6 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-enum FeatureType {
-  unknown,
-  vibrate,
-  rotate,
-  oscillate,
-  constrict,
-  spray,
-  position,
-  battery,
-  rssi,
-  button,
-  pressure,
-  rotateWithDirection,
-  positionWithDuration,
-  heater,
-  led,
-}
-
 enum InputCommandType { read, subscribe, unsubscribe }
 
 enum InputType { unknown, battery, rssi, button, pressure }

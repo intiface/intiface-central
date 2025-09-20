@@ -4,16 +4,14 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-import 'enums.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `hash`, `into`, `into`, `into`, `into`
-// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `feature_uuid`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `hash`, `into`, `into`
 
 Future<void> updateUserConfig({
   required ExposedUserDeviceIdentifier identifier,
-  required ExposedDeviceDefinition config,
+  required ExposedServerDeviceDefinition config,
 }) => RustLib.instance.api.crateApiDeviceConfigUpdateUserConfig(
   identifier: identifier,
   config: config,
@@ -28,41 +26,68 @@ Future<void> removeUserConfig({
 Future<String> getUserConfigStr() =>
     RustLib.instance.api.crateApiDeviceConfigGetUserConfigStr();
 
-Future<Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition>>
-getUserDeviceDefinitions() =>
-    RustLib.instance.api.crateApiDeviceConfigGetUserDeviceDefinitions();
+Future<Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>>
+getDeviceDefinitions() =>
+    RustLib.instance.api.crateApiDeviceConfigGetDeviceDefinitions();
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedDeviceDefinition>>
-abstract class ExposedDeviceDefinition implements RustOpaqueInterface {
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>>
+abstract class ExposedRangeWithLimit implements RustOpaqueInterface {}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>
+abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
+  bool get allow;
+
+  bool get deny;
+
+  String? get displayName;
+
+  List<ExposedServerDeviceFeature> get features;
+
   UuidValue get id;
 
+  int get index;
+
+  int? get messageGapMs;
+
   String get name;
-
-  List<ExposedFeatureOutput> outputs();
-
-  void setUserConfig({required ExposedUserDeviceCustomization config});
-
-  void updateOutput({required ExposedFeatureOutput userOutput});
-
-  ExposedUserDeviceCustomization get userConfig;
 }
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedFeatureOutput>>
-abstract class ExposedFeatureOutput implements RustOpaqueInterface {
-  String get description;
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeature>>
+abstract class ExposedServerDeviceFeature implements RustOpaqueInterface {
+  ExposedServerDeviceFeatureInput? get input;
 
-  int get featureIndex;
-
-  FeatureType get featureType;
-
-  OutputType get outputType;
-
-  void setStepLimit({required (int, int) limit});
-
-  (int, int) get stepLimit;
-
-  (int, int) get stepRange;
+  ExposedServerDeviceFeatureOutput? get output;
 }
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureInput>>
+abstract class ExposedServerDeviceFeatureInput implements RustOpaqueInterface {}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutput>>
+abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
+  ExposedServerDeviceFeatureOutputProperties? get constrict;
+
+  ExposedServerDeviceFeatureOutputProperties? get heater;
+
+  ExposedServerDeviceFeatureOutputProperties? get led;
+
+  ExposedServerDeviceFeatureOutputProperties? get oscillate;
+
+  ExposedServerDeviceFeatureOutputProperties? get position;
+
+  ExposedServerDeviceFeatureOutputProperties? get positionWithDuration;
+
+  ExposedServerDeviceFeatureOutputProperties? get rotate;
+
+  ExposedServerDeviceFeatureOutputProperties? get rotateWithDirection;
+
+  ExposedServerDeviceFeatureOutputProperties? get spray;
+
+  ExposedServerDeviceFeatureOutputProperties? get vibrate;
+}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutputProperties>>
+abstract class ExposedServerDeviceFeatureOutputProperties
+    implements RustOpaqueInterface {}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>
 abstract class ExposedUserDeviceIdentifier implements RustOpaqueInterface {
@@ -81,39 +106,4 @@ abstract class ExposedUserDeviceIdentifier implements RustOpaqueInterface {
   );
 
   String get protocol;
-}
-
-class ExposedUserDeviceCustomization {
-  final String? displayName;
-  final bool allow;
-  final bool deny;
-  final int index;
-  final int? messageGapMs;
-
-  const ExposedUserDeviceCustomization({
-    this.displayName,
-    required this.allow,
-    required this.deny,
-    required this.index,
-    this.messageGapMs,
-  });
-
-  @override
-  int get hashCode =>
-      displayName.hashCode ^
-      allow.hashCode ^
-      deny.hashCode ^
-      index.hashCode ^
-      messageGapMs.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ExposedUserDeviceCustomization &&
-          runtimeType == other.runtimeType &&
-          displayName == other.displayName &&
-          allow == other.allow &&
-          deny == other.deny &&
-          index == other.index &&
-          messageGapMs == other.messageGapMs;
 }

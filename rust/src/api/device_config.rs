@@ -1,7 +1,6 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
-pub use buttplug_core::message::{FeatureType, OutputType};
-use buttplug_server_device_config::{DeviceDefinition, UserDeviceCustomization, UserDeviceIdentifier, ServerUserDeviceFeatureOutput, save_user_config};
+use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputPositionWithDurationProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
@@ -11,9 +10,10 @@ use crate::api::DEVICE_CONFIG_MANAGER;
 // Identifiers
 //
 
-#[frb(unignore, ignore_all)]
+#[frb(unignore, ignore_all, opaque)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExposedUserDeviceIdentifier {
+  #[frb(ignore)]
   identifier: UserDeviceIdentifier
 }
 
@@ -61,179 +61,248 @@ impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
 // Definitions
 //
 
-#[frb(unignore, ignore_all)]
+#[frb(unignore, ignore_all, opaque)]
 #[derive(Debug, Clone)]
-pub struct ExposedDeviceDefinition {
-  definition: DeviceDefinition,
+pub struct ExposedServerDeviceDefinition {
+  #[frb(ignore)]
+  definition: ServerDeviceDefinition,
 }
 
-impl From<DeviceDefinition> for ExposedDeviceDefinition {
-  fn from(value: DeviceDefinition) -> Self {
+impl From<ServerDeviceDefinition> for ExposedServerDeviceDefinition {
+  fn from(value: ServerDeviceDefinition) -> Self {
     Self {
       definition: value
     }
   }
 }
 
-impl Into<DeviceDefinition> for ExposedDeviceDefinition {
-  fn into(self) -> DeviceDefinition {
+impl Into<ServerDeviceDefinition> for ExposedServerDeviceDefinition {
+  fn into(self) -> ServerDeviceDefinition {
     self.definition
   }
 }
 
-impl ExposedDeviceDefinition {
+impl ExposedServerDeviceDefinition {
   #[frb(sync, getter)]
   pub fn id(&self) -> Uuid {
-    self.definition.user_device().id()
+    self.definition.id()
   }
 
   #[frb(sync, getter)]
   pub fn name(&self) -> String {
-    self.definition.base_device().name().to_owned()
+    self.definition.name().to_owned()
   }
 
   #[frb(sync, getter)]
-  pub fn user_config(&self) -> ExposedUserDeviceCustomization {
-    self.definition.user_device().user_config().clone().into()
+  pub fn message_gap_ms(&self) -> Option<u32> {
+    self.definition.message_gap_ms().clone()
   }
 
-  #[frb(sync)]
-  pub fn set_user_config(&mut self, config: ExposedUserDeviceCustomization) {
-    *self.definition.user_device_mut().user_config_mut() = config.into();
+  #[frb(sync, getter)]
+  pub fn display_name(&self) -> Option<String> {
+    self.definition.display_name().clone()
   }
 
-  #[frb(sync)]
-  pub fn update_output(&mut self, user_output: ExposedFeatureOutput) {
-    let feature_id = user_output.feature_uuid_;
-    let output_type = user_output.output_type();
-    let rust_type = user_output.into();
-    self.definition.update_user_output(feature_id, output_type, rust_type);
+  #[frb(sync, getter)]
+  pub fn allow(&self) -> bool {
+    self.definition.allow()
   }
 
-  #[frb(sync)]
-  pub fn outputs(&self) -> Vec<ExposedFeatureOutput> {
-    let mut outputs = Vec::new();
-    for (index, feature) in self.definition.features().iter().enumerate() {
-      if let Some(output_map) = feature.output() {
-        for (output_type, output) in output_map {
-          outputs.push(ExposedFeatureOutput {
-            feature_index_: index as u32,
-            feature_uuid_: feature.id(),
-            feature_type_: feature.feature_type(),
-            description_: feature.description().clone(),
-            output_type_: *output_type,
-            step_range_: (*output.base_feature().step_range().start(), *output.base_feature().step_range().end()),
-            step_limit_: (*output.step_limit().start(), *output.step_limit().end())
-          });
-        }
-      }
-    }
-    outputs
+  #[frb(sync, getter)]
+  pub fn deny(&self) -> bool {
+    self.definition.deny()
+  }
+
+  #[frb(sync, getter)]
+  pub fn index(&self) -> u32 {
+    self.definition.index()
+  }
+
+  #[frb(sync, getter)]
+  pub fn features(&self) -> Vec<ExposedServerDeviceFeature> {
+    self.definition.features().iter().map(|x| x.into()).collect()
   }
 }
 
 #[frb(unignore, opaque, ignore_all)]
 #[derive(Debug, Clone)]
-pub struct ExposedFeatureOutput {
-  feature_index_: u32,
-  feature_uuid_: Uuid,
-  feature_type_: FeatureType,
-  description_: String,
-  output_type_: OutputType,
-  step_range_: (u32, u32),
-  step_limit_: (u32, u32),
+pub struct ExposedServerDeviceFeature {
+  feature: ServerDeviceFeature
 }
 
-impl ExposedFeatureOutput {
+impl ExposedServerDeviceFeature {
   #[frb(sync, getter)]
-  pub fn feature_index(&self) -> u32 {
-    self.feature_index_
-  }
-
-  #[frb(ignore)]
-  pub fn feature_uuid(&self) -> Uuid {
-    self.feature_uuid_
+  pub fn output(&self) -> Option<ExposedServerDeviceFeatureOutput> {
+    self.feature.output().clone().map(|x| x.into())
   }
 
   #[frb(sync, getter)]
-  pub fn feature_type(&self) -> FeatureType {
-    self.feature_type_
-  }
-
-  #[frb(sync, getter)]
-  pub fn description(&self) -> String {
-    self.description_.clone()
-  }
-
-  #[frb(sync, getter)]
-  pub fn output_type(&self) -> OutputType {
-    self.output_type_
-  }
-
-  #[frb(sync, getter)]
-  pub fn step_range(&self) -> (u32, u32) {
-    self.step_range_.clone()
-  }
-
-  #[frb(sync, getter)]
-  pub fn step_limit(&self) -> (u32, u32) {
-    self.step_limit_.clone()
-  }
-
-  #[frb(sync)]
-  pub fn set_step_limit(&mut self, limit: (u32, u32)) {
-    self.step_limit_ = limit;
+  pub fn input(&self) -> Option<ExposedServerDeviceFeatureInput> {
+    self.feature.input().clone().map(|x| x.into())
   }
 }
 
-impl Into<ServerUserDeviceFeatureOutput> for ExposedFeatureOutput {
-  fn into(self) -> ServerUserDeviceFeatureOutput {
-    ServerUserDeviceFeatureOutput::new(Some(RangeInclusive::<u32>::new(self.step_limit_.0, self.step_limit_.1)), None, None)
-  }
-}
-
-#[frb(unignore)]
-#[derive(Debug, Clone)]
-pub struct ExposedUserDeviceCustomization {
-  pub display_name: Option<String>,
-  pub allow: bool,
-  pub deny: bool,
-  pub index: u32,
-  pub message_gap_ms: Option<u32>,
-}
-
-impl From<UserDeviceCustomization> for ExposedUserDeviceCustomization {
-  fn from(value: UserDeviceCustomization) -> Self {
+impl From<&ServerDeviceFeature> for ExposedServerDeviceFeature {
+  fn from(value: &ServerDeviceFeature) -> Self {
     Self {
-      display_name: value.display_name().clone(),
-      allow: value.allow(),
-      deny: value.deny(),
-      index: value.index(),
-      message_gap_ms: value.message_gap_ms()
+      feature: value.clone()
     }
   }
 }
 
-impl Into<UserDeviceCustomization> for ExposedUserDeviceCustomization {
-  fn into(self) -> UserDeviceCustomization {
-    UserDeviceCustomization::new(
-      &self.display_name.clone(),
-      self.allow,
-      self.deny,
-      self.index,
-      self.message_gap_ms
-    )
+#[frb(unignore, opaque, ignore_all)]
+#[derive(Debug, Clone)]
+pub struct ExposedServerDeviceFeatureOutput {
+  output: ServerDeviceFeatureOutput
+}
+
+impl ExposedServerDeviceFeatureOutput {
+  #[frb(sync, getter)]
+  pub fn vibrate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.vibrate().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn rotate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.rotate().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn rotate_with_direction(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.rotate_with_direction().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn oscillate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.oscillate().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn constrict(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.constrict().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn heater(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.heater().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn led(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.led().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn position(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.position().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn position_with_duration(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.position().clone().map(|x| x.into())
+  }
+
+  #[frb(sync, getter)]
+  pub fn spray(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.spray().clone().map(|x| x.into())
+  }
+}
+
+impl From<ServerDeviceFeatureOutput> for ExposedServerDeviceFeatureOutput {
+  fn from(value: ServerDeviceFeatureOutput) -> Self {
+    Self {
+      output: value.clone()
+    }
+  }
+}
+
+#[frb(unignore, opaque, ignore_all)]
+#[derive(Debug, Clone)]
+pub struct ExposedServerDeviceFeatureInput {
+  input: ServerDeviceFeatureInput
+}
+
+impl ExposedServerDeviceFeatureInput {
+}
+
+impl From<ServerDeviceFeatureInput> for ExposedServerDeviceFeatureInput {
+  fn from(value: ServerDeviceFeatureInput) -> Self {
+    Self {
+      input: value.clone()
+    }
+  }
+}
+
+#[frb(unignore, opaque, ignore_all)]
+#[derive(Debug, Clone)]
+pub struct ExposedServerDeviceFeatureOutputProperties {
+  value: Option<ExposedRangeWithLimit>,
+  position: Option<ExposedRangeWithLimit>,
+  duration: Option<ExposedRangeWithLimit>,
+  disabled: bool,
+  reverse_position: bool,
+}
+
+impl From<ServerDeviceFeatureOutputValueProperties> for ExposedServerDeviceFeatureOutputProperties {
+  fn from(props: ServerDeviceFeatureOutputValueProperties) -> Self {
+    Self {
+      value: Some(props.value().into()),
+      position: None,
+      duration: None,
+      disabled: props.disabled(),
+      reverse_position: false
+    }
+  }
+}
+
+impl From<ServerDeviceFeatureOutputPositionWithDurationProperties> for ExposedServerDeviceFeatureOutputProperties {
+  fn from(props: ServerDeviceFeatureOutputPositionWithDurationProperties) -> Self {
+    Self {
+      value: None,
+      position: Some(props.position().into()),
+      duration: Some(props.duration().into()),
+      disabled: props.disabled(),
+      reverse_position: props.reverse_position()
+    }
+  }
+}
+
+impl From<ServerDeviceFeatureOutputPositionProperties> for ExposedServerDeviceFeatureOutputProperties {
+  fn from(props: ServerDeviceFeatureOutputPositionProperties) -> Self {
+    Self {
+      value: None,
+      position: Some(props.position().into()),
+      duration: None,
+      disabled: props.disabled(),
+      reverse_position: props.reverse_position()
+    }
+  }
+}
+
+#[frb(unignore, opaque, ignore_all)]
+#[derive(Debug, Clone)]
+pub struct ExposedRangeWithLimit {
+  base: RangeInclusive<i32>,
+  user: Option<RangeInclusive<u32>>
+}
+
+impl From<&RangeWithLimit> for ExposedRangeWithLimit {
+  fn from(value: &RangeWithLimit) -> Self {
+    Self {
+      base: value.base().clone(),
+      user: value.user().clone()
+    }
   }
 }
 
 pub fn update_user_config(
   identifier: ExposedUserDeviceIdentifier,
-  config: ExposedDeviceDefinition,
+  config: ExposedServerDeviceDefinition,
 ) {
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
-  dcm.add_user_device_definition(&identifier.into(), &config.into());
+  //dcm.add_user_device_definition(&identifier, &config);
 }
 
 pub fn remove_user_config(identifier: ExposedUserDeviceIdentifier) {
@@ -250,8 +319,8 @@ pub fn get_user_config_str() -> String {
   save_user_config(&dcm).unwrap()
 }
 
-pub fn get_user_device_definitions(
-) -> HashMap<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> {
+pub fn get_device_definitions(
+) -> HashMap<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> {
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
