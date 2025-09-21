@@ -24,7 +24,7 @@ class DeviceConfigWidget extends StatelessWidget {
               builder: (context, state) {
                 List<AbstractSettingsSection> tiles = [];
                 var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
-                ExposedDeviceDefinition config;
+                ExposedServerDeviceDefinition config;
                 try {
                   config = userDeviceConfigCubit.configs[identifier]!;
                 } catch (e) {
@@ -39,10 +39,10 @@ class DeviceConfigWidget extends StatelessWidget {
                       SettingsTile.navigation(
                         enabled: !engineIsRunning,
                         title: const Text("Display Name"),
-                        value: Text(config.userConfig.displayName ?? ""),
+                        value: Text(config.displayName ?? ""),
                         onPressed: (context) {
                           final TextEditingController nameController = TextEditingController(
-                            text: config.userConfig.displayName ?? "",
+                            text: config.displayName ?? "",
                           );
                           var nameField = TextField(
                             controller: nameController,
@@ -82,7 +82,7 @@ class DeviceConfigWidget extends StatelessWidget {
                       ),
                       SettingsTile.switchTile(
                         enabled: !engineIsRunning,
-                        initialValue: !config.userConfig.deny,
+                        initialValue: !config.deny,
                         onToggle: (value) async {
                           await userDeviceConfigCubit.updateDeviceDeny(identifier, config, !value);
                         },

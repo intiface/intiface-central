@@ -11,7 +11,6 @@ import 'package:intiface_central/widget/device_control_widget.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
-import 'package:loggy/loggy.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
@@ -40,10 +39,10 @@ class DevicePage extends StatelessWidget {
                   for (var deviceCubit in deviceBloc.devices) {
                     var device = deviceCubit.device!;
                     connectedIndexes.add(device.index);
-                    MapEntry<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> deviceEntry;
+                    MapEntry<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> deviceEntry;
                     try {
                       deviceEntry = userDeviceConfigCubit.configs.entries.firstWhere(
-                        (element) => element.value.userConfig.index == device.index,
+                        (element) => element.value.index == device.index,
                       );
                     } catch (e) {
                       continue;
@@ -92,10 +91,10 @@ class DevicePage extends StatelessWidget {
 
                 deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
                 for (var deviceEntry in userDeviceConfigCubit.configs.entries) {
-                  if (connectedIndexes.contains(deviceEntry.value.userConfig.index)) {
+                  if (connectedIndexes.contains(deviceEntry.value.index)) {
                     continue;
                   }
-                  var expansionName = "device-settings-${deviceEntry.value.userConfig.index}";
+                  var expansionName = "device-settings-${deviceEntry.value.index}";
                   var identifierString =
                       "${deviceEntry.key.protocol}-${deviceEntry.key.identifier}-${deviceEntry.key.address}";
                   deviceWidgets.add(
@@ -117,8 +116,8 @@ class DevicePage extends StatelessWidget {
                               headerBuilder: (BuildContext context, bool isExpanded) {
                                 return ListTile(
                                   title: Text(
-                                    deviceEntry.value.userConfig.displayName != null
-                                        ? "${deviceEntry.value.userConfig.displayName} (${deviceEntry.value.name})"
+                                    deviceEntry.value.displayName != null
+                                        ? "${deviceEntry.value.displayName} (${deviceEntry.value.name})"
                                         : deviceEntry.value.name,
                                   ),
                                   subtitle: Text(identifierString),
