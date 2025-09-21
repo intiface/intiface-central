@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:intiface_central/src/rust/third_party/buttplug_server_device_config.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/specifiers.dart';
@@ -19,8 +20,8 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   }
 */
 
-  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> _configs = {};
-  Map<ExposedUserDeviceIdentifier, ExposedDeviceDefinition> get configs => _configs;
+  Map<UserDeviceIdentifier, ExposedDeviceDefinition> _configs = {};
+  Map<UserDeviceIdentifier, ExposedDeviceDefinition> get configs => _configs;
 
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];

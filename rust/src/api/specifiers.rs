@@ -1,5 +1,6 @@
 use std::sync::Arc;
-use super::DEVICE_CONFIG_MANAGER;
+use crate::api::device_config_manager::DEVICE_CONFIG_MANAGER;
+
 
 use buttplug_server_device_config::{ProtocolCommunicationSpecifier, SerialSpecifier, WebsocketSpecifier, load_protocol_configs}; 
 use buttplug_server::device::protocol_impl::get_default_protocol_map;

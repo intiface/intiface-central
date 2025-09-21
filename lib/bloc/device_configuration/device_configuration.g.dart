@@ -9,8 +9,8 @@ part of 'device_configuration.dart';
 DeviceConfigFileVersion _$DeviceConfigFileVersionFromJson(
   Map<String, dynamic> json,
 ) => DeviceConfigFileVersion()
-  ..major = json['major'] as int
-  ..minor = json['minor'] as int;
+  ..major = (json['major'] as num).toInt()
+  ..minor = (json['minor'] as num).toInt();
 
 Map<String, dynamic> _$DeviceConfigFileVersionToJson(
   DeviceConfigFileVersion instance,

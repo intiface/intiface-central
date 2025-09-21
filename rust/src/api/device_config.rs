@@ -4,7 +4,7 @@ use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, Serv
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
-use crate::api::DEVICE_CONFIG_MANAGER;
+use crate::api::device_config_manager::DEVICE_CONFIG_MANAGER;
 
 //
 // Identifiers
@@ -153,6 +153,7 @@ impl From<&ServerDeviceFeature> for ExposedServerDeviceFeature {
 #[frb(unignore, opaque, ignore_all)]
 #[derive(Debug, Clone)]
 pub struct ExposedServerDeviceFeatureOutput {
+  #[ignore]
   output: ServerDeviceFeatureOutput
 }
 
@@ -219,6 +220,7 @@ impl From<ServerDeviceFeatureOutput> for ExposedServerDeviceFeatureOutput {
 #[frb(unignore, opaque, ignore_all)]
 #[derive(Debug, Clone)]
 pub struct ExposedServerDeviceFeatureInput {
+  #[ignore]
   input: ServerDeviceFeatureInput
 }
 
