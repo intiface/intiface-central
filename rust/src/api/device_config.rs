@@ -1,6 +1,6 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
-use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputPositionWithDurationProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
+use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputPositionWithDurationProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
@@ -102,15 +102,36 @@ impl ExposedServerDeviceDefinition {
   pub fn display_name(&self) -> Option<String> {
     self.definition.display_name().clone()
   }
+  
+  #[frb(sync, setter)]
+  pub fn set_display_name(&mut self, display_name: Option<String>) {
+    let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);
+    builder.display_name(&display_name);
+    self.definition = builder.finish();
+  }
 
   #[frb(sync, getter)]
   pub fn allow(&self) -> bool {
     self.definition.allow()
   }
 
+   #[frb(sync, setter)]
+  pub fn set_allow(&mut self, allow: bool) {
+    let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);
+    builder.allow(allow);
+    self.definition = builder.finish();
+  }
+
   #[frb(sync, getter)]
   pub fn deny(&self) -> bool {
     self.definition.deny()
+  }
+
+  #[frb(sync, setter)]
+  pub fn set_deny(&mut self, deny: bool) {
+    let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);
+    builder.deny(deny);
+    self.definition = builder.finish();
   }
 
   #[frb(sync, getter)]
@@ -304,7 +325,7 @@ pub fn update_user_config(
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
-  //dcm.add_user_device_definition(&identifier, &config);
+  dcm.add_user_device_definition(&identifier.into(), &config.into());
 }
 
 pub fn remove_user_config(identifier: ExposedUserDeviceIdentifier) {

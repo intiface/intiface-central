@@ -50,6 +50,12 @@ abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
   int? get messageGapMs;
 
   String get name;
+
+  set allow(bool allow);
+
+  set deny(bool deny);
+
+  set displayName(String? displayName);
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeature>>

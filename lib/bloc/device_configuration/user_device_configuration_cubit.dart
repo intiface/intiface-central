@@ -114,50 +114,32 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> updateDeviceAllow(
     ExposedUserDeviceIdentifier deviceIdentifier,
-    ExposedDeviceDefinition def,
+    ExposedServerDeviceDefinition def,
     bool allow,
   ) async {
-    var newUserConfig = ExposedUserDeviceCustomization(
-      allow: allow,
-      deny: def.userConfig.deny,
-      index: def.userConfig.index,
-      displayName: def.userConfig.displayName,
-    );
-    def.setUserConfig(config: newUserConfig);
+    def.allow = allow;
     await updateDefinition(deviceIdentifier, def);
   }
 
   Future<void> updateDeviceDeny(
     ExposedUserDeviceIdentifier deviceIdentifier,
-    ExposedDeviceDefinition def,
+    ExposedServerDeviceDefinition def,
     bool deny,
   ) async {
-    var newUserConfig = ExposedUserDeviceCustomization(
-      allow: def.userConfig.allow,
-      deny: deny,
-      index: def.userConfig.index,
-      displayName: def.userConfig.displayName,
-    );
-    def.setUserConfig(config: newUserConfig);
+    def.deny = deny;
     await updateDefinition(deviceIdentifier, def);
   }
 
   Future<void> updateDisplayName(
     ExposedUserDeviceIdentifier deviceIdentifier,
-    ExposedDeviceDefinition def,
+    ExposedServerDeviceDefinition def,
     String displayName,
   ) async {
-    var newUserConfig = ExposedUserDeviceCustomization(
-      allow: def.userConfig.allow,
-      deny: def.userConfig.deny,
-      index: def.userConfig.index,
-      displayName: displayName,
-    );
-    def.setUserConfig(config: newUserConfig);
+    def.displayName = displayName;
     await updateDefinition(deviceIdentifier, def);
   }
 
-  Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedDeviceDefinition def) async {
+  Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedServerDeviceDefinition def) async {
     await updateUserConfig(identifier: deviceIdentifier, config: def);
     await _saveConfigFile();
   }
