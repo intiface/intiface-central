@@ -99,8 +99,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExposedRangeWithLimit
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    dynamic raw,
+  );
+
+  @protected
   ExposedServerDeviceDefinition
   dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedServerDeviceFeature
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedServerDeviceFeatureOutputProperties
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedRangeWithLimit
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
     dynamic raw,
   );
 
@@ -119,6 +143,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   ExposedServerDeviceFeatureOutput
   dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedServerDeviceFeatureOutputProperties
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
     dynamic raw,
   );
 
@@ -189,6 +219,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  ExposedRangeWithLimit
+  dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    dynamic raw,
+  );
+
+  @protected
   ExposedServerDeviceFeatureInput
   dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     dynamic raw,
@@ -210,6 +246,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   EngineOptionsExternal dco_decode_box_autoadd_engine_options_external(
     dynamic raw,
   );
+
+  @protected
+  (int, int) dco_decode_box_autoadd_record_u_32_u_32(dynamic raw);
 
   @protected
   int dco_decode_box_autoadd_u_16(dynamic raw);
@@ -265,6 +304,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  ExposedRangeWithLimit?
+  dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    dynamic raw,
+  );
+
+  @protected
   ExposedServerDeviceFeatureInput?
   dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     dynamic raw,
@@ -298,12 +343,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  (int, int) dco_decode_record_i_32_i_32(dynamic raw);
+
+  @protected
   (String, ExposedSerialSpecifier)
   dco_decode_record_string_exposed_serial_specifier(dynamic raw);
 
   @protected
   (String, ExposedWebsocketSpecifier)
   dco_decode_record_string_exposed_websocket_specifier(dynamic raw);
+
+  @protected
+  (int, int) dco_decode_record_u_32_u_32(dynamic raw);
 
   @protected
   int dco_decode_u_16(dynamic raw);
@@ -366,8 +417,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExposedRangeWithLimit
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExposedServerDeviceDefinition
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedServerDeviceFeature
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedServerDeviceFeatureOutputProperties
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedRangeWithLimit
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
     SseDeserializer deserializer,
   );
 
@@ -386,6 +461,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   ExposedServerDeviceFeatureOutput
   sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedServerDeviceFeatureOutputProperties
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
     SseDeserializer deserializer,
   );
 
@@ -458,6 +539,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  ExposedRangeWithLimit
+  sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExposedServerDeviceFeatureInput
   sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     SseDeserializer deserializer,
@@ -477,6 +564,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   EngineOptionsExternal sse_decode_box_autoadd_engine_options_external(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  (int, int) sse_decode_box_autoadd_record_u_32_u_32(
     SseDeserializer deserializer,
   );
 
@@ -544,6 +636,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
+  ExposedRangeWithLimit?
+  sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExposedServerDeviceFeatureInput?
   sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     SseDeserializer deserializer,
@@ -577,6 +675,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  (int, int) sse_decode_record_i_32_i_32(SseDeserializer deserializer);
+
+  @protected
   (String, ExposedSerialSpecifier)
   sse_decode_record_string_exposed_serial_specifier(
     SseDeserializer deserializer,
@@ -587,6 +688,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   sse_decode_record_string_exposed_websocket_specifier(
     SseDeserializer deserializer,
   );
+
+  @protected
+  (int, int) sse_decode_record_u_32_u_32(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_16(SseDeserializer deserializer);
@@ -660,8 +764,36 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
     ExposedServerDeviceDefinition self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit self,
     SseSerializer serializer,
   );
 
@@ -683,6 +815,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
     ExposedServerDeviceFeatureOutput self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties self,
     SseSerializer serializer,
   );
 
@@ -766,6 +905,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     ExposedServerDeviceFeatureInput self,
     SseSerializer serializer,
@@ -788,6 +934,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_engine_options_external(
     EngineOptionsExternal self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_record_u_32_u_32(
+    (int, int) self,
     SseSerializer serializer,
   );
 
@@ -867,6 +1019,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
     ExposedServerDeviceFeatureInput? self,
     SseSerializer serializer,
@@ -903,6 +1062,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_record_i_32_i_32((int, int) self, SseSerializer serializer);
+
+  @protected
   void sse_encode_record_string_exposed_serial_specifier(
     (String, ExposedSerialSpecifier) self,
     SseSerializer serializer,
@@ -913,6 +1075,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     (String, ExposedWebsocketSpecifier) self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_record_u_32_u_32((int, int) self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_16(int self, SseSerializer serializer);

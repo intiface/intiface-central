@@ -5,16 +5,91 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
+import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/util/debouncer.dart';
 import 'package:loggy/loggy.dart';
 
 class FeatureOutputConfigWidget extends StatelessWidget {
   final ExposedUserDeviceIdentifier _deviceIdentifier;
-  final ExposedDeviceDefinition _deviceDefinition;
+  final ExposedServerDeviceDefinition _deviceDefinition;
 
   const FeatureOutputConfigWidget({super.key, required deviceIdentifier, required deviceDefinition})
     : _deviceDefinition = deviceDefinition,
       _deviceIdentifier = deviceIdentifier;
+
+  void buildOutputValueTile(
+    bool engineIsRunning,
+    List<Widget> outputList,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+    Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
+  ) {
+    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    outputList.addAll([
+      ListTile(
+        subtitle: Text(
+          "$type - Step Range - Min: ${props.value!.base.$1} Max: ${props.value!.base.$2} Step Limit - Min: ${props.value!.user.$1} Max: ${props.value!.user.$2}",
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.value!.base.$2.toDouble(),
+          values: [props.value!.user.$1.floorToDouble(), props.value!.user.$2.floorToDouble()],
+          divisions: props.value!.base.$2,
+          onChanged: engineIsRunning
+              ? null
+              : ((value) async {
+                  if (value[0].toInt() == value[1].toInt()) {
+                    return;
+                  }
+                  var v = props.value!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.value = v;
+                  d.run(() async {
+                    await updateFunc(props);
+                  });
+                }),
+        ),
+      ),
+    ]);
+  }
+
+  void buildOutputPositionWithDurationTile(
+    bool engineIsRunning,
+    List<Widget> outputList,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+    Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
+  ) {
+    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    outputList.addAll([
+      ListTile(
+        subtitle: Text(
+          "$type - Step Range - Min: ${props.value!.base.$1} Max: ${props.value!.base.$2} Step Limit - Min: ${props.value!.user.$1} Max: ${props.value!.user.$2}",
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.value!.base.$2.toDouble(),
+          values: [props.value!.user.$1.floorToDouble(), props.value!.user.$2.floorToDouble()],
+          divisions: props.value!.base.$2,
+          onChanged: engineIsRunning
+              ? null
+              : ((value) async {
+                  if (value[0].toInt() == value[1].toInt()) {
+                    return;
+                  }
+                  var v = props.position!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.position = v;
+                  d.run(() async {
+                    await updateFunc(props);
+                  });
+                }),
+        ),
+      ),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,69 +101,51 @@ class FeatureOutputConfigWidget extends StatelessWidget {
           current is ClientConnectedState ||
           current is ClientDisconnectedState,
       builder: (context, EngineControlState state) {
+        logInfo("Rerendering");
         var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
         List<Widget> outputList = [];
-        for (var output in _deviceDefinition.outputs()) {
+        for (var feature in _deviceDefinition.features) {
+          outputList.addAll([ListTile(title: Text("Feature: ${feature.description} - ${feature.id}"))]);
           var userConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
-          if (output.outputType != OutputType.positionWithDuration) {
-            Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
-            outputList.addAll([
-              ListTile(
-                title: Text(
-                  "Feature: ${output.description.isEmpty ? output.featureType.name : "${output.description} - ${output.featureType.name}"}",
-                ),
-                subtitle: Text(
-                  "Step Range - Min: ${output.stepRange.$1} Max: ${output.stepRange.$2} Step Limit - Min: ${output.stepLimit.$1} Max: ${output.stepLimit.$2}",
-                ),
-              ),
-              BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
-                builder: (context, state) => MultiSlider(
-                  max: output.stepRange.$2.toDouble(),
-                  values: [output.stepLimit.$1.floorToDouble(), output.stepLimit.$2.floorToDouble()],
-                  divisions: output.stepRange.$2,
-                  onChanged: engineIsRunning
-                      ? null
-                      : ((value) async {
-                          if (value[0].toInt() == value[1].toInt()) {
-                            return;
-                          }
-                          output.setStepLimit(limit: (value[0].toInt(), value[1].toInt()));
-                          d.run(() async {
-                            _deviceDefinition.updateOutput(userOutput: output);
-                            await userConfigCubit.updateDefinition(_deviceIdentifier, _deviceDefinition);
-                          });
-                        }),
-                ),
-              ),
-            ]);
+          void rangeUpdate(newOutputProps) async {
+            _deviceDefinition.updateFeatureOutputProperties(props: newOutputProps);
+            await userConfigCubit.updateDefinition(_deviceIdentifier, _deviceDefinition);
           }
-          if (output.outputType == OutputType.positionWithDuration) {
-            outputList.addAll([
-              ListTile(
-                title: Text(
-                  "Feature: ${output.description.isEmpty ? output.featureType.name : "${output.description} - ${output.featureType.name}"}",
-                ),
-                subtitle: Text("Position Limit - Min: ${output.stepLimit.$1} Max: ${output.stepLimit.$2}"),
-              ),
-              BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
-                builder: (context, state) => MultiSlider(
-                  max: output.stepRange.$2.toDouble(),
-                  values: [output.stepLimit.$1.floorToDouble(), output.stepLimit.$2.floorToDouble()],
-                  divisions: output.stepRange.$2,
-                  onChanged: engineIsRunning
-                      ? null
-                      : ((value) async {
-                          if (value[0].toInt() == value[1].toInt()) {
-                            return;
-                          }
-                          output.setStepLimit(limit: (value[0].toInt(), value[1].toInt()));
-                          _deviceDefinition.updateOutput(userOutput: output);
-                          await userConfigCubit.updateDefinition(_deviceIdentifier, _deviceDefinition);
-                        }),
-                ),
-              ),
-            ]);
+
+          if (feature.output?.vibrate != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Vibrate", feature.output!.vibrate!, rangeUpdate);
           }
+          if (feature.output?.spray != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Rotate", feature.output!.rotate!, rangeUpdate);
+          }
+          if (feature.output?.oscillate != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Oscillate", feature.output!.oscillate!, rangeUpdate);
+          }
+          if (feature.output?.constrict != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Constrict", feature.output!.constrict!, rangeUpdate);
+          }
+          if (feature.output?.heater != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Heater", feature.output!.heater!, rangeUpdate);
+          }
+          if (feature.output?.led != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "LED", feature.output!.led!, rangeUpdate);
+          }
+          if (feature.output?.spray != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Spray", feature.output!.spray!, rangeUpdate);
+          }
+          if (feature.output?.position != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Position", feature.output!.position!, rangeUpdate);
+          }
+          if (feature.output?.positionWithDuration != null) {
+            buildOutputPositionWithDurationTile(
+              engineIsRunning,
+              outputList,
+              "PositionWithDuration",
+              feature.output!.positionWithDuration!,
+              rangeUpdate,
+            );
+          }
+          if (feature.input != null) {}
         }
         return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: outputList);
       },

@@ -6,7 +6,7 @@ description = "Rust-Flutter bridge for IntifaceEngine"
 license = "BSD-3-Clause"
 homepage = "http://intiface.com"
 readme = "README.md"
-edition = "2021"
+edition = "2024"
 exclude = [".vscode/**"]
 
 [lib]

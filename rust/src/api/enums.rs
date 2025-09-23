@@ -27,8 +27,6 @@ pub enum _OutputType {
   Vibrate,
   // Single Direction Rotation Speed
   Rotate,
-  // Two Direction Rotation Speed
-  RotateWithDirection,
   Oscillate,
   Constrict,
   Spray,

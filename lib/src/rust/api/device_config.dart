@@ -7,6 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
+// These functions are ignored because they are not marked as `pub`: `new_from_position_with_duration`, `new_from_position`, `new_from_value`, `new`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `hash`, `into`, `into`
 
 Future<void> updateUserConfig({
@@ -31,7 +32,13 @@ getDeviceDefinitions() =>
     RustLib.instance.api.crateApiDeviceConfigGetDeviceDefinitions();
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>>
-abstract class ExposedRangeWithLimit implements RustOpaqueInterface {}
+abstract class ExposedRangeWithLimit implements RustOpaqueInterface {
+  (int, int) get base;
+
+  set user((int, int) range);
+
+  (int, int) get user;
+}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>
 abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
@@ -56,13 +63,25 @@ abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
   set deny(bool deny);
 
   set displayName(String? displayName);
+
+  void updateFeature({required ExposedServerDeviceFeature feature});
+
+  void updateFeatureOutputProperties({
+    required ExposedServerDeviceFeatureOutputProperties props,
+  });
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeature>>
 abstract class ExposedServerDeviceFeature implements RustOpaqueInterface {
+  String get description;
+
+  UuidValue get id;
+
   ExposedServerDeviceFeatureInput? get input;
 
   ExposedServerDeviceFeatureOutput? get output;
+
+  set output(ExposedServerDeviceFeatureOutput? output);
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureInput>>
@@ -84,8 +103,6 @@ abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
 
   ExposedServerDeviceFeatureOutputProperties? get rotate;
 
-  ExposedServerDeviceFeatureOutputProperties? get rotateWithDirection;
-
   ExposedServerDeviceFeatureOutputProperties? get spray;
 
   ExposedServerDeviceFeatureOutputProperties? get vibrate;
@@ -93,7 +110,27 @@ abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutputProperties>>
 abstract class ExposedServerDeviceFeatureOutputProperties
-    implements RustOpaqueInterface {}
+    implements RustOpaqueInterface {
+  bool get disabled;
+
+  ExposedRangeWithLimit? get duration;
+
+  ExposedRangeWithLimit? get position;
+
+  bool get reversePosition;
+
+  set disabled(bool v);
+
+  set duration(ExposedRangeWithLimit? duration);
+
+  set position(ExposedRangeWithLimit? position);
+
+  set reversePosition(bool v);
+
+  set value(ExposedRangeWithLimit? value);
+
+  ExposedRangeWithLimit? get value;
+}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>
 abstract class ExposedUserDeviceIdentifier implements RustOpaqueInterface {

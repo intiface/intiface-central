@@ -18,10 +18,12 @@ lazy_static! {
 
 pub fn setup_logging(sink: StreamSink<String>) {
   // Default log to debug, we'll filter in UI if we need it.
-  std::env::set_var(
-    "RUST_LOG",
-    format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
-  );
+  unsafe {
+    std::env::set_var(
+      "RUST_LOG",
+      format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
+    );
+  }
   *LOGGER.lock().unwrap() = Some(FlutterTracingWriter::new(sink));
 }
 

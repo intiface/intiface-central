@@ -14,7 +14,6 @@ enum OutputType {
   unknown,
   vibrate,
   rotate,
-  rotateWithDirection,
   oscillate,
   constrict,
   spray,

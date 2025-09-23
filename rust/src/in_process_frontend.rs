@@ -22,7 +22,7 @@ impl FlutterIntifaceEngineFrontend {
     }
   }
 
-  pub fn notify_on_creation(&self) -> impl Future {
+  pub fn notify_on_creation(&self) -> impl Future + use<> {
     let notify = self.notify.clone();
     async move { notify.notified().await }.boxed()
   }
