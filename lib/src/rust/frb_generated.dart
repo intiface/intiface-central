@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/device_config.dart';
+import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
 import 'api/specifiers.dart';
@@ -69,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 1335945927;
+  int get rustContentHash => -2026722184;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -345,7 +346,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiRuntimeSendRuntimeMsg({required String msgJson});
 
-  Future<void> crateApiSpecifiersSetupDeviceConfigurationManager({
+  Future<void> crateApiDeviceConfigManagerSetupDeviceConfigurationManager({
     String? baseConfig,
     String? userConfig,
   });
@@ -2461,7 +2462,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "send_runtime_msg", argNames: ["msgJson"]);
 
   @override
-  Future<void> crateApiSpecifiersSetupDeviceConfigurationManager({
+  Future<void> crateApiDeviceConfigManagerSetupDeviceConfigurationManager({
     String? baseConfig,
     String? userConfig,
   }) {
@@ -2480,9 +2481,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
+          decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiSpecifiersSetupDeviceConfigurationManagerConstMeta,
+        constMeta:
+            kCrateApiDeviceConfigManagerSetupDeviceConfigurationManagerConstMeta,
         argValues: [baseConfig, userConfig],
         apiImpl: this,
       ),
@@ -2490,7 +2492,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta
-  get kCrateApiSpecifiersSetupDeviceConfigurationManagerConstMeta =>
+  get kCrateApiDeviceConfigManagerSetupDeviceConfigurationManagerConstMeta =>
       const TaskConstMeta(
         debugName: "setup_device_configuration_manager",
         argNames: ["baseConfig", "userConfig"],

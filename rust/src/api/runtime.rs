@@ -1,5 +1,5 @@
 use crate::{
-  api::device_config_manager::DEVICE_CONFIG_MANAGER, in_process_frontend::FlutterIntifaceEngineFrontend, logging::FlutterTracingWriter, mobile_init
+  api::device_config_manager::DEVICE_CONFIG_MANAGER, in_process_frontend::FlutterIntifaceEngineFrontend, mobile_init
 };
 use anyhow::Result;
 use flutter_rust_bridge::frb;

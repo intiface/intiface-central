@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/src/rust/api/device_config_manager.dart';
 import 'package:intiface_central/src/rust/api/specifiers.dart';
 import 'package:loggy/loggy.dart';
 
@@ -21,6 +22,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> _configs = {};
   Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> get configs => _configs;
+  Object? _createError;
 
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];
@@ -28,6 +30,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   List<(String, ExposedWebsocketSpecifier)> get specifiers => _specifiers;
   List<(String, ExposedSerialSpecifier)> get serialSpecifiers => _serialSpecifiers;
   List<String> get protocols => _protocols;
+  Object? get createError => _createError;
 
   static Future<UserDeviceConfigurationCubit> create() async {
     var cubit = UserDeviceConfigurationCubit._();
@@ -47,6 +50,7 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       }
       await setupDeviceConfigurationManager(baseConfig: deviceConfig, userConfig: userConfig);
     } catch (e) {
+      _createError = e;
       logError("Error loading cubit! Deleting configs and creating new ones.");
       logError(e);
       try {

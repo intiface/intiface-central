@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1335945927;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2026722184;
 
 // Section: executor
 
@@ -2619,7 +2619,7 @@ fn wire__crate__api__runtime__send_runtime_msg_impl(
         },
     )
 }
-fn wire__crate__api__specifiers__setup_device_configuration_manager_impl(
+fn wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -2645,15 +2645,16 @@ fn wire__crate__api__specifiers__setup_device_configuration_manager_impl(
             let api_user_config = <Option<String>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok({
-                        crate::api::specifiers::setup_device_configuration_manager(
-                            api_base_config,
-                            api_user_config,
-                        );
-                    })?;
-                    Ok(output_ok)
-                })())
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok =
+                            crate::api::device_config_manager::setup_device_configuration_manager(
+                                api_base_config,
+                                api_user_config,
+                            )?;
+                        Ok(output_ok)
+                    })(),
+                )
             }
         },
     )
@@ -3541,7 +3542,7 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         59 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-        60 => wire__crate__api__specifiers__setup_device_configuration_manager_impl(
+        60 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
             port,
             ptr,
             rust_vec_len,

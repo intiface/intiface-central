@@ -1,8 +1,7 @@
-use std::sync::Arc;
 use crate::api::device_config_manager::DEVICE_CONFIG_MANAGER;
 
 
-use buttplug_server_device_config::{ProtocolCommunicationSpecifier, SerialSpecifier, WebsocketSpecifier, load_protocol_configs}; 
+use buttplug_server_device_config::{ProtocolCommunicationSpecifier, SerialSpecifier, WebsocketSpecifier}; 
 use buttplug_server::device::protocol_impl::get_default_protocol_map;
 
 #[derive(Debug, Clone)]
@@ -54,20 +53,6 @@ impl From<WebsocketSpecifier> for ExposedWebsocketSpecifier {
 impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   fn into(self) -> WebsocketSpecifier {
     WebsocketSpecifier::new(&self.name)
-  }
-}
-
-pub fn setup_device_configuration_manager(
-  base_config: Option<String>,
-  user_config: Option<String>,
-) {
-  if let Ok(mut dcm) = DEVICE_CONFIG_MANAGER.try_write() {
-    *dcm = Arc::new(
-      load_protocol_configs(&base_config, &user_config, false)
-        .unwrap()
-        .finish()
-        .unwrap(),
-    );
   }
 }
 

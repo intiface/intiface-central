@@ -493,6 +493,37 @@ class IntifaceCentralPage extends StatelessWidget {
           if (!isDesktop() || !useCompactDisplay) {
             widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
           }
+          var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+          if (userCubit.createError != null) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showDialog<void>(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Error Loading Configs'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          Text(
+                            "Intiface Central configuration files were not able to load. They have been deleted and defaults will be restored. Any user specified configurations will need to be reset. We also recommend closing and reopening Intiface Central.",
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          }
           return Scaffold(body: Column(children: widgets));
         },
       ),

@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum Error {
+pub enum MobileInitError {
   #[error("Btleplug error: {0}")]
   Btleplug(#[from] btleplug::Error),
 

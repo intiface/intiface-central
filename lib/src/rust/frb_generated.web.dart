@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/device_config.dart';
+import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
 import 'api/specifiers.dart';

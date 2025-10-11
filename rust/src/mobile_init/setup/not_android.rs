@@ -1,9 +1,9 @@
-use crate::mobile_init::Error;
+use crate::mobile_init::MobileInitError;
 use crate::frb_generated::StreamSink;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 
-pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, Error> {
+pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, MobileInitError> {
   let runtime = {
     tokio::runtime::Builder::new_multi_thread()
       .enable_all()
