@@ -19,11 +19,7 @@ abstract class GithubUpdater implements UpdateProvider {
   GithubUpdater(this._githubUsername, this._githubRepo);
 
   Future<String?> checkForUpdate() async {
-    GitHub github = GitHub(auth: findAuthenticationFromEnvironment());
-    var release = await github.repositories.getLatestRelease(
-      RepositorySlug(_githubUsername, _githubRepo),
-    );
-    return release.tagName;
+    GitHub github = GitHub();
   }
 
   void stopExit() {
@@ -34,7 +30,7 @@ abstract class GithubUpdater implements UpdateProvider {
     // This should only ever run on windows. Everyone else is either updating via a mobile app or can download manually
     // because this absolutely will not work on their platforms.
     if (Platform.isWindows) {
-      GitHub github = GitHub(auth: findAuthenticationFromEnvironment());
+      GitHub github = GitHub();
       logInfo("Running application update. Getting file from Github.");
       var release = await github.repositories.getLatestRelease(
         RepositorySlug(_githubUsername, _githubRepo),
