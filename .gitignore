@@ -141,3 +141,5 @@ app.*.symbols
 
 # New android build system files
 **/.cxx
+
+target/
