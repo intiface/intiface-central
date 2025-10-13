@@ -1,3 +1,23 @@
+# v3.0.0 Beta - 2025/10/12 (Desktop Platforms)
+
+## Features
+
+- Update to Buttplug v10.0.0b1/Intiface Engine v4.0.0b1
+  - Introduce new v4 message spec (SUBJECT TO CHANGE WHILE IN BETA)
+  - Massive rewrite of like half the library cause I spent 3 years fucking around lol
+  - Tons of device updates
+- Move to flutter_rust_bridge v2
+  - Generally cleaner rust bindings
+  - Still a ton of boilerplate
+- Added Prelease version toggle.
+
+# v2.6.8 - 2025/09/13 (All Platforms)
+
+## Features
+
+- Update to Buttplug v9.0.9/Intiface Engine v3.0.9
+  - Support for a bunch of new devices
+
 # v2.6.7 - 2025/04/25 (All Platforms)
 
 ## Features
