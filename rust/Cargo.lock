@@ -393,7 +393,7 @@ checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "buttplug_client"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "buttplug_core",
  "buttplug_derive",
@@ -414,7 +414,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_client_in_process"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "buttplug_client",
  "buttplug_core",
@@ -441,7 +441,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_core"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-stream",
  "buttplug_derive",
@@ -513,7 +513,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_device_config"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "buttplug_core",
  "buttplug_derive",
@@ -536,7 +536,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_btleplug"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "btleplug",
@@ -556,7 +556,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_hid"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -576,7 +576,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_lovense_connect"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_lovense_dongle"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -625,7 +625,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_serial"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -646,7 +646,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_websocket"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -670,7 +670,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_xinput"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -694,7 +694,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_transport_websocket_tungstenite"
-version = "10.0.0"
+version = "10.0.0-beta1"
 dependencies = [
  "buttplug_core",
  "buttplug_derive",
@@ -1681,7 +1681,7 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "3.0.8"
+version = "4.0.0-beta1"
 dependencies = [
  "anyhow",
  "argh",
