@@ -178,6 +178,11 @@ class ShowRepeaterModeState extends IntifaceConfigurationState {
   ShowRepeaterModeState(this.value);
 }
 
+class UsePrereleaseVersion extends IntifaceConfigurationState {
+  final bool value;
+  UsePrereleaseVersion(this.value);
+}
+
 class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -244,6 +249,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     var packageInfo = await PackageInfo.fromPlatform();
     currentAppVersion = packageInfo.version;
     latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
+    usePrereleaseVersion = _prefs.getBool("usePrereleaseVersion") ?? false;
 
     useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
     // Default to true on mobile.
@@ -290,6 +296,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set useSideNavigationBar(bool value) {
     _prefs.setBool("useSideNavigationBar", value);
     emit(UseSideNavigationBar(value));
+  }
+
+  bool get usePrereleaseVersion => _prefs.getBool("usePrereleaseVersion")!;
+  set usePrereleaseVersion(bool value) {
+    _prefs.setBool("usePrereleaseVersion", value);
+    emit(UsePrereleaseVersion(value));
   }
 
   bool get useLightTheme => _prefs.getBool("useLightTheme")!;
