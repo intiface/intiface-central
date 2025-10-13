@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'dart:isolate';
-import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/src/rust/api/runtime.dart';
