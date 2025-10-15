@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug
-          path: buttplug
+          path: ../buttplug
       - uses: actions/checkout@v3
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
@@ -60,7 +60,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug
-          path: buttplug
+          path: ../buttplug
       - uses: actions/checkout@v3
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
