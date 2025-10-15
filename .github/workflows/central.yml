@@ -19,9 +19,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug
+      - uses: actions/checkout@v3
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -57,9 +57,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug      
+      - uses: actions/checkout@v3
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
         with:
