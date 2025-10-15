@@ -17,12 +17,17 @@ concurrency:
 jobs:
   windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./intiface-central
     steps:
       - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug
-          path: ../buttplug
+          path: buttplug
       - uses: actions/checkout@v3
+        with:
+          path: intiface-central
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -56,12 +61,19 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "ubuntu-22.04"]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./intiface-central
+
     steps:
       - uses: actions/checkout@v3
         with:
           repository: buttplugio/buttplug
-          path: ../buttplug
+          path: buttplug
       - uses: actions/checkout@v3
+        with:
+          path: intiface-central
+
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
         with:
