@@ -247,7 +247,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     currentDeviceConfigVersion = _prefs.getString("currentDeviceConfigVersion") ?? "0.0";
 
     var packageInfo = await PackageInfo.fromPlatform();
-    currentAppVersion = packageInfo.version;
+    currentAppVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
     latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
     usePrereleaseVersion = _prefs.getBool("usePrereleaseVersion") ?? false;
 
