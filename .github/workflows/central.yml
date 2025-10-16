@@ -49,7 +49,7 @@ jobs:
         env:
           BUILD_VERSION: ${{ github.ref_name }}
         run: |
-          winget install -e --id JRSoftware.InnoSetu --disable-interactivity --accept-source-agreements --accept-package-agreements 
+          winget install -e --id JRSoftware.InnoSetup --disable-interactivity --accept-source-agreements --accept-package-agreements 
           iscc .\intiface-central-installer.iss
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
