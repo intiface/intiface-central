@@ -4,8 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/util/intiface_util.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 enum AppMode { engine, repeater }
 
@@ -246,8 +247,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     currentDeviceConfigEtag = _prefs.getString("currentDeviceConfigEtag") ?? "";
     currentDeviceConfigVersion = _prefs.getString("currentDeviceConfigVersion") ?? "0.0";
 
-    var packageInfo = await PackageInfo.fromPlatform();
-    currentAppVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
+    var spec = Pubspec.parse(await rootBundle.loadString('pubspec.yaml'));
+
+    currentAppVersion = spec.version!.toString();
     latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
     usePrereleaseVersion = _prefs.getBool("usePrereleaseVersion") ?? false;
 

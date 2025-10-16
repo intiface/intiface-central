@@ -29,13 +29,14 @@ import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/widget/control_widget.dart';
 import 'package:loggy/loggy.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/src/rust/api/util.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class IntifaceCentralApp extends StatelessWidget with WindowListener {
   IntifaceCentralApp._create({required this.guiSettingsCubit});
@@ -79,8 +80,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     var multiPrinter = MultiPrinter(errorNotifier);
     // Logging setup needs to happen after we've done initial setup.
     initLogging(multiPrinter);
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String packageVersion = "${packageInfo.version}+${packageInfo.buildNumber}";
+    var spec = Pubspec.parse(await rootBundle.loadString('pubspec.yaml'));
+    var packageVersion = spec.version!.toString();
     logInfo("Intiface Central $packageVersion Starting...");
     logInfo("Running main builder");
 
@@ -220,7 +221,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       logWarning("Intiface currently running in DEBUG MODE.");
     }
 
-    configCubit.currentAppVersion = packageInfo.version;
+    configCubit.currentAppVersion = packageVersion;
 
     var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;

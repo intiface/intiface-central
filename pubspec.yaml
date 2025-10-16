@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface® Central
 
 publish_to: 'none'
-version: 3.0.0-beta.1
+version: 3.0.0-beta1
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -34,7 +34,6 @@ dependencies:
   loggy: ^2.0.3
   markdown: ^7.1.1
   network_info_plus: ^4.1.0
-  package_info_plus: ^8.3.0
   path_provider: ^2.1.1
   path: ^1.8.3
   percent_indicator: ^4.2.3
@@ -54,6 +53,7 @@ dependencies:
   multicast_dns: ^0.3.2+6
   flutter_multi_slider: ^2.0.0
   discord_rich_presence: ^1.1.1
+  pubspec_parse: ^1.5.0
   rust_lib_intiface_central:
     path: rust_builder
 
@@ -79,6 +79,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - pubspec.yaml
 
 msix_config:
   display_name: Intiface® Central
