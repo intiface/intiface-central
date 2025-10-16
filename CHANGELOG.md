@@ -11,6 +11,10 @@
   - Still a ton of boilerplate
 - Added Prelease version toggle.
 
+## Bugfixes
+
+- Central now warns if device files are corrupt, versus just stalling
+
 # v2.6.8 - 2025/09/13 (All Platforms)
 
 ## Features
