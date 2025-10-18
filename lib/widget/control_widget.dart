@@ -14,9 +14,7 @@ class ControlWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Unused dynamic array for storing repaint trigger logic.
-    final _ = context.select<IntifaceConfigurationCubit, bool>(
-      (bloc) => bloc.state is AppModeState,
-    );
+    final _ = context.select<IntifaceConfigurationCubit, bool>((bloc) => bloc.state is AppModeState);
 
     // No easy way to do "only update on certain states" with select, so we still use a BlocBuilder here.
     return BlocBuilder<EngineControlBloc, EngineControlState>(
@@ -35,13 +33,11 @@ class ControlWidget extends StatelessWidget {
         var networkCubit = BlocProvider.of<NetworkInfoCubit>(context);
         var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
         final ColorScheme colors = Theme.of(context).colorScheme;
-        void Function()? buttonAction = () =>
-            engineControlBloc.add(EngineControlEventStop());
+        void Function()? buttonAction = () => engineControlBloc.add(EngineControlEventStop());
         if (state is ClientConnectedState) {
           statusMessage = state.clientName;
           statusIcon = Icons.phone_in_talk;
-        } else if (state is ClientDisconnectedState ||
-            state is EngineServerCreatedState) {
+        } else if (state is ClientDisconnectedState || state is EngineServerCreatedState) {
           statusMessage = "Server running, no client connected";
           statusIcon = Icons.phone_disabled;
           // Once we're in this state the engine is started.
@@ -55,10 +51,7 @@ class ControlWidget extends StatelessWidget {
           statusIcon = Icons.bedtime;
           buttonAction = () async => engineControlBloc.add(
             EngineControlEventStart(
-              options: await BlocProvider.of<IntifaceConfigurationCubit>(
-                context,
-                listen: false,
-              ).getEngineOptions(),
+              options: await BlocProvider.of<IntifaceConfigurationCubit>(context, listen: false).getEngineOptions(),
             ),
           );
         } else if (state is EngineStartingState) {
@@ -69,9 +62,7 @@ class ControlWidget extends StatelessWidget {
 
         IconButton controlButton;
 
-        if (isDesktop() &&
-            configCubit.useProcessEngine &&
-            !IntifacePaths.engineFile.existsSync()) {
+        if (isDesktop() && configCubit.useProcessEngine && !IntifacePaths.engineFile.existsSync()) {
           controlButton = IconButton(
             style: IconButton.styleFrom(
               foregroundColor: colors.onPrimary,
@@ -98,40 +89,51 @@ class ControlWidget extends StatelessWidget {
             ),
             iconSize: 90,
             onPressed: buttonAction,
-            tooltip: state is EngineStoppedState
-                ? "Start Server"
-                : "Stop Server",
-            icon: Icon(
-              state is EngineStoppedState ? Icons.play_arrow : Icons.stop,
-            ),
+            tooltip: state is EngineStoppedState ? "Start Server" : "Stop Server",
+            icon: Icon(state is EngineStoppedState ? Icons.play_arrow : Icons.stop),
           );
         }
 
         var engineStatus = "Engine Status Unknown";
-        if (configCubit.appMode == AppMode.engine) {
-          if (state is ClientConnectedState) {
-            engineStatus = "${state.clientName} connected";
-          } else if (state is EngineStartedState ||
-              state is EngineServerCreatedState ||
-              state is ClientDisconnectedState) {
-            engineStatus = "Engine running, waiting for client";
-          } else if (state is EngineStartingState) {
-            engineStatus = "Engine starting...";
-          } else if (state is EngineStoppedState) {
-            engineStatus = "Engine not running";
-          } else {
-            logWarning("Engine Status $state unknown");
-          }
-        } else if (configCubit.appMode == AppMode.repeater) {
-          if (state is EngineStartedState ||
-              state is EngineServerCreatedState ||
-              state is ClientDisconnectedState) {
-            engineStatus = "Repeater running";
-          } else if (state is EngineStoppedState) {
-            engineStatus = "Repeater not running";
-          } else if (state is EngineStartingState) {
-            engineStatus = "Repeater starting...";
-          }
+        switch (configCubit.appMode) {
+          case AppMode.engine:
+            if (state is ClientConnectedState) {
+              engineStatus = "${state.clientName} connected";
+            } else if (state is EngineStartedState ||
+                state is EngineServerCreatedState ||
+                state is ClientDisconnectedState) {
+              engineStatus = "Engine running, waiting for client";
+            } else if (state is EngineStartingState) {
+              engineStatus = "Engine starting...";
+            } else if (state is EngineStoppedState) {
+              engineStatus = "Engine not running";
+            } else {
+              logWarning("Engine Status $state unknown");
+            }
+          case AppMode.repeater:
+            {
+              if (state is EngineStartedState ||
+                  state is EngineServerCreatedState ||
+                  state is ClientDisconnectedState) {
+                engineStatus = "Repeater running";
+              } else if (state is EngineStoppedState) {
+                engineStatus = "Repeater not running";
+              } else if (state is EngineStartingState) {
+                engineStatus = "Repeater starting...";
+              }
+            }
+          case AppMode.restApi:
+            {
+              if (state is EngineStartedState ||
+                  state is EngineServerCreatedState ||
+                  state is ClientDisconnectedState) {
+                engineStatus = "REST API Server running";
+              } else if (state is EngineStoppedState) {
+                engineStatus = "REST API Server not running";
+              } else if (state is EngineStartingState) {
+                engineStatus = "REST API Server starting...";
+              }
+            }
         }
 
         List<Widget> columnWidgets = [
@@ -141,15 +143,11 @@ class ControlWidget extends StatelessWidget {
 
         if (configCubit.appMode == AppMode.engine) {
           columnWidgets.addAll([
-            const Text(
-              "Server Address:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            const Text("Server Address:", style: TextStyle(fontWeight: FontWeight.bold)),
             BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
               bloc: configCubit,
               buildWhen: (previous, current) =>
-                  current is WebsocketServerAllInterfacesState ||
-                  current is WebsocketServerPortState,
+                  current is WebsocketServerAllInterfacesState || current is WebsocketServerPortState,
               builder: (context, state) => Text(
                 "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}",
               ),
@@ -174,37 +172,24 @@ class ControlWidget extends StatelessWidget {
                   bloc: BlocProvider.of<ErrorNotifierCubit>(context),
                   builder: (context, ErrorNotifierState state) {
                     return Visibility(
-                      visible: state is ErrorNotifierTriggerState
-                          ? true
-                          : false,
+                      visible: state is ErrorNotifierTriggerState ? true : false,
                       child: TextButton.icon(
                         label: const Text("Error"),
                         onPressed: () => navCubit.goLogs(),
                         icon: const Icon(Icons.warning),
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.resolveWith(
-                            (s) => Colors.red,
-                          ),
-                        ),
+                        style: ButtonStyle(foregroundColor: WidgetStateProperty.resolveWith((s) => Colors.red)),
                       ),
                     );
                   },
                 ),
                 Visibility(
                   visible:
-                      isDesktop() &&
-                      canShowUpdate() &&
-                      configCubit.currentAppVersion !=
-                          configCubit.latestAppVersion,
+                      isDesktop() && canShowUpdate() && configCubit.currentAppVersion != configCubit.latestAppVersion,
                   child: TextButton.icon(
                     label: const Text("Update"),
                     onPressed: () => navCubit.goSettings(),
                     icon: const Icon(Icons.update, color: Colors.green),
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith(
-                        (s) => Colors.green,
-                      ),
-                    ),
+                    style: ButtonStyle(foregroundColor: WidgetStateProperty.resolveWith((s) => Colors.green)),
                   ),
                 ),
                 Visibility(
@@ -213,11 +198,7 @@ class ControlWidget extends StatelessWidget {
                     onPressed: () => navCubit.goNews(),
                     icon: const Icon(Icons.newspaper),
                     label: const Text("News"),
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith(
-                        (s) => Colors.blue,
-                      ),
-                    ),
+                    style: ButtonStyle(foregroundColor: WidgetStateProperty.resolveWith((s) => Colors.blue)),
                   ),
                 ),
               ],

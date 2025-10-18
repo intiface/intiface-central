@@ -18,29 +18,18 @@ class RepeaterConfigWidget extends StatelessWidget {
     var portController = TextEditingController();
     portController.text = configCubit.repeaterLocalPort.toString();
 
-    var repeaterAddressController = TextEditingController(
-      text: configCubit.repeaterRemoteAddress,
-    );
-    var repeaterPortController = TextEditingController(
-      text: configCubit.repeaterRemoteAddress,
-    );
+    var repeaterAddressController = TextEditingController(text: configCubit.repeaterRemoteAddress);
+    var repeaterPortController = TextEditingController(text: configCubit.repeaterLocalPort.toString());
     return Expanded(
       child: BlocBuilder<EngineControlBloc, EngineControlState>(
-        buildWhen: ((previous, current) =>
-            current is EngineStartedState || current is EngineStoppedState),
+        buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
         builder: (context, engineState) {
-          return BlocBuilder<
-            IntifaceConfigurationCubit,
-            IntifaceConfigurationState
-          >(
+          return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
             buildWhen: (previousState, currentState) =>
-                currentState is RepeaterLocalPortState ||
-                currentState is RepeaterRemoteAddressState,
+                currentState is RepeaterLocalPortState || currentState is RepeaterRemoteAddressState,
             builder: (context, state) {
               var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-              var engineIsRunning = BlocProvider.of<EngineControlBloc>(
-                context,
-              ).isRunning;
+              var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
               List<AbstractSettingsSection> tiles = [
                 SettingsSection(
                   title: const Text("Repeater Settings"),
@@ -57,36 +46,25 @@ class RepeaterConfigWidget extends StatelessWidget {
                             content: TextField(
                               keyboardType: TextInputType.number,
                               controller: repeaterPortController,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
+                              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                               onSubmitted: (value) {
                                 var newPort = int.tryParse(value);
-                                if (newPort != null &&
-                                    newPort > 1024 &&
-                                    newPort < 65536) {
+                                if (newPort != null && newPort > 1024 && newPort < 65536) {
                                   cubit.repeaterLocalPort = newPort;
                                 }
                                 Navigator.pop(context);
                               },
-                              decoration: const InputDecoration(
-                                hintText: "Local Port",
-                              ),
+                              decoration: const InputDecoration(hintText: "Local Port"),
                             ),
                             actions: <Widget>[
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
+                                onPressed: () => Navigator.pop(context, 'Cancel'),
                                 child: const Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  var newPort = int.tryParse(
-                                    repeaterPortController.text,
-                                  );
-                                  if (newPort != null &&
-                                      newPort > 1024 &&
-                                      newPort < 65536) {
+                                  var newPort = int.tryParse(repeaterPortController.text);
+                                  if (newPort != null && newPort > 1024 && newPort < 65536) {
                                     cubit.repeaterLocalPort = newPort;
                                   }
                                   Navigator.pop(context);
@@ -115,20 +93,16 @@ class RepeaterConfigWidget extends StatelessWidget {
                                 configCubit.repeaterRemoteAddress = value;
                                 Navigator.pop(context);
                               },
-                              decoration: const InputDecoration(
-                                hintText: "Remote Server Address",
-                              ),
+                              decoration: const InputDecoration(hintText: "Remote Server Address"),
                             ),
                             actions: <Widget>[
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
+                                onPressed: () => Navigator.pop(context, 'Cancel'),
                                 child: const Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  configCubit.repeaterRemoteAddress =
-                                      repeaterAddressController.text;
+                                  configCubit.repeaterRemoteAddress = repeaterAddressController.text;
                                   Navigator.pop(context);
                                 },
                                 child: const Text('OK'),

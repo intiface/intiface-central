@@ -8,7 +8,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-enum AppMode { engine, repeater }
+enum AppMode { engine, repeater, restApi }
 
 class IntifaceConfigurationState {}
 
@@ -154,6 +154,11 @@ class RepeaterRemoteAddressState extends IntifaceConfigurationState {
   RepeaterRemoteAddressState(this.value);
 }
 
+class RestLocalPortState extends IntifaceConfigurationState {
+  final int value;
+  RestLocalPortState(this.value);
+}
+
 class AppModeState extends IntifaceConfigurationState {
   final AppMode value;
   AppModeState(this.value);
@@ -253,6 +258,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
     repeaterLocalPort = _prefs.getInt("repeaterLocalPort") ?? 12345;
     repeaterRemoteAddress = _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
+
+    restLocalPort = _prefs.getInt("restLocalPort") ?? 3000;
     // Default for appMode built into getter, since it also requires a type conversion.
   }
 
@@ -483,6 +490,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(RepeaterLocalPortState(value));
   }
 
+  int get restLocalPort => _prefs.getInt("restLocalPort")!;
+  set restLocalPort(int value) {
+    _prefs.setInt("restLocalPort", value);
+    emit(RestLocalPortState(value));
+  }
+
   String get repeaterRemoteAddress => _prefs.getString("repeaterRemoteAddress")!;
   set repeaterRemoteAddress(String value) {
     _prefs.setString("repeaterRemoteAddress", value);
@@ -537,6 +550,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       repeaterMode: appMode == AppMode.repeater,
       repeaterLocalPort: repeaterLocalPort,
       repeaterRemoteAddress: repeaterRemoteAddress,
+      restApiPort: appMode == AppMode.restApi ? restLocalPort : null,
     );
   }
 }
