@@ -151,11 +151,7 @@ class SettingPage extends StatelessWidget {
         onToggle: (value) => cubit.checkForUpdateOnStart = value,
         title: const Text("Check For Updates when Intiface Central Launches"),
       ),
-      SettingsTile.switchTile(
-        initialValue: cubit.showRepeaterMode,
-        onToggle: (value) => cubit.showRepeaterMode = value,
-        title: const Text("Show Repeater Mode (EXPERIMENTAL)"),
-      ),
+
       SettingsTile.switchTile(
         initialValue: cubit.crashReporting,
         onToggle: cubit.canUseCrashReporting ? ((value) => cubit.crashReporting = value) : null,

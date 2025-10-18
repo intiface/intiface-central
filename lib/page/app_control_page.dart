@@ -13,10 +13,7 @@ class AppControlPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-    var modes = [AppMode.engine];
-    if (configCubit.showRepeaterMode) {
-      modes.add(AppMode.repeater);
-    }
+    var modes = [AppMode.engine, AppMode.repeater, AppMode.restApi];
     return BlocBuilder<EngineControlBloc, EngineControlState>(
       buildWhen: ((previous, current) =>
           current is EngineStartedState || current is EngineStoppedState),
