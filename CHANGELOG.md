@@ -1,4 +1,11 @@
-# v3.0.0 Beta - 2025/10/12 (Desktop Platforms)
+# v3.0.0 Beta 2 - 2025/10/15 (Desktop Platforms)
+
+## Bugfixes
+
+- Handle version inclusion and checking for prerelease correctly
+  - package_info_plus doesn't know how to deal with -beta, so just load the string from pubspec.
+
+# v3.0.0 Beta 1 - 2025/10/12 (Desktop Platforms)
 
 ## Features
 
