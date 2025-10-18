@@ -55,8 +55,8 @@ jobs:
         with:
           name: windows-installer
           path: |
-            build/windows/x64/runner/Release/intiface_central.pdb
-            installer/intiface-central-installer.exe
+            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
+            intiface-central/installer/intiface-central-installer.exe
   linux:
     strategy:
       matrix:
@@ -97,7 +97,7 @@ jobs:
         run: |
           ROOT=`pwd`
           ZIP=$PWD/intiface-central-linux-${{ matrix.os }}-x64.zip
-          cd build/linux/x64/release/bundle
+          cd intiface-central/build/linux/x64/release/bundle
           zip -r $ZIP ./*
           cd $ROOT
           cd linux/
