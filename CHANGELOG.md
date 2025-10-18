@@ -1,7 +1,15 @@
-# v3.0.0 Beta 2 - 2025/10/15 (Desktop Platforms)
+# v3.0.0 Beta 2 - 2025/10/18 (Desktop Platforms)
+
+## Features
+
+- Add REST API Mode Selection UI
+  - Allows using the buttplug server as a REST server instead of a websocket server
+- Update for Heater -> Temperature output type change in Buttplug v10
 
 ## Bugfixes
 
+- Remove Raw Message settings
+  - Feature was removed in Buttplug v10, with no backward compat
 - Handle version inclusion and checking for prerelease correctly
   - package_info_plus doesn't know how to deal with -beta, so just load the string from pubspec.
 
