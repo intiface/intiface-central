@@ -165,7 +165,7 @@ impl ExposedServerDeviceDefinition {
           info!("Has output type");
           match props.output_type {
             OutputType::Constrict => output.set_constrict(Some(props.clone().into())),
-            OutputType::Heater => output.set_heater(Some(props.clone().into())),
+            OutputType::Temperature => output.set_temperature(Some(props.clone().into())),
             OutputType::Led => output.set_led(Some(props.clone().into())),
             OutputType::Oscillate => output.set_oscillate(Some(props.clone().into())),
             OutputType::Position => output.set_position(Some(props.clone().into())),
@@ -263,8 +263,8 @@ impl ExposedServerDeviceFeatureOutput {
   }
 
   #[frb(sync, getter)]
-  pub fn heater(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.heater().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Heater, x))
+  pub fn temperature(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.temperature().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Temperature, x))
   }
 
   #[frb(sync, getter)]

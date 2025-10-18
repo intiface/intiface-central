@@ -30,7 +30,7 @@ pub enum _OutputType {
   Oscillate,
   Constrict,
   Spray,
-  Heater,
+  Temperature,
   Led,
   // For instances where we specify a position to move to ASAP. Usually servos, probably for the
   // OSR-2/SR-6.

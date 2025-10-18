@@ -91,8 +91,6 @@ abstract class ExposedServerDeviceFeatureInput implements RustOpaqueInterface {}
 abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
   ExposedServerDeviceFeatureOutputProperties? get constrict;
 
-  ExposedServerDeviceFeatureOutputProperties? get heater;
-
   ExposedServerDeviceFeatureOutputProperties? get led;
 
   ExposedServerDeviceFeatureOutputProperties? get oscillate;
@@ -104,6 +102,8 @@ abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
   ExposedServerDeviceFeatureOutputProperties? get rotate;
 
   ExposedServerDeviceFeatureOutputProperties? get spray;
+
+  ExposedServerDeviceFeatureOutputProperties? get temperature;
 
   ExposedServerDeviceFeatureOutputProperties? get vibrate;
 }

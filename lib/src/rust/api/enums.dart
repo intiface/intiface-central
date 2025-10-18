@@ -17,7 +17,7 @@ enum OutputType {
   oscillate,
   constrict,
   spray,
-  heater,
+  temperature,
   led,
   position,
   positionWithDuration,

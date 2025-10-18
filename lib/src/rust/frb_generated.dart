@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -2026722184;
+  int get rustContentHash => -1241198086;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -212,11 +212,6 @@ abstract class RustLibApi extends BaseApi {
   });
 
   ExposedServerDeviceFeatureOutputProperties?
-  crateApiDeviceConfigExposedServerDeviceFeatureOutputHeater({
-    required ExposedServerDeviceFeatureOutput that,
-  });
-
-  ExposedServerDeviceFeatureOutputProperties?
   crateApiDeviceConfigExposedServerDeviceFeatureOutputLed({
     required ExposedServerDeviceFeatureOutput that,
   });
@@ -243,6 +238,11 @@ abstract class RustLibApi extends BaseApi {
 
   ExposedServerDeviceFeatureOutputProperties?
   crateApiDeviceConfigExposedServerDeviceFeatureOutputSpray({
+    required ExposedServerDeviceFeatureOutput that,
+  });
+
+  ExposedServerDeviceFeatureOutputProperties?
+  crateApiDeviceConfigExposedServerDeviceFeatureOutputTemperature({
     required ExposedServerDeviceFeatureOutput that,
   });
 
@@ -1383,41 +1383,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   ExposedServerDeviceFeatureOutputProperties?
-  crateApiDeviceConfigExposedServerDeviceFeatureOutputHeater({
-    required ExposedServerDeviceFeatureOutput that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
-            that,
-            serializer,
-          );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
-        },
-        codec: SseCodec(
-          decodeSuccessData:
-              sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties,
-          decodeErrorData: null,
-        ),
-        constMeta:
-            kCrateApiDeviceConfigExposedServerDeviceFeatureOutputHeaterConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiDeviceConfigExposedServerDeviceFeatureOutputHeaterConstMeta =>
-      const TaskConstMeta(
-        debugName: "ExposedServerDeviceFeatureOutput_heater",
-        argNames: ["that"],
-      );
-
-  @override
-  ExposedServerDeviceFeatureOutputProperties?
   crateApiDeviceConfigExposedServerDeviceFeatureOutputLed({
     required ExposedServerDeviceFeatureOutput that,
   }) {
@@ -1429,7 +1394,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1464,7 +1429,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1499,7 +1464,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1534,7 +1499,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1569,7 +1534,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1604,7 +1569,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1623,6 +1588,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   get kCrateApiDeviceConfigExposedServerDeviceFeatureOutputSprayConstMeta =>
       const TaskConstMeta(
         debugName: "ExposedServerDeviceFeatureOutput_spray",
+        argNames: ["that"],
+      );
+
+  @override
+  ExposedServerDeviceFeatureOutputProperties?
+  crateApiDeviceConfigExposedServerDeviceFeatureOutputTemperature({
+    required ExposedServerDeviceFeatureOutput that,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedServerDeviceFeatureOutputTemperatureConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedServerDeviceFeatureOutputTemperatureConstMeta =>
+      const TaskConstMeta(
+        debugName: "ExposedServerDeviceFeatureOutput_temperature",
         argNames: ["that"],
       );
 
@@ -5223,9 +5223,6 @@ class ExposedServerDeviceFeatureOutputImpl extends RustOpaque
         that: this,
       );
 
-  ExposedServerDeviceFeatureOutputProperties? get heater => RustLib.instance.api
-      .crateApiDeviceConfigExposedServerDeviceFeatureOutputHeater(that: this);
-
   ExposedServerDeviceFeatureOutputProperties? get led => RustLib.instance.api
       .crateApiDeviceConfigExposedServerDeviceFeatureOutputLed(that: this);
 
@@ -5252,6 +5249,13 @@ class ExposedServerDeviceFeatureOutputImpl extends RustOpaque
 
   ExposedServerDeviceFeatureOutputProperties? get spray => RustLib.instance.api
       .crateApiDeviceConfigExposedServerDeviceFeatureOutputSpray(that: this);
+
+  ExposedServerDeviceFeatureOutputProperties? get temperature => RustLib
+      .instance
+      .api
+      .crateApiDeviceConfigExposedServerDeviceFeatureOutputTemperature(
+        that: this,
+      );
 
   ExposedServerDeviceFeatureOutputProperties? get vibrate => RustLib
       .instance

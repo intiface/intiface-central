@@ -122,8 +122,8 @@ class FeatureOutputConfigWidget extends StatelessWidget {
           if (feature.output?.constrict != null) {
             buildOutputValueTile(engineIsRunning, outputList, "Constrict", feature.output!.constrict!, rangeUpdate);
           }
-          if (feature.output?.heater != null) {
-            buildOutputValueTile(engineIsRunning, outputList, "Heater", feature.output!.heater!, rangeUpdate);
+          if (feature.output?.temperature != null) {
+            buildOutputValueTile(engineIsRunning, outputList, "Temperature", feature.output!.temperature!, rangeUpdate);
           }
           if (feature.output?.led != null) {
             buildOutputValueTile(engineIsRunning, outputList, "LED", feature.output!.led!, rangeUpdate);

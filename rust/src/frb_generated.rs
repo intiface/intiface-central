@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2026722184;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1241198086;
 
 // Section: executor
 
@@ -1257,58 +1257,6 @@ fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict_i
         },
     )
 }
-fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_heater_impl(
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "ExposedServerDeviceFeatureOutput_heater",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<
-                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<
-                    ExposedServerDeviceFeatureOutput,
-                >,
-            >>::sse_decode(&mut deserializer);
-            deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = Result::<_, ()>::Ok(
-                    crate::api::device_config::ExposedServerDeviceFeatureOutput::heater(
-                        &*api_that_guard,
-                    ),
-                )?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
 fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1583,6 +1531,58 @@ fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray_impl(
                 let api_that_guard = api_that_guard.unwrap();
                 let output_ok = Result::<_, ()>::Ok(
                     crate::api::device_config::ExposedServerDeviceFeatureOutput::spray(
+                        &*api_that_guard,
+                    ),
+                )?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "ExposedServerDeviceFeatureOutput_temperature",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<
+                    ExposedServerDeviceFeatureOutput,
+                >,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = Result::<_, ()>::Ok(
+                    crate::api::device_config::ExposedServerDeviceFeatureOutput::temperature(
                         &*api_that_guard,
                     ),
                 )?;
@@ -3375,7 +3375,7 @@ impl SseDecode for crate::api::enums::OutputType {
             3 => crate::api::enums::OutputType::Oscillate,
             4 => crate::api::enums::OutputType::Constrict,
             5 => crate::api::enums::OutputType::Spray,
-            6 => crate::api::enums::OutputType::Heater,
+            6 => crate::api::enums::OutputType::Temperature,
             7 => crate::api::enums::OutputType::Led,
             8 => crate::api::enums::OutputType::Position,
             9 => crate::api::enums::OutputType::PositionWithDuration,
@@ -3596,13 +3596,13 @@ fn pde_ffi_dispatcher_sync_impl(
 25 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value_impl(ptr, rust_vec_len, data_len),
 26 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value_impl(ptr, rust_vec_len, data_len),
 27 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict_impl(ptr, rust_vec_len, data_len),
-28 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_heater_impl(ptr, rust_vec_len, data_len),
-29 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led_impl(ptr, rust_vec_len, data_len),
-30 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate_impl(ptr, rust_vec_len, data_len),
-31 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_impl(ptr, rust_vec_len, data_len),
-32 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration_impl(ptr, rust_vec_len, data_len),
-33 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate_impl(ptr, rust_vec_len, data_len),
-34 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray_impl(ptr, rust_vec_len, data_len),
+28 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led_impl(ptr, rust_vec_len, data_len),
+29 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate_impl(ptr, rust_vec_len, data_len),
+30 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_impl(ptr, rust_vec_len, data_len),
+31 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration_impl(ptr, rust_vec_len, data_len),
+32 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate_impl(ptr, rust_vec_len, data_len),
+33 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray_impl(ptr, rust_vec_len, data_len),
+34 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature_impl(ptr, rust_vec_len, data_len),
 35 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate_impl(ptr, rust_vec_len, data_len),
 36 => wire__crate__api__device_config__ExposedServerDeviceFeature_description_impl(ptr, rust_vec_len, data_len),
 37 => wire__crate__api__device_config__ExposedServerDeviceFeature_id_impl(ptr, rust_vec_len, data_len),
@@ -3917,7 +3917,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::enums::OutputType>
             crate::api::enums::OutputType::Oscillate => 3.into_dart(),
             crate::api::enums::OutputType::Constrict => 4.into_dart(),
             crate::api::enums::OutputType::Spray => 5.into_dart(),
-            crate::api::enums::OutputType::Heater => 6.into_dart(),
+            crate::api::enums::OutputType::Temperature => 6.into_dart(),
             crate::api::enums::OutputType::Led => 7.into_dart(),
             crate::api::enums::OutputType::Position => 8.into_dart(),
             crate::api::enums::OutputType::PositionWithDuration => 9.into_dart(),
@@ -4408,7 +4408,7 @@ impl SseEncode for crate::api::enums::OutputType {
                 crate::api::enums::OutputType::Oscillate => 3,
                 crate::api::enums::OutputType::Constrict => 4,
                 crate::api::enums::OutputType::Spray => 5,
-                crate::api::enums::OutputType::Heater => 6,
+                crate::api::enums::OutputType::Temperature => 6,
                 crate::api::enums::OutputType::Led => 7,
                 crate::api::enums::OutputType::Position => 8,
                 crate::api::enums::OutputType::PositionWithDuration => 9,
