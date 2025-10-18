@@ -224,14 +224,6 @@ class EngineConfigWidget extends StatelessWidget {
       advancedSettingsTiles.add(
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
-          initialValue: cubit.allowRawMessages,
-          onToggle: (value) => cubit.allowRawMessages = value,
-          title: const Text("Allow Raw Messages"),
-        ),
-      );
-      advancedSettingsTiles.add(
-        SettingsTile.switchTile(
-          enabled: !engineIsRunning,
           initialValue: cubit.broadcastServerMdns,
           onToggle: (value) => cubit.broadcastServerMdns = value,
           title: const Text("Broadcast Server Info via mDNS"),

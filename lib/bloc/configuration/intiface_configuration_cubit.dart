@@ -124,11 +124,6 @@ class UseForegroundProcessState extends IntifaceConfigurationState {
   UseForegroundProcessState(this.value);
 }
 
-class AllowRawMessagesState extends IntifaceConfigurationState {
-  final bool value;
-  AllowRawMessagesState(this.value);
-}
-
 class BroadcastServerMdnsState extends IntifaceConfigurationState {
   final bool value;
   BroadcastServerMdnsState(this.value);
@@ -216,7 +211,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     showNotifications = _prefs.getBool("showNotifications") ?? false;
     hasRunFirstUse = _prefs.getBool("hasRunFirstUse") ?? false;
     showExtendedUI = _prefs.getBool("showExtendedUI") ?? false;
-    allowRawMessages = _prefs.getBool("allowRawMessages") ?? false;
     unreadNews = _prefs.getBool("unreadNews") ?? false;
     useSideNavigationBar = _prefs.getBool("useSideNavigationBar") ?? isDesktop();
     useLightTheme = _prefs.getBool("useLightTheme") ?? true;
@@ -429,12 +423,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get showExtendedUI => _prefs.getBool("showExtendedUI")!;
   set showExtendedUI(bool value) {
     _prefs.setBool("showExtendedUI", value);
-  }
-
-  bool get allowRawMessages => _prefs.getBool("allowRawMessages")!;
-  set allowRawMessages(bool value) {
-    _prefs.setBool("allowRawMessages", value);
-    emit(AllowRawMessagesState(value));
   }
 
   bool get unreadNews => _prefs.getBool("unreadNews")!;

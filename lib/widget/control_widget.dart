@@ -154,21 +154,6 @@ class ControlWidget extends StatelessWidget {
                 "ws://${configCubit.websocketServerAllInterfaces ? (networkCubit.ip ?? "0.0.0.0") : "localhost"}:${configCubit.websocketServerPort}",
               ),
             ),
-            BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-              bloc: configCubit,
-              buildWhen: (previous, current) =>
-                  current is AllowRawMessagesState,
-              builder: (context, state) => Visibility(
-                visible: configCubit.allowRawMessages,
-                child: const Text(
-                  "Raw Messages Allowed",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
           ]);
         }
 
