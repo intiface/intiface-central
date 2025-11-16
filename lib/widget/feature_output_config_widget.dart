@@ -23,6 +23,10 @@ class FeatureOutputConfigWidget extends StatelessWidget {
     Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
   ) {
     Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    if (props.value == null) {
+      logWarning("Null prop value, cannot render.");
+      return;
+    }
     outputList.addAll([
       ListTile(
         subtitle: Text(
@@ -43,6 +47,47 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                   var v = props.value!;
                   v.user = (value[0].floor(), value[1].ceil());
                   props.value = v;
+                  d.run(() async {
+                    await updateFunc(props);
+                  });
+                }),
+        ),
+      ),
+    ]);
+  }
+
+  void buildOutputPositionTile(
+    bool engineIsRunning,
+    List<Widget> outputList,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+    Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
+  ) {
+    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    if (props.position == null) {
+      logWarning("Null prop position, cannot render.");
+      return;
+    }
+    outputList.addAll([
+      ListTile(
+        subtitle: Text(
+          "$type - Step Range - Min: ${props.position!.base.$1} Max: ${props.position!.base.$2} Step Limit - Min: ${props.position!.user.$1} Max: ${props.position!.user.$2}",
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.position!.base.$2.toDouble(),
+          values: [props.position!.user.$1.floorToDouble(), props.position!.user.$2.floorToDouble()],
+          divisions: props.position!.base.$2,
+          onChanged: engineIsRunning
+              ? null
+              : ((value) async {
+                  if (value[0].toInt() == value[1].toInt()) {
+                    return;
+                  }
+                  var v = props.position!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.position = v;
                   d.run(() async {
                     await updateFunc(props);
                   });
@@ -99,7 +144,6 @@ class FeatureOutputConfigWidget extends StatelessWidget {
           current is ClientConnectedState ||
           current is ClientDisconnectedState,
       builder: (context, EngineControlState state) {
-        logInfo("Rerendering");
         var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
         List<Widget> outputList = [];
         for (var feature in _deviceDefinition.features) {
@@ -132,7 +176,7 @@ class FeatureOutputConfigWidget extends StatelessWidget {
             buildOutputValueTile(engineIsRunning, outputList, "Spray", feature.output!.spray!, rangeUpdate);
           }
           if (feature.output?.position != null) {
-            buildOutputValueTile(engineIsRunning, outputList, "Position", feature.output!.position!, rangeUpdate);
+            buildOutputPositionTile(engineIsRunning, outputList, "Position", feature.output!.position!, rangeUpdate);
           }
           if (feature.output?.positionWithDuration != null) {
             buildOutputPositionWithDurationTile(
