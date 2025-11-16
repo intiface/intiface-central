@@ -36,7 +36,9 @@ class DevicePage extends StatelessWidget {
                 var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 if (engineState is! EngineStoppedState) {
                   deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
-                  for (var deviceCubit in deviceBloc.devices) {
+                  var devices = deviceBloc.devices;
+                  devices.sort((a, b) => a.device!.index.compareTo(b.device!.index));
+                  for (var deviceCubit in devices) {
                     var device = deviceCubit.device!;
                     connectedIndexes.add(device.index);
                     MapEntry<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> deviceEntry;
@@ -90,7 +92,9 @@ class DevicePage extends StatelessWidget {
                 }
 
                 deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
-                for (var deviceEntry in userDeviceConfigCubit.configs.entries) {
+                var userDevices = userDeviceConfigCubit.configs.entries.toList();
+                userDevices.sort((a, b) => a.value.index.compareTo(b.value.index));
+                for (var deviceEntry in userDevices) {
                   if (connectedIndexes.contains(deviceEntry.value.index)) {
                     continue;
                   }
