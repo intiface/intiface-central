@@ -170,7 +170,7 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   _buildStepper(currentStep, devices.isNotEmpty),
                   const SizedBox(height: 20),
                   if (hasError)
@@ -239,17 +239,39 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
     final isStep2Complete = currentStep == SimpleModeStep.connectingDevices;
     final isStep3Complete = hasDevices;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          _buildStepCircle('1', 'Start Server', isStep1Complete, currentStep == SimpleModeStep.startServer),
-          _buildStepLine(isStep1Complete),
-          _buildStepCircle('2', 'Start Scanning', isStep2Complete, currentStep == SimpleModeStep.startScanning),
-          _buildStepLine(isStep2Complete),
-          _buildStepCircle('3', 'Connecting Devices', isStep3Complete, currentStep == SimpleModeStep.connectingDevices),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use vertical layout for narrow screens (less than 400px)
+        final useVerticalLayout = constraints.maxWidth < 400;
+
+        if (useVerticalLayout) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                _buildStepCircleCompact('1', 'Start Server', isStep1Complete, currentStep == SimpleModeStep.startServer),
+                const SizedBox(height: 8),
+                _buildStepCircleCompact('2', 'Start Scanning', isStep2Complete, currentStep == SimpleModeStep.startScanning),
+                const SizedBox(height: 8),
+                _buildStepCircleCompact('3', 'Connecting Devices', isStep3Complete, currentStep == SimpleModeStep.connectingDevices),
+              ],
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              _buildStepCircle('1', 'Start Server', isStep1Complete, currentStep == SimpleModeStep.startServer),
+              _buildStepLine(isStep1Complete),
+              _buildStepCircle('2', 'Start Scanning', isStep2Complete, currentStep == SimpleModeStep.startScanning),
+              _buildStepLine(isStep2Complete),
+              _buildStepCircle('3', 'Connecting Devices', isStep3Complete, currentStep == SimpleModeStep.connectingDevices),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -286,14 +308,18 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          '$stepNumber. $label',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isComplete ? Colors.green : (isActive ? colorScheme.primary : Colors.grey),
+        SizedBox(
+          height: 32, // Fixed height for 2 lines of text
+          child: Text(
+            '$stepNumber. $label',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isComplete ? Colors.green : (isActive ? colorScheme.primary : Colors.grey),
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
           ),
-          textAlign: TextAlign.center,
         ),
         ],
       ),
@@ -304,9 +330,63 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
     return Expanded(
       child: Container(
         height: 4,
-        margin: const EdgeInsets.only(bottom: 28),
+        margin: const EdgeInsets.only(bottom: 40), // Adjusted for fixed 2-line text height
         color: isComplete ? Colors.green : Colors.grey.shade300,
       ),
+    );
+  }
+
+  Widget _buildStepCircleCompact(String stepNumber, String label, bool isComplete, bool isActive) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isComplete ? Colors.green : (isActive ? colorScheme.primary.withOpacity(0.3) : Colors.grey.shade300),
+          ),
+          child: Center(
+            child: isComplete
+                ? const Icon(Icons.check, color: Colors.white, size: 18)
+                : (isActive
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                        ),
+                      )
+                    : Text(
+                        '...',
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      )),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            '$stepNumber. $label',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              color: isComplete ? Colors.green : (isActive ? colorScheme.primary : Colors.grey),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVerticalStepLine(bool isComplete) {
+    return Container(
+      width: 4,
+      height: 20,
+      margin: const EdgeInsets.only(left: 23),
+      color: isComplete ? Colors.green : Colors.grey.shade300,
     );
   }
 

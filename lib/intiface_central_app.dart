@@ -479,27 +479,33 @@ class IntifaceCentralPage extends StatelessWidget {
 
           List<Widget> widgets = [const ControlWidget()];
 
-          // Add Advanced Mode toggle
-          widgets.add(
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Advanced Mode',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  Switch(
-                    value: useAdvancedMode,
-                    onChanged: (value) {
-                      configCubit.useAdvancedMode = value;
-                    },
-                  ),
-                ],
-              ),
+          // Build Advanced Mode toggle widget
+          Widget advancedModeToggle = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Advanced Mode',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                Switch(
+                  value: useAdvancedMode,
+                  onChanged: (value) {
+                    configCubit.useAdvancedMode = value;
+                  },
+                ),
+              ],
             ),
           );
+
+          // On mobile Simple Mode, toggle goes at the bottom
+          // On desktop or Advanced Mode, toggle stays at the top
+          bool showToggleAtTop = isDesktop() || useAdvancedMode;
+
+          if (showToggleAtTop) {
+            widgets.add(advancedModeToggle);
+          }
 
           if (!isDesktop() || !useCompactDisplay) {
             widgets.add(const Divider(height: 2));
@@ -508,6 +514,11 @@ class IntifaceCentralPage extends StatelessWidget {
               widgets.add(const Expanded(child: BodyWidget()));
             } else {
               widgets.add(const Expanded(child: SimpleModeWidget()));
+              // On mobile Simple Mode, add toggle at the bottom
+              if (!isDesktop()) {
+                widgets.add(const Divider(height: 2));
+                widgets.add(advancedModeToggle);
+              }
             }
           }
 
