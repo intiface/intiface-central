@@ -242,7 +242,6 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildStepCircle('1', 'Start Server', isStep1Complete, currentStep == SimpleModeStep.startServer),
           _buildStepLine(isStep1Complete),
@@ -257,11 +256,13 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
   Widget _buildStepCircle(String stepNumber, String label, bool isComplete, bool isActive) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Column(
-      children: [
-        Container(
-          width: 70,
-          height: 70,
+    return SizedBox(
+      width: 100,
+      child: Column(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isComplete ? Colors.green : (isActive ? colorScheme.primary.withOpacity(0.3) : Colors.grey.shade300),
@@ -292,8 +293,10 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
             fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             color: isComplete ? Colors.green : (isActive ? colorScheme.primary : Colors.grey),
           ),
+          textAlign: TextAlign.center,
         ),
-      ],
+        ],
+      ),
     );
   }
 
