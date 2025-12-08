@@ -28,6 +28,7 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/widget/control_widget.dart';
+import 'package:intiface_central/widget/simple_mode_widget.dart';
 import 'package:loggy/loggy.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -467,33 +468,49 @@ class IntifaceCentralPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
+        buildWhen: (previous, current) =>
+            current is UseCompactDisplayState ||
+            current is ConfigurationResetState ||
+            current is UseAdvancedModeState,
         builder: (context, state) {
-          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
+          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+          var useCompactDisplay = configCubit.useCompactDisplay;
+          var useAdvancedMode = configCubit.useAdvancedMode;
+
           List<Widget> widgets = [const ControlWidget()];
-          /*
-              if (isDesktop()) {
-                widgets.addAll([
-                  const Divider(height: 2),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: IconButton(
-                              onPressed: () {
-                                BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay =
-                                    !useCompactDisplay;
-                              },
-                              icon: useCompactDisplay
-                                  ? const Icon(Icons.arrow_drop_down)
-                                  : const Icon(Icons.arrow_drop_up)))
-                    ],
-                  )
-                ]);
-              }
-              */
+
+          // Add Advanced Mode toggle
+          widgets.add(
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Advanced Mode',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  Switch(
+                    value: useAdvancedMode,
+                    onChanged: (value) {
+                      configCubit.useAdvancedMode = value;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+
           if (!isDesktop() || !useCompactDisplay) {
-            widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
+            widgets.add(const Divider(height: 2));
+            // Show Simple Mode or Advanced Mode based on setting
+            if (useAdvancedMode) {
+              widgets.add(const Expanded(child: BodyWidget()));
+            } else {
+              widgets.add(const Expanded(child: SimpleModeWidget()));
+            }
           }
+
           var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
           if (userCubit.createError != null) {
             WidgetsBinding.instance.addPostFrameCallback(

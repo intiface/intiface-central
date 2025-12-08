@@ -179,6 +179,11 @@ class UsePrereleaseVersion extends IntifaceConfigurationState {
   UsePrereleaseVersion(this.value);
 }
 
+class UseAdvancedModeState extends IntifaceConfigurationState {
+  final bool value;
+  UseAdvancedModeState(this.value);
+}
+
 class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
@@ -221,6 +226,9 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useLightTheme = _prefs.getBool("useLightTheme") ?? true;
     restoreWindowLocation = _prefs.getBool("restoreWindowLocation") ?? true;
     useDiscordRichPresence = _prefs.getBool("useDiscordRichPresence") ?? false;
+
+    // Default to Simple Mode (advanced mode off) for new installs
+    useAdvancedMode = _prefs.getBool("useAdvancedMode") ?? false;
 
     // True on all platforms
     useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
@@ -321,6 +329,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set useDiscordRichPresence(bool value) {
     _prefs.setBool("useDiscordRichPresence", value);
     emit(UseDiscordRichPresence(value));
+  }
+
+  bool get useAdvancedMode => _prefs.getBool("useAdvancedMode")!;
+  set useAdvancedMode(bool value) {
+    _prefs.setBool("useAdvancedMode", value);
+    emit(UseAdvancedModeState(value));
   }
 
   String get serverName => _prefs.getString("serverName")!;
