@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/widget/device_control_widget.dart';
 import 'package:loggy/loggy.dart';
 
@@ -135,8 +137,10 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EngineControlBloc, EngineControlState>(
-      buildWhen: (previous, current) =>
+    return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(
+      builder: (context, errorState) {
+        return BlocBuilder<EngineControlBloc, EngineControlState>(
+          buildWhen: (previous, current) =>
           current is EngineStartingState ||
           current is EngineStartedState ||
           current is EngineStoppedState ||
@@ -159,6 +163,7 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
             final isScanning = deviceManagerBloc.scanning;
             final engineRunning = engineBloc.isRunning;
             final currentStep = _getCurrentStep(engineRunning, isScanning, devices);
+            final hasError = errorState is ErrorNotifierTriggerState;
 
             loggy.debug("SimpleModeWidget: Build - devices=${devices.length}, deviceState=$deviceState, engineState=$engineState");
 
@@ -168,7 +173,10 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
                   const SizedBox(height: 40),
                   _buildStepper(currentStep, devices.isNotEmpty),
                   const SizedBox(height: 20),
-                  _buildStatusMessage(currentStep, devices),
+                  if (hasError)
+                    _buildErrorMessage(errorState as ErrorNotifierTriggerState)
+                  else
+                    _buildStatusMessage(currentStep, devices),
                   const SizedBox(height: 20),
                   if (devices.isNotEmpty) _buildDeviceList(devices),
                 ],
@@ -176,7 +184,52 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
             );
           },
         );
+        },
+      );
       },
+    );
+  }
+
+  Widget _buildErrorMessage(ErrorNotifierTriggerState errorState) {
+    final errorMessage = errorState.record.message;
+    final configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+    final navCubit = BlocProvider.of<NavigationCubit>(context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, color: Colors.red),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(fontSize: 14, color: Colors.red.shade700),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () {
+              configCubit.useAdvancedMode = true;
+              navCubit.goLogs();
+            },
+            icon: const Icon(Icons.text_snippet_outlined),
+            label: const Text('View Details in Logs'),
+            style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+          ),
+        ],
+      ),
     );
   }
 
