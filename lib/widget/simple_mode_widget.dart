@@ -108,9 +108,15 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
     });
   }
 
-  SimpleModeStep _getCurrentStep(bool engineRunning, bool isScanning, List devices) {
+  SimpleModeStep _getCurrentStep(bool engineRunning, bool isScanning, List devices, bool hasError) {
     if (!engineRunning) {
       return SimpleModeStep.startServer;
+    }
+
+    // If there's an error and no devices connected, stay at Step 2
+    // This handles the case when scanning fails (e.g., Bluetooth off)
+    if (hasError && devices.isEmpty) {
+      return SimpleModeStep.startScanning;
     }
 
     if (!isScanning && devices.isEmpty) {
@@ -159,11 +165,20 @@ class _SimpleModeWidgetState extends State<SimpleModeWidget> with UiLoggy {
           builder: (context, deviceState) {
             final engineBloc = BlocProvider.of<EngineControlBloc>(context);
             final deviceManagerBloc = BlocProvider.of<DeviceManagerBloc>(context);
+            final errorNotifierCubit = BlocProvider.of<ErrorNotifierCubit>(context);
             final devices = deviceManagerBloc.devices;
             final isScanning = deviceManagerBloc.scanning;
             final engineRunning = engineBloc.isRunning;
-            final currentStep = _getCurrentStep(engineRunning, isScanning, devices);
             final hasError = errorState is ErrorNotifierTriggerState;
+            final currentStep = _getCurrentStep(engineRunning, isScanning, devices, hasError);
+
+            // Clear error when a device connects successfully
+            // This is the most reliable indicator that things are working
+            if (hasError && devices.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                errorNotifierCubit.clearError();
+              });
+            }
 
             loggy.debug("SimpleModeWidget: Build - devices=${devices.length}, deviceState=$deviceState, engineState=$engineState");
 
