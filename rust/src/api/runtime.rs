@@ -1,16 +1,16 @@
 use crate::{
   api::device_config_manager::DEVICE_CONFIG_MANAGER, in_process_frontend::FlutterIntifaceEngineFrontend, mobile_init
 };
+use std::sync::Weak;
 use anyhow::Result;
 use flutter_rust_bridge::frb;
 use crate::frb_generated::{StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
-use once_cell::sync::OnceCell;
 use std::{
   sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+    Arc, Mutex, RwLock,
   },
   thread,
   time::Duration,
@@ -26,14 +26,22 @@ use tracing_futures::Instrument;
 
 pub use intiface_engine::{EngineOptionsExternal, IntifaceEngine, IntifaceMessage};
 
-static ENGINE_NOTIFIER: OnceCell<Arc<Notify>> = OnceCell::new();
+// Use RwLock<Option<...>> instead of OnceCell so the notifier can be properly reset between runs.
+// OnceCell can only be set once per process lifetime, causing stale state on app restart.
 lazy_static! {
+  static ref ENGINE_NOTIFIER: RwLock<Option<Arc<Notify>>> = RwLock::new(None);
   static ref RUNTIME: Arc<Mutex<Option<Runtime>>> = Arc::new(Mutex::new(None));
   static ref RUN_STATUS: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
   static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> =
     Arc::new(broadcast::channel(255).0);
   static ref BACKDOOR_INCOMING_BROADCASTER: Arc<broadcast::Sender<String>> =
     Arc::new(broadcast::channel(255).0);
+  /// Weak reference to the frontend for closing during shutdown.
+  /// Uses Weak to avoid preventing cleanup, and RwLock for thread-safe access.
+  static ref ENGINE_FRONTEND: RwLock<Option<Weak<FlutterIntifaceEngineFrontend>>> = RwLock::new(None);
+  /// Global shutdown flag to prevent SendError messages during shutdown.
+  /// Checked by all sink.add() operations to avoid sending to closed streams.
+  static ref ENGINE_SHUTDOWN: AtomicBool = AtomicBool::new(false);
 }
 
 #[frb(mirror(EngineOptionsExternal))]
@@ -71,11 +79,19 @@ pub fn rust_runtime_started() -> bool {
   RUNTIME.lock().unwrap().is_some()
 }
 
+/// Check if the engine is currently shutting down.
+/// Used by other modules to prevent sending messages to closed streams.
+pub fn is_engine_shutdown() -> bool {
+  ENGINE_SHUTDOWN.load(Ordering::SeqCst)
+}
+
 pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Result<()> {
   if RUN_STATUS.load(Ordering::Relaxed) {
     return Err(anyhow::Error::msg("Server already running!"));
   }
   RUN_STATUS.store(true, Ordering::Relaxed);
+  // Clear the shutdown flag for the new engine run
+  ENGINE_SHUTDOWN.store(false, Ordering::SeqCst);
 
   let mut runtime_storage = RUNTIME.lock().unwrap();
 
@@ -86,25 +102,29 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   let runtime = mobile_init::create_runtime(sink.clone())
     .expect("Runtime should work, otherwise we can't function.");
 
-  if ENGINE_NOTIFIER.get().is_none() {
-    info!("Creating notifier");
-    ENGINE_NOTIFIER
-      .set(Arc::new(Notify::new()))
-      .expect("We already checked creation so this shouldn't fail");
-  } else {
-    info!("Notifier already created");
+  // Always create a fresh notifier for each engine run to avoid stale state from previous runs.
+  // This is critical for proper cleanup when the app restarts without full process termination.
+  info!("Creating fresh notifier for engine run");
+  let notify = Arc::new(Notify::new());
+  {
+    let mut notifier_guard = ENGINE_NOTIFIER.write().unwrap();
+    *notifier_guard = Some(notify.clone());
   }
 
   let frontend = Arc::new(FlutterIntifaceEngineFrontend::new(
     sink.clone(),
     ENGINE_BROADCASTER.clone(),
   ));
+  // Store weak reference to frontend for closing during shutdown
+  {
+    let mut frontend_guard = ENGINE_FRONTEND.write().unwrap();
+    *frontend_guard = Some(Arc::downgrade(&frontend));
+  }
   info!("Frontend logging set up.");
   let frontend_waiter = frontend.notify_on_creation();
   let engine = Arc::new(IntifaceEngine::default());
   let engine_clone = engine.clone();
   let engine_clone_clone = engine.clone();
-  let notify = ENGINE_NOTIFIER.get().expect("Should be set").clone();
   let notify_clone = notify.clone();
   let notify_clone_clone = notify.clone();
   let options = args.into();
@@ -156,7 +176,10 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
               outgoing = backdoor_server_stream.next() => {
                 match outgoing {
                   Some(msg) => {
-                    let _ = sink.add(msg);
+                    // Check shutdown flag before sending to avoid SendError
+                    if !ENGINE_SHUTDOWN.load(Ordering::SeqCst) {
+                      let _ = sink.add(msg);
+                    }
                   },
                   None => break
                 }
@@ -186,6 +209,9 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
           engine_clone_clone.stop();
         }
       );
+      // Set shutdown flag to prevent any more sink messages from being sent.
+      // This is critical for preventing SendError when engine completes naturally.
+      ENGINE_SHUTDOWN.store(true, Ordering::SeqCst);
       RUN_STATUS.store(false, Ordering::Relaxed);
       info!("Exiting main join.");
     }
@@ -206,28 +232,69 @@ pub fn send_runtime_msg(msg_json: String) {
 
 pub fn stop_engine() {
   info!("Stop engine called in rust.");
-  if let Some(notifier) = ENGINE_NOTIFIER.get() {
-    notifier.notify_waiters();
+
+  // NOTE: We do NOT set ENGINE_SHUTDOWN or close the frontend here.
+  // The engine needs to send the "engineStopped" message to Dart before cleanup.
+  // The shutdown flag and frontend close happen automatically in the async task
+  // after the engine has finished and sent its final messages.
+  // The btleplug SendError is handled by log filtering in logging.rs.
+
+  // Notify all waiters to stop the engine
+  {
+    let notifier_guard = ENGINE_NOTIFIER.read().unwrap();
+    if let Some(ref notifier) = *notifier_guard {
+      notifier.notify_waiters();
+    }
   }
+
   // Need to park ourselves real quick to let the other runtime threads finish out.
   //
-  // HACK The android JNI drop calls (and sometimes windows UWP calls) are slow (100ms+) and need
-  // quite a while to get everything disconnected if there are currently connected devices. If they
-  // don't run to completion, the runtime won't shutdown properly and everything will stall. Running
-  // runtime_shutdown() doesn't work here because these are all tasks that may be stalled at the OS
-  // level so we don't have enough info. Waiting on this is not the optimal way to do it, but I also
-  // don't have a good way to know when shutdown is finished right now. So waiting it is. This isn't
-  // super noticable from an UX standpoint.
-  thread::sleep(Duration::from_millis(500));
+  // Platform-specific Bluetooth cleanup times vary significantly:
+  // - Android JNI drop calls: 100ms+
+  // - Windows UWP calls: 100ms+
+  // - macOS CoreBluetooth: Can take significantly longer due to delegate callbacks
+  //
+  // If cleanup doesn't complete, the runtime won't shutdown properly and everything stalls.
+  // This isn't optimal but we don't have a good way to know when shutdown is finished.
+  #[cfg(target_os = "macos")]
+  {
+    info!("macOS detected - using extended cleanup timeout for CoreBluetooth");
+    thread::sleep(Duration::from_millis(1000));
+  }
+  #[cfg(not(target_os = "macos"))]
+  {
+    thread::sleep(Duration::from_millis(500));
+  }
+
   let runtime;
   {
     runtime = RUNTIME.lock().unwrap().take();
   }
   if let Some(rt) = runtime {
     info!("Shutting down runtime");
-    rt.shutdown_timeout(Duration::from_secs(1));
-    info!("Runtime shutdown complete");
+    // Use shutdown_background to avoid blocking - the runtime will clean up in background
+    // shutdown_timeout can hang indefinitely if there are deadlocked tasks
+    rt.shutdown_background();
+    info!("Runtime shutdown initiated");
+  } else {
+    info!("No runtime to shutdown");
   }
+
+  // Clear the notifier so a fresh one is created on next run.
+  // This prevents stale state from accumulating across app restarts.
+  {
+    let mut notifier_guard = ENGINE_NOTIFIER.write().unwrap();
+    *notifier_guard = None;
+    info!("Engine notifier cleared for next run");
+  }
+
+  // Clear the frontend reference
+  {
+    let mut frontend_guard = ENGINE_FRONTEND.write().unwrap();
+    *frontend_guard = None;
+    info!("Engine frontend reference cleared for next run");
+  }
+
   RUN_STATUS.store(false, Ordering::Relaxed);
 }
 

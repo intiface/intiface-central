@@ -44,6 +44,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
   static List<bool Function(SentryEvent, {Hint? hint})> eventProcessors = [];
   final GuiSettingsCubit guiSettingsCubit;
 
+  // Cache the buildApp() future to prevent multiple concurrent initializations.
+  // This fixes a race condition where FutureBuilder would call buildApp() on every
+  // rebuild, potentially causing FFI conflicts and window initialization issues.
+  static Future<Widget>? _buildAppFuture;
+
   static Future<IntifaceCentralApp> create() async {
     WidgetsFlutterBinding.ensureInitialized();
     var guiSettingsCubit = await GuiSettingsCubit.create();
@@ -415,8 +420,15 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       create: (context) => AppResetCubit(),
       child: BlocBuilder<AppResetCubit, AppResetState>(
         builder: (context, state) {
+          // Clear cached future on app reset to force re-initialization
+          if (state is AppResetTriggerState) {
+            _buildAppFuture = null;
+          }
+          // Cache the future to prevent multiple concurrent buildApp() calls
+          // which can cause FFI conflicts and race conditions
+          _buildAppFuture ??= buildApp();
           return FutureBuilder(
-            future: buildApp(),
+            future: _buildAppFuture,
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data!;

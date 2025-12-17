@@ -1,5 +1,6 @@
 use crossbeam_channel::{bounded, Sender};
 use crate::frb_generated::StreamSink;
+use crate::api::runtime::is_engine_shutdown;
 use std::{
   sync::{atomic::AtomicBool, Arc},
   thread::JoinHandle,
@@ -13,6 +14,18 @@ use tracing_subscriber::{
 };
 use log::*;
 use tracing_subscriber::fmt::MakeWriter;
+
+/// Log messages matching these patterns are filtered out (not sent to Flutter).
+/// These are benign errors from third-party libraries that would confuse users.
+const FILTERED_LOG_PATTERNS: &[&str] = &[
+  // btleplug logs this during macOS Bluetooth permission flow - benign
+  "Error dispatching event: SendError",
+];
+
+/// Check if a log message should be filtered out.
+fn should_filter_log(msg: &str) -> bool {
+  FILTERED_LOG_PATTERNS.iter().any(|pattern| msg.contains(pattern))
+}
 
 pub struct BroadcastWriter {
   log_sender: Sender<String>,
@@ -97,16 +110,22 @@ impl FlutterTracingWriter {
         let should_quit = cancel_clone.load(std::sync::atomic::Ordering::Relaxed);
         if should_quit {
           info!("Breaking out of logging loop.");
-          // Exhaust all waiting messages.
+          // Exhaust all waiting messages, but only if engine is not shutting down.
           while let Ok(msg) = external_receiver.try_recv() {
-            sink.add(msg);
+            if !is_engine_shutdown() && !should_filter_log(&msg) {
+              let _ = sink.add(msg);
+            }
           }
           break;
         }
         // Wait on the receiver, as while getting 255 messages in the time between our quit calls is
         // unlikely, backpressure locks are worse than waiting 10ms.
+        // Check shutdown flag before sending to avoid SendError.
+        // Also filter out benign third-party library errors.
         if let Ok(msg) = external_receiver.recv_timeout(Duration::from_millis(10)) {
-          sink.add(msg);
+          if !is_engine_shutdown() && !should_filter_log(&msg) {
+            let _ = sink.add(msg);
+          }
         }
       }
     });

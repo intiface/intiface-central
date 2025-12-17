@@ -60,6 +60,8 @@ class EngineRepository {
 
   Future<void> stop() async {
     await _provider.stop();
+    // Close the stream to end any emit.forEach listeners in the bloc
+    await _engineMessageStream.close();
   }
 
   Future<bool> runtimeStarted() async {
