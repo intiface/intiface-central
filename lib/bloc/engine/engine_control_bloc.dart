@@ -163,7 +163,8 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
     });
     on<EngineControlEventStop>((event, emit) async {
       await _repo.stop();
-      //return emit(EngineStoppedState());
+      _isRunning = false;
+      emit(EngineStoppedState());
     });
   }
 
