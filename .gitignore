@@ -142,4 +142,4 @@ app.*.symbols
 # New android build system files
 **/.cxx
 
-target/CLAUDE.md
+target
