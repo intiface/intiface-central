@@ -142,19 +142,19 @@ impl ExposedServerDeviceDefinition {
 
   #[frb(sync, getter)]
   pub fn features(&self) -> Vec<ExposedServerDeviceFeature> {
-    self.definition.features().iter().map(|x| x.into()).collect()
+    self.definition.features().values().map(|x| x.into()).collect()
   }
 
   #[frb(sync)]
   pub fn update_feature(&mut self, feature: &ExposedServerDeviceFeature) {
-    if let Some(f) = self.definition.features().iter().find(|x| x.id() == feature.id()) {
+    if let Some(f) = self.definition.features().values().find(|x| x.id() == feature.id()) {
       ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&feature.feature);
     }
   }
 
   #[frb(sync)]
   pub fn update_feature_output_properties(&mut self, props: &ExposedServerDeviceFeatureOutputProperties) {
-    if let Some(f) = self.definition.features().iter().find(|x| x.id() == props.feature_id) {
+    if let Some(f) = self.definition.features().values().find(|x| x.id() == props.feature_id) {
       let mut f = f.clone();
       info!("Has feature");
       // Why let chaining won't work here, I don't know. Something is conflicting with the edition setting in Cargo.
