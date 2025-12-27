@@ -20,36 +20,25 @@ class DeviceSubscribeSensorEvent {}
 
 class DeviceSubscribeSensorEventSubscribe extends DeviceSubscribeSensorEvent {}
 
-class DeviceSubscribeSensorEventUnsubscribe
-    extends DeviceSubscribeSensorEvent {}
+class DeviceSubscribeSensorEventUnsubscribe extends DeviceSubscribeSensorEvent {}
 
 abstract class DeviceSensorBloc<T> extends Bloc<T, DeviceSensorState> {
   final ButtplugClientDevice _device;
   final String descriptor;
   final int _index;
   final List<List<int>> sensorRange;
-  final SensorType sensorType;
+  final InputType sensorType;
   List<int> _currentData = [0];
 
-  DeviceSensorBloc(
-    this._device,
-    this.descriptor,
-    this.sensorRange,
-    this._index,
-    this.sensorType,
-  ) : super(DeviceSensorStateInitial());
+  DeviceSensorBloc(this._device, this.descriptor, this.sensorRange, this._index, this.sensorType)
+    : super(DeviceSensorStateInitial());
 
   List<int> get currentData => _currentData;
 }
 
 class SensorReadBloc extends DeviceSensorBloc<DeviceReadSensorEvent> {
-  SensorReadBloc(
-    super.device,
-    super.descriptor,
-    super.sensorRange,
-    super.index,
-    super.sensorType,
-  ) {
+  SensorReadBloc(super.device, super.descriptor, super.sensorRange, super.index, super.sensorType) {
+    /*
     on<DeviceReadSensorEventRead>(((event, emit) async {
       var newData = await _device.sensorRead(_index);
       logInfo("Sensor data: $newData");
@@ -59,5 +48,6 @@ class SensorReadBloc extends DeviceSensorBloc<DeviceReadSensorEvent> {
         return emit(DeviceSensorStateUpdate(_currentData));
       }
     }));
+    */
   }
 }

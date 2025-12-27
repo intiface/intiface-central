@@ -1,7 +1,6 @@
-import 'package:buttplug/buttplug.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/bloc/device/device_actuator_cubit.dart';
+import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
@@ -11,8 +10,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class DeviceControlWidget extends StatelessWidget {
   final DeviceCubit _deviceCubit;
 
-  const DeviceControlWidget({super.key, required deviceCubit})
-    : _deviceCubit = deviceCubit;
+  const DeviceControlWidget({super.key, required deviceCubit}) : _deviceCubit = deviceCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -25,42 +23,37 @@ class DeviceControlWidget extends StatelessWidget {
       builder: (context, engineState) {
         return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
           builder: (context, state) {
-            List<Widget> actuatorList = [];
-            for (var actuator in _deviceCubit.actuators) {
-              if (actuator is ScalarActuatorCubit) {
-                actuatorList.addAll([
+            List<Widget> outputList = [];
+            for (var output in _deviceCubit.outputs) {
+              if (output is ValueOutputCubit) {
+                var range = output.feature.feature.output![output.type]!.value!;
+                outputList.addAll([
                   ListTile(
-                    title: Text(actuator.actuatorType.name),
-                    subtitle: Text(
-                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
-                    ),
+                    title: Text(output.type.name),
+                    subtitle: Text("Description: ${output.feature.feature.featureDescription} - Step Count: $range"),
                   ),
-                  BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
-                    bloc: actuator,
-                    buildWhen: (previous, current) =>
-                        current is DeviceActuatorStateUpdate,
+                  BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
+                    bloc: output,
+                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
                     builder: (context, state) => Slider(
-                      max: actuator.stepCount.toDouble(),
-                      value: actuator.currentValue.floorToDouble(),
-                      divisions: actuator.stepCount,
+                      max: range[1].toDouble(),
+                      value: output.currentValue.floorToDouble(),
+                      divisions: range[1],
                       onChanged: ((value) async {
-                        actuator.scalar(value);
+                        output.setValue(value.ceil());
                       }),
                     ),
                   ),
                 ]);
-              } else if (actuator is RotateActuatorCubit) {
+              } /*else if (actuator is RotateActuatorCubit) {
                 actuatorList.addAll([
                   ListTile(
                     title: const Text("Rotation"),
-                    subtitle: Text(
-                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
-                    ),
+                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
                   ),
-                  BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
+                  BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
                     bloc: actuator,
-                    buildWhen: (previous, current) =>
-                        current is DeviceActuatorStateUpdate,
+                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
                     builder: (context, state) => Slider(
                       max: actuator.stepCount.toDouble(),
                       value: actuator.currentValue.floorToDouble(),
@@ -75,14 +68,11 @@ class DeviceControlWidget extends StatelessWidget {
                 actuatorList.addAll([
                   ListTile(
                     title: const Text("Linear"),
-                    subtitle: Text(
-                      "Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}",
-                    ),
+                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
                   ),
-                  BlocBuilder<DeviceActuatorCubit, DeviceActuatorState>(
+                  BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
                     bloc: actuator,
-                    buildWhen: (previous, current) =>
-                        current is DeviceActuatorStateUpdate,
+                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
                     builder: (context, state) {
                       return ListView(
                         physics: const NeverScrollableScrollPhysics(),
@@ -90,10 +80,7 @@ class DeviceControlWidget extends StatelessWidget {
                         children: [
                           RangeSlider(
                             max: actuator.stepCount.toDouble(),
-                            values: RangeValues(
-                              actuator.currentMin,
-                              actuator.currentMax,
-                            ),
+                            values: RangeValues(actuator.currentMin, actuator.currentMax),
                             divisions: actuator.stepCount,
                             onChanged: ((values) async {
                               actuator.position(values.start, values.end);
@@ -115,27 +102,23 @@ class DeviceControlWidget extends StatelessWidget {
                     },
                   ),
                 ]);
-              } else {
-                actuatorList.add(const ListTile(title: Text("Unknown")));
+                
+              } */ else {
+                outputList.add(const ListTile(title: Text("Unknown")));
               }
             }
-
+            /*
             for (var sensor in _deviceCubit.sensors) {
               if (sensor is SensorReadBloc) {
                 actuatorList.addAll([
                   ListTile(
                     title: Text(sensor.sensorType.name),
-                    subtitle: Text(
-                      "Description: ${sensor.descriptor} - Sensor Range: ${sensor.sensorRange}",
-                    ),
+                    subtitle: Text("Description: ${sensor.descriptor} - Sensor Range: ${sensor.sensorRange}"),
                   ),
                   BlocBuilder<DeviceSensorBloc, DeviceSensorState>(
                     bloc: sensor,
-                    buildWhen:
-                        (
-                          DeviceSensorState previous,
-                          DeviceSensorState current,
-                        ) => current is DeviceSensorStateUpdate,
+                    buildWhen: (DeviceSensorState previous, DeviceSensorState current) =>
+                        current is DeviceSensorStateUpdate,
                     builder: (context, state) {
                       if (sensor.sensorType == SensorType.Battery) {
                         double percentage = sensor.currentData[0] / 100.0;
@@ -159,11 +142,8 @@ class DeviceControlWidget extends StatelessWidget {
                 ]);
               }
             }
-            return ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: actuatorList,
-            );
+            */
+            return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: outputList);
           },
         );
       },

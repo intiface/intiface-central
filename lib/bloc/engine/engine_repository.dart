@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:buttplug/buttplug.dart';
+import 'package:buttplug/messages/messages.dart';
 import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
@@ -33,13 +34,13 @@ class EngineRepository {
         // Try parsing the JSON first to make sure it's even valid JSON.
         jsonElement = jsonDecode(element);
       } catch (e) {
-        logError("Error decoding engine message $element: $e");
+        logError("Error decoding json for engine message $element: $e");
         return;
       }
       try {
         // If we've got valid JSON, see if it's an engine message or a server message.
         var message = EngineMessage.fromJson(jsonElement);
-        _engineMessageStream.add(EngineOutput(message, null));
+        if (!_engineMessageStream.isClosed) _engineMessageStream.add(EngineOutput(message, null));
         if (message.engineStarted != null) {
           _provider.onEngineStart();
         }

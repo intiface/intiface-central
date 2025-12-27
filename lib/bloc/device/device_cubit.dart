@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:intiface_central/bloc/device/device_actuator_cubit.dart';
+import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
 
 class DeviceState {}
@@ -13,7 +13,7 @@ class DeviceStateOffline extends DeviceState {}
 
 class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? _clientDevice;
-  List<DeviceActuatorCubit> _actuators = [];
+  List<DeviceOutputCubit> _outputs = [];
   final List<DeviceSensorBloc> _sensors = [];
   // DeviceConfiguration _deviceConfiguration;
 
@@ -23,62 +23,17 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   void setOnline(ButtplugClientDevice device) {
     _clientDevice = device;
-    if (_clientDevice!.messageAttributes.scalarCmd != null) {
-      int i = 0;
-      for (var attr in _clientDevice!.messageAttributes.scalarCmd!) {
-        _actuators.add(
-          ScalarActuatorCubit(
-            _clientDevice!,
-            attr.featureDescriptor,
-            attr.stepCount,
-            i,
-            attr.actuatorType,
-          ),
-        );
-        ++i;
-      }
-    }
-    if (_clientDevice!.messageAttributes.rotateCmd != null) {
-      int i = 0;
-      for (var attr in _clientDevice!.messageAttributes.rotateCmd!) {
-        _actuators.add(
-          RotateActuatorCubit(
-            _clientDevice!,
-            attr.featureDescriptor,
-            attr.stepCount,
-            i,
-          ),
-        );
-        ++i;
-      }
-    }
-    if (_clientDevice!.messageAttributes.linearCmd != null) {
-      var i = 0;
-      for (var attr in _clientDevice!.messageAttributes.linearCmd!) {
-        _actuators.add(
-          LinearActuatorCubit(
-            _clientDevice!,
-            attr.featureDescriptor,
-            attr.stepCount,
-            i,
-          ),
-        );
-        ++i;
-      }
-    }
-    if (_clientDevice!.messageAttributes.sensorReadCmd != null) {
-      var i = 0;
-      for (var attr in _clientDevice!.messageAttributes.sensorReadCmd!) {
-        _sensors.add(
-          SensorReadBloc(
-            _clientDevice!,
-            attr.featureDescriptor,
-            attr.sensorRange,
-            i,
-            attr.sensorType,
-          ),
-        );
-        ++i;
+    for (var feature in _clientDevice!.features.values) {
+      if (feature.feature.output != null) {
+        for (var output in feature.feature.output!.entries) {
+          if (output.key == OutputType.position) {
+            _outputs.add(PositionOutputCubit(feature));
+          } else if (output.key == OutputType.positionWithDuration) {
+            _outputs.add(PositionWithDurationOutputCubit(feature));
+          } else {
+            _outputs.add(ValueOutputCubit(feature, output.key));
+          }
+        }
       }
     }
     emit(DeviceStateOnline());
@@ -86,11 +41,11 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   void setOffline() {
     _clientDevice = null;
-    _actuators = [];
+    _outputs = [];
     emit(DeviceStateOffline());
   }
 
   ButtplugClientDevice? get device => _clientDevice;
-  List<DeviceActuatorCubit> get actuators => _actuators;
+  List<DeviceOutputCubit> get outputs => _outputs;
   List<DeviceSensorBloc> get sensors => _sensors;
 }
