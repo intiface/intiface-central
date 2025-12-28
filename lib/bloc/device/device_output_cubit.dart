@@ -40,23 +40,6 @@ class ValueOutputCubit extends DeviceOutputCubit {
   }
 }
 
-class PositionOutputCubit extends DeviceOutputCubit {
-  PositionOutputCubit(buttplug_dart.ButtplugClientDeviceFeature feature)
-    : super(feature, buttplug_dart.OutputType.position);
-
-  void setValue(int value) {
-    _currentValue = value;
-    emit(DeviceOutputStateUpdate(_currentValue));
-    EasyDebounce.debounce(
-      "actuator-output-${feature.deviceIndex}-${feature.feature.featureIndex}-$type",
-      const Duration(milliseconds: 100),
-      () async {
-        await feature.runOutput(buttplug_dart.DeviceOutputPositionConstructor().steps(value));
-      },
-    );
-  }
-}
-
 class PositionWithDurationOutputCubit extends DeviceOutputCubit {
   double _currentMin = 0;
   late double _currentMax;

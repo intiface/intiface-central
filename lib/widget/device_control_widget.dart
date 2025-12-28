@@ -5,6 +5,7 @@ import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceControlWidget extends StatelessWidget {
@@ -64,14 +65,15 @@ class DeviceControlWidget extends StatelessWidget {
                     ),
                   ),
                 ]);
-              } else if (actuator is LinearActuatorCubit) {
-                actuatorList.addAll([
+              } else if (output is PositionOutputCubit) {
+                var range = output.feature.feature.output![output.type]!.position!;
+                outputList.addAll([
                   ListTile(
                     title: const Text("Linear"),
-                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
+                    subtitle: Text("Description: ${output.feature.feature.featureDescription} - Step Count: $range"),
                   ),
                   BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
-                    bloc: actuator,
+                    bloc: output,
                     buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
                     builder: (context, state) {
                       return ListView(
@@ -79,30 +81,29 @@ class DeviceControlWidget extends StatelessWidget {
                         shrinkWrap: true,
                         children: [
                           RangeSlider(
-                            max: actuator.stepCount.toDouble(),
-                            values: RangeValues(actuator.currentMin, actuator.currentMax),
-                            divisions: actuator.stepCount,
+                            max: range[1].toDouble(),
+                            values: RangeValues(output.currentMin, output.currentMax),
+                            divisions: range[1],
                             onChanged: ((values) async {
-                              actuator.position(values.start, values.end);
+                              output.setPosition(values.start, values.end);
                             }),
                           ),
                           Slider(
                             max: 3000,
-                            value: actuator.currentDuration.floorToDouble(),
+                            value: output.currentDuration.floorToDouble(),
                             onChanged: ((value) async {
-                              actuator.duration(value);
+                              output.duration(value);
                             }),
                           ),
                           TextButton(
                             child: const Text("Toggle Oscillation"),
-                            onPressed: () => actuator.toggleRunning(),
+                            onPressed: () => output.toggleRunning(),
                           ),
                         ],
                       );
                     },
                   ),
                 ]);
-                
               } */ else {
                 outputList.add(const ListTile(title: Text("Unknown")));
               }
