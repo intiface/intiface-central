@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/bloc/device/device_output_cubit.dart';
-import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
+import 'package:intiface_central/bloc/device/device_input_cubit.dart';
 
 class DeviceState {}
 
@@ -14,7 +14,7 @@ class DeviceStateOffline extends DeviceState {}
 class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? _clientDevice;
   List<DeviceOutputCubit> _outputs = [];
-  final List<DeviceSensorBloc> _sensors = [];
+  final List<DeviceInputBloc> _inputs = [];
   // DeviceConfiguration _deviceConfiguration;
 
   DeviceCubit(this._clientDevice) : super(DeviceStateInitial()) {
@@ -33,6 +33,11 @@ class DeviceCubit extends Cubit<DeviceState> {
           }
         }
       }
+      if (feature.feature.input != null) {
+        for (var input in feature.feature.input!.entries) {
+          _inputs.add(InputReadBloc(device, feature.feature.featureDescription, input.value.valueRange, input.key));
+        }
+      }
     }
     emit(DeviceStateOnline());
   }
@@ -45,5 +50,5 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   ButtplugClientDevice? get device => _clientDevice;
   List<DeviceOutputCubit> get outputs => _outputs;
-  List<DeviceSensorBloc> get sensors => _sensors;
+  List<DeviceInputBloc> get inputs => _inputs;
 }

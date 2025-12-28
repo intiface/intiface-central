@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
-import 'package:intiface_central/bloc/device/device_sensor_cubit.dart';
+import 'package:intiface_central/bloc/device/device_input_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/src/rust/api/enums.dart';
 import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -37,36 +38,18 @@ class DeviceControlWidget extends StatelessWidget {
                     bloc: output,
                     buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
                     builder: (context, state) => Slider(
+                      min: range[0].toDouble(),
                       max: range[1].toDouble(),
                       value: output.currentValue.floorToDouble(),
-                      divisions: range[1],
+                      divisions: (range[0].abs() + range[1].abs()),
                       onChanged: ((value) async {
                         output.setValue(value.ceil());
                       }),
                     ),
                   ),
                 ]);
-              } /*else if (actuator is RotateActuatorCubit) {
-                actuatorList.addAll([
-                  ListTile(
-                    title: const Text("Rotation"),
-                    subtitle: Text("Description: ${actuator.descriptor} - Step Count: ${actuator.stepCount}"),
-                  ),
-                  BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
-                    bloc: actuator,
-                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
-                    builder: (context, state) => Slider(
-                      max: actuator.stepCount.toDouble(),
-                      value: actuator.currentValue.floorToDouble(),
-                      divisions: actuator.stepCount,
-                      onChanged: ((value) async {
-                        actuator.rotate(value);
-                      }),
-                    ),
-                  ),
-                ]);
-              } else if (output is PositionOutputCubit) {
-                var range = output.feature.feature.output![output.type]!.position!;
+              } else if (output is PositionWithDurationOutputCubit) {
+                var range = output.feature.feature.output![output.type]!.value!;
                 outputList.addAll([
                   ListTile(
                     title: const Text("Linear"),
@@ -95,34 +78,30 @@ class DeviceControlWidget extends StatelessWidget {
                               output.duration(value);
                             }),
                           ),
-                          TextButton(
-                            child: const Text("Toggle Oscillation"),
-                            onPressed: () => output.toggleRunning(),
-                          ),
+                          TextButton(child: const Text("Toggle Oscillation"), onPressed: () => output.toggleRunning()),
                         ],
                       );
                     },
                   ),
                 ]);
-              } */ else {
+              } else {
                 outputList.add(const ListTile(title: Text("Unknown")));
               }
             }
-            /*
-            for (var sensor in _deviceCubit.sensors) {
-              if (sensor is SensorReadBloc) {
-                actuatorList.addAll([
+            for (var input in _deviceCubit.inputs) {
+              if (input is InputReadBloc) {
+                outputList.addAll([
                   ListTile(
-                    title: Text(sensor.sensorType.name),
-                    subtitle: Text("Description: ${sensor.descriptor} - Sensor Range: ${sensor.sensorRange}"),
+                    title: Text(input.inputType.name),
+                    subtitle: Text("Description: ${input.descriptor} - Sensor Range: ${input.sensorRange}"),
                   ),
-                  BlocBuilder<DeviceSensorBloc, DeviceSensorState>(
-                    bloc: sensor,
-                    buildWhen: (DeviceSensorState previous, DeviceSensorState current) =>
-                        current is DeviceSensorStateUpdate,
+                  BlocBuilder<DeviceInputBloc, DeviceInputState>(
+                    bloc: input,
+                    buildWhen: (DeviceInputState previous, DeviceInputState current) =>
+                        current is DeviceInputStateUpdate,
                     builder: (context, state) {
-                      if (sensor.sensorType == SensorType.Battery) {
-                        double percentage = sensor.currentData[0] / 100.0;
+                      if (input.inputType == InputType.battery) {
+                        double percentage = input.currentData / 100.0;
                         return LinearPercentIndicator(
                           percent: percentage,
                           animation: true,
@@ -133,17 +112,13 @@ class DeviceControlWidget extends StatelessWidget {
                           center: Text("${(percentage * 100).toInt()}%"),
                         );
                       }
-                      return Text("${sensor.currentData}");
+                      return Text("${input.currentData}");
                     },
                   ),
-                  TextButton(
-                    child: const Text("Read Sensor"),
-                    onPressed: () => sensor.add(DeviceReadSensorEventRead()),
-                  ),
+                  TextButton(child: const Text("Read Sensor"), onPressed: () => input.add(DeviceInputReadEvent())),
                 ]);
               }
             }
-            */
             return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: outputList);
           },
         );
