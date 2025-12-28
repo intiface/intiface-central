@@ -48,7 +48,7 @@ class PositionWithDurationOutputCubit extends DeviceOutputCubit {
 
   PositionWithDurationOutputCubit(ButtplugClientDeviceFeature feature)
     : super(feature, buttplug_dart.OutputType.positionWithDuration) {
-    _currentMax = feature.feature.output![buttplug_dart.OutputType.positionWithDuration]!.position![1].toDouble();
+    _currentMax = feature.feature.output![buttplug_dart.OutputType.positionWithDuration]!.value![1].toDouble();
   }
 
   void position(double min, double max) {
