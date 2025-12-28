@@ -124,8 +124,8 @@ packages:
   buttplug:
     dependency: "direct main"
     description:
-      path: "/Users/qdot/code/buttplug_dart"
-      relative: false
+      path: "../buttplug_dart"
+      relative: true
     source: path
     version: "1.0.0"
   characters:

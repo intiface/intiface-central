@@ -13,7 +13,7 @@ dependencies:
   bloc: ^9.1.0
   #buttplug: ^0.0.4
   buttplug: 
-    path: /Users/qdot/code/buttplug_dart
+    path: ../buttplug_dart
   cupertino_icons: ^1.0.8
   device_info_plus: ^11.5.0
   easy_debounce: ^2.0.3
