@@ -27,6 +27,10 @@ jobs:
           path: buttplug
       - uses: actions/checkout@v3
         with:
+          repository: buttplugio/buttplug_dart
+          path: buttplug_dart
+      - uses: actions/checkout@v3
+        with:
           path: intiface-central
       - name: rust toolchain
         uses: actions-rs/toolchain@v1
@@ -71,6 +75,10 @@ jobs:
         with:
           repository: buttplugio/buttplug
           path: buttplug
+      - uses: actions/checkout@v3
+        with:
+          repository: buttplugio/buttplug_dart
+          path: buttplug_dart
       - uses: actions/checkout@v3
         with:
           path: intiface-central
