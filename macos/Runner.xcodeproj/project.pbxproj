@@ -27,7 +27,6 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		42827741290498DC00870167 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42827740290498DC00870167 /* CoreBluetooth.framework */; };
-		4282774329049A0600870167 /* bridge_generated.h in Resources */ = {isa = PBXBuildFile; fileRef = 4282774229049A0100870167 /* bridge_generated.h */; };
 		44A8C7C499695BCE16398221 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423AB11368150DFF42A5D089 /* Pods_Runner.framework */; };
 		C1523AB72E261181009AD8FC /* librust_lib_intiface_central_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E979FE2E25F6F4006AB3B0 /* librust_lib_intiface_central_static.a */; };
 /* End PBXBuildFile section */
@@ -321,7 +320,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4282774329049A0600870167 /* bridge_generated.h in Resources */,
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 			);
@@ -515,6 +513,7 @@
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Intiface Central";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -524,6 +523,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonpolynomial.intifacecentral;
 				PRODUCT_NAME = "Intiface Central";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};
@@ -686,6 +686,7 @@
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Intiface Central";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -695,6 +696,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nonpolynomial.intifacecentral;
 				PRODUCT_NAME = "Intiface Central";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = Runner/bridge_generated.h;
 				SWIFT_VERSION = 5.0;
 			};

@@ -191,6 +191,7 @@
 				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
 				DYLIB_COMPATIBILITY_VERSION = 2;
 				PRODUCT_NAME = rust_lib_intiface_central;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Release;
@@ -202,6 +203,7 @@
 				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
 				DYLIB_COMPATIBILITY_VERSION = 2;
 				PRODUCT_NAME = rust_lib_intiface_central;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 			};
 			name = Debug;
