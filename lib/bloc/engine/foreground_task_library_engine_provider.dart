@@ -53,7 +53,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   @override
-  Future<void> onStart(DateTime timestamp) async {
+  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
     _sendProviderLog("Info", "Trying to start engine in foreground service.");
     await RustLib.init();
 
@@ -122,7 +122,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   }
 
   @override
-  Future<void> onDestroy(DateTime timestamp) async {
+  Future<void> onDestroy(DateTime timestamp, bool whatever) async {
     _sendProviderLog("INFO", "Shutting down foreground task");
     IsolateNameServer.removePortNameMapping(_kMainServerPortName);
     IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
@@ -204,11 +204,6 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       reqResult = await FlutterForegroundTask.startService(
         notificationTitle: 'Intiface Engine is running',
         notificationText: 'Tap to return to the app',
-        notificationIcon: const NotificationIconData(
-          resType: ResourceType.mipmap,
-          resPrefix: ResourcePrefix.ic,
-          name: 'launcher',
-        ),
         notificationButtons: [const NotificationButton(id: 'stopServerButton', text: 'Stop Server')],
         callback: startCallback,
       );
