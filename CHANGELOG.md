@@ -1,3 +1,21 @@
+# v3.0.0 Beta 3 - 2025/12/28 (Desktop Platforms)
+
+## Features
+
+- Update to Buttplug v10.0.0b3/intiface Engine v4.0.0b3
+  - Even more device updates, see Buttplug README
+  - Finished implementing v4 spec, now used in Central for Devices panel
+  - Lots of bugfixes
+- Update all dependencies to latest
+- Move to using buttplug_dart v1b1 (v4 spec)
+
+## Bugfixes
+
+- Fix issue with using hot restarts during dev
+- Fix issue with macOS often showing blank screens
+- Fix engine stop never completing on macOS
+- Fix order of engine stop messages that were racing
+
 # v3.0.0 Beta 2 - 2025/10/18 (Desktop Platforms)
 
 ## Features
