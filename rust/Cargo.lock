@@ -406,7 +406,7 @@ checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
 name = "buttplug_client"
-version = "10.0.0-beta3"
+version = "10.0.0-beta4"
 dependencies = [
  "buttplug_core",
  "buttplug_derive",
@@ -454,7 +454,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_core"
-version = "10.0.0-beta3"
+version = "10.0.0-beta4"
 dependencies = [
  "async-stream",
  "buttplug_derive",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server"
-version = "10.0.0-beta3"
+version = "10.0.0-beta4"
 dependencies = [
  "aes",
  "async-trait",
@@ -524,7 +524,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_device_config"
-version = "10.0.0-beta3"
+version = "10.0.0-beta4"
 dependencies = [
  "buttplug_core",
  "buttplug_derive",
@@ -1722,7 +1722,7 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "4.0.0-beta3"
+version = "4.0.0-beta4"
 dependencies = [
  "anyhow",
  "argh",
