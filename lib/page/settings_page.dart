@@ -137,6 +137,12 @@ class SettingPage extends StatelessWidget {
 
     var appSettingsTiles = [
       SettingsTile.switchTile(
+        initialValue: cubit.useAdvancedMode,
+        onToggle: (value) => cubit.useAdvancedMode = value,
+        title: const Text("Advanced Mode"),
+        description: const Text("Show full UI with all controls and navigation"),
+      ),
+      SettingsTile.switchTile(
         initialValue: cubit.useLightTheme,
         onToggle: (value) => cubit.useLightTheme = value,
         title: const Text("Light Theme"),

@@ -44,6 +44,11 @@ Building Intiface Central will require the following tools:
 - Flutter SDK (3.27.1 or greater) and it's requirements for your platform (XCode for iOS/macOS,
   Android SDK/JDK etc for Android, etc...)
 - Rust (Latest version)
+- **Windows notes (devs):**
+  - JDK is required. Set `JAVA_HOME` to a JDK (e.g. `C:\Program Files\Microsoft\jdk-21...`) and add its `bin` to PATH. A JRE alone will make `FindJNI` fail.
+  - Rust: use stable 1.91+ (older stable fails on `buttplug_core` let-chain syntax). Run `rustup update stable`.
+  - CMake installs to `C:\Program Files` by default; avoid permission errors by setting `CMAKE_INSTALL_PREFIX` to your build folder, e.g.
+    `setx CMAKE_INSTALL_PREFIX "%cd%\build\windows\x64\runner\Debug"`
 
 To run a development version instead of making a build, switch out the `flutter build -d [target]` statements below with `flutter run [target]` (or just `flutter run` if the default platform is what you're aiming for).
 
