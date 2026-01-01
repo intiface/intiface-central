@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
-import 'package:loggy/loggy.dart';
 
 abstract class DeviceInputState {}
 

@@ -6,7 +6,6 @@ import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device/device_input_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
-import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceControlWidget extends StatelessWidget {
