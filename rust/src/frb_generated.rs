@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1241198086;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1919980017;
 
 // Section: executor
 
@@ -2369,6 +2369,38 @@ fn wire__crate__api__specifiers__get_user_websocket_communication_specifiers_imp
         },
     )
 }
+fn wire__crate__api__runtime__is_engine_shutdown_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "is_engine_shutdown",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(crate::api::runtime::is_engine_shutdown())?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__specifiers__remove_serial_specifier_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2834,6 +2866,7 @@ const _: fn() = || {
     let _: Option<u16> = EngineOptionsExternal.repeater_local_port;
     let _: Option<String> = EngineOptionsExternal.repeater_remote_address;
     let _: Option<u16> = EngineOptionsExternal.rest_api_port;
+    let _: bool = EngineOptionsExternal.allow_v4_spec;
 };
 
 // Section: related_funcs
@@ -3108,6 +3141,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
         let mut var_repeaterLocalPort = <Option<u16>>::sse_decode(deserializer);
         let mut var_repeaterRemoteAddress = <Option<String>>::sse_decode(deserializer);
         let mut var_restApiPort = <Option<u16>>::sse_decode(deserializer);
+        let mut var_allowV4Spec = <bool>::sse_decode(deserializer);
         return crate::api::runtime::EngineOptionsExternal {
             device_config_json: var_deviceConfigJson,
             user_device_config_json: var_userDeviceConfigJson,
@@ -3136,6 +3170,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
             repeater_local_port: var_repeaterLocalPort,
             repeater_remote_address: var_repeaterRemoteAddress,
             rest_api_port: var_restApiPort,
+            allow_v4_spec: var_allowV4Spec,
         };
     }
 }
@@ -3513,45 +3548,46 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        53 => wire__crate__api__specifiers__remove_serial_specifier_impl(
+        53 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__specifiers__remove_serial_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        54 => wire__crate__api__device_config__remove_user_config_impl(
+        55 => wire__crate__api__device_config__remove_user_config_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        55 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
+        56 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        56 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
-        57 => {
+        57 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
+        58 => {
             wire__crate__api__runtime__rust_runtime_started_impl(port, ptr, rust_vec_len, data_len)
         }
-        58 => wire__crate__api__runtime__send_backend_server_message_impl(
+        59 => wire__crate__api__runtime__send_backend_server_message_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        59 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-        60 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+        60 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
+        61 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        61 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
-        62 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
-        64 => wire__crate__api__device_config__update_user_config_impl(
+        62 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
+        64 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__device_config__update_user_config_impl(
             port,
             ptr,
             rust_vec_len,
@@ -3805,6 +3841,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
             self.0.repeater_local_port.into_into_dart().into_dart(),
             self.0.repeater_remote_address.into_into_dart().into_dart(),
             self.0.rest_api_port.into_into_dart().into_dart(),
+            self.0.allow_v4_spec.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4197,6 +4234,7 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
         <Option<u16>>::sse_encode(self.repeater_local_port, serializer);
         <Option<String>>::sse_encode(self.repeater_remote_address, serializer);
         <Option<u16>>::sse_encode(self.rest_api_port, serializer);
+        <bool>::sse_encode(self.allow_v4_spec, serializer);
     }
 }
 

@@ -190,6 +190,30 @@ class SettingPage extends StatelessWidget {
       SettingsSection(title: const Text("App Settings"), tiles: appSettingsTiles),
     ]);
 
+    var experimentalTiles = [
+      SettingsTile.switchTile(
+        initialValue: cubit.allowExperimentalV4Support,
+        onToggle: (value) {
+          cubit.allowExperimentalV4Support = value;
+          // If we're turning off V4 support, turn off the REST server too.
+          if (!value) {
+            cubit.allowExperimentalRestServer = false;
+          }
+        },
+        title: const Text("Buttplug V4 Spec"),
+      ),
+    ];
+    if (cubit.allowExperimentalV4Support) {
+      experimentalTiles.add(
+        SettingsTile.switchTile(
+          initialValue: cubit.allowExperimentalRestServer,
+          onToggle: (value) => cubit.allowExperimentalRestServer = value,
+          title: const Text("REST Server"),
+        ),
+      );
+    }
+    tiles.add(SettingsSection(title: const Text("Experimental Features"), tiles: experimentalTiles));
+
     tiles.add(
       SettingsSection(
         title: const Text("Reset Application"),

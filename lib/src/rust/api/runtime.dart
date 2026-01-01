@@ -6,11 +6,16 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BACKDOOR_INCOMING_BROADCASTER`, `ENGINE_BROADCASTER`, `RUNTIME`, `RUN_STATUS`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BACKDOOR_INCOMING_BROADCASTER`, `ENGINE_BROADCASTER`, `ENGINE_FRONTEND`, `ENGINE_NOTIFIER`, `ENGINE_SHUTDOWN`, `RUNTIME`, `RUN_STATUS`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`
 
 Future<bool> rustRuntimeStarted() =>
     RustLib.instance.api.crateApiRuntimeRustRuntimeStarted();
+
+/// Check if the engine is currently shutting down.
+/// Used by other modules to prevent sending messages to closed streams.
+Future<bool> isEngineShutdown() =>
+    RustLib.instance.api.crateApiRuntimeIsEngineShutdown();
 
 Stream<String> runEngine({required EngineOptionsExternal args}) =>
     RustLib.instance.api.crateApiRuntimeRunEngine(args: args);
@@ -51,6 +56,7 @@ class EngineOptionsExternal {
   final int? repeaterLocalPort;
   final String? repeaterRemoteAddress;
   final int? restApiPort;
+  final bool allowV4Spec;
 
   const EngineOptionsExternal({
     this.deviceConfigJson,
@@ -80,6 +86,7 @@ class EngineOptionsExternal {
     this.repeaterLocalPort,
     this.repeaterRemoteAddress,
     this.restApiPort,
+    required this.allowV4Spec,
   });
 
   @override
@@ -110,7 +117,8 @@ class EngineOptionsExternal {
       repeaterMode.hashCode ^
       repeaterLocalPort.hashCode ^
       repeaterRemoteAddress.hashCode ^
-      restApiPort.hashCode;
+      restApiPort.hashCode ^
+      allowV4Spec.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -143,5 +151,6 @@ class EngineOptionsExternal {
           repeaterMode == other.repeaterMode &&
           repeaterLocalPort == other.repeaterLocalPort &&
           repeaterRemoteAddress == other.repeaterRemoteAddress &&
-          restApiPort == other.restApiPort;
+          restApiPort == other.restApiPort &&
+          allowV4Spec == other.allowV4Spec;
 }
