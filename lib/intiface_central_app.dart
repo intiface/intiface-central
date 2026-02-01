@@ -101,7 +101,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     // Bring up our settings repo.
     var configCubit = await IntifaceConfigurationCubit.create();
     // Set up Update/Configuration Pipe/Cubit.
-    var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
+    var updateRepo = UpdateRepository(
+      configCubit.currentNewsEtag,
+      configCubit.currentDeviceConfigEtag,
+    );
 
     // Set up attachments to be sent with sentry events.
     if (configCubit.canUseCrashReporting) {
@@ -111,22 +114,30 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       var entities = (await dir.list().toList()).whereType<File>();
       Sentry.configureScope((scope) {
         scope.clearAttachments();
-        final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
-        final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
+        final logAttachments = entities.map(
+          (e) => IoSentryAttachment.fromFile(e),
+        );
+        final userConfigAttachment = IoSentryAttachment.fromFile(
+          IntifacePaths.userDeviceConfigFile,
+        );
         for (var attachment in logAttachments) {
           scope.addAttachment(attachment);
         }
         scope.addAttachment(userConfigAttachment);
       });
     } else {
-      logWarning("DSN not set, crash reporting cannot be used in this version of Intiface Central");
+      logWarning(
+        "DSN not set, crash reporting cannot be used in this version of Intiface Central",
+      );
     }
 
     if (isDesktop()) {
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
-      String windowTitle = kDebugMode ? "Intiface® Central $packageVersion DEBUG" : "Intiface® Central $packageVersion";
+      String windowTitle = kDebugMode
+          ? "Intiface® Central $packageVersion DEBUG"
+          : "Intiface® Central $packageVersion";
 
       WindowOptions windowOptions = const WindowOptions(
         //center: true,
@@ -149,9 +160,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           "Testing window position $windowPosition against ${display.name} (${display.size} ${display.visiblePosition})",
         );
         if (display.visiblePosition!.dx < windowPosition.dx &&
-            (display.visiblePosition!.dx + display.size.width) > windowPosition.dx &&
+            (display.visiblePosition!.dx + display.size.width) >
+                windowPosition.dx &&
             display.visiblePosition!.dy < windowPosition.dy &&
-            (display.visiblePosition!.dy + display.size.height) > windowPosition.dy) {
+            (display.visiblePosition!.dy + display.size.height) >
+                windowPosition.dy) {
           windowInBounds = true;
           logInfo("Window in bounds for ${display.name}");
           break;
@@ -162,7 +175,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
         guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
       } else if (configCubit.restoreWindowLocation) {
         // Only restore the window location if the option to do so is on.
-        logInfo("Restoring window position to ${guiSettingsCubit.getWindowPosition()}");
+        logInfo(
+          "Restoring window position to ${guiSettingsCubit.getWindowPosition()}",
+        );
         await windowManager.setPosition(guiSettingsCubit.getWindowPosition());
       } else {
         logInfo("Window location not restored due to configuration settings");
@@ -206,7 +221,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
           androidNotificationOptions: AndroidNotificationOptions(
             channelId: 'notification_channel_id',
             channelName: 'Intiface Engine Notification',
-            channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
+            channelDescription:
+                'This notification appears when the Intiface Engine foreground service is running.',
             channelImportance: NotificationChannelImportance.LOW,
             priority: NotificationPriority.LOW,
           ),
@@ -231,7 +247,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     configCubit.currentAppVersion = packageVersion;
 
-    var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
+    var deviceConfigVersion =
+        await DeviceConfiguration.getBaseConfigFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
     var networkCubit = await NetworkInfoCubit.create();
@@ -257,7 +274,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       if (state is DeviceConfigUpdateRetrieved) {
         configCubit.currentDeviceConfigEtag = state.version;
         // Load the file and pull internal version while we're at it.
-        var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
+        var deviceConfigVersion =
+            await DeviceConfiguration.getBaseConfigFileVersion();
         configCubit.currentDeviceConfigVersion = deviceConfigVersion;
       }
       if (isDesktop()) {
@@ -273,7 +291,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
 
     var engineControlBloc = EngineControlBloc(engineRepo);
 
-    var deviceControlBloc = DeviceManagerBloc(engineControlBloc.stream, engineControlBloc.add);
+    var deviceControlBloc = DeviceManagerBloc(
+      engineControlBloc.stream,
+      engineControlBloc.add,
+    );
 
     ///
     /// ORDER MATTERS HERE
@@ -313,7 +334,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     });
 
     if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
-      await crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
+      await crashReporting(
+        sentryApiKey: const String.fromEnvironment('SENTRY_DSN'),
+      );
     }
 
     DiscordBloc discordBloc = DiscordBloc();
@@ -379,7 +402,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     }
 
     if (configCubit.startServerOnStartup) {
-      engineControlBloc.add(EngineControlEventStart(options: await configCubit.getEngineOptions()));
+      engineControlBloc.add(
+        EngineControlEventStart(options: await configCubit.getEngineOptions()),
+      );
     }
 
     // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
@@ -387,10 +412,14 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       logInfo(event.eventId);
       if (!configCubit.crashReporting) {
         if (event.tags?.containsKey("ManualLogSubmit") != true) {
-          logWarning("Crash/error received but CrashReporting is off, not sending to devs.");
+          logWarning(
+            "Crash/error received but CrashReporting is off, not sending to devs.",
+          );
           return false;
         }
-        logWarning("Manual log submission, crashReporting is off, overriding and sending to devs.");
+        logWarning(
+          "Manual log submission, crashReporting is off, overriding and sending to devs.",
+        );
       } else {
         logWarning("Submitting crash report/logs to developers.");
       }
@@ -440,7 +469,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
                 title: 'Intiface Central',
                 debugShowCheckedModeBanner: false,
                 home: Scaffold(
-                  body: Center(child: Image(image: AssetImage('assets/icons/intiface_central_icon.png'))),
+                  body: Center(
+                    child: Image(
+                      image: AssetImage(
+                        'assets/icons/intiface_central_icon.png',
+                      ),
+                    ),
+                  ),
                 ),
               );
             },
@@ -496,9 +531,13 @@ class IntifaceCentralPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
+        buildWhen: (previous, current) =>
+            current is UseCompactDisplayState ||
+            current is ConfigurationResetState,
         builder: (context, state) {
-          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
+          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(
+            context,
+          ).useCompactDisplay;
           List<Widget> widgets = [const ControlWidget()];
           /*
               if (isDesktop()) {
@@ -521,9 +560,14 @@ class IntifaceCentralPage extends StatelessWidget {
               }
               */
           if (!isDesktop() || !useCompactDisplay) {
-            widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
+            widgets.addAll(const [
+              Divider(height: 2),
+              Expanded(child: BodyWidget()),
+            ]);
           }
-          var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+          var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(
+            context,
+          );
           if (userCubit.createError != null) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => showDialog<void>(

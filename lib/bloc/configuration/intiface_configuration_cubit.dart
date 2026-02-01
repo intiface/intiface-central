@@ -189,7 +189,8 @@ class AllowExperimentalRestServer extends IntifaceConfigurationState {
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final SharedPreferences _prefs;
 
-  IntifaceConfigurationCubit._create(this._prefs) : super(IntifaceConfigurationStateNone());
+  IntifaceConfigurationCubit._create(this._prefs)
+    : super(IntifaceConfigurationStateNone());
 
   static Future<IntifaceConfigurationCubit> create() async {
     final prefs = await SharedPreferences.getInstance();
@@ -214,7 +215,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     serverName = _prefs.getString("serverName") ?? "Intiface Server";
     serverMaxPingTime = _prefs.getInt("maxPingTime") ?? 0;
     // This should automatically be true on phones, otherwise people are going to be VERY confused.
-    websocketServerAllInterfaces = _prefs.getBool("websocketServerAllInterfaces") ?? isMobile();
+    websocketServerAllInterfaces =
+        _prefs.getBool("websocketServerAllInterfaces") ?? isMobile();
     websocketServerPort = _prefs.getInt("websocketServerPort") ?? 12345;
     checkForUpdateOnStart = _prefs.getBool("checkForUpdateOnStart") ?? true;
     startServerOnStartup = _prefs.getBool("startServerOnStartup") ?? false;
@@ -222,6 +224,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     hasRunFirstUse = _prefs.getBool("hasRunFirstUse") ?? false;
     showExtendedUI = _prefs.getBool("showExtendedUI") ?? false;
     unreadNews = _prefs.getBool("unreadNews") ?? false;
+    useSideNavigationBar =
+        _prefs.getBool("useSideNavigationBar") ?? isDesktop();
     // Migrate old boolean useLightTheme to new tri-state themeMode.
     if (_prefs.getString("themeMode") == null &&
         _prefs.getBool("useLightTheme") != null) {
@@ -239,8 +243,10 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useXInput = _prefs.getBool("useXInput") ?? Platform.isWindows;
 
     // Always default off, require user to turn them on.
-    useLovenseConnectService = _prefs.getBool("useLovenseConnectService") ?? false;
-    useDeviceWebsocketServer = _prefs.getBool("useDeviceWebsocketServer") ?? false;
+    useLovenseConnectService =
+        _prefs.getBool("useLovenseConnectService") ?? false;
+    useDeviceWebsocketServer =
+        _prefs.getBool("useDeviceWebsocketServer") ?? false;
     useSerialPort = _prefs.getBool("useSerialPort") ?? false;
     useHID = _prefs.getBool("useHID") ?? false;
     useLovenseHIDDongle = _prefs.getBool("useLovenseHIDDongle") ?? false;
@@ -249,15 +255,19 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     // Update settings
     currentNewsEtag = _prefs.getString("currentNewsEtag") ?? "";
     currentDeviceConfigEtag = _prefs.getString("currentDeviceConfigEtag") ?? "";
-    currentDeviceConfigVersion = _prefs.getString("currentDeviceConfigVersion") ?? "0.0";
+    currentDeviceConfigVersion =
+        _prefs.getString("currentDeviceConfigVersion") ?? "0.0";
 
     var spec = Pubspec.parse(await rootBundle.loadString('pubspec.yaml'));
 
     currentAppVersion = spec.version!.toString();
-    latestAppVersion = _prefs.getString("latestAppVersion") ?? currentAppVersion;
+    latestAppVersion =
+        _prefs.getString("latestAppVersion") ?? currentAppVersion;
     usePrereleaseVersion = _prefs.getBool("usePrereleaseVersion") ?? false;
 
-    useProcessEngine = kDebugMode ? (_prefs.getBool("useProcessEngine") ?? false) : false;
+    useProcessEngine = kDebugMode
+        ? (_prefs.getBool("useProcessEngine") ?? false)
+        : false;
     // Default to true on mobile.
     useForegroundProcess = (Platform.isAndroid || Platform.isIOS)
         ? (_prefs.getBool("useForegroundProcess3") ?? true)
@@ -267,10 +277,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     mdnsSuffix = _prefs.getString("mdnsSuffix") ?? "";
     displayLogLevel = _prefs.getString("displayLogLevel") ?? "info";
     repeaterLocalPort = _prefs.getInt("repeaterLocalPort") ?? 12345;
-    repeaterRemoteAddress = _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
+    repeaterRemoteAddress =
+        _prefs.getString("repeaterRemoteAddress") ?? "192.168.1.1:12345";
 
     restLocalPort = _prefs.getInt("restLocalPort") ?? 3000;
-    allowExperimentalRestServer = _prefs.getBool("allowExperimentalRestServer") ?? false;
+    allowExperimentalRestServer =
+        _prefs.getBool("allowExperimentalRestServer") ?? false;
     // Default for appMode built into getter, since it also requires a type conversion.
   }
 
@@ -287,7 +299,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(CurrentNewsEtagState(value));
   }
 
-  String get currentDeviceConfigEtag => _prefs.getString("currentDeviceConfigEtag")!;
+  String get currentDeviceConfigEtag =>
+      _prefs.getString("currentDeviceConfigEtag")!;
   set currentDeviceConfigEtag(String value) {
     _prefs.setString("currentDeviceConfigEtag", value);
     emit(CurrentDeviceConfigEtagState(value));
@@ -345,7 +358,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     _prefs.setInt("maxPingTime", value);
   }
 
-  bool get websocketServerAllInterfaces => _prefs.getBool("websocketServerAllInterfaces")!;
+  bool get websocketServerAllInterfaces =>
+      _prefs.getBool("websocketServerAllInterfaces")!;
   set websocketServerAllInterfaces(bool value) {
     _prefs.setBool("websocketServerAllInterfaces", value);
     emit(WebsocketServerAllInterfacesState(value));
@@ -400,7 +414,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseLovenseSerialDongleState(value));
   }
 
-  bool get useLovenseConnectService => _prefs.getBool("useLovenseConnectService")!;
+  bool get useLovenseConnectService =>
+      _prefs.getBool("useLovenseConnectService")!;
   set useLovenseConnectService(bool value) {
     _prefs.setBool("useLovenseConnectService", value);
     emit(UseLovenseConnectServiceState(value));
@@ -416,7 +431,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseXInputState(value));
   }
 
-  bool get useDeviceWebsocketServer => _prefs.getBool("useDeviceWebsocketServer")!;
+  bool get useDeviceWebsocketServer =>
+      _prefs.getBool("useDeviceWebsocketServer")!;
   set useDeviceWebsocketServer(bool value) {
     _prefs.setBool("useDeviceWebsocketServer", value);
     emit(UseDeviceWebsocketServerState(value));
@@ -459,7 +475,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(LatestAppVersionState(value));
   }
 
-  String get currentDeviceConfigVersion => _prefs.getString("currentDeviceConfigVersion")!;
+  String get currentDeviceConfigVersion =>
+      _prefs.getString("currentDeviceConfigVersion")!;
   set currentDeviceConfigVersion(String value) {
     _prefs.setString("currentDeviceConfigVersion", value);
     emit(CurrentDeviceConfigVersionState(value));
@@ -507,7 +524,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(RestLocalPortState(value));
   }
 
-  String get repeaterRemoteAddress => _prefs.getString("repeaterRemoteAddress")!;
+  String get repeaterRemoteAddress =>
+      _prefs.getString("repeaterRemoteAddress")!;
   set repeaterRemoteAddress(String value) {
     _prefs.setString("repeaterRemoteAddress", value);
     emit(RepeaterRemoteAddressState(value));
@@ -515,7 +533,10 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
   AppMode get appMode {
     var mode = _prefs.getString("appMode");
-    return AppMode.values.firstWhere((element) => mode == element.name, orElse: () => AppMode.engine);
+    return AppMode.values.firstWhere(
+      (element) => mode == element.name,
+      orElse: () => AppMode.engine,
+    );
   }
 
   set appMode(AppMode value) {
@@ -523,9 +544,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(AppModeState(value));
   }
 
-  bool get canUseCrashReporting => const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
+  bool get canUseCrashReporting =>
+      const String.fromEnvironment("SENTRY_DSN").isNotEmpty;
 
-  bool get allowExperimentalRestServer => _prefs.getBool("allowExperimentalRestServer")!;
+  bool get allowExperimentalRestServer =>
+      _prefs.getBool("allowExperimentalRestServer")!;
   set allowExperimentalRestServer(bool value) {
     _prefs.setBool("allowExperimentalRestServer", value);
     emit(AllowExperimentalRestServer(value));
@@ -534,12 +557,16 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   Future<EngineOptionsExternal> getEngineOptions() async {
     String? deviceConfigFile;
     if (await IntifacePaths.deviceConfigFile.exists()) {
-      deviceConfigFile = await File(IntifacePaths.deviceConfigFile.path).readAsString();
+      deviceConfigFile = await File(
+        IntifacePaths.deviceConfigFile.path,
+      ).readAsString();
     }
 
     String? userDeviceConfigFile;
     if (await IntifacePaths.userDeviceConfigFile.exists()) {
-      userDeviceConfigFile = await File(IntifacePaths.userDeviceConfigFile.path).readAsString();
+      userDeviceConfigFile = await File(
+        IntifacePaths.userDeviceConfigFile.path,
+      ).readAsString();
     }
 
     return EngineOptionsExternal(
