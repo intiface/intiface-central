@@ -208,7 +208,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  RustStreamSink<String> dco_decode_StreamSink_String_Sse(dynamic raw);
+  RustStreamSink<String> dco_decode_StreamSink_String_Dco(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -526,7 +526,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  RustStreamSink<String> sse_decode_StreamSink_String_Sse(
+  RustStreamSink<String> sse_decode_StreamSink_String_Dco(
     SseDeserializer deserializer,
   );
 
@@ -707,6 +707,530 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
+  String cst_encode_AnyhowException(AnyhowException raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    throw UnimplementedError();
+  }
+
+  @protected
+  JSAny
+  cst_encode_Map_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition_None(
+    Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+      raw.entries.map((e) => (e.key, e.value)).toList(),
+    );
+  }
+
+  @protected
+  String cst_encode_StreamSink_String_Dco(RustStreamSink<String> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_String(
+      raw.setupAndSerialize(
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_String,
+          decodeErrorData: dco_decode_AnyhowException,
+        ),
+      ),
+    );
+  }
+
+  @protected
+  String cst_encode_String(String raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw;
+  }
+
+  @protected
+  JSAny cst_encode_Uuid(UuidValue raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_list_prim_u_8_strict(raw.toBytes());
+  }
+
+  @protected
+  int
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+      raw,
+    );
+  }
+
+  @protected
+  int
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+      raw,
+    );
+  }
+
+  @protected
+  int
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+      raw,
+    );
+  }
+
+  @protected
+  int
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+      raw,
+    );
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_engine_options_external(
+    EngineOptionsExternal raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_engine_options_external(raw);
+  }
+
+  @protected
+  JSAny cst_encode_box_autoadd_record_u_32_u_32((int, int) raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_record_u_32_u_32(raw);
+  }
+
+  @protected
+  int cst_encode_box_autoadd_u_16(int raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_u_16(raw);
+  }
+
+  @protected
+  int cst_encode_box_autoadd_u_32(int raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_u_32(raw);
+  }
+
+  @protected
+  JSAny cst_encode_engine_options_external(EngineOptionsExternal raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_opt_String(raw.deviceConfigJson),
+      cst_encode_opt_String(raw.userDeviceConfigJson),
+      cst_encode_opt_String(raw.userDeviceConfigPath),
+      cst_encode_String(raw.serverName),
+      cst_encode_bool(raw.websocketUseAllInterfaces),
+      cst_encode_opt_box_autoadd_u_16(raw.websocketPort),
+      cst_encode_opt_box_autoadd_u_16(raw.frontendWebsocketPort),
+      cst_encode_bool(raw.frontendInProcessChannel),
+      cst_encode_u_32(raw.maxPingTime),
+      cst_encode_bool(raw.useBluetoothLe),
+      cst_encode_bool(raw.useSerialPort),
+      cst_encode_bool(raw.useHid),
+      cst_encode_bool(raw.useLovenseDongleSerial),
+      cst_encode_bool(raw.useLovenseDongleHid),
+      cst_encode_bool(raw.useXinput),
+      cst_encode_bool(raw.useLovenseConnect),
+      cst_encode_bool(raw.useDeviceWebsocketServer),
+      cst_encode_opt_box_autoadd_u_16(raw.deviceWebsocketServerPort),
+      cst_encode_bool(raw.crashMainThread),
+      cst_encode_bool(raw.crashTaskThread),
+      cst_encode_opt_String(raw.websocketClientAddress),
+      cst_encode_bool(raw.broadcastServerMdns),
+      cst_encode_opt_String(raw.mdnsSuffix),
+      cst_encode_bool(raw.repeaterMode),
+      cst_encode_opt_box_autoadd_u_16(raw.repeaterLocalPort),
+      cst_encode_opt_String(raw.repeaterRemoteAddress),
+      cst_encode_opt_box_autoadd_u_16(raw.restApiPort),
+      cst_encode_bool(raw.allowV4Spec),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_exposed_serial_specifier(ExposedSerialSpecifier raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_u_32(raw.baudRate),
+      cst_encode_u_8(raw.dataBits),
+      cst_encode_u_8(raw.stopBits),
+      cst_encode_String(raw.parity),
+      cst_encode_String(raw.port),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_exposed_websocket_specifier(ExposedWebsocketSpecifier raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [cst_encode_String(raw.name)].jsify()!;
+  }
+
+  @protected
+  JSAny
+  cst_encode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    List<ExposedServerDeviceFeature> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw
+        .map(
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature,
+        )
+        .toList()
+        .jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_String(List<String> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.map(cst_encode_String).toList().jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_prim_u_8_strict(Uint8List raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.jsify()!;
+  }
+
+  @protected
+  JSAny
+  cst_encode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+    List<(ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw
+        .map(
+          cst_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition,
+        )
+        .toList()
+        .jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_record_string_exposed_serial_specifier(
+    List<(String, ExposedSerialSpecifier)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw
+        .map(cst_encode_record_string_exposed_serial_specifier)
+        .toList()
+        .jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_list_record_string_exposed_websocket_specifier(
+    List<(String, ExposedWebsocketSpecifier)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw
+        .map(cst_encode_record_string_exposed_websocket_specifier)
+        .toList()
+        .jsify()!;
+  }
+
+  @protected
+  String? cst_encode_opt_String(String? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_String(raw);
+  }
+
+  @protected
+  int?
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? null
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+            raw,
+          );
+  }
+
+  @protected
+  int?
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? null
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+            raw,
+          );
+  }
+
+  @protected
+  int?
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? null
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+            raw,
+          );
+  }
+
+  @protected
+  int?
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? null
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+            raw,
+          );
+  }
+
+  @protected
+  int? cst_encode_opt_box_autoadd_u_16(int? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_box_autoadd_u_16(raw);
+  }
+
+  @protected
+  int? cst_encode_opt_box_autoadd_u_32(int? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_box_autoadd_u_32(raw);
+  }
+
+  @protected
+  JSAny
+  cst_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+    (ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition) raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+        raw.$1,
+      ),
+      cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+        raw.$2,
+      ),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_record_i_32_i_32((int, int) raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [cst_encode_i_32(raw.$1), cst_encode_i_32(raw.$2)].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_record_string_exposed_serial_specifier(
+    (String, ExposedSerialSpecifier) raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_String(raw.$1),
+      cst_encode_exposed_serial_specifier(raw.$2),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_record_string_exposed_websocket_specifier(
+    (String, ExposedWebsocketSpecifier) raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [
+      cst_encode_String(raw.$1),
+      cst_encode_exposed_websocket_specifier(raw.$2),
+    ].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_record_u_32_u_32((int, int) raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return [cst_encode_u_32(raw.$1), cst_encode_u_32(raw.$2)].jsify()!;
+  }
+
+  @protected
+  JSAny cst_encode_usize(BigInt raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return castNativeBigInt(raw);
+  }
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  bool cst_encode_bool(bool raw);
+
+  @protected
+  int cst_encode_i_32(int raw);
+
+  @protected
+  int cst_encode_input_command_type(InputCommandType raw);
+
+  @protected
+  int cst_encode_input_type(InputType raw);
+
+  @protected
+  int cst_encode_output_type(OutputType raw);
+
+  @protected
+  int cst_encode_u_16(int raw);
+
+  @protected
+  int cst_encode_u_32(int raw);
+
+  @protected
+  int cst_encode_u_8(int raw);
+
+  @protected
+  void cst_encode_unit(void raw);
 
   @protected
   void sse_encode_AnyhowException(
@@ -890,7 +1414,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_StreamSink_String_Sse(
+  void sse_encode_StreamSink_String_Dco(
     RustStreamSink<String> self,
     SseSerializer serializer,
   );
@@ -1101,6 +1625,523 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 class RustLibWire implements BaseWire {
   RustLibWire.fromExternalLibrary(ExternalLibrary lib);
 
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_base(int that) =>
+      wasmModule.wire__crate__api__device_config__ExposedRangeWithLimit_base(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_set_user(
+    int that,
+    JSAny range,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedRangeWithLimit_set_user(
+        that,
+        range,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_user(int that) =>
+      wasmModule.wire__crate__api__device_config__ExposedRangeWithLimit_user(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_allow(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_allow(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_deny(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_deny(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_features(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_features(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_id(int that) =>
+      wasmModule
+          .wire__crate__api__device_config__ExposedServerDeviceDefinition_id(
+            that,
+          );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_index(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_index(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_name(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_name(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow(
+    int that,
+    bool allow,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow(
+        that,
+        allow,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny(
+    int that,
+    bool deny,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny(
+        that,
+        deny,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
+    int that,
+    String? display_name,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
+        that,
+        display_name,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
+    int that,
+    int feature,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
+        that,
+        feature,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(
+    int that,
+    int props,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(
+        that,
+        props,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled(
+    int that,
+    bool v,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled(
+        that,
+        v,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration(
+    int that,
+    int? duration,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration(
+        that,
+        duration,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position(
+    int that,
+    int? position,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position(
+        that,
+        position,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position(
+    int that,
+    bool v,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position(
+        that,
+        v,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value(
+    int that,
+    int? value,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value(
+        that,
+        value,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_description(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeature_description(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_id(int that) =>
+      wasmModule.wire__crate__api__device_config__ExposedServerDeviceFeature_id(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_input(int that) =>
+      wasmModule
+          .wire__crate__api__device_config__ExposedServerDeviceFeature_input(
+            that,
+          );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_output(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeature_output(that);
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_set_output(
+    int that,
+    int? output,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceFeature_set_output(
+        that,
+        output,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_address(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedUserDeviceIdentifier_address(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier(
+        that,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_new(
+    String address,
+    String protocol,
+    String? identifier,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedUserDeviceIdentifier_new(
+        address,
+        protocol,
+        identifier,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol(
+    int that,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol(
+        that,
+      );
+
+  void wire__crate__api__specifiers__add_serial_specifier(
+    NativePortType port_,
+    String protocol,
+    String port,
+    int baud_rate,
+    int data_bits,
+    int stop_bits,
+    String parity,
+  ) => wasmModule.wire__crate__api__specifiers__add_serial_specifier(
+    port_,
+    protocol,
+    port,
+    baud_rate,
+    data_bits,
+    stop_bits,
+    parity,
+  );
+
+  void wire__crate__api__specifiers__add_websocket_specifier(
+    NativePortType port_,
+    String protocol,
+    String name,
+  ) => wasmModule.wire__crate__api__specifiers__add_websocket_specifier(
+    port_,
+    protocol,
+    name,
+  );
+
+  void wire__crate__api__util__crash_reporting(
+    NativePortType port_,
+    String sentry_api_key,
+  ) =>
+      wasmModule.wire__crate__api__util__crash_reporting(port_, sentry_api_key);
+
+  void wire__crate__api__device_config__get_device_definitions(
+    NativePortType port_,
+  ) =>
+      wasmModule.wire__crate__api__device_config__get_device_definitions(port_);
+
+  void wire__crate__api__specifiers__get_protocol_names(NativePortType port_) =>
+      wasmModule.wire__crate__api__specifiers__get_protocol_names(port_);
+
+  void wire__crate__api__device_config__get_user_config_str(
+    NativePortType port_,
+  ) => wasmModule.wire__crate__api__device_config__get_user_config_str(port_);
+
+  void wire__crate__api__specifiers__get_user_serial_communication_specifiers(
+    NativePortType port_,
+  ) => wasmModule
+      .wire__crate__api__specifiers__get_user_serial_communication_specifiers(
+        port_,
+      );
+
+  void
+  wire__crate__api__specifiers__get_user_websocket_communication_specifiers(
+    NativePortType port_,
+  ) => wasmModule
+      .wire__crate__api__specifiers__get_user_websocket_communication_specifiers(
+        port_,
+      );
+
+  void wire__crate__api__runtime__is_engine_shutdown(NativePortType port_) =>
+      wasmModule.wire__crate__api__runtime__is_engine_shutdown(port_);
+
+  void wire__crate__api__specifiers__remove_serial_specifier(
+    NativePortType port_,
+    String protocol,
+    String port,
+  ) => wasmModule.wire__crate__api__specifiers__remove_serial_specifier(
+    port_,
+    protocol,
+    port,
+  );
+
+  void wire__crate__api__device_config__remove_user_config(
+    NativePortType port_,
+    int identifier,
+  ) => wasmModule.wire__crate__api__device_config__remove_user_config(
+    port_,
+    identifier,
+  );
+
+  void wire__crate__api__specifiers__remove_websocket_specifier(
+    NativePortType port_,
+    String protocol,
+    String name,
+  ) => wasmModule.wire__crate__api__specifiers__remove_websocket_specifier(
+    port_,
+    protocol,
+    name,
+  );
+
+  void wire__crate__api__runtime__run_engine(
+    NativePortType port_,
+    String sink,
+    JSAny args,
+  ) => wasmModule.wire__crate__api__runtime__run_engine(port_, sink, args);
+
+  void wire__crate__api__runtime__rust_runtime_started(NativePortType port_) =>
+      wasmModule.wire__crate__api__runtime__rust_runtime_started(port_);
+
+  void wire__crate__api__runtime__send_backend_server_message(
+    NativePortType port_,
+    String msg,
+  ) => wasmModule.wire__crate__api__runtime__send_backend_server_message(
+    port_,
+    msg,
+  );
+
+  void wire__crate__api__runtime__send_runtime_msg(
+    NativePortType port_,
+    String msg_json,
+  ) => wasmModule.wire__crate__api__runtime__send_runtime_msg(port_, msg_json);
+
+  void
+  wire__crate__api__device_config_manager__setup_device_configuration_manager(
+    NativePortType port_,
+    String? base_config,
+    String? user_config,
+  ) => wasmModule
+      .wire__crate__api__device_config_manager__setup_device_configuration_manager(
+        port_,
+        base_config,
+        user_config,
+      );
+
+  void wire__crate__api__util__setup_logging(
+    NativePortType port_,
+    String sink,
+  ) => wasmModule.wire__crate__api__util__setup_logging(port_, sink);
+
+  void wire__crate__api__util__shutdown_logging(NativePortType port_) =>
+      wasmModule.wire__crate__api__util__shutdown_logging(port_);
+
+  void wire__crate__api__runtime__stop_engine(NativePortType port_) =>
+      wasmModule.wire__crate__api__runtime__stop_engine(port_);
+
+  void wire__crate__api__device_config__update_user_config(
+    NativePortType port_,
+    int identifier,
+    int config,
+  ) => wasmModule.wire__crate__api__device_config__update_user_config(
+    port_,
+    identifier,
+    config,
+  );
+
   void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
     int ptr,
@@ -1220,6 +2261,330 @@ external RustLibWasmModule get wasmModule;
 @JS()
 @anonymous
 extension type RustLibWasmModule._(JSObject _) implements JSObject {
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_base(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_set_user(
+    int that,
+    JSAny range,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedRangeWithLimit_user(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_allow(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_deny(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_features(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_id(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_index(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_name(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow(
+    int that,
+    bool allow,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny(
+    int that,
+    bool deny,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
+    int that,
+    String? display_name,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
+    int that,
+    int feature,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(
+    int that,
+    int props,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled(
+    int that,
+    bool v,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration(
+    int that,
+    int? duration,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position(
+    int that,
+    int? position,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position(
+    int that,
+    bool v,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value(
+    int that,
+    int? value,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_description(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_id(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_input(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_output(int that);
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceFeature_set_output(
+    int that,
+    int? output,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_address(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier(
+    int that,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_new(
+    String address,
+    String protocol,
+    String? identifier,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol(
+    int that,
+  );
+
+  external void wire__crate__api__specifiers__add_serial_specifier(
+    NativePortType port_,
+    String protocol,
+    String port,
+    int baud_rate,
+    int data_bits,
+    int stop_bits,
+    String parity,
+  );
+
+  external void wire__crate__api__specifiers__add_websocket_specifier(
+    NativePortType port_,
+    String protocol,
+    String name,
+  );
+
+  external void wire__crate__api__util__crash_reporting(
+    NativePortType port_,
+    String sentry_api_key,
+  );
+
+  external void wire__crate__api__device_config__get_device_definitions(
+    NativePortType port_,
+  );
+
+  external void wire__crate__api__specifiers__get_protocol_names(
+    NativePortType port_,
+  );
+
+  external void wire__crate__api__device_config__get_user_config_str(
+    NativePortType port_,
+  );
+
+  external void
+  wire__crate__api__specifiers__get_user_serial_communication_specifiers(
+    NativePortType port_,
+  );
+
+  external void
+  wire__crate__api__specifiers__get_user_websocket_communication_specifiers(
+    NativePortType port_,
+  );
+
+  external void wire__crate__api__runtime__is_engine_shutdown(
+    NativePortType port_,
+  );
+
+  external void wire__crate__api__specifiers__remove_serial_specifier(
+    NativePortType port_,
+    String protocol,
+    String port,
+  );
+
+  external void wire__crate__api__device_config__remove_user_config(
+    NativePortType port_,
+    int identifier,
+  );
+
+  external void wire__crate__api__specifiers__remove_websocket_specifier(
+    NativePortType port_,
+    String protocol,
+    String name,
+  );
+
+  external void wire__crate__api__runtime__run_engine(
+    NativePortType port_,
+    String sink,
+    JSAny args,
+  );
+
+  external void wire__crate__api__runtime__rust_runtime_started(
+    NativePortType port_,
+  );
+
+  external void wire__crate__api__runtime__send_backend_server_message(
+    NativePortType port_,
+    String msg,
+  );
+
+  external void wire__crate__api__runtime__send_runtime_msg(
+    NativePortType port_,
+    String msg_json,
+  );
+
+  external void
+  wire__crate__api__device_config_manager__setup_device_configuration_manager(
+    NativePortType port_,
+    String? base_config,
+    String? user_config,
+  );
+
+  external void wire__crate__api__util__setup_logging(
+    NativePortType port_,
+    String sink,
+  );
+
+  external void wire__crate__api__util__shutdown_logging(NativePortType port_);
+
+  external void wire__crate__api__runtime__stop_engine(NativePortType port_);
+
+  external void wire__crate__api__device_config__update_user_config(
+    NativePortType port_,
+    int identifier,
+    int config,
+  );
+
   external void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
     int ptr,

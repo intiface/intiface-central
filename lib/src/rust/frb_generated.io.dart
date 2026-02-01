@@ -206,7 +206,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  RustStreamSink<String> dco_decode_StreamSink_String_Sse(dynamic raw);
+  RustStreamSink<String> dco_decode_StreamSink_String_Dco(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -524,7 +524,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  RustStreamSink<String> sse_decode_StreamSink_String_Sse(
+  RustStreamSink<String> sse_decode_StreamSink_String_Dco(
     SseDeserializer deserializer,
   );
 
@@ -705,6 +705,637 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_AnyhowException(
+    AnyhowException raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    throw UnimplementedError();
+  }
+
+  @protected
+  ffi.Pointer<
+    wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+  >
+  cst_encode_Map_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition_None(
+    Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+      raw.entries.map((e) => (e.key, e.value)).toList(),
+    );
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_StreamSink_String_Dco(
+    RustStreamSink<String> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_String(
+      raw.setupAndSerialize(
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_String,
+          decodeErrorData: dco_decode_AnyhowException,
+        ),
+      ),
+    );
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_String(String raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_list_prim_u_8_strict(utf8.encoder.convert(raw));
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_Uuid(UuidValue raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_list_prim_u_8_strict(raw.toBytes());
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire
+        .cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+            raw,
+          ),
+        );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire
+        .cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+            raw,
+          ),
+        );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire
+        .cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+            raw,
+          ),
+        );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire
+        .cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+            raw,
+          ),
+        );
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_engine_options_external>
+  cst_encode_box_autoadd_engine_options_external(EngineOptionsExternal raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_engine_options_external();
+    cst_api_fill_to_wire_engine_options_external(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_record_u_32_u_32>
+  cst_encode_box_autoadd_record_u_32_u_32((int, int) raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ptr = wire.cst_new_box_autoadd_record_u_32_u_32();
+    cst_api_fill_to_wire_record_u_32_u_32(raw, ptr.ref);
+    return ptr;
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint16> cst_encode_box_autoadd_u_16(int raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire.cst_new_box_autoadd_u_16(cst_encode_u_16(raw));
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint32> cst_encode_box_autoadd_u_32(int raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return wire.cst_new_box_autoadd_u_32(cst_encode_u_32(raw));
+  }
+
+  @protected
+  ffi.Pointer<
+    wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature
+  >
+  cst_encode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    List<ExposedServerDeviceFeature> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire
+        .cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+          raw.length,
+        );
+    for (var i = 0; i < raw.length; ++i) {
+      ans.ref.ptr[i] =
+          cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+            raw[i],
+          );
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_String> cst_encode_list_String(List<String> raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_String(raw.length);
+    for (var i = 0; i < raw.length; ++i) {
+      ans.ref.ptr[i] = cst_encode_String(raw[i]);
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_list_prim_u_8_strict(
+    Uint8List raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_prim_u_8_strict(raw.length);
+    ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<
+    wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+  >
+  cst_encode_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+    List<(ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire
+        .cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+          raw.length,
+        );
+    for (var i = 0; i < raw.length; ++i) {
+      cst_api_fill_to_wire_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+        raw[i],
+        ans.ref.ptr[i],
+      );
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_record_string_exposed_serial_specifier>
+  cst_encode_list_record_string_exposed_serial_specifier(
+    List<(String, ExposedSerialSpecifier)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_record_string_exposed_serial_specifier(
+      raw.length,
+    );
+    for (var i = 0; i < raw.length; ++i) {
+      cst_api_fill_to_wire_record_string_exposed_serial_specifier(
+        raw[i],
+        ans.ref.ptr[i],
+      );
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_record_string_exposed_websocket_specifier>
+  cst_encode_list_record_string_exposed_websocket_specifier(
+    List<(String, ExposedWebsocketSpecifier)> raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    final ans = wire.cst_new_list_record_string_exposed_websocket_specifier(
+      raw.length,
+    );
+    for (var i = 0; i < raw.length; ++i) {
+      cst_api_fill_to_wire_record_string_exposed_websocket_specifier(
+        raw[i],
+        ans.ref.ptr[i],
+      );
+    }
+    return ans;
+  }
+
+  @protected
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_opt_String(
+    String? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? ffi.nullptr : cst_encode_String(raw);
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+            raw,
+          );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+            raw,
+          );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+            raw,
+          );
+  }
+
+  @protected
+  ffi.Pointer<ffi.UintPtr>
+  cst_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties? raw,
+  ) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null
+        ? ffi.nullptr
+        : cst_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+            raw,
+          );
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint16> cst_encode_opt_box_autoadd_u_16(int? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? ffi.nullptr : cst_encode_box_autoadd_u_16(raw);
+  }
+
+  @protected
+  ffi.Pointer<ffi.Uint32> cst_encode_opt_box_autoadd_u_32(int? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? ffi.nullptr : cst_encode_box_autoadd_u_32(raw);
+  }
+
+  @protected
+  int cst_encode_usize(BigInt raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw.toSigned(64).toInt();
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_engine_options_external(
+    EngineOptionsExternal apiObj,
+    ffi.Pointer<wire_cst_engine_options_external> wireObj,
+  ) {
+    cst_api_fill_to_wire_engine_options_external(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_box_autoadd_record_u_32_u_32(
+    (int, int) apiObj,
+    ffi.Pointer<wire_cst_record_u_32_u_32> wireObj,
+  ) {
+    cst_api_fill_to_wire_record_u_32_u_32(apiObj, wireObj.ref);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_engine_options_external(
+    EngineOptionsExternal apiObj,
+    wire_cst_engine_options_external wireObj,
+  ) {
+    wireObj.device_config_json = cst_encode_opt_String(apiObj.deviceConfigJson);
+    wireObj.user_device_config_json = cst_encode_opt_String(
+      apiObj.userDeviceConfigJson,
+    );
+    wireObj.user_device_config_path = cst_encode_opt_String(
+      apiObj.userDeviceConfigPath,
+    );
+    wireObj.server_name = cst_encode_String(apiObj.serverName);
+    wireObj.websocket_use_all_interfaces = cst_encode_bool(
+      apiObj.websocketUseAllInterfaces,
+    );
+    wireObj.websocket_port = cst_encode_opt_box_autoadd_u_16(
+      apiObj.websocketPort,
+    );
+    wireObj.frontend_websocket_port = cst_encode_opt_box_autoadd_u_16(
+      apiObj.frontendWebsocketPort,
+    );
+    wireObj.frontend_in_process_channel = cst_encode_bool(
+      apiObj.frontendInProcessChannel,
+    );
+    wireObj.max_ping_time = cst_encode_u_32(apiObj.maxPingTime);
+    wireObj.use_bluetooth_le = cst_encode_bool(apiObj.useBluetoothLe);
+    wireObj.use_serial_port = cst_encode_bool(apiObj.useSerialPort);
+    wireObj.use_hid = cst_encode_bool(apiObj.useHid);
+    wireObj.use_lovense_dongle_serial = cst_encode_bool(
+      apiObj.useLovenseDongleSerial,
+    );
+    wireObj.use_lovense_dongle_hid = cst_encode_bool(
+      apiObj.useLovenseDongleHid,
+    );
+    wireObj.use_xinput = cst_encode_bool(apiObj.useXinput);
+    wireObj.use_lovense_connect = cst_encode_bool(apiObj.useLovenseConnect);
+    wireObj.use_device_websocket_server = cst_encode_bool(
+      apiObj.useDeviceWebsocketServer,
+    );
+    wireObj.device_websocket_server_port = cst_encode_opt_box_autoadd_u_16(
+      apiObj.deviceWebsocketServerPort,
+    );
+    wireObj.crash_main_thread = cst_encode_bool(apiObj.crashMainThread);
+    wireObj.crash_task_thread = cst_encode_bool(apiObj.crashTaskThread);
+    wireObj.websocket_client_address = cst_encode_opt_String(
+      apiObj.websocketClientAddress,
+    );
+    wireObj.broadcast_server_mdns = cst_encode_bool(apiObj.broadcastServerMdns);
+    wireObj.mdns_suffix = cst_encode_opt_String(apiObj.mdnsSuffix);
+    wireObj.repeater_mode = cst_encode_bool(apiObj.repeaterMode);
+    wireObj.repeater_local_port = cst_encode_opt_box_autoadd_u_16(
+      apiObj.repeaterLocalPort,
+    );
+    wireObj.repeater_remote_address = cst_encode_opt_String(
+      apiObj.repeaterRemoteAddress,
+    );
+    wireObj.rest_api_port = cst_encode_opt_box_autoadd_u_16(apiObj.restApiPort);
+    wireObj.allow_v4_spec = cst_encode_bool(apiObj.allowV4Spec);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_exposed_serial_specifier(
+    ExposedSerialSpecifier apiObj,
+    wire_cst_exposed_serial_specifier wireObj,
+  ) {
+    wireObj.baud_rate = cst_encode_u_32(apiObj.baudRate);
+    wireObj.data_bits = cst_encode_u_8(apiObj.dataBits);
+    wireObj.stop_bits = cst_encode_u_8(apiObj.stopBits);
+    wireObj.parity = cst_encode_String(apiObj.parity);
+    wireObj.port = cst_encode_String(apiObj.port);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_exposed_websocket_specifier(
+    ExposedWebsocketSpecifier apiObj,
+    wire_cst_exposed_websocket_specifier wireObj,
+  ) {
+    wireObj.name = cst_encode_String(apiObj.name);
+  }
+
+  @protected
+  void
+  cst_api_fill_to_wire_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+    (ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition) apiObj,
+    wire_cst_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+    wireObj,
+  ) {
+    wireObj.field0 =
+        cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+          apiObj.$1,
+        );
+    wireObj.field1 =
+        cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+          apiObj.$2,
+        );
+  }
+
+  @protected
+  void cst_api_fill_to_wire_record_i_32_i_32(
+    (int, int) apiObj,
+    wire_cst_record_i_32_i_32 wireObj,
+  ) {
+    wireObj.field0 = cst_encode_i_32(apiObj.$1);
+    wireObj.field1 = cst_encode_i_32(apiObj.$2);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_record_string_exposed_serial_specifier(
+    (String, ExposedSerialSpecifier) apiObj,
+    wire_cst_record_string_exposed_serial_specifier wireObj,
+  ) {
+    wireObj.field0 = cst_encode_String(apiObj.$1);
+    cst_api_fill_to_wire_exposed_serial_specifier(apiObj.$2, wireObj.field1);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_record_string_exposed_websocket_specifier(
+    (String, ExposedWebsocketSpecifier) apiObj,
+    wire_cst_record_string_exposed_websocket_specifier wireObj,
+  ) {
+    wireObj.field0 = cst_encode_String(apiObj.$1);
+    cst_api_fill_to_wire_exposed_websocket_specifier(apiObj.$2, wireObj.field1);
+  }
+
+  @protected
+  void cst_api_fill_to_wire_record_u_32_u_32(
+    (int, int) apiObj,
+    wire_cst_record_u_32_u_32 wireObj,
+  ) {
+    wireObj.field0 = cst_encode_u_32(apiObj.$1);
+    wireObj.field1 = cst_encode_u_32(apiObj.$2);
+  }
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    ExposedRangeWithLimit raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+    ExposedServerDeviceDefinition raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    ExposedServerDeviceFeature raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    ExposedServerDeviceFeatureInput raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    ExposedServerDeviceFeatureOutput raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    ExposedServerDeviceFeatureOutputProperties raw,
+  );
+
+  @protected
+  int
+  cst_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
+    ExposedUserDeviceIdentifier raw,
+  );
+
+  @protected
+  bool cst_encode_bool(bool raw);
+
+  @protected
+  int cst_encode_i_32(int raw);
+
+  @protected
+  int cst_encode_input_command_type(InputCommandType raw);
+
+  @protected
+  int cst_encode_input_type(InputType raw);
+
+  @protected
+  int cst_encode_output_type(OutputType raw);
+
+  @protected
+  int cst_encode_u_16(int raw);
+
+  @protected
+  int cst_encode_u_32(int raw);
+
+  @protected
+  int cst_encode_u_8(int raw);
+
+  @protected
+  void cst_encode_unit(void raw);
 
   @protected
   void sse_encode_AnyhowException(
@@ -888,7 +1519,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_StreamSink_String_Sse(
+  void sse_encode_StreamSink_String_Dco(
     RustStreamSink<String> self,
     SseSerializer serializer,
   );
@@ -1096,6 +1727,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
 // Section: wire_class
 
+// ignore_for_file: camel_case_types, non_constant_identifier_names, avoid_positional_boolean_parameters, annotate_overrides, constant_identifier_names
+// AUTO GENERATED FILE, DO NOT EDIT.
+//
+// Generated by `package:ffigen`.
+// ignore_for_file: type=lint, unused_import
+
+/// generated by flutter_rust_bridge
 class RustLibWire implements BaseWire {
   factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) =>
       RustLibWire(lib.ffiDynamicLibrary);
@@ -1107,6 +1745,1324 @@ class RustLibWire implements BaseWire {
   /// The symbols are looked up in [dynamicLibrary].
   RustLibWire(ffi.DynamicLibrary dynamicLibrary)
     : _lookup = dynamicLibrary.lookup;
+
+  /// The symbols are looked up with [lookup].
+  RustLibWire.fromLookup(
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
+
+  void store_dart_post_cobject(DartPostCObjectFnType ptr) {
+    return _store_dart_post_cobject(ptr);
+  }
+
+  late final _store_dart_post_cobjectPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(DartPostCObjectFnType)>>(
+        'store_dart_post_cobject',
+      );
+  late final _store_dart_post_cobject = _store_dart_post_cobjectPtr
+      .asFunction<void Function(DartPostCObjectFnType)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedRangeWithLimit_base(int that) {
+    return _wire__crate__api__device_config__ExposedRangeWithLimit_base(that);
+  }
+
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_basePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedRangeWithLimit_base',
+      );
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_base =
+      _wire__crate__api__device_config__ExposedRangeWithLimit_basePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedRangeWithLimit_set_user(
+    int that,
+    ffi.Pointer<wire_cst_record_u_32_u_32> range,
+  ) {
+    return _wire__crate__api__device_config__ExposedRangeWithLimit_set_user(
+      that,
+      range,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_set_userPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.UintPtr,
+            ffi.Pointer<wire_cst_record_u_32_u_32>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedRangeWithLimit_set_user',
+      );
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_set_user =
+      _wire__crate__api__device_config__ExposedRangeWithLimit_set_userPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              int,
+              ffi.Pointer<wire_cst_record_u_32_u_32>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedRangeWithLimit_user(int that) {
+    return _wire__crate__api__device_config__ExposedRangeWithLimit_user(that);
+  }
+
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_userPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedRangeWithLimit_user',
+      );
+  late final _wire__crate__api__device_config__ExposedRangeWithLimit_user =
+      _wire__crate__api__device_config__ExposedRangeWithLimit_userPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_allow(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_allow(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_allowPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_allow',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_allow =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_allowPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_deny(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_deny(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_denyPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_deny',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_deny =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_denyPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_display_namePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_display_name =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_display_namePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_features(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_features(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_featuresPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_features',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_features =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_featuresPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_id(int that) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_id(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_idPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_id',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_id =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_idPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_index(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_index(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_indexPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_index',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_index =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_indexPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_msPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_ms =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_message_gap_msPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_name(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_name(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_namePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_name',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_name =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_namePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow(
+    int that,
+    bool allow,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow(
+      that,
+      allow,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allowPtr =
+      _lookup<
+        ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Bool)>
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allowPtr
+          .asFunction<WireSyncRust2DartDco Function(int, bool)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny(
+    int that,
+    bool deny,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny(
+      that,
+      deny,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_denyPtr =
+      _lookup<
+        ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Bool)>
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_denyPtr
+          .asFunction<WireSyncRust2DartDco Function(int, bool)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
+    int that,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> display_name,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
+      that,
+      display_name,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_namePtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.UintPtr,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_namePtr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
+    int that,
+    int feature,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
+      that,
+      feature,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_featurePtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.UintPtr)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_featurePtr
+          .asFunction<WireSyncRust2DartDco Function(int, int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(
+    int that,
+    int props,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(
+      that,
+      props,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_propertiesPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.UintPtr)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_propertiesPtr
+          .asFunction<WireSyncRust2DartDco Function(int, int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabledPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabledPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_durationPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_durationPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_positionPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_positionPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_positionPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_positionPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled(
+    int that,
+    bool v,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled(
+      that,
+      v,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabledPtr =
+      _lookup<
+        ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Bool)>
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabledPtr
+          .asFunction<WireSyncRust2DartDco Function(int, bool)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration(
+    int that,
+    ffi.Pointer<ffi.UintPtr> duration,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration(
+      that,
+      duration,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_durationPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Pointer<ffi.UintPtr>)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_durationPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(int, ffi.Pointer<ffi.UintPtr>)
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position(
+    int that,
+    ffi.Pointer<ffi.UintPtr> position,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position(
+      that,
+      position,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_positionPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Pointer<ffi.UintPtr>)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_positionPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(int, ffi.Pointer<ffi.UintPtr>)
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position(
+    int that,
+    bool v,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position(
+      that,
+      v,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_positionPtr =
+      _lookup<
+        ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Bool)>
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_positionPtr
+          .asFunction<WireSyncRust2DartDco Function(int, bool)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value(
+    int that,
+    ffi.Pointer<ffi.UintPtr> value,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value(
+      that,
+      value,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_valuePtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Pointer<ffi.UintPtr>)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_valuePtr
+          .asFunction<
+            WireSyncRust2DartDco Function(int, ffi.Pointer<ffi.UintPtr>)
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_valuePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_valuePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrictPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrictPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_ledPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_ledPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillatePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillatePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_positionPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_positionPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_durationPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_durationPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotatePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotatePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_sprayPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_sprayPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperaturePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperaturePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibratePtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate =
+      _wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibratePtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeature_description(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeature_description(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_descriptionPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeature_description',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_description =
+      _wire__crate__api__device_config__ExposedServerDeviceFeature_descriptionPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeature_id(int that) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeature_id(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_idPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeature_id',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_id =
+      _wire__crate__api__device_config__ExposedServerDeviceFeature_idPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeature_input(int that) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeature_input(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_inputPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeature_input',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_input =
+      _wire__crate__api__device_config__ExposedServerDeviceFeature_inputPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeature_output(int that) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeature_output(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_outputPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeature_output',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_output =
+      _wire__crate__api__device_config__ExposedServerDeviceFeature_outputPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceFeature_set_output(
+    int that,
+    ffi.Pointer<ffi.UintPtr> output,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceFeature_set_output(
+      that,
+      output,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_set_outputPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Pointer<ffi.UintPtr>)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeature_set_output',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceFeature_set_output =
+      _wire__crate__api__device_config__ExposedServerDeviceFeature_set_outputPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(int, ffi.Pointer<ffi.UintPtr>)
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_address(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedUserDeviceIdentifier_address(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_addressPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedUserDeviceIdentifier_address',
+      );
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_address =
+      _wire__crate__api__device_config__ExposedUserDeviceIdentifier_addressPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifierPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier',
+      );
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier =
+      _wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifierPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_new(
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> address,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> protocol,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> identifier,
+  ) {
+    return _wire__crate__api__device_config__ExposedUserDeviceIdentifier_new(
+      address,
+      protocol,
+      identifier,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_newPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedUserDeviceIdentifier_new',
+      );
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_new =
+      _wire__crate__api__device_config__ExposedUserDeviceIdentifier_newPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol(
+    int that,
+  ) {
+    return _wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol(
+      that,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocolPtr =
+      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol',
+      );
+  late final _wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol =
+      _wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocolPtr
+          .asFunction<WireSyncRust2DartDco Function(int)>();
+
+  void wire__crate__api__specifiers__add_serial_specifier(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> protocol,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> port,
+    int baud_rate,
+    int data_bits,
+    int stop_bits,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> parity,
+  ) {
+    return _wire__crate__api__specifiers__add_serial_specifier(
+      port_,
+      protocol,
+      port,
+      baud_rate,
+      data_bits,
+      stop_bits,
+      parity,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__add_serial_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Uint32,
+            ffi.Uint8,
+            ffi.Uint8,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__specifiers__add_serial_specifier',
+      );
+  late final _wire__crate__api__specifiers__add_serial_specifier =
+      _wire__crate__api__specifiers__add_serial_specifierPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              int,
+              int,
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__specifiers__add_websocket_specifier(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> protocol,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> name,
+  ) {
+    return _wire__crate__api__specifiers__add_websocket_specifier(
+      port_,
+      protocol,
+      name,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__add_websocket_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__specifiers__add_websocket_specifier',
+      );
+  late final _wire__crate__api__specifiers__add_websocket_specifier =
+      _wire__crate__api__specifiers__add_websocket_specifierPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__util__crash_reporting(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> sentry_api_key,
+  ) {
+    return _wire__crate__api__util__crash_reporting(port_, sentry_api_key);
+  }
+
+  late final _wire__crate__api__util__crash_reportingPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >('frbgen_intiface_central_wire__crate__api__util__crash_reporting');
+  late final _wire__crate__api__util__crash_reporting =
+      _wire__crate__api__util__crash_reportingPtr
+          .asFunction<
+            void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
+          >();
+
+  void wire__crate__api__device_config__get_device_definitions(int port_) {
+    return _wire__crate__api__device_config__get_device_definitions(port_);
+  }
+
+  late final _wire__crate__api__device_config__get_device_definitionsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__get_device_definitions',
+      );
+  late final _wire__crate__api__device_config__get_device_definitions =
+      _wire__crate__api__device_config__get_device_definitionsPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__specifiers__get_protocol_names(int port_) {
+    return _wire__crate__api__specifiers__get_protocol_names(port_);
+  }
+
+  late final _wire__crate__api__specifiers__get_protocol_namesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__specifiers__get_protocol_names',
+      );
+  late final _wire__crate__api__specifiers__get_protocol_names =
+      _wire__crate__api__specifiers__get_protocol_namesPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__device_config__get_user_config_str(int port_) {
+    return _wire__crate__api__device_config__get_user_config_str(port_);
+  }
+
+  late final _wire__crate__api__device_config__get_user_config_strPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__get_user_config_str',
+      );
+  late final _wire__crate__api__device_config__get_user_config_str =
+      _wire__crate__api__device_config__get_user_config_strPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__specifiers__get_user_serial_communication_specifiers(
+    int port_,
+  ) {
+    return _wire__crate__api__specifiers__get_user_serial_communication_specifiers(
+      port_,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__get_user_serial_communication_specifiersPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__specifiers__get_user_serial_communication_specifiers',
+      );
+  late final _wire__crate__api__specifiers__get_user_serial_communication_specifiers =
+      _wire__crate__api__specifiers__get_user_serial_communication_specifiersPtr
+          .asFunction<void Function(int)>();
+
+  void
+  wire__crate__api__specifiers__get_user_websocket_communication_specifiers(
+    int port_,
+  ) {
+    return _wire__crate__api__specifiers__get_user_websocket_communication_specifiers(
+      port_,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__get_user_websocket_communication_specifiersPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__specifiers__get_user_websocket_communication_specifiers',
+      );
+  late final _wire__crate__api__specifiers__get_user_websocket_communication_specifiers =
+      _wire__crate__api__specifiers__get_user_websocket_communication_specifiersPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__runtime__is_engine_shutdown(int port_) {
+    return _wire__crate__api__runtime__is_engine_shutdown(port_);
+  }
+
+  late final _wire__crate__api__runtime__is_engine_shutdownPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__runtime__is_engine_shutdown',
+      );
+  late final _wire__crate__api__runtime__is_engine_shutdown =
+      _wire__crate__api__runtime__is_engine_shutdownPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__specifiers__remove_serial_specifier(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> protocol,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> port,
+  ) {
+    return _wire__crate__api__specifiers__remove_serial_specifier(
+      port_,
+      protocol,
+      port,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__remove_serial_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__specifiers__remove_serial_specifier',
+      );
+  late final _wire__crate__api__specifiers__remove_serial_specifier =
+      _wire__crate__api__specifiers__remove_serial_specifierPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__device_config__remove_user_config(
+    int port_,
+    int identifier,
+  ) {
+    return _wire__crate__api__device_config__remove_user_config(
+      port_,
+      identifier,
+    );
+  }
+
+  late final _wire__crate__api__device_config__remove_user_configPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.UintPtr)>>(
+        'frbgen_intiface_central_wire__crate__api__device_config__remove_user_config',
+      );
+  late final _wire__crate__api__device_config__remove_user_config =
+      _wire__crate__api__device_config__remove_user_configPtr
+          .asFunction<void Function(int, int)>();
+
+  void wire__crate__api__specifiers__remove_websocket_specifier(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> protocol,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> name,
+  ) {
+    return _wire__crate__api__specifiers__remove_websocket_specifier(
+      port_,
+      protocol,
+      name,
+    );
+  }
+
+  late final _wire__crate__api__specifiers__remove_websocket_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__specifiers__remove_websocket_specifier',
+      );
+  late final _wire__crate__api__specifiers__remove_websocket_specifier =
+      _wire__crate__api__specifiers__remove_websocket_specifierPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__runtime__run_engine(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> sink,
+    ffi.Pointer<wire_cst_engine_options_external> args,
+  ) {
+    return _wire__crate__api__runtime__run_engine(port_, sink, args);
+  }
+
+  late final _wire__crate__api__runtime__run_enginePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_engine_options_external>,
+          )
+        >
+      >('frbgen_intiface_central_wire__crate__api__runtime__run_engine');
+  late final _wire__crate__api__runtime__run_engine =
+      _wire__crate__api__runtime__run_enginePtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_engine_options_external>,
+            )
+          >();
+
+  void wire__crate__api__runtime__rust_runtime_started(int port_) {
+    return _wire__crate__api__runtime__rust_runtime_started(port_);
+  }
+
+  late final _wire__crate__api__runtime__rust_runtime_startedPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__runtime__rust_runtime_started',
+      );
+  late final _wire__crate__api__runtime__rust_runtime_started =
+      _wire__crate__api__runtime__rust_runtime_startedPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__runtime__send_backend_server_message(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> msg,
+  ) {
+    return _wire__crate__api__runtime__send_backend_server_message(port_, msg);
+  }
+
+  late final _wire__crate__api__runtime__send_backend_server_messagePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__runtime__send_backend_server_message',
+      );
+  late final _wire__crate__api__runtime__send_backend_server_message =
+      _wire__crate__api__runtime__send_backend_server_messagePtr
+          .asFunction<
+            void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
+          >();
+
+  void wire__crate__api__runtime__send_runtime_msg(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> msg_json,
+  ) {
+    return _wire__crate__api__runtime__send_runtime_msg(port_, msg_json);
+  }
+
+  late final _wire__crate__api__runtime__send_runtime_msgPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >('frbgen_intiface_central_wire__crate__api__runtime__send_runtime_msg');
+  late final _wire__crate__api__runtime__send_runtime_msg =
+      _wire__crate__api__runtime__send_runtime_msgPtr
+          .asFunction<
+            void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
+          >();
+
+  void
+  wire__crate__api__device_config_manager__setup_device_configuration_manager(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> base_config,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> user_config,
+  ) {
+    return _wire__crate__api__device_config_manager__setup_device_configuration_manager(
+      port_,
+      base_config,
+      user_config,
+    );
+  }
+
+  late final _wire__crate__api__device_config_manager__setup_device_configuration_managerPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config_manager__setup_device_configuration_manager',
+      );
+  late final _wire__crate__api__device_config_manager__setup_device_configuration_manager =
+      _wire__crate__api__device_config_manager__setup_device_configuration_managerPtr
+          .asFunction<
+            void Function(
+              int,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+            )
+          >();
+
+  void wire__crate__api__util__setup_logging(
+    int port_,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> sink,
+  ) {
+    return _wire__crate__api__util__setup_logging(port_, sink);
+  }
+
+  late final _wire__crate__api__util__setup_loggingPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Int64,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
+          )
+        >
+      >('frbgen_intiface_central_wire__crate__api__util__setup_logging');
+  late final _wire__crate__api__util__setup_logging =
+      _wire__crate__api__util__setup_loggingPtr
+          .asFunction<
+            void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
+          >();
+
+  void wire__crate__api__util__shutdown_logging(int port_) {
+    return _wire__crate__api__util__shutdown_logging(port_);
+  }
+
+  late final _wire__crate__api__util__shutdown_loggingPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__util__shutdown_logging',
+      );
+  late final _wire__crate__api__util__shutdown_logging =
+      _wire__crate__api__util__shutdown_loggingPtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__runtime__stop_engine(int port_) {
+    return _wire__crate__api__runtime__stop_engine(port_);
+  }
+
+  late final _wire__crate__api__runtime__stop_enginePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+        'frbgen_intiface_central_wire__crate__api__runtime__stop_engine',
+      );
+  late final _wire__crate__api__runtime__stop_engine =
+      _wire__crate__api__runtime__stop_enginePtr
+          .asFunction<void Function(int)>();
+
+  void wire__crate__api__device_config__update_user_config(
+    int port_,
+    int identifier,
+    int config,
+  ) {
+    return _wire__crate__api__device_config__update_user_config(
+      port_,
+      identifier,
+      config,
+    );
+  }
+
+  late final _wire__crate__api__device_config__update_user_configPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.UintPtr, ffi.UintPtr)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__update_user_config',
+      );
+  late final _wire__crate__api__device_config__update_user_config =
+      _wire__crate__api__device_config__update_user_configPtr
+          .asFunction<void Function(int, int, int)>();
 
   void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
@@ -1345,4 +3301,475 @@ class RustLibWire implements BaseWire {
   late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier =
       _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifierPtr
           .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  ffi.Pointer<ffi.UintPtr>
+  cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit(
+      value,
+    );
+  }
+
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimitPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<ffi.UintPtr> Function(ffi.UintPtr)>
+      >(
+        'frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit',
+      );
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit =
+      _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimitPtr
+          .asFunction<ffi.Pointer<ffi.UintPtr> Function(int)>();
+
+  ffi.Pointer<ffi.UintPtr>
+  cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput(
+      value,
+    );
+  }
+
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInputPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<ffi.UintPtr> Function(ffi.UintPtr)>
+      >(
+        'frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput',
+      );
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInput =
+      _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureInputPtr
+          .asFunction<ffi.Pointer<ffi.UintPtr> Function(int)>();
+
+  ffi.Pointer<ffi.UintPtr>
+  cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput(
+      value,
+    );
+  }
+
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<ffi.UintPtr> Function(ffi.UintPtr)>
+      >(
+        'frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput',
+      );
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutput =
+      _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputPtr
+          .asFunction<ffi.Pointer<ffi.UintPtr> Function(int)>();
+
+  ffi.Pointer<ffi.UintPtr>
+  cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+    int value,
+  ) {
+    return _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties(
+      value,
+    );
+  }
+
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputPropertiesPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<ffi.UintPtr> Function(ffi.UintPtr)>
+      >(
+        'frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties',
+      );
+  late final _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputProperties =
+      _cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeatureOutputPropertiesPtr
+          .asFunction<ffi.Pointer<ffi.UintPtr> Function(int)>();
+
+  ffi.Pointer<wire_cst_engine_options_external>
+  cst_new_box_autoadd_engine_options_external() {
+    return _cst_new_box_autoadd_engine_options_external();
+  }
+
+  late final _cst_new_box_autoadd_engine_options_externalPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_engine_options_external> Function()
+        >
+      >('frbgen_intiface_central_cst_new_box_autoadd_engine_options_external');
+  late final _cst_new_box_autoadd_engine_options_external =
+      _cst_new_box_autoadd_engine_options_externalPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_engine_options_external> Function()
+          >();
+
+  ffi.Pointer<wire_cst_record_u_32_u_32>
+  cst_new_box_autoadd_record_u_32_u_32() {
+    return _cst_new_box_autoadd_record_u_32_u_32();
+  }
+
+  late final _cst_new_box_autoadd_record_u_32_u_32Ptr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<wire_cst_record_u_32_u_32> Function()>
+      >('frbgen_intiface_central_cst_new_box_autoadd_record_u_32_u_32');
+  late final _cst_new_box_autoadd_record_u_32_u_32 =
+      _cst_new_box_autoadd_record_u_32_u_32Ptr
+          .asFunction<ffi.Pointer<wire_cst_record_u_32_u_32> Function()>();
+
+  ffi.Pointer<ffi.Uint16> cst_new_box_autoadd_u_16(int value) {
+    return _cst_new_box_autoadd_u_16(value);
+  }
+
+  late final _cst_new_box_autoadd_u_16Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint16> Function(ffi.Uint16)>>(
+        'frbgen_intiface_central_cst_new_box_autoadd_u_16',
+      );
+  late final _cst_new_box_autoadd_u_16 = _cst_new_box_autoadd_u_16Ptr
+      .asFunction<ffi.Pointer<ffi.Uint16> Function(int)>();
+
+  ffi.Pointer<ffi.Uint32> cst_new_box_autoadd_u_32(int value) {
+    return _cst_new_box_autoadd_u_32(value);
+  }
+
+  late final _cst_new_box_autoadd_u_32Ptr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Uint32> Function(ffi.Uint32)>>(
+        'frbgen_intiface_central_cst_new_box_autoadd_u_32',
+      );
+  late final _cst_new_box_autoadd_u_32 = _cst_new_box_autoadd_u_32Ptr
+      .asFunction<ffi.Pointer<ffi.Uint32> Function(int)>();
+
+  ffi.Pointer<
+    wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature
+  >
+  cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+    int len,
+  ) {
+    return _cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature(
+      len,
+    );
+  }
+
+  late final _cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeaturePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<
+            wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature
+          >
+          Function(ffi.Int32)
+        >
+      >(
+        'frbgen_intiface_central_cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature',
+      );
+  late final _cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature =
+      _cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeaturePtr
+          .asFunction<
+            ffi.Pointer<
+              wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature
+            >
+            Function(int)
+          >();
+
+  ffi.Pointer<wire_cst_list_String> cst_new_list_String(int len) {
+    return _cst_new_list_String(len);
+  }
+
+  late final _cst_new_list_StringPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_String> Function(ffi.Int32)
+        >
+      >('frbgen_intiface_central_cst_new_list_String');
+  late final _cst_new_list_String = _cst_new_list_StringPtr
+      .asFunction<ffi.Pointer<wire_cst_list_String> Function(int)>();
+
+  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_new_list_prim_u_8_strict(
+    int len,
+  ) {
+    return _cst_new_list_prim_u_8_strict(len);
+  }
+
+  late final _cst_new_list_prim_u_8_strictPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_prim_u_8_strict> Function(ffi.Int32)
+        >
+      >('frbgen_intiface_central_cst_new_list_prim_u_8_strict');
+  late final _cst_new_list_prim_u_8_strict = _cst_new_list_prim_u_8_strictPtr
+      .asFunction<ffi.Pointer<wire_cst_list_prim_u_8_strict> Function(int)>();
+
+  ffi.Pointer<
+    wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+  >
+  cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+    int len,
+  ) {
+    return _cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(
+      len,
+    );
+  }
+
+  late final _cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definitionPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<
+            wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+          >
+          Function(ffi.Int32)
+        >
+      >(
+        'frbgen_intiface_central_cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition',
+      );
+  late final _cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition =
+      _cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definitionPtr
+          .asFunction<
+            ffi.Pointer<
+              wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+            >
+            Function(int)
+          >();
+
+  ffi.Pointer<wire_cst_list_record_string_exposed_serial_specifier>
+  cst_new_list_record_string_exposed_serial_specifier(int len) {
+    return _cst_new_list_record_string_exposed_serial_specifier(len);
+  }
+
+  late final _cst_new_list_record_string_exposed_serial_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_record_string_exposed_serial_specifier>
+          Function(ffi.Int32)
+        >
+      >(
+        'frbgen_intiface_central_cst_new_list_record_string_exposed_serial_specifier',
+      );
+  late final _cst_new_list_record_string_exposed_serial_specifier =
+      _cst_new_list_record_string_exposed_serial_specifierPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_list_record_string_exposed_serial_specifier>
+            Function(int)
+          >();
+
+  ffi.Pointer<wire_cst_list_record_string_exposed_websocket_specifier>
+  cst_new_list_record_string_exposed_websocket_specifier(int len) {
+    return _cst_new_list_record_string_exposed_websocket_specifier(len);
+  }
+
+  late final _cst_new_list_record_string_exposed_websocket_specifierPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<wire_cst_list_record_string_exposed_websocket_specifier>
+          Function(ffi.Int32)
+        >
+      >(
+        'frbgen_intiface_central_cst_new_list_record_string_exposed_websocket_specifier',
+      );
+  late final _cst_new_list_record_string_exposed_websocket_specifier =
+      _cst_new_list_record_string_exposed_websocket_specifierPtr
+          .asFunction<
+            ffi.Pointer<wire_cst_list_record_string_exposed_websocket_specifier>
+            Function(int)
+          >();
+
+  int JNI_OnLoad(int vm, ffi.Pointer<ffi.Void> _res) {
+    return _JNI_OnLoad(vm, _res);
+  }
+
+  late final _JNI_OnLoadPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Pointer<ffi.Void>)>
+      >('JNI_OnLoad');
+  late final _JNI_OnLoad =
+      _JNI_OnLoadPtr.asFunction<int Function(int, ffi.Pointer<ffi.Void>)>();
+
+  int dummy_method_to_enforce_bundling() {
+    return _dummy_method_to_enforce_bundling();
+  }
+
+  late final _dummy_method_to_enforce_bundlingPtr =
+      _lookup<ffi.NativeFunction<ffi.Int64 Function()>>(
+        'dummy_method_to_enforce_bundling',
+      );
+  late final _dummy_method_to_enforce_bundling =
+      _dummy_method_to_enforce_bundlingPtr.asFunction<int Function()>();
+}
+
+typedef DartPort = ffi.Int64;
+typedef DartDartPort = int;
+typedef DartPostCObjectFnTypeFunction =
+    ffi.Bool Function(DartPort port_id, ffi.Pointer<ffi.Void> message);
+typedef DartDartPostCObjectFnTypeFunction =
+    bool Function(DartDartPort port_id, ffi.Pointer<ffi.Void> message);
+typedef DartPostCObjectFnType =
+    ffi.Pointer<ffi.NativeFunction<DartPostCObjectFnTypeFunction>>;
+
+final class wire_cst_record_u_32_u_32 extends ffi.Struct {
+  @ffi.Uint32()
+  external int field0;
+
+  @ffi.Uint32()
+  external int field1;
+}
+
+final class wire_cst_list_prim_u_8_strict extends ffi.Struct {
+  external ffi.Pointer<ffi.Uint8> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_engine_options_external extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> device_config_json;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> user_device_config_json;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> user_device_config_path;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> server_name;
+
+  @ffi.Bool()
+  external bool websocket_use_all_interfaces;
+
+  external ffi.Pointer<ffi.Uint16> websocket_port;
+
+  external ffi.Pointer<ffi.Uint16> frontend_websocket_port;
+
+  @ffi.Bool()
+  external bool frontend_in_process_channel;
+
+  @ffi.Uint32()
+  external int max_ping_time;
+
+  @ffi.Bool()
+  external bool use_bluetooth_le;
+
+  @ffi.Bool()
+  external bool use_serial_port;
+
+  @ffi.Bool()
+  external bool use_hid;
+
+  @ffi.Bool()
+  external bool use_lovense_dongle_serial;
+
+  @ffi.Bool()
+  external bool use_lovense_dongle_hid;
+
+  @ffi.Bool()
+  external bool use_xinput;
+
+  @ffi.Bool()
+  external bool use_lovense_connect;
+
+  @ffi.Bool()
+  external bool use_device_websocket_server;
+
+  external ffi.Pointer<ffi.Uint16> device_websocket_server_port;
+
+  @ffi.Bool()
+  external bool crash_main_thread;
+
+  @ffi.Bool()
+  external bool crash_task_thread;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> websocket_client_address;
+
+  @ffi.Bool()
+  external bool broadcast_server_mdns;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> mdns_suffix;
+
+  @ffi.Bool()
+  external bool repeater_mode;
+
+  external ffi.Pointer<ffi.Uint16> repeater_local_port;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> repeater_remote_address;
+
+  external ffi.Pointer<ffi.Uint16> rest_api_port;
+
+  @ffi.Bool()
+  external bool allow_v4_spec;
+}
+
+final class wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature
+    extends ffi.Struct {
+  external ffi.Pointer<ffi.UintPtr> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_list_String extends ffi.Struct {
+  external ffi.Pointer<ffi.Pointer<wire_cst_list_prim_u_8_strict>> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+    extends ffi.Struct {
+  @ffi.UintPtr()
+  external int field0;
+
+  @ffi.UintPtr()
+  external int field1;
+}
+
+final class wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+    extends ffi.Struct {
+  external ffi.Pointer<
+    wire_cst_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition
+  >
+  ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_exposed_serial_specifier extends ffi.Struct {
+  @ffi.Uint32()
+  external int baud_rate;
+
+  @ffi.Uint8()
+  external int data_bits;
+
+  @ffi.Uint8()
+  external int stop_bits;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> parity;
+
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> port;
+}
+
+final class wire_cst_record_string_exposed_serial_specifier extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> field0;
+
+  external wire_cst_exposed_serial_specifier field1;
+}
+
+final class wire_cst_list_record_string_exposed_serial_specifier
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_record_string_exposed_serial_specifier> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_exposed_websocket_specifier extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> name;
+}
+
+final class wire_cst_record_string_exposed_websocket_specifier
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_list_prim_u_8_strict> field0;
+
+  external wire_cst_exposed_websocket_specifier field1;
+}
+
+final class wire_cst_list_record_string_exposed_websocket_specifier
+    extends ffi.Struct {
+  external ffi.Pointer<wire_cst_record_string_exposed_websocket_specifier> ptr;
+
+  @ffi.Int32()
+  external int len;
+}
+
+final class wire_cst_record_i_32_i_32 extends ffi.Struct {
+  @ffi.Int32()
+  external int field0;
+
+  @ffi.Int32()
+  external int field1;
 }
