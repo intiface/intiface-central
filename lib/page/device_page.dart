@@ -27,6 +27,25 @@ class DevicePage extends StatelessWidget {
         var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
         var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
         var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+
+        // When a device connects, force its connected card expanded.
+        // When a device disconnects, force its disconnected card collapsed.
+        if (engineState is DeviceConnectedState) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            guiSettingsCubit.setExpansionValue(
+              "device-connected-${engineState.index}",
+              true,
+            );
+          });
+        } else if (engineState is DeviceDisconnectedState) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            guiSettingsCubit.setExpansionValue(
+              "device-settings-${engineState.index}",
+              false,
+            );
+          });
+        }
+
         return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
           builder: (context, state) {
             return BlocBuilder<
