@@ -1,6 +1,5 @@
 // !$*UTF8*$!
 {
-	/* generated with cargo-xcode 1.11.0 */
 	archiveVersion = 1;
 	classes = {
 	};
@@ -34,7 +33,7 @@
 /* Begin PBXFileReference section */
 		CA003ACDB6B2F8F50C9319C7 /* librust_lib_intiface_central_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librust_lib_intiface_central_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA010B3A20D7BF7821A2B37A /* rust_lib_intiface_central.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rust_lib_intiface_central.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAF9C11981863EF4668187A5 /* Cargo.toml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cargo.toml; path = Cargo.toml; sourceTree = "<group>"; };
+		CAF9C11981863EF4668187A5 /* Cargo.toml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -156,20 +155,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		CA0076631A393312A545FA2C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
-				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.a;
-				INSTALL_GROUP = "";
-				INSTALL_MODE_FLAG = "";
-				INSTALL_OWNER = "";
-				PRODUCT_NAME = rust_lib_intiface_central_static;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-			};
-			name = Release;
-		};
 		CA004693F3E33312A545FA2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -184,15 +169,17 @@
 			};
 			name = Debug;
 		};
-		CA0176631A39E0C840EADD69 /* Release */ = {
+		CA0076631A393312A545FA2C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
-				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
-				DYLIB_COMPATIBILITY_VERSION = 2;
-				PRODUCT_NAME = rust_lib_intiface_central;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.a;
+				INSTALL_GROUP = "";
+				INSTALL_MODE_FLAG = "";
+				INSTALL_OWNER = "";
+				PRODUCT_NAME = rust_lib_intiface_central_static;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 			};
 			name = Release;
 		};
@@ -208,13 +195,25 @@
 			};
 			name = Debug;
 		};
+		CA0176631A39E0C840EADD69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CARGO_XCODE_CARGO_DEP_FILE_NAME = librust_lib_intiface_central.d;
+				CARGO_XCODE_CARGO_FILE_NAME = librust_lib_intiface_central.dylib;
+				DYLIB_COMPATIBILITY_VERSION = 2;
+				PRODUCT_NAME = rust_lib_intiface_central;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
+			};
+			name = Release;
+		};
 		CAF781B727CF3CC16B37690B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
 				CARGO_XCODE_BUILD_PROFILE = release;
@@ -232,10 +231,10 @@
 		CAF881B727CF228BE02872F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
 				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
 				CARGO_XCODE_BUILD_PROFILE = debug;
