@@ -61,7 +61,9 @@ class NewsCardWidget extends StatefulWidget {
 }
 
 class _NewsCardWidgetState extends State<NewsCardWidget> {
+  static const _pageSize = 5;
   final Set<int> _expandedIndices = {};
+  int _visibleCount = _pageSize;
 
   @override
   void initState() {
@@ -79,12 +81,35 @@ class _NewsCardWidgetState extends State<NewsCardWidget> {
     }
 
     final colorScheme = Theme.of(context).colorScheme;
+    final visiblePosts = posts.length <= _visibleCount
+        ? posts.length
+        : _visibleCount;
+    final hasMore = visiblePosts < posts.length;
+    // Extra item for the "Show more" button when there are hidden posts.
+    final itemCount = visiblePosts + (hasMore ? 1 : 0);
 
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(12),
-        itemCount: posts.length,
+        itemCount: itemCount,
         itemBuilder: (context, index) {
+          // "Show more" button as the last item.
+          if (hasMore && index == visiblePosts) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Center(
+                child: FilledButton.tonal(
+                  onPressed: () {
+                    setState(() {
+                      _visibleCount += _pageSize;
+                    });
+                  },
+                  child: const Text('Show more posts'),
+                ),
+              ),
+            );
+          }
+
           final post = posts[index];
           final isExpanded = _expandedIndices.contains(index);
 
