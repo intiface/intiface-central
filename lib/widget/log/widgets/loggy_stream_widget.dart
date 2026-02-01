@@ -47,15 +47,17 @@ class LoggyStreamWidget extends StatelessWidget {
                     return Container();
                   }
 
-                  return ListView(
-                    reverse: true,
-                    children: records.data!
-                        .where(
-                          (LogRecord record) =>
-                              record.level.priority >= logLevel!.priority,
-                        )
-                        .map((LogRecord record) => _LoggyItemWidget(record))
-                        .toList(),
+                  return SelectionArea(
+                    child: ListView(
+                      reverse: true,
+                      children: records.data!
+                          .where(
+                            (LogRecord record) =>
+                                record.level.priority >= logLevel!.priority,
+                          )
+                          .map((LogRecord record) => _LoggyItemWidget(record))
+                          .toList(),
+                    ),
                   );
                 },
           ),
