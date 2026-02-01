@@ -35,5 +35,5 @@ pub enum _OutputType {
   // For instances where we specify a position to move to ASAP. Usually servos, probably for the
   // OSR-2/SR-6.
   Position,
-  PositionWithDuration,
+  HwPositionWithDuration,
 }

@@ -20,5 +20,5 @@ enum OutputType {
   temperature,
   led,
   position,
-  positionWithDuration,
+  hwPositionWithDuration,
 }

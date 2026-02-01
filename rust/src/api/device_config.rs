@@ -1,7 +1,7 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
 use buttplug_core::message::OutputType;
-use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputPositionWithDurationProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
+use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputHwPositionWithDurationProperties, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
@@ -169,7 +169,7 @@ impl ExposedServerDeviceDefinition {
             OutputType::Led => output.set_led(Some(props.clone().into())),
             OutputType::Oscillate => output.set_oscillate(Some(props.clone().into())),
             OutputType::Position => output.set_position(Some(props.clone().into())),
-            OutputType::PositionWithDuration => output.set_position_with_duration(Some(props.clone().into())),
+            OutputType::HwPositionWithDuration => output.set_hw_position_with_duration(Some(props.clone().into())),
             OutputType::Rotate => output.set_rotate(Some(props.clone().into())),
             OutputType::Spray => output.set_spray(Some(props.clone().into())),
             OutputType::Vibrate => output.set_vibrate(Some(props.clone().into())),
@@ -284,7 +284,7 @@ impl ExposedServerDeviceFeatureOutput {
 
   #[frb(sync, getter)]
   pub fn position_with_duration(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.position_with_duration().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(self.feature_id, OutputType::PositionWithDuration, x))
+    self.output.hw_position_with_duration().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(self.feature_id, OutputType::HwPositionWithDuration, x))
   }
 }
 
@@ -331,12 +331,12 @@ impl ExposedServerDeviceFeatureOutputProperties {
     }
   }
 
-  fn new_from_position_with_duration(feature_id: Uuid, output_type: OutputType, props: ServerDeviceFeatureOutputPositionWithDurationProperties) -> Self {
+  fn new_from_position_with_duration(feature_id: Uuid, output_type: OutputType, props: ServerDeviceFeatureOutputHwPositionWithDurationProperties) -> Self {
     Self {
       feature_id,
       output_type,
       value: None,
-      position: Some(props.position().into()),
+      position: Some(props.value().into()),
       duration: Some(props.duration().into()),
       disabled: props.disabled(),
       reverse_position: props.reverse_position()
@@ -348,7 +348,7 @@ impl ExposedServerDeviceFeatureOutputProperties {
       feature_id,
       output_type,
       value: None,
-      position: Some(props.position().into()),
+      position: Some(props.value().into()),
       duration: None,
       disabled: props.disabled(),
       reverse_position: props.reverse_position()
@@ -421,9 +421,9 @@ impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOut
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
-impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputPositionWithDurationProperties {
+impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputHwPositionWithDurationProperties {
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputPositionWithDurationProperties::new(&value.position.unwrap().into(), &value.duration.unwrap().into(), value.disabled, value.reverse_position)
+    ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(&value.position.unwrap().into(), &value.duration.unwrap().into(), value.disabled, value.reverse_position)
   }
 }
 
