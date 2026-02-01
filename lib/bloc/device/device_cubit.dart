@@ -26,7 +26,7 @@ class DeviceCubit extends Cubit<DeviceState> {
     for (var feature in _clientDevice!.features.values) {
       if (feature.feature.output != null) {
         for (var output in feature.feature.output!.entries) {
-          if (output.key == OutputType.positionWithDuration) {
+          if (output.key == OutputType.hwPositionWithDuration) {
             _outputs.add(PositionWithDurationOutputCubit(feature));
           } else {
             _outputs.add(ValueOutputCubit(feature, output.key));
