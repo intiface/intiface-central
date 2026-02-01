@@ -52,7 +52,6 @@ typedef struct wire_cst_engine_options_external {
   uint16_t *repeater_local_port;
   struct wire_cst_list_prim_u_8_strict *repeater_remote_address;
   uint16_t *rest_api_port;
-  bool allow_v4_spec;
 } wire_cst_engine_options_external;
 
 typedef struct wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature {

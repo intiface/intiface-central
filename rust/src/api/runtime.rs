@@ -73,7 +73,6 @@ pub struct _EngineOptionsExternal {
   pub repeater_local_port: Option<u16>,
   pub repeater_remote_address: Option<String>,
   pub rest_api_port: Option<u16>,
-  pub allow_v4_spec: bool,
 }
 
 pub fn rust_runtime_started() -> bool {

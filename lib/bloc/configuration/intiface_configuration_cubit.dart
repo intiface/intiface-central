@@ -186,11 +186,6 @@ class AllowExperimentalRestServer extends IntifaceConfigurationState {
   AllowExperimentalRestServer(this.value);
 }
 
-class AllowExperimentalV4Support extends IntifaceConfigurationState {
-  final bool value;
-  AllowExperimentalV4Support(this.value);
-}
-
 class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   final SharedPreferences _prefs;
 
@@ -271,7 +266,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
 
     restLocalPort = _prefs.getInt("restLocalPort") ?? 3000;
     allowExperimentalRestServer = _prefs.getBool("allowExperimentalRestServer") ?? false;
-    allowExperimentalV4Support = _prefs.getBool("allowExperimentalV4Support") ?? false;
     // Default for appMode built into getter, since it also requires a type conversion.
   }
 
@@ -532,12 +526,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(AllowExperimentalRestServer(value));
   }
 
-  bool get allowExperimentalV4Support => _prefs.getBool("allowExperimentalV4Support")!;
-  set allowExperimentalV4Support(bool value) {
-    _prefs.setBool("allowExperimentalV4Support", value);
-    emit(AllowExperimentalV4Support(value));
-  }
-
   Future<EngineOptionsExternal> getEngineOptions() async {
     String? deviceConfigFile;
     if (await IntifacePaths.deviceConfigFile.exists()) {
@@ -575,7 +563,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       repeaterLocalPort: repeaterLocalPort,
       repeaterRemoteAddress: repeaterRemoteAddress,
       restApiPort: appMode == AppMode.restApi ? restLocalPort : null,
-      allowV4Spec: allowExperimentalV4Support,
     );
   }
 }

@@ -851,7 +851,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_opt_box_autoadd_u_16(raw.repeaterLocalPort),
       cst_encode_opt_String(raw.repeaterRemoteAddress),
       cst_encode_opt_box_autoadd_u_16(raw.restApiPort),
-      cst_encode_bool(raw.allowV4Spec),
     ].jsify()!;
   }
 

@@ -2238,7 +2238,6 @@ const _: fn() = || {
     let _: Option<u16> = EngineOptionsExternal.repeater_local_port;
     let _: Option<String> = EngineOptionsExternal.repeater_remote_address;
     let _: Option<u16> = EngineOptionsExternal.rest_api_port;
-    let _: bool = EngineOptionsExternal.allow_v4_spec;
 };
 
 // Section: dart2rust
@@ -2565,7 +2564,6 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
         let mut var_repeaterLocalPort = <Option<u16>>::sse_decode(deserializer);
         let mut var_repeaterRemoteAddress = <Option<String>>::sse_decode(deserializer);
         let mut var_restApiPort = <Option<u16>>::sse_decode(deserializer);
-        let mut var_allowV4Spec = <bool>::sse_decode(deserializer);
         return crate::api::runtime::EngineOptionsExternal {
             device_config_json: var_deviceConfigJson,
             user_device_config_json: var_userDeviceConfigJson,
@@ -2594,7 +2592,6 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
             repeater_local_port: var_repeaterLocalPort,
             repeater_remote_address: var_repeaterRemoteAddress,
             rest_api_port: var_restApiPort,
-            allow_v4_spec: var_allowV4Spec,
         };
     }
 }
@@ -3136,7 +3133,6 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
             self.0.repeater_local_port.into_into_dart().into_dart(),
             self.0.repeater_remote_address.into_into_dart().into_dart(),
             self.0.rest_api_port.into_into_dart().into_dart(),
-            self.0.allow_v4_spec.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -3529,7 +3525,6 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
         <Option<u16>>::sse_encode(self.repeater_local_port, serializer);
         <Option<String>>::sse_encode(self.repeater_remote_address, serializer);
         <Option<u16>>::sse_encode(self.rest_api_port, serializer);
-        <bool>::sse_encode(self.allow_v4_spec, serializer);
     }
 }
 
@@ -4199,7 +4194,6 @@ mod io {
                 repeater_local_port: self.repeater_local_port.cst_decode(),
                 repeater_remote_address: self.repeater_remote_address.cst_decode(),
                 rest_api_port: self.rest_api_port.cst_decode(),
-                allow_v4_spec: self.allow_v4_spec.cst_decode(),
             }
         }
     }
@@ -4354,7 +4348,6 @@ mod io {
                 repeater_local_port: core::ptr::null_mut(),
                 repeater_remote_address: core::ptr::null_mut(),
                 rest_api_port: core::ptr::null_mut(),
-                allow_v4_spec: Default::default(),
             }
         }
     }
@@ -5283,7 +5276,6 @@ field1: Default::default(), }
         repeater_local_port: *mut u16,
         repeater_remote_address: *mut wire_cst_list_prim_u_8_strict,
         rest_api_port: *mut u16,
-        allow_v4_spec: bool,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -5428,8 +5420,8 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                28,
-                "Expected 28 elements, got {}",
+                27,
+                "Expected 27 elements, got {}",
                 self_.length()
             );
             crate::api::runtime::EngineOptionsExternal {
@@ -5460,7 +5452,6 @@ mod web {
                 repeater_local_port: self_.get(24).cst_decode(),
                 repeater_remote_address: self_.get(25).cst_decode(),
                 rest_api_port: self_.get(26).cst_decode(),
-                allow_v4_spec: self_.get(27).cst_decode(),
             }
         }
     }

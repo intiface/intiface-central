@@ -15,7 +15,7 @@ class AppControlPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var modes = [AppMode.engine, AppMode.repeater];
-    if (configCubit.allowExperimentalV4Support && configCubit.allowExperimentalRestServer) {
+    if (configCubit.allowExperimentalRestServer) {
       modes.add(AppMode.restApi);
     }
     return BlocBuilder<EngineControlBloc, EngineControlState>(
