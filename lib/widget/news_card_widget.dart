@@ -51,18 +51,34 @@ List<_NewsPost> _parseNewsPosts(String markdown) {
   return posts;
 }
 
-class NewsCardWidget extends StatelessWidget {
+class NewsCardWidget extends StatefulWidget {
   final String markdownContent;
 
   const NewsCardWidget({super.key, required this.markdownContent});
 
   @override
+  State<NewsCardWidget> createState() => _NewsCardWidgetState();
+}
+
+class _NewsCardWidgetState extends State<NewsCardWidget> {
+  final Set<int> _expandedIndices = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Expand the first post by default.
+    _expandedIndices.add(0);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final posts = _parseNewsPosts(markdownContent);
+    final posts = _parseNewsPosts(widget.markdownContent);
 
     if (posts.isEmpty) {
       return const Expanded(child: Center(child: Text('No news available.')));
     }
+
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Expanded(
       child: ListView.builder(
@@ -70,32 +86,73 @@ class NewsCardWidget extends StatelessWidget {
         itemCount: posts.length,
         itemBuilder: (context, index) {
           final post = posts[index];
+          final isExpanded = _expandedIndices.contains(index);
+
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (post.title.isNotEmpty)
-                    Text(
-                      post.title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Tappable header with tinted background.
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (isExpanded) {
+                        _expandedIndices.remove(index);
+                      } else {
+                        _expandedIndices.add(index);
+                      }
+                    });
+                  },
+                  child: Container(
+                    color: colorScheme.surfaceContainerHighest,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
-                  if (post.date != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      post.date!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (post.title.isNotEmpty)
+                                Text(
+                                  post.title,
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              if (post.date != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  post.date!,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: isExpanded ? 0.5 : 0.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            Icons.expand_more,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                  if (post.body.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    MarkdownBody(
+                  ),
+                ),
+                // Collapsible body.
+                if (isExpanded && post.body.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: MarkdownBody(
                       selectable: true,
                       data: post.body,
                       onTapLink: (text, url, title) async {
@@ -111,9 +168,8 @@ class NewsCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ],
-                ],
-              ),
+                  ),
+              ],
             ),
           );
         },
