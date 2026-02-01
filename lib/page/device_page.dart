@@ -15,6 +15,36 @@ import 'package:intiface_central/src/rust/api/device_config.dart';
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
 
+  static Widget _sectionHeader(
+    BuildContext context,
+    String title, {
+    bool addTopSpacing = false,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: EdgeInsets.only(
+        top: addTopSpacing ? 24 : 8,
+        bottom: 8,
+        left: 4,
+        right: 4,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (addTopSpacing) Divider(color: colorScheme.outlineVariant),
+          if (addTopSpacing) const SizedBox(height: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EngineControlBloc, EngineControlState>(
@@ -59,7 +89,7 @@ class DevicePage extends StatelessWidget {
                     BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 if (engineState is! EngineStoppedState) {
                   deviceWidgets.add(
-                    const ListTile(title: Text("Connected Devices")),
+                    _sectionHeader(context, "Connected Devices"),
                   );
                   var devices = deviceBloc.devices;
                   devices.sort(
@@ -182,7 +212,11 @@ class DevicePage extends StatelessWidget {
                 }
 
                 deviceWidgets.add(
-                  const ListTile(title: Text("Disconnected Devices")),
+                  _sectionHeader(
+                    context,
+                    "Disconnected Devices",
+                    addTopSpacing: engineState is! EngineStoppedState,
+                  ),
                 );
                 var userDevices = userDeviceConfigCubit.configs.entries
                     .toList();
@@ -293,79 +327,148 @@ class DevicePage extends StatelessWidget {
                   );
                 }
 
-                var expansionName = "device-settings-advanceddeviceconfig";
-
                 deviceWidgets.add(
-                  const ListTile(title: Text("Advanced Device Config")),
+                  _sectionHeader(
+                    context,
+                    "Advanced Device Config",
+                    addTopSpacing: true,
+                  ),
                 );
                 if (configCubit.useDeviceWebsocketServer ||
                     configCubit.useSerialPort) {
-                  deviceWidgets.add(
-                    BlocBuilder<
-                      UserDeviceConfigurationCubit,
-                      UserDeviceConfigurationState
-                    >(
-                      builder: (context, state) =>
-                          BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                            buildWhen: (previous, current) =>
-                                current is GuiSettingStateUpdate &&
-                                current.valueName == expansionName,
-                            builder: (context, state) {
-                              var configWidgetList = <ExpansionPanel>[];
-                              if (configCubit.useDeviceWebsocketServer) {
-                                configWidgetList.add(
-                                  ExpansionPanel(
-                                    isExpanded:
-                                        guiSettingsCubit.getExpansionValue(
-                                          expansionName,
-                                        ) ??
-                                        false,
-                                    headerBuilder:
-                                        (
-                                          BuildContext context,
-                                          bool isExpanded,
-                                        ) => const ListTile(
-                                          title: Text(
-                                            "Websocket Devices (Advanced)",
-                                          ),
-                                        ),
-                                    body: const AddWebsocketDeviceWidget(),
-                                  ),
-                                );
-                              }
-                              if (configCubit.useSerialPort) {
-                                configWidgetList.add(
-                                  ExpansionPanel(
-                                    isExpanded:
-                                        guiSettingsCubit.getExpansionValue(
-                                          expansionName,
-                                        ) ??
-                                        false,
-                                    headerBuilder:
-                                        (
-                                          BuildContext context,
-                                          bool isExpanded,
-                                        ) => const ListTile(
-                                          title: Text(
-                                            "Serial Devices (Advanced)",
-                                          ),
-                                        ),
-                                    body: const AddSerialDeviceWidget(),
-                                  ),
-                                );
-                              }
-                              return ExpansionPanelList(
-                                expansionCallback: (panelIndex, isExpanded) =>
-                                    guiSettingsCubit.setExpansionValue(
-                                      expansionName,
-                                      isExpanded,
+                  if (configCubit.useDeviceWebsocketServer) {
+                    const wsExpansion = "device-settings-advanced-websocket";
+                    deviceWidgets.add(
+                      BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                        buildWhen: (previous, current) =>
+                            current is GuiSettingStateUpdate &&
+                            current.valueName == wsExpansion,
+                        builder: (context, state) {
+                          final isExpanded =
+                              guiSettingsCubit.getExpansionValue(wsExpansion) ??
+                              false;
+                          final colorScheme = Theme.of(context).colorScheme;
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () =>
+                                      guiSettingsCubit.setExpansionValue(
+                                        wsExpansion,
+                                        !isExpanded,
+                                      ),
+                                  child: Container(
+                                    color: colorScheme.surfaceContainerHighest,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
                                     ),
-                                children: configWidgetList,
-                              );
-                            },
-                          ),
-                    ),
-                  );
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Websocket Devices",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ),
+                                        AnimatedRotation(
+                                          turns: isExpanded ? 0.5 : 0.0,
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
+                                          child: Icon(
+                                            Icons.expand_more,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (isExpanded)
+                                  const AddWebsocketDeviceWidget(),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  if (configCubit.useSerialPort) {
+                    const serialExpansion = "device-settings-advanced-serial";
+                    deviceWidgets.add(
+                      BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                        buildWhen: (previous, current) =>
+                            current is GuiSettingStateUpdate &&
+                            current.valueName == serialExpansion,
+                        builder: (context, state) {
+                          final isExpanded =
+                              guiSettingsCubit.getExpansionValue(
+                                serialExpansion,
+                              ) ??
+                              false;
+                          final colorScheme = Theme.of(context).colorScheme;
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () =>
+                                      guiSettingsCubit.setExpansionValue(
+                                        serialExpansion,
+                                        !isExpanded,
+                                      ),
+                                  child: Container(
+                                    color: colorScheme.surfaceContainerHighest,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Serial Devices",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ),
+                                        AnimatedRotation(
+                                          turns: isExpanded ? 0.5 : 0.0,
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
+                                          child: Icon(
+                                            Icons.expand_more,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (isExpanded) const AddSerialDeviceWidget(),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
                 } else {
                   deviceWidgets.add(
                     const FractionallySizedBox(
