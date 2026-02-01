@@ -1,3 +1,19 @@
+# v3.0.0 - 2026/01/31 (All Platforms)
+
+## Features
+
+- Update to Buttplug v10/Intiface Engine v4! It's done! 3.5 years of work, done!
+- New device support since Beta 4
+  - KGoal Boost
+  - Adorime Cockring
+  - Luvmazer Dildo
+  - Add Temp/LED to Joyhub devices
+  - Lovense Lush Anal
+  - Svakom protocol fixes
+  - Joyhub Dodge
+- Not much noticable in Central otherwise, because all of the work has been concentrated on
+  Buttplug. Now it's time to start working on this.
+
 # v3.0.0 Beta 4 - 2025/12/29 (Desktop Platforms)
 
 ## Bugfixes
