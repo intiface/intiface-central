@@ -10,7 +10,7 @@ import 'package:intiface_central/page/app_control_page.dart';
 import 'package:intiface_central/page/log_page.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/page/submit_logs_page.dart';
-import 'package:intiface_central/widget/markdown_widget.dart';
+import 'package:intiface_central/widget/news_card_widget.dart';
 import 'package:intiface_central/page/device_page.dart';
 import 'package:intiface_central/page/settings_page.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
@@ -55,10 +55,8 @@ class BodyWidget extends StatelessWidget {
         'News',
         () => BlocBuilder<UpdateBloc, UpdateState>(
           buildWhen: (previous, current) => current is NewsUpdateRetrieved,
-          builder: (context, state) => MarkdownWidget(
-            markdownContent: assets.newsAsset,
-            backToSettings: false,
-          ),
+          builder: (context, state) =>
+              NewsCardWidget(markdownContent: assets.newsAsset),
         ),
         true,
         true,
