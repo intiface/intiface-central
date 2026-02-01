@@ -15,15 +15,22 @@ class DeviceConfigWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EngineControlBloc, EngineControlState>(
-      buildWhen: ((previous, current) => current is EngineStartedState || current is EngineStoppedState),
+      buildWhen: ((previous, current) =>
+          current is EngineStartedState || current is EngineStoppedState),
       builder: (context, state) {
-        return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        return BlocBuilder<
+          UserDeviceConfigurationCubit,
+          UserDeviceConfigurationState
+        >(
           builder: (context, userConfigState) {
-            var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+            var userDeviceConfigCubit =
+                BlocProvider.of<UserDeviceConfigurationCubit>(context);
             return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
               builder: (context, state) {
                 List<AbstractSettingsSection> tiles = [];
-                var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
+                var engineIsRunning = BlocProvider.of<EngineControlBloc>(
+                  context,
+                ).isRunning;
                 ExposedServerDeviceDefinition config;
                 try {
                   config = userDeviceConfigCubit.configs[identifier]!;
@@ -41,16 +48,23 @@ class DeviceConfigWidget extends StatelessWidget {
                         title: const Text("Display Name"),
                         value: Text(config.displayName ?? ""),
                         onPressed: (context) {
-                          final TextEditingController nameController = TextEditingController(
-                            text: config.displayName ?? "",
-                          );
+                          final TextEditingController nameController =
+                              TextEditingController(
+                                text: config.displayName ?? "",
+                              );
                           var nameField = TextField(
                             controller: nameController,
                             onSubmitted: (value) async {
                               Navigator.pop(context);
-                              await userDeviceConfigCubit.updateDisplayName(identifier, config, value);
+                              await userDeviceConfigCubit.updateDisplayName(
+                                identifier,
+                                config,
+                                value,
+                              );
                             },
-                            decoration: const InputDecoration(hintText: "Display Name Entry"),
+                            decoration: const InputDecoration(
+                              hintText: "Display Name Entry",
+                            ),
                           );
                           showDialog(
                             context: context,
@@ -62,11 +76,12 @@ class DeviceConfigWidget extends StatelessWidget {
                                   child: const Text('Ok'),
                                   onPressed: () async {
                                     Navigator.pop(context);
-                                    await userDeviceConfigCubit.updateDisplayName(
-                                      identifier,
-                                      config,
-                                      nameController.text,
-                                    );
+                                    await userDeviceConfigCubit
+                                        .updateDisplayName(
+                                          identifier,
+                                          config,
+                                          nameController.text,
+                                        );
                                   },
                                 ),
                                 TextButton(
@@ -84,7 +99,11 @@ class DeviceConfigWidget extends StatelessWidget {
                         enabled: !engineIsRunning,
                         initialValue: !config.deny,
                         onToggle: (value) async {
-                          await userDeviceConfigCubit.updateDeviceDeny(identifier, config, !value);
+                          await userDeviceConfigCubit.updateDeviceDeny(
+                            identifier,
+                            config,
+                            !value,
+                          );
                         },
                         title: const Text("Connect to this device"),
                       ),
@@ -93,7 +112,8 @@ class DeviceConfigWidget extends StatelessWidget {
                           onPressed: engineIsRunning
                               ? null
                               : () async {
-                                  await userDeviceConfigCubit.removeDeviceConfig(identifier);
+                                  await userDeviceConfigCubit
+                                      .removeDeviceConfig(identifier);
                                 },
                           child: const Text('Forget Device'),
                         ),
@@ -101,7 +121,20 @@ class DeviceConfigWidget extends StatelessWidget {
                     ],
                   ),
                 );
-                return SettingsList(sections: tiles, shrinkWrap: true);
+                final brightness = Theme.of(context).brightness;
+                final transparentBg = SettingsThemeData(
+                  settingsListBackground: Colors.transparent,
+                );
+                return SettingsList(
+                  sections: tiles,
+                  shrinkWrap: true,
+                  lightTheme: brightness == Brightness.light
+                      ? transparentBg
+                      : null,
+                  darkTheme: brightness == Brightness.dark
+                      ? transparentBg
+                      : null,
+                );
               },
             );
           },

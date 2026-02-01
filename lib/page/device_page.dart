@@ -127,6 +127,12 @@ class DevicePage extends StatelessWidget {
                           return Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: colorScheme.outlineVariant,
+                              ),
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -189,18 +195,21 @@ class DevicePage extends StatelessWidget {
                                   ),
                                 ),
                                 if (isExpanded)
-                                  ListView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    children: [
-                                      DeviceControlWidget(
-                                        deviceCubit: deviceCubit,
-                                      ),
-                                      DeviceConfigWidget(
-                                        identifier: deviceEntry.key,
-                                      ),
-                                    ],
+                                  Container(
+                                    color: colorScheme.surfaceContainerLow,
+                                    child: ListView(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      children: [
+                                        DeviceControlWidget(
+                                          deviceCubit: deviceCubit,
+                                        ),
+                                        DeviceConfigWidget(
+                                          identifier: deviceEntry.key,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                               ],
                             ),
@@ -244,6 +253,10 @@ class DevicePage extends StatelessWidget {
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
                           clipBehavior: Clip.antiAlias,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: colorScheme.outlineVariant),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -306,18 +319,22 @@ class DevicePage extends StatelessWidget {
                                 ),
                               ),
                               if (isExpanded)
-                                ListView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  children: [
-                                    DeviceConfigWidget(
-                                      identifier: deviceEntry.key,
-                                    ),
-                                    FeatureOutputConfigWidget(
-                                      deviceIdentifier: deviceEntry.key,
-                                      deviceDefinition: deviceEntry.value,
-                                    ),
-                                  ],
+                                Container(
+                                  color: colorScheme.surfaceContainerLow,
+                                  child: ListView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    children: [
+                                      DeviceConfigWidget(
+                                        identifier: deviceEntry.key,
+                                      ),
+                                      FeatureOutputConfigWidget(
+                                        deviceIdentifier: deviceEntry.key,
+                                        deviceDefinition: deviceEntry.value,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                             ],
                           ),
