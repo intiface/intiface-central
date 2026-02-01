@@ -1,4 +1,4 @@
-use flutter_rust_bridge::StreamSink;
+use crate::frb_generated::StreamSink;
 use jni::objects::GlobalRef;
 use jni::{AttachGuard, JNIEnv, JavaVM};
 use once_cell::sync::OnceCell;
@@ -6,7 +6,7 @@ use std::cell::RefCell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 
-use crate::mobile_init::Error;
+use crate::mobile_init::MobileInitError;
 
 static CLASS_LOADER: OnceCell<GlobalRef> = OnceCell::new();
 pub static JAVAVM: OnceCell<JavaVM> = OnceCell::new();
@@ -15,8 +15,8 @@ std::thread_local! {
   static JNI_ENV: RefCell<Option<AttachGuard<'static>>> = RefCell::new(None);
 }
 
-pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, Error> {
-  let vm = JAVAVM.get().ok_or(Error::JavaVM)?;
+pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, MobileInitError> {
+  let vm = JAVAVM.get().ok_or(MobileInitError::JavaVM)?;
   let env = vm.attach_current_thread().unwrap();
 
   // We create runtimes multiple times. Only run our loader setup once.
@@ -68,7 +68,7 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, Error> {
   Ok(runtime)
 }
 
-fn setup_class_loader(env: &JNIEnv) -> Result<(), Error> {
+fn setup_class_loader(env: &JNIEnv) -> Result<(), MobileInitError> {
   let thread = env
     .call_static_method(
       "java/lang/Thread",
@@ -88,13 +88,13 @@ fn setup_class_loader(env: &JNIEnv) -> Result<(), Error> {
 
   CLASS_LOADER
     .set(env.new_global_ref(class_loader)?)
-    .map_err(|_| Error::ClassLoader)
+    .map_err(|_| MobileInitError::ClassLoader)
 }
 
 // THIS HAS TO BE COMMENTED OUT OR REMOVED FROM GENERATED CODE WHEN BUILDING IOS CODEGEN OTHERWISE
 // IOS BUILDS WILL FAIL
 #[cfg(target_os = "android")]
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn JNI_OnLoad(vm: jni::JavaVM, _res: *const std::os::raw::c_void) -> jni::sys::jint {
   let env = vm.get_env().unwrap();
   jni_utils::init(&env).unwrap();
