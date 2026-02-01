@@ -55,7 +55,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     return IntifaceCentralApp._create(guiSettingsCubit: guiSettingsCubit);
   }
 
-  void windowDisplayModeResize(bool useCompactDisplay, GuiSettingsCubit settingsCubit) {
+  void windowDisplayModeResize(
+    bool useCompactDisplay,
+    GuiSettingsCubit settingsCubit,
+  ) {
     const compactSize = Size(500, 175);
     if (useCompactDisplay) {
       windowManager.setMinimumSize(compactSize);
@@ -453,21 +456,35 @@ class IntifaceCentralView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logInfo(
-      "Using theme ${BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme ? ThemeMode.light : ThemeMode.dark}",
-    );
+    final configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+    logInfo("Using theme mode: ${configCubit.themeModeSetting}");
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-      buildWhen: (previous, current) => current is UseLightThemeState || current is ConfigurationResetState,
-      builder: (context, state) => MaterialApp(
-        title: 'Intiface Central',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue, useMaterial3: true),
-        darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue, useMaterial3: true),
-        themeMode: BlocProvider.of<IntifaceConfigurationCubit>(context).useLightTheme
-            ? ThemeMode.light
-            : ThemeMode.dark,
-        home: const IntifaceCentralPage(),
-      ),
+      buildWhen: (previous, current) =>
+          current is ThemeModeSettingState ||
+          current is ConfigurationResetState,
+      builder: (context, state) {
+        final themeMode = switch (configCubit.themeModeSetting) {
+          "light" => ThemeMode.light,
+          "dark" => ThemeMode.dark,
+          _ => ThemeMode.system,
+        };
+        return MaterialApp(
+          title: 'Intiface Central',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primarySwatch: Colors.blue,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.blue,
+            useMaterial3: true,
+          ),
+          themeMode: themeMode,
+          home: const IntifaceCentralPage(),
+        );
+      },
     );
   }
 }

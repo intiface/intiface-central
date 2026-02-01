@@ -14,9 +14,9 @@ class IntifaceConfigurationState {}
 
 class IntifaceConfigurationStateNone extends IntifaceConfigurationState {}
 
-class UseLightThemeState extends IntifaceConfigurationState {
-  final bool value;
-  UseLightThemeState(this.value);
+class ThemeModeSettingState extends IntifaceConfigurationState {
+  final String value;
+  ThemeModeSettingState(this.value);
 }
 
 class UseSideNavigationBar extends IntifaceConfigurationState {
@@ -222,8 +222,13 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     hasRunFirstUse = _prefs.getBool("hasRunFirstUse") ?? false;
     showExtendedUI = _prefs.getBool("showExtendedUI") ?? false;
     unreadNews = _prefs.getBool("unreadNews") ?? false;
-    useSideNavigationBar = _prefs.getBool("useSideNavigationBar") ?? isDesktop();
-    useLightTheme = _prefs.getBool("useLightTheme") ?? true;
+    // Migrate old boolean useLightTheme to new tri-state themeMode.
+    if (_prefs.getString("themeMode") == null &&
+        _prefs.getBool("useLightTheme") != null) {
+      themeModeSetting = _prefs.getBool("useLightTheme")! ? "light" : "dark";
+    } else {
+      themeModeSetting = _prefs.getString("themeMode") ?? "system";
+    }
     restoreWindowLocation = _prefs.getBool("restoreWindowLocation") ?? true;
     useDiscordRichPresence = _prefs.getBool("useDiscordRichPresence") ?? false;
 
@@ -307,10 +312,10 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UsePrereleaseVersion(value));
   }
 
-  bool get useLightTheme => _prefs.getBool("useLightTheme")!;
-  set useLightTheme(bool value) {
-    _prefs.setBool("useLightTheme", value);
-    emit(UseLightThemeState(value));
+  String get themeModeSetting => _prefs.getString("themeMode") ?? "system";
+  set themeModeSetting(String value) {
+    _prefs.setString("themeMode", value);
+    emit(ThemeModeSettingState(value));
   }
 
   bool get restoreWindowLocation => _prefs.getBool("restoreWindowLocation")!;

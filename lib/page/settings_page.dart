@@ -135,11 +135,45 @@ class SettingPage extends StatelessWidget {
       ]);
     }
 
+    const themeModeLabels = {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark",
+    };
     var appSettingsTiles = [
-      SettingsTile.switchTile(
-        initialValue: cubit.useLightTheme,
-        onToggle: (value) => cubit.useLightTheme = value,
-        title: const Text("Light Theme"),
+      SettingsTile.navigation(
+        title: const Text("Theme"),
+        value: Text(themeModeLabels[cubit.themeModeSetting] ?? "System"),
+        onPressed: (context) {
+          showDialog<String>(
+            context: context,
+            builder: (context) => SimpleDialog(
+              title: const Text("Theme"),
+              children: [
+                RadioGroup<String>(
+                  groupValue: cubit.themeModeSetting,
+                  onChanged: (value) {
+                    if (value != null) {
+                      cubit.themeModeSetting = value;
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: themeModeLabels.entries
+                        .map(
+                          (e) => RadioListTile<String>(
+                            title: Text(e.value),
+                            value: e.key,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
       SettingsTile.switchTile(
         initialValue: cubit.useSideNavigationBar,
