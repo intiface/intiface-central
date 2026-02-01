@@ -32,7 +32,12 @@ class DeviceConnectedState extends EngineControlState {
   final int index;
   final ExposedUserDeviceIdentifier identifier;
 
-  DeviceConnectedState(this.name, this.displayName, this.index, this.identifier);
+  DeviceConnectedState(
+    this.name,
+    this.displayName,
+    this.index,
+    this.identifier,
+  );
 }
 
 class DeviceDisconnectedState extends EngineControlState {
@@ -124,7 +129,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
               return state;
             }
             if (engineMessage.clientConnected != null) {
-              return ClientConnectedState(engineMessage.clientConnected!.clientName);
+              return ClientConnectedState(
+                engineMessage.clientConnected!.clientName,
+              );
             }
             if (engineMessage.clientDisconnected != null) {
               return ClientDisconnectedState();
@@ -145,7 +152,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             }
             if (engineMessage.deviceDisconnected != null) {
               _devices.remove(engineMessage.deviceDisconnected!.index);
-              return DeviceDisconnectedState(engineMessage.deviceDisconnected!.index);
+              return DeviceDisconnectedState(
+                engineMessage.deviceDisconnected!.index,
+              );
             }
             if (engineMessage.engineStopped != null) {
               logInfo("Received EngineStopped message");

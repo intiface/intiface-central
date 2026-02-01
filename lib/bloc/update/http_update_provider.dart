@@ -27,7 +27,9 @@ abstract class HttpUpdateProvider implements UpdateProvider {
     client.connectionTimeout = _connectionTimeout;
 
     try {
-      HttpClientRequest req = await client.getUrl(Uri.parse(_updateUrl)).timeout(_connectionTimeout);
+      HttpClientRequest req = await client
+          .getUrl(Uri.parse(_updateUrl))
+          .timeout(_connectionTimeout);
       // If we don't have a copy of the file locally, skip our version check and always download it.
       if (await _localFile.exists()) {
         req.headers.add(HttpHeaders.ifNoneMatchHeader, _expectedVersion);
@@ -35,7 +37,10 @@ abstract class HttpUpdateProvider implements UpdateProvider {
       HttpClientResponse response = await req.close().timeout(_responseTimeout);
       if (response.statusCode == 200) {
         final etag = response.headers.value(HttpHeaders.etagHeader);
-        final stringData = await response.transform(utf8.decoder).join().timeout(_responseTimeout);
+        final stringData = await response
+            .transform(utf8.decoder)
+            .join()
+            .timeout(_responseTimeout);
         await _localFile.writeAsString(stringData);
         _expectedVersion = etag!;
         logInfo(

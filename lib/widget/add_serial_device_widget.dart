@@ -17,13 +17,20 @@ class AddSerialDeviceWidget extends StatelessWidget {
       },
     );
     */
-    return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+    return BlocBuilder<
+      UserDeviceConfigurationCubit,
+      UserDeviceConfigurationState
+    >(
       builder: (context, state) {
-        var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+        var userDeviceConfigCubit =
+            BlocProvider.of<UserDeviceConfigurationCubit>(context);
 
-        var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
+        var engineIsRunning = BlocProvider.of<EngineControlBloc>(
+          context,
+        ).isRunning;
         List<DataRow> rows = [];
-        for (var (protocol, serialSpecifier) in userDeviceConfigCubit.serialSpecifiers) {
+        for (var (protocol, serialSpecifier)
+            in userDeviceConfigCubit.serialSpecifiers) {
           rows.add(
             DataRow(
               cells: [
@@ -38,7 +45,10 @@ class AddSerialDeviceWidget extends StatelessWidget {
                   TextButton(
                     onPressed: engineIsRunning
                         ? null
-                        : () => userDeviceConfigCubit.removeSerialPort(protocol, serialSpecifier.port),
+                        : () => userDeviceConfigCubit.removeSerialPort(
+                            protocol,
+                            serialSpecifier.port,
+                          ),
                     child: const Text("Delete"),
                   ),
                 ),
@@ -94,22 +104,34 @@ class AddSerialDeviceWidget extends StatelessWidget {
                   columns: const <DataColumn>[
                     DataColumn(
                       label: Expanded(
-                        child: Text('Protocol', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Protocol',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                     DataColumn(
                       label: Expanded(
-                        child: Text('Port', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Port',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                     DataColumn(
                       label: Expanded(
-                        child: Text('Info', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Info',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                     DataColumn(
                       label: Expanded(
-                        child: Text('Delete', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                   ],
@@ -120,14 +142,22 @@ class AddSerialDeviceWidget extends StatelessWidget {
                 widthFactor: 0.8,
                 child: Column(
                   children: [
-                    const Text("Add Serial Device", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                    const Text(
+                      "Add Serial Device",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                     protocolDropdown,
                     SizedBox(
                       width: 150,
                       child: TextField(
                         enabled: !engineIsRunning,
                         controller: portController,
-                        decoration: const InputDecoration(hintText: "Port Name"),
+                        decoration: const InputDecoration(
+                          hintText: "Port Name",
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -136,7 +166,9 @@ class AddSerialDeviceWidget extends StatelessWidget {
                         enabled: !engineIsRunning,
                         controller: baudController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         decoration: const InputDecoration(hintText: "Baud"),
                       ),
                     ),
@@ -148,7 +180,8 @@ class AddSerialDeviceWidget extends StatelessWidget {
                           ? null
                           : () {
                               var name = portController.text;
-                              var protocol = protocolDropdown.valueNotifier.value;
+                              var protocol =
+                                  protocolDropdown.valueNotifier.value;
                               protocolDropdown.valueNotifier.value = "";
                               userDeviceConfigCubit.addSerialPort(
                                 protocol,

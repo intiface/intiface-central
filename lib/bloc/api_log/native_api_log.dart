@@ -8,7 +8,8 @@ import 'package:loggy/loggy.dart';
 class NativeApiLog {
   static final NativeApiLog _instance = NativeApiLog._internal();
   late Stream<String> _logStream;
-  final StreamController<EngineLogMessage> _logMessageStream = StreamController();
+  final StreamController<EngineLogMessage> _logMessageStream =
+      StreamController();
 
   factory NativeApiLog() {
     return _instance;

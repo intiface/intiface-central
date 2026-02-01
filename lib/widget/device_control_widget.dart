@@ -11,7 +11,8 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class DeviceControlWidget extends StatelessWidget {
   final DeviceCubit _deviceCubit;
 
-  const DeviceControlWidget({super.key, required deviceCubit}) : _deviceCubit = deviceCubit;
+  const DeviceControlWidget({super.key, required deviceCubit})
+    : _deviceCubit = deviceCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +32,14 @@ class DeviceControlWidget extends StatelessWidget {
                 outputList.addAll([
                   ListTile(
                     title: Text(output.type.name),
-                    subtitle: Text("Description: ${output.feature.feature.featureDescription} - Step Count: $range"),
+                    subtitle: Text(
+                      "Description: ${output.feature.feature.featureDescription} - Step Count: $range",
+                    ),
                   ),
                   BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
                     bloc: output,
-                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
+                    buildWhen: (previous, current) =>
+                        current is DeviceOutputStateUpdate,
                     builder: (context, state) => Slider(
                       min: range[0].toDouble(),
                       max: range[1].toDouble(),
@@ -52,11 +56,14 @@ class DeviceControlWidget extends StatelessWidget {
                 outputList.addAll([
                   ListTile(
                     title: const Text("Linear"),
-                    subtitle: Text("Description: ${output.feature.feature.featureDescription} - Step Count: $range"),
+                    subtitle: Text(
+                      "Description: ${output.feature.feature.featureDescription} - Step Count: $range",
+                    ),
                   ),
                   BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
                     bloc: output,
-                    buildWhen: (previous, current) => current is DeviceOutputStateUpdate,
+                    buildWhen: (previous, current) =>
+                        current is DeviceOutputStateUpdate,
                     builder: (context, state) {
                       return ListView(
                         physics: const NeverScrollableScrollPhysics(),
@@ -64,7 +71,10 @@ class DeviceControlWidget extends StatelessWidget {
                         children: [
                           RangeSlider(
                             max: range[1].toDouble(),
-                            values: RangeValues(output.currentMin, output.currentMax),
+                            values: RangeValues(
+                              output.currentMin,
+                              output.currentMax,
+                            ),
                             divisions: range[1],
                             onChanged: ((values) async {
                               output.setPosition(values.start, values.end);
@@ -77,7 +87,10 @@ class DeviceControlWidget extends StatelessWidget {
                               output.duration(value);
                             }),
                           ),
-                          TextButton(child: const Text("Toggle Oscillation"), onPressed: () => output.toggleRunning()),
+                          TextButton(
+                            child: const Text("Toggle Oscillation"),
+                            onPressed: () => output.toggleRunning(),
+                          ),
                         ],
                       );
                     },
@@ -92,12 +105,15 @@ class DeviceControlWidget extends StatelessWidget {
                 outputList.addAll([
                   ListTile(
                     title: Text(input.inputType.name),
-                    subtitle: Text("Description: ${input.descriptor} - Sensor Range: ${input.sensorRange}"),
+                    subtitle: Text(
+                      "Description: ${input.descriptor} - Sensor Range: ${input.sensorRange}",
+                    ),
                   ),
                   BlocBuilder<DeviceInputBloc, DeviceInputState>(
                     bloc: input,
-                    buildWhen: (DeviceInputState previous, DeviceInputState current) =>
-                        current is DeviceInputStateUpdate,
+                    buildWhen:
+                        (DeviceInputState previous, DeviceInputState current) =>
+                            current is DeviceInputStateUpdate,
                     builder: (context, state) {
                       if (input.inputType.name == InputType.battery.name) {
                         double percentage = input.currentData / 100.0;
@@ -114,11 +130,18 @@ class DeviceControlWidget extends StatelessWidget {
                       return Text("${input.currentData}");
                     },
                   ),
-                  TextButton(child: const Text("Read Sensor"), onPressed: () => input.add(DeviceInputReadEvent())),
+                  TextButton(
+                    child: const Text("Read Sensor"),
+                    onPressed: () => input.add(DeviceInputReadEvent()),
+                  ),
                 ]);
               }
             }
-            return ListView(physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: outputList);
+            return ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: outputList,
+            );
           },
         );
       },

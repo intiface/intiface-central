@@ -9,7 +9,9 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
-    logInfo("Starting library internal engine with the following arguments: $options");
+    logInfo(
+      "Starting library internal engine with the following arguments: $options",
+    );
     try {
       _stream = runEngine(args: options);
     } catch (e) {

@@ -22,7 +22,6 @@ dependencies:
   ffi: ^2.1.4
   flutter_bloc: ^9.1.1
   flutter_foreground_task: ^9.2.0
-  # flutter_local_notifications: ^19.5.0
   flutter_loggy: ^2.0.3+1
   flutter_markdown: ^0.7.7+1
   flutter_rust_bridge: 2.11.1
@@ -45,12 +44,10 @@ dependencies:
   sentry: ^9.9.1
   flutter_settings_ui: ^3.0.1
   shared_preferences: ^2.5.4
-  tuple: ^2.0.2
   url_launcher: ^6.3.2
   version: ^3.0.2
   web_socket_channel: ^3.0.3
   window_manager: ^0.5.1
-  multicast_dns: ^0.3.3
   flutter_multi_slider: ^2.0.1
   discord_rich_presence: ^1.1.1
   pubspec_parse: ^1.5.0

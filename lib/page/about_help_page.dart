@@ -13,10 +13,7 @@ class AboutHelpPage extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          MarkdownWidget(
-            markdownContent: assets.aboutAsset,
-            backToSettings: true,
-          ),
+          MarkdownWidget(markdownContent: assets.aboutAsset),
           Row(
             children: [
               const Text(

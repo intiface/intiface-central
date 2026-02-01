@@ -16,13 +16,20 @@ class AddWebsocketDeviceWidget extends StatelessWidget {
       },
     );
     */
-    return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+    return BlocBuilder<
+      UserDeviceConfigurationCubit,
+      UserDeviceConfigurationState
+    >(
       builder: (context, state) {
-        var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+        var userDeviceConfigCubit =
+            BlocProvider.of<UserDeviceConfigurationCubit>(context);
 
-        var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
+        var engineIsRunning = BlocProvider.of<EngineControlBloc>(
+          context,
+        ).isRunning;
         List<DataRow> rows = [];
-        for (var (protocol, websocketSpecifier) in userDeviceConfigCubit.specifiers) {
+        for (var (protocol, websocketSpecifier)
+            in userDeviceConfigCubit.specifiers) {
           rows.add(
             DataRow(
               cells: [
@@ -32,7 +39,10 @@ class AddWebsocketDeviceWidget extends StatelessWidget {
                   TextButton(
                     onPressed: engineIsRunning
                         ? null
-                        : () => userDeviceConfigCubit.removeWebsocketDeviceName(protocol, websocketSpecifier.name),
+                        : () => userDeviceConfigCubit.removeWebsocketDeviceName(
+                            protocol,
+                            websocketSpecifier.name,
+                          ),
                     child: const Text("Delete"),
                   ),
                 ),
@@ -63,17 +73,26 @@ class AddWebsocketDeviceWidget extends StatelessWidget {
                   columns: const <DataColumn>[
                     DataColumn(
                       label: Expanded(
-                        child: Text('Protocol', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Protocol',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                     DataColumn(
                       label: Expanded(
-                        child: Text('Device Name', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Device Name',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                     DataColumn(
                       label: Expanded(
-                        child: Text('Delete', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
                       ),
                     ),
                   ],
@@ -84,7 +103,13 @@ class AddWebsocketDeviceWidget extends StatelessWidget {
                 widthFactor: 0.8,
                 child: Column(
                   children: [
-                    const Text("Add Websocket Device", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                    const Text(
+                      "Add Websocket Device",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                     protocolDropdown,
                     SizedBox(
                       width: 150,
@@ -99,9 +124,13 @@ class AddWebsocketDeviceWidget extends StatelessWidget {
                           ? null
                           : () {
                               var name = controller.text;
-                              var protocol = protocolDropdown.valueNotifier.value;
+                              var protocol =
+                                  protocolDropdown.valueNotifier.value;
                               protocolDropdown.valueNotifier.value = "";
-                              userDeviceConfigCubit.addWebsocketDeviceName(protocol, name);
+                              userDeviceConfigCubit.addWebsocketDeviceName(
+                                protocol,
+                                name,
+                              );
                             },
                       child: const Text("Add Websocket Device"),
                     ),

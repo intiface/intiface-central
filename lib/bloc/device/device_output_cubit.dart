@@ -19,7 +19,8 @@ abstract class DeviceOutputCubit extends Cubit<DeviceOutputState> {
   final OutputType type;
   int _currentValue = 0;
 
-  DeviceOutputCubit(this.feature, this.type) : super(DeviceOutputStateInitial());
+  DeviceOutputCubit(this.feature, this.type)
+    : super(DeviceOutputStateInitial());
 
   int get currentValue => _currentValue;
 }
@@ -34,7 +35,9 @@ class ValueOutputCubit extends DeviceOutputCubit {
       "actuator-output-${feature.feature.featureIndex}-$type",
       const Duration(milliseconds: 100),
       () async {
-        await feature.runOutput(buttplug_dart.DeviceOutputValueConstructor(type).steps(value));
+        await feature.runOutput(
+          buttplug_dart.DeviceOutputValueConstructor(type).steps(value),
+        );
       },
     );
   }
@@ -48,7 +51,11 @@ class PositionWithDurationOutputCubit extends DeviceOutputCubit {
 
   PositionWithDurationOutputCubit(ButtplugClientDeviceFeature feature)
     : super(feature, buttplug_dart.OutputType.hwPositionWithDuration) {
-    _currentMax = feature.feature.output![buttplug_dart.OutputType.hwPositionWithDuration]!.value![1].toDouble();
+    _currentMax = feature
+        .feature
+        .output![buttplug_dart.OutputType.hwPositionWithDuration]!
+        .value![1]
+        .toDouble();
   }
 
   void setPosition(double min, double max) {
@@ -60,7 +67,10 @@ class PositionWithDurationOutputCubit extends DeviceOutputCubit {
       const Duration(milliseconds: 100),
       () async {
         await feature.runOutput(
-          buttplug_dart.DeviceOutputPositionWithDurationConstructor().steps(_currentValue, _currentDuration.toInt()),
+          buttplug_dart.DeviceOutputPositionWithDurationConstructor().steps(
+            _currentValue,
+            _currentDuration.toInt(),
+          ),
         );
       },
     );
@@ -74,7 +84,10 @@ class PositionWithDurationOutputCubit extends DeviceOutputCubit {
       const Duration(milliseconds: 100),
       () async {
         await feature.runOutput(
-          buttplug_dart.DeviceOutputPositionWithDurationConstructor().steps(_currentValue, _currentDuration.toInt()),
+          buttplug_dart.DeviceOutputPositionWithDurationConstructor().steps(
+            _currentValue,
+            _currentDuration.toInt(),
+          ),
         );
       },
     );

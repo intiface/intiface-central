@@ -23,14 +23,18 @@ abstract class GithubUpdater implements UpdateProvider {
     GitHub github = GitHub();
     var configCubit = await IntifaceConfigurationCubit.create();
     if (configCubit.usePrereleaseVersion) {
-      var releases = github.repositories.listReleases(RepositorySlug(_githubUsername, _githubRepo));
+      var releases = github.repositories.listReleases(
+        RepositorySlug(_githubUsername, _githubRepo),
+      );
       await for (var release in releases) {
         if (release.isPrerelease == true) {
           return release.tagName;
         }
       }
     }
-    return (await github.repositories.getLatestRelease(RepositorySlug(_githubUsername, _githubRepo))).tagName;
+    return (await github.repositories.getLatestRelease(
+      RepositorySlug(_githubUsername, _githubRepo),
+    )).tagName;
   }
 
   void stopExit() {
@@ -43,14 +47,20 @@ abstract class GithubUpdater implements UpdateProvider {
     if (Platform.isWindows) {
       GitHub github = GitHub();
       logInfo("Running application update. Getting file from Github.");
-      var release = await github.repositories.getLatestRelease(RepositorySlug(_githubUsername, _githubRepo));
+      var release = await github.repositories.getLatestRelease(
+        RepositorySlug(_githubUsername, _githubRepo),
+      );
       if (release.assets != null) {
         for (var asset in release.assets!) {
           // This is a horrible way to find the windows binary, but it works for now.
-          if (asset.name != null && asset.name!.contains("-win-") && asset.browserDownloadUrl != null) {
+          if (asset.name != null &&
+              asset.name!.contains("-win-") &&
+              asset.browserDownloadUrl != null) {
             HttpClient client = HttpClient();
             try {
-              var request = await client.getUrl(Uri.parse(asset.browserDownloadUrl!));
+              var request = await client.getUrl(
+                Uri.parse(asset.browserDownloadUrl!),
+              );
               var response = await request.close();
               var bytes = await consolidateHttpClientResponseBytes(response);
               final dir = await getTemporaryDirectory();
@@ -92,7 +102,9 @@ class IntifaceCentralDesktopUpdater extends GithubUpdater {
     // Strip the "v" off the front.
     var strippedVersion = latestVersion.substring(1);
     var repoVersion = Version.parse(strippedVersion);
-    logInfo("Current application version for remote download: ${repoVersion.toString()}");
+    logInfo(
+      "Current application version for remote download: ${repoVersion.toString()}",
+    );
     return IntifaceCentralUpdateAvailable(repoVersion.toString());
   }
 }

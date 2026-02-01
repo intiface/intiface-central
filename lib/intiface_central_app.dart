@@ -539,26 +539,6 @@ class IntifaceCentralPage extends StatelessWidget {
             context,
           ).useCompactDisplay;
           List<Widget> widgets = [const ControlWidget()];
-          /*
-              if (isDesktop()) {
-                widgets.addAll([
-                  const Divider(height: 2),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: IconButton(
-                              onPressed: () {
-                                BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay =
-                                    !useCompactDisplay;
-                              },
-                              icon: useCompactDisplay
-                                  ? const Icon(Icons.arrow_drop_down)
-                                  : const Icon(Icons.arrow_drop_up)))
-                    ],
-                  )
-                ]);
-              }
-              */
           if (!isDesktop() || !useCompactDisplay) {
             widgets.addAll(const [
               Divider(height: 2),

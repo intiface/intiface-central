@@ -35,7 +35,14 @@ class DeviceCubit extends Cubit<DeviceState> {
       }
       if (feature.feature.input != null) {
         for (var input in feature.feature.input!.entries) {
-          _inputs.add(InputReadBloc(device, feature.feature.featureDescription, input.value.value, input.key));
+          _inputs.add(
+            InputReadBloc(
+              device,
+              feature.feature.featureDescription,
+              input.value.value,
+              input.key,
+            ),
+          );
         }
       }
     }

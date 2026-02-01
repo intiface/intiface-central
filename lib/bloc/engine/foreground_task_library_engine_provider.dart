@@ -47,9 +47,18 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     final serverSendPort = _serverMessageReceivePort.sendPort;
     final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
     final shutdownSendPort = _shutdownReceivePort.sendPort;
-    IsolateNameServer.registerPortWithName(serverSendPort, _kMainServerPortName);
-    IsolateNameServer.registerPortWithName(backdoorSendPort, _kMainBackdoorPortName);
-    IsolateNameServer.registerPortWithName(shutdownSendPort, _kMainShutdownPortName);
+    IsolateNameServer.registerPortWithName(
+      serverSendPort,
+      _kMainServerPortName,
+    );
+    IsolateNameServer.registerPortWithName(
+      backdoorSendPort,
+      _kMainBackdoorPortName,
+    );
+    IsolateNameServer.registerPortWithName(
+      shutdownSendPort,
+      _kMainShutdownPortName,
+    );
   }
 
   @override
@@ -75,7 +84,10 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     var engineOptions = await configRepo.getEngineOptions();
     _sendProviderLog("INFO", "Starting engine");
 
-    _sendProviderLog("INFO", "Starting library internal engine with the following arguments: $engineOptions");
+    _sendProviderLog(
+      "INFO",
+      "Starting library internal engine with the following arguments: $engineOptions",
+    );
     try {
       _stream = runEngine(args: engineOptions);
     } catch (e) {
@@ -166,8 +178,12 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   @override
   void onEngineStart() {
     _serverSendPort = IsolateNameServer.lookupPortByName(_kMainServerPortName);
-    _backdoorSendPort = IsolateNameServer.lookupPortByName(_kMainBackdoorPortName);
-    _shutdownSendPort = IsolateNameServer.lookupPortByName(_kMainShutdownPortName);
+    _backdoorSendPort = IsolateNameServer.lookupPortByName(
+      _kMainBackdoorPortName,
+    );
+    _shutdownSendPort = IsolateNameServer.lookupPortByName(
+      _kMainShutdownPortName,
+    );
   }
 
   @override
@@ -204,7 +220,9 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       reqResult = await FlutterForegroundTask.startService(
         notificationTitle: 'Intiface Engine is running',
         notificationText: 'Tap to return to the app',
-        notificationButtons: [const NotificationButton(id: 'stopServerButton', text: 'Stop Server')],
+        notificationButtons: [
+          const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
+        ],
         callback: startCallback,
       );
     }
@@ -224,7 +242,9 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       _processMessageStream.add(message);
     } else if (message is bool) {
       logInfo("Shutdown complete message received, stopping foreground task.");
-      FlutterForegroundTask.stopService().then((_) => logInfo("Foreground task shutdown complete."));
+      FlutterForegroundTask.stopService().then(
+        (_) => logInfo("Foreground task shutdown complete."),
+      );
     }
   }
 

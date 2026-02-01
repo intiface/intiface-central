@@ -20,7 +20,8 @@ class EngineOutput {
 
 class EngineRepository {
   final EngineProvider _provider;
-  StreamController<EngineOutput> _engineMessageStream = StreamController.broadcast();
+  StreamController<EngineOutput> _engineMessageStream =
+      StreamController.broadcast();
 
   EngineRepository(this._provider);
 
@@ -40,7 +41,8 @@ class EngineRepository {
       try {
         // If we've got valid JSON, see if it's an engine message or a server message.
         var message = EngineMessage.fromJson(jsonElement);
-        if (!_engineMessageStream.isClosed) _engineMessageStream.add(EngineOutput(message, null));
+        if (!_engineMessageStream.isClosed)
+          _engineMessageStream.add(EngineOutput(message, null));
         if (message.engineStarted != null) {
           _provider.onEngineStart();
         }

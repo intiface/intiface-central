@@ -7,28 +7,27 @@ import 'package:loggy/loggy.dart';
 
 class UserDeviceConfigurationState {}
 
-class UserDeviceConfigurationStateInitial extends UserDeviceConfigurationState {}
+class UserDeviceConfigurationStateInitial
+    extends UserDeviceConfigurationState {}
 
-class UserDeviceConfigurationStateUpdated extends UserDeviceConfigurationState {}
+class UserDeviceConfigurationStateUpdated
+    extends UserDeviceConfigurationState {}
 
 class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
-  UserDeviceConfigurationCubit._() : super(UserDeviceConfigurationStateInitial());
-  /*
-  static Future<UserDeviceConfigurationCubit> create() async {
-    var cubit = UserDeviceConfigurationCubit._();
-    return cubit;
-  }
-*/
+  UserDeviceConfigurationCubit._()
+    : super(UserDeviceConfigurationStateInitial());
 
   Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> _configs = {};
-  Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> get configs => _configs;
+  Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> get configs =>
+      _configs;
   Object? _createError;
 
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];
   List<(String, ExposedSerialSpecifier)> _serialSpecifiers = [];
   List<(String, ExposedWebsocketSpecifier)> get specifiers => _specifiers;
-  List<(String, ExposedSerialSpecifier)> get serialSpecifiers => _serialSpecifiers;
+  List<(String, ExposedSerialSpecifier)> get serialSpecifiers =>
+      _serialSpecifiers;
   List<String> get protocols => _protocols;
   Object? get createError => _createError;
 
@@ -48,7 +47,10 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
       if (IntifacePaths.userDeviceConfigFile.existsSync()) {
         userConfig = IntifacePaths.userDeviceConfigFile.readAsStringSync();
       }
-      await setupDeviceConfigurationManager(baseConfig: deviceConfig, userConfig: userConfig);
+      await setupDeviceConfigurationManager(
+        baseConfig: deviceConfig,
+        userConfig: userConfig,
+      );
     } catch (e) {
       _createError = e;
       logError("Error loading cubit! Deleting configs and creating new ones.");
@@ -143,12 +145,17 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await updateDefinition(deviceIdentifier, def);
   }
 
-  Future<void> updateDefinition(ExposedUserDeviceIdentifier deviceIdentifier, ExposedServerDeviceDefinition def) async {
+  Future<void> updateDefinition(
+    ExposedUserDeviceIdentifier deviceIdentifier,
+    ExposedServerDeviceDefinition def,
+  ) async {
     await updateUserConfig(identifier: deviceIdentifier, config: def);
     await _saveConfigFile();
   }
 
-  Future<void> removeDeviceConfig(ExposedUserDeviceIdentifier deviceIdentifier) async {
+  Future<void> removeDeviceConfig(
+    ExposedUserDeviceIdentifier deviceIdentifier,
+  ) async {
     await removeUserConfig(identifier: deviceIdentifier);
     await _saveConfigFile();
   }
