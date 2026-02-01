@@ -8,7 +8,7 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

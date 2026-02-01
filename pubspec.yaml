@@ -43,7 +43,7 @@ dependencies:
   screen_retriever: ^0.2.0
   sentry_flutter: ^9.9.1
   sentry: ^9.9.1
-  settings_ui: ^2.0.2
+  flutter_settings_ui: ^3.0.1
   shared_preferences: ^2.5.4
   tuple: ^2.0.2
   url_launcher: ^6.3.2

@@ -7,7 +7,7 @@ import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 class EngineConfigWidget extends StatelessWidget {
   const EngineConfigWidget({super.key});
