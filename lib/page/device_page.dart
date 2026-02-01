@@ -29,114 +29,245 @@ class DevicePage extends StatelessWidget {
         var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
         return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
           builder: (context, state) {
-            return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+            return BlocBuilder<
+              UserDeviceConfigurationCubit,
+              UserDeviceConfigurationState
+            >(
               builder: (context, userConfigState) {
                 List<Widget> deviceWidgets = [];
                 List<int> connectedIndexes = [];
-                var userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+                var userDeviceConfigCubit =
+                    BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 if (engineState is! EngineStoppedState) {
-                  deviceWidgets.add(const ListTile(title: Text("Connected Devices")));
+                  deviceWidgets.add(
+                    const ListTile(title: Text("Connected Devices")),
+                  );
                   var devices = deviceBloc.devices;
-                  devices.sort((a, b) => a.device!.index.compareTo(b.device!.index));
+                  devices.sort(
+                    (a, b) => a.device!.index.compareTo(b.device!.index),
+                  );
                   for (var deviceCubit in devices) {
                     var device = deviceCubit.device!;
                     connectedIndexes.add(device.index);
-                    MapEntry<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> deviceEntry;
+                    MapEntry<
+                      ExposedUserDeviceIdentifier,
+                      ExposedServerDeviceDefinition
+                    >
+                    deviceEntry;
                     try {
-                      deviceEntry = userDeviceConfigCubit.configs.entries.firstWhere(
-                        (element) => element.value.index == device.index,
-                      );
+                      deviceEntry = userDeviceConfigCubit.configs.entries
+                          .firstWhere(
+                            (element) => element.value.index == device.index,
+                          );
                     } catch (e) {
                       continue;
                     }
-                    var expansionName = "device-settings-${device.index}";
+                    var expansionName = "device-connected-${device.index}";
                     deviceWidgets.add(
-                      Card(
-                        child: ListView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            ListTile(
-                              title: Text(device.displayName ?? device.name),
-                              subtitle: Text("Index: ${device.index} - Base Name: ${device.name}"),
-                            ),
-                            DeviceControlWidget(deviceCubit: deviceCubit),
-                            BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                              buildWhen: (previous, current) =>
-                                  current is GuiSettingStateUpdate && current.valueName == expansionName,
-                              builder: (context, state) {
-                                return ExpansionPanelList(
-                                  children: [
-                                    ExpansionPanel(
-                                      headerBuilder: (BuildContext context, bool isExpanded) {
-                                        return const ListTile(title: Text("Settings"));
-                                      },
-                                      body: ListView(
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        children: [DeviceConfigWidget(identifier: deviceEntry.key)],
+                      BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                        buildWhen: (previous, current) =>
+                            current is GuiSettingStateUpdate &&
+                            current.valueName == expansionName,
+                        builder: (context, state) {
+                          final isExpanded =
+                              guiSettingsCubit.getExpansionValue(
+                                expansionName,
+                              ) ??
+                              true;
+                          final colorScheme = Theme.of(context).colorScheme;
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () =>
+                                      guiSettingsCubit.setExpansionValue(
+                                        expansionName,
+                                        !isExpanded,
                                       ),
-                                      isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
+                                  child: Container(
+                                    color: colorScheme.surfaceContainerHighest,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
                                     ),
-                                  ],
-                                  expansionCallback: (panelIndex, isExpanded) =>
-                                      guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
-                                );
-                              },
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                device.displayName ??
+                                                    device.name,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                "Index: ${device.index} - Base Name: ${device.name}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurfaceVariant,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        AnimatedRotation(
+                                          turns: isExpanded ? 0.5 : 0.0,
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
+                                          child: Icon(
+                                            Icons.expand_more,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (isExpanded)
+                                  ListView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    children: [
+                                      DeviceControlWidget(
+                                        deviceCubit: deviceCubit,
+                                      ),
+                                      DeviceConfigWidget(
+                                        identifier: deviceEntry.key,
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     );
                   }
                 }
 
-                deviceWidgets.add(const ListTile(title: Text("Disconnected Devices")));
-                var userDevices = userDeviceConfigCubit.configs.entries.toList();
-                userDevices.sort((a, b) => a.value.index.compareTo(b.value.index));
+                deviceWidgets.add(
+                  const ListTile(title: Text("Disconnected Devices")),
+                );
+                var userDevices = userDeviceConfigCubit.configs.entries
+                    .toList();
+                userDevices.sort(
+                  (a, b) => a.value.index.compareTo(b.value.index),
+                );
                 for (var deviceEntry in userDevices) {
                   if (connectedIndexes.contains(deviceEntry.value.index)) {
                     continue;
                   }
-                  var expansionName = "device-settings-${deviceEntry.value.index}";
+                  var expansionName =
+                      "device-settings-${deviceEntry.value.index}";
                   var identifierString =
                       "${deviceEntry.key.protocol}-${deviceEntry.key.identifier}-${deviceEntry.key.address}";
                   deviceWidgets.add(
                     BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
                       buildWhen: (previous, current) =>
-                          current is GuiSettingStateUpdate && current.valueName == expansionName,
+                          current is GuiSettingStateUpdate &&
+                          current.valueName == expansionName,
                       builder: (context, state) {
-                        var listWidgets = [
-                          DeviceConfigWidget(identifier: deviceEntry.key),
-                          FeatureOutputConfigWidget(
-                            deviceIdentifier: deviceEntry.key,
-                            deviceDefinition: deviceEntry.value,
-                          ),
-                        ];
-
-                        return ExpansionPanelList(
-                          children: [
-                            ExpansionPanel(
-                              headerBuilder: (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text(
-                                    deviceEntry.value.displayName != null
-                                        ? "${deviceEntry.value.displayName} (${deviceEntry.value.name})"
-                                        : deviceEntry.value.name,
+                        final isExpanded =
+                            guiSettingsCubit.getExpansionValue(expansionName) ??
+                            false;
+                        final colorScheme = Theme.of(context).colorScheme;
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () => guiSettingsCubit.setExpansionValue(
+                                  expansionName,
+                                  !isExpanded,
+                                ),
+                                child: Container(
+                                  color: colorScheme.surfaceContainerHighest,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
                                   ),
-                                  subtitle: Text(identifierString),
-                                );
-                              },
-                              body: ListView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                children: listWidgets,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              deviceEntry.value.displayName !=
+                                                      null
+                                                  ? "${deviceEntry.value.displayName} (${deviceEntry.value.name})"
+                                                  : deviceEntry.value.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              identifierString,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.copyWith(
+                                                    color: colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      AnimatedRotation(
+                                        turns: isExpanded ? 0.5 : 0.0,
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
+                                        child: Icon(
+                                          Icons.expand_more,
+                                          color: colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? true,
-                            ),
-                          ],
-                          expansionCallback: (panelIndex, isExpanded) =>
-                              guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
+                              if (isExpanded)
+                                ListView(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  children: [
+                                    DeviceConfigWidget(
+                                      identifier: deviceEntry.key,
+                                    ),
+                                    FeatureOutputConfigWidget(
+                                      deviceIdentifier: deviceEntry.key,
+                                      deviceDefinition: deviceEntry.value,
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -145,42 +276,75 @@ class DevicePage extends StatelessWidget {
 
                 var expansionName = "device-settings-advanceddeviceconfig";
 
-                deviceWidgets.add(const ListTile(title: Text("Advanced Device Config")));
-                if (configCubit.useDeviceWebsocketServer || configCubit.useSerialPort) {
+                deviceWidgets.add(
+                  const ListTile(title: Text("Advanced Device Config")),
+                );
+                if (configCubit.useDeviceWebsocketServer ||
+                    configCubit.useSerialPort) {
                   deviceWidgets.add(
-                    BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
-                      builder: (context, state) => BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
-                        buildWhen: (previous, current) =>
-                            current is GuiSettingStateUpdate && current.valueName == expansionName,
-                        builder: (context, state) {
-                          var configWidgetList = <ExpansionPanel>[];
-                          if (configCubit.useDeviceWebsocketServer) {
-                            configWidgetList.add(
-                              ExpansionPanel(
-                                isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
-                                headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Websocket Devices (Advanced)")),
-                                body: const AddWebsocketDeviceWidget(),
-                              ),
-                            );
-                          }
-                          if (configCubit.useSerialPort) {
-                            configWidgetList.add(
-                              ExpansionPanel(
-                                isExpanded: guiSettingsCubit.getExpansionValue(expansionName) ?? false,
-                                headerBuilder: (BuildContext context, bool isExpanded) =>
-                                    const ListTile(title: Text("Serial Devices (Advanced)")),
-                                body: const AddSerialDeviceWidget(),
-                              ),
-                            );
-                          }
-                          return ExpansionPanelList(
-                            expansionCallback: (panelIndex, isExpanded) =>
-                                guiSettingsCubit.setExpansionValue(expansionName, isExpanded),
-                            children: configWidgetList,
-                          );
-                        },
-                      ),
+                    BlocBuilder<
+                      UserDeviceConfigurationCubit,
+                      UserDeviceConfigurationState
+                    >(
+                      builder: (context, state) =>
+                          BlocBuilder<GuiSettingsCubit, GuiSettingsState>(
+                            buildWhen: (previous, current) =>
+                                current is GuiSettingStateUpdate &&
+                                current.valueName == expansionName,
+                            builder: (context, state) {
+                              var configWidgetList = <ExpansionPanel>[];
+                              if (configCubit.useDeviceWebsocketServer) {
+                                configWidgetList.add(
+                                  ExpansionPanel(
+                                    isExpanded:
+                                        guiSettingsCubit.getExpansionValue(
+                                          expansionName,
+                                        ) ??
+                                        false,
+                                    headerBuilder:
+                                        (
+                                          BuildContext context,
+                                          bool isExpanded,
+                                        ) => const ListTile(
+                                          title: Text(
+                                            "Websocket Devices (Advanced)",
+                                          ),
+                                        ),
+                                    body: const AddWebsocketDeviceWidget(),
+                                  ),
+                                );
+                              }
+                              if (configCubit.useSerialPort) {
+                                configWidgetList.add(
+                                  ExpansionPanel(
+                                    isExpanded:
+                                        guiSettingsCubit.getExpansionValue(
+                                          expansionName,
+                                        ) ??
+                                        false,
+                                    headerBuilder:
+                                        (
+                                          BuildContext context,
+                                          bool isExpanded,
+                                        ) => const ListTile(
+                                          title: Text(
+                                            "Serial Devices (Advanced)",
+                                          ),
+                                        ),
+                                    body: const AddSerialDeviceWidget(),
+                                  ),
+                                );
+                              }
+                              return ExpansionPanelList(
+                                expansionCallback: (panelIndex, isExpanded) =>
+                                    guiSettingsCubit.setExpansionValue(
+                                      expansionName,
+                                      isExpanded,
+                                    ),
+                                children: configWidgetList,
+                              );
+                            },
+                          ),
                     ),
                   );
                 } else {
@@ -204,7 +368,9 @@ class DevicePage extends StatelessWidget {
                               ? TextButton(
                                   onPressed: engineState is! EngineStoppedState
                                       ? () {
-                                          deviceBloc.add(DeviceManagerStartScanningEvent());
+                                          deviceBloc.add(
+                                            DeviceManagerStartScanningEvent(),
+                                          );
                                         }
                                       : null,
                                   child: const Text("Start Scanning"),
@@ -212,7 +378,9 @@ class DevicePage extends StatelessWidget {
                               : TextButton(
                                   onPressed: engineState is! EngineStoppedState
                                       ? () {
-                                          deviceBloc.add(DeviceManagerStopScanningEvent());
+                                          deviceBloc.add(
+                                            DeviceManagerStopScanningEvent(),
+                                          );
                                         }
                                       : null,
                                   child: const Text("Stop Scanning"),
