@@ -154,7 +154,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   Future<bool> runtimeStarted() async {
-    return await runtimeStarted();
+    return await rustRuntimeStarted();
   }
 
   @override
