@@ -99,7 +99,7 @@ class DeviceControlWidget extends StatelessWidget {
                     buildWhen: (DeviceInputState previous, DeviceInputState current) =>
                         current is DeviceInputStateUpdate,
                     builder: (context, state) {
-                      if (input.inputType == InputType.battery) {
+                      if (input.inputType.name == InputType.battery.name) {
                         double percentage = input.currentData / 100.0;
                         return LinearPercentIndicator(
                           percent: percentage,
