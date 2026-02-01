@@ -4,8 +4,6 @@ PODS:
   - Flutter (1.0.0)
   - flutter_foreground_task (0.0.1):
     - Flutter
-  - flutter_local_notifications (0.0.1):
-    - Flutter
   - network_info_plus (0.0.1):
     - Flutter
   - package_info_plus (0.4.5):
@@ -15,11 +13,13 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
-  - Sentry/HybridSDK (8.25.0)
-  - sentry_flutter (7.20.2):
+  - rust_lib_intiface_central (0.0.1):
+    - Flutter
+  - Sentry/HybridSDK (8.56.2)
+  - sentry_flutter (9.9.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.25.0)
+    - Sentry/HybridSDK (= 8.56.2)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -30,11 +30,11 @@ DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
-  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - rust_lib_intiface_central (from `.symlinks/plugins/rust_lib_intiface_central/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -50,8 +50,6 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_foreground_task:
     :path: ".symlinks/plugins/flutter_foreground_task/ios"
-  flutter_local_notifications:
-    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   package_info_plus:
@@ -60,6 +58,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  rust_lib_intiface_central:
+    :path: ".symlinks/plugins/rust_lib_intiface_central/ios"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   shared_preferences_foundation:
@@ -68,19 +68,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
-  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
-  network_info_plus: 6d0c3eb8367b8164fa3fb0c19875e3f59d49697f
-  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  Sentry: cd86fc55628f5b7c572cabe66cc8f95a9d2f165a
-  sentry_flutter: 0cf2507eb90ff7a6aa3304e900dd7f08edbbefdf
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_foreground_task: a159d2c2173b33699ddb3e6c2a067045d7cebb89
+  network_info_plus: cf61925ab5205dce05a4f0895989afdb6aade5fc
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  rust_lib_intiface_central: 1c21d597a413dcdff42175c69bdf2e961b23a972
+  Sentry: b53951377b78e21a734f5dc8318e333dbfc682d7
+  sentry_flutter: 580133c878f86698e23bb5dd7217a3387c4b79b5
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
-PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
+PODFILE CHECKSUM: 0dbd5a87e0ace00c9610d2037ac22083a01f861d
 
-COCOAPODS: 1.15.0
+COCOAPODS: 1.16.2
