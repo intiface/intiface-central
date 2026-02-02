@@ -17,7 +17,7 @@ import 'package:intiface_central/bloc/update/update_bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
-  final bool Function(NavigationState state) stateCheck;
+  final bool Function(NavigationPage page) stateCheck;
   final void Function(NavigationCubit cubit) navigate;
   final Icon icon;
   final Icon selectedIcon;
@@ -41,14 +41,14 @@ class NavigationDestination {
 class BodyWidget extends StatelessWidget {
   const BodyWidget({super.key});
 
-  Widget _buildMenu(BuildContext context, NavigationState state) {
+  Widget _buildMenu(BuildContext context, NavigationPage state) {
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     var errorNotifierCubit = BlocProvider.of<ErrorNotifierCubit>(context);
     var assets = BlocProvider.of<AssetCubit>(context);
 
     var destinations = [
       NavigationDestination(
-        (state) => state is NavigationStateNews,
+        (state) => state == NavigationPage.news,
         (NavigationCubit cubit) => cubit.goNews(),
         const Icon(Icons.newspaper_outlined),
         const Icon(Icons.newspaper),
@@ -62,7 +62,7 @@ class BodyWidget extends StatelessWidget {
         true,
       ),
       NavigationDestination(
-        (state) => state is NavigationStateAppControl,
+        (state) => state == NavigationPage.appControl,
         (NavigationCubit cubit) => cubit.goAppControl(),
         const Icon(Icons.play_circle_outlined),
         const Icon(Icons.play_circle),
@@ -72,7 +72,7 @@ class BodyWidget extends StatelessWidget {
         true,
       ),
       NavigationDestination(
-        (state) => state is NavigationStateDeviceControl,
+        (state) => state == NavigationPage.deviceControl,
         (NavigationCubit cubit) => cubit.goDeviceControl(),
         const Icon(Icons.vibration_outlined),
         const Icon(Icons.vibration),
@@ -82,7 +82,7 @@ class BodyWidget extends StatelessWidget {
         true,
       ),
       NavigationDestination(
-        (state) => state is NavigationStateLogs,
+        (state) => state == NavigationPage.logs,
         (NavigationCubit cubit) => cubit.goLogs(),
         Icon(
           Icons.text_snippet_outlined,
@@ -97,7 +97,7 @@ class BodyWidget extends StatelessWidget {
         true,
       ),
       NavigationDestination(
-        (state) => state is NavigationStateSettings,
+        (state) => state == NavigationPage.settings,
         (NavigationCubit cubit) => cubit.goSettings(),
         Icon(
           Icons.settings_outlined,
@@ -124,7 +124,7 @@ class BodyWidget extends StatelessWidget {
       // We have Navigation Destinations for which we may not want to show bottom bar nav. For instance, we'll want to
       // hide our About/Help in the Settings widget on mobile, and we never want the Send Logs page shown.
       NavigationDestination(
-        (state) => state is NavigationStateAbout,
+        (state) => state == NavigationPage.about,
         (NavigationCubit cubit) => cubit.goAbout(),
         const Icon(Icons.help_outlined),
         const Icon(Icons.help),
@@ -138,7 +138,7 @@ class BodyWidget extends StatelessWidget {
     if (const String.fromEnvironment('IS_STEAM_DECK').isNotEmpty) {
       destinations.addAll([
         NavigationDestination(
-          (state) => state is NavigationStateExit,
+          (state) => state == NavigationPage.exit,
           (NavigationCubit cubit) => cubit.goExit(),
           const Icon(Icons.exit_to_app),
           const Icon(Icons.exit_to_app),
@@ -154,7 +154,7 @@ class BodyWidget extends StatelessWidget {
     // before other selection fields, it screws up our ordering.
     destinations.addAll([
       NavigationDestination(
-        (state) => state is NavigationStateSendLogs,
+        (state) => state == NavigationPage.sendLogs,
         (NavigationCubit cubit) => cubit.goSendLogs(),
         const Icon(Icons.help_outlined),
         const Icon(Icons.help),
@@ -251,7 +251,7 @@ class BodyWidget extends StatelessWidget {
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
       buildWhen: (previous, current) => current is UseSideNavigationBar,
       builder: (context, configState) =>
-          BlocBuilder<NavigationCubit, NavigationState>(
+          BlocBuilder<NavigationCubit, NavigationPage>(
             builder: (context, navigationState) {
               return BlocBuilder<ErrorNotifierCubit, ErrorNotifierState>(
                 builder: (context, errorState) {
