@@ -5,15 +5,37 @@ import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
-class RestApiConfigWidget extends StatelessWidget {
+class RestApiConfigWidget extends StatefulWidget {
   const RestApiConfigWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<RestApiConfigWidget> createState() => _RestApiConfigWidgetState();
+}
+
+class _RestApiConfigWidgetState extends State<RestApiConfigWidget> {
+  late TextEditingController _restPortController;
+
+  @override
+  void initState() {
+    super.initState();
+    _restPortController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-    var restPortController = TextEditingController(
-      text: configCubit.restLocalPort.toString(),
-    );
+    _restPortController.text = configCubit.restLocalPort.toString();
+  }
+
+  @override
+  void dispose() {
+    _restPortController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: BlocBuilder<EngineControlBloc, EngineControlState>(
         buildWhen: ((previous, current) =>
@@ -45,7 +67,7 @@ class RestApiConfigWidget extends StatelessWidget {
                             title: const Text('Local Port'),
                             content: TextField(
                               keyboardType: TextInputType.number,
-                              controller: restPortController,
+                              controller: _restPortController,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
@@ -71,7 +93,7 @@ class RestApiConfigWidget extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   var newPort = int.tryParse(
-                                    restPortController.text,
+                                    _restPortController.text,
                                   );
                                   if (newPort != null &&
                                       newPort > 1024 &&

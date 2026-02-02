@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 
-final List<LogRecord> _shownRecords = <LogRecord>[];
-
 class LoggyItemStackWidget extends StatefulWidget {
   const LoggyItemStackWidget(this.record, {super.key});
 
@@ -13,6 +11,8 @@ class LoggyItemStackWidget extends StatefulWidget {
 }
 
 class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
+  bool _isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     if (widget.record.stackTrace == null) {
@@ -25,11 +25,7 @@ class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
         key: ValueKey<DateTime>(widget.record.time),
         onTap: () {
           setState(() {
-            if (_shownRecords.contains(widget.record)) {
-              _shownRecords.remove(widget.record);
-            } else {
-              _shownRecords.add(widget.record);
-            }
+            _isExpanded = !_isExpanded;
           });
         },
         child: Container(
@@ -37,12 +33,12 @@ class LoggyItemStackWidgetState extends State<LoggyItemStackWidget> {
           child: Column(
             children: [
               Divider(color: Colors.grey.shade600),
-              _CollapsableButton(widget.record),
+              _CollapsableButton(isExpanded: _isExpanded),
               AnimatedCrossFade(
                 firstChild: SizedBox(width: MediaQuery.of(context).size.width),
                 secondChild: _StackList(widget.record),
                 duration: const Duration(milliseconds: 250),
-                crossFadeState: _shownRecords.contains(widget.record)
+                crossFadeState: _isExpanded
                     ? CrossFadeState.showSecond
                     : CrossFadeState.showFirst,
               ),
@@ -106,9 +102,9 @@ class _StackList extends StatelessWidget {
 }
 
 class _CollapsableButton extends StatelessWidget {
-  const _CollapsableButton(this.record);
+  const _CollapsableButton({required this.isExpanded});
 
-  final LogRecord record;
+  final bool isExpanded;
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +136,7 @@ class _CollapsableButton extends StatelessWidget {
         ),
       ),
       duration: const Duration(milliseconds: 250),
-      crossFadeState: _shownRecords.contains(record)
+      crossFadeState: isExpanded
           ? CrossFadeState.showSecond
           : CrossFadeState.showFirst,
     );

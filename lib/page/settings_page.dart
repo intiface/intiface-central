@@ -18,13 +18,8 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Unused dynamic array for storing repaint trigger logic.
-    final _ = [
-      context.watch<EngineControlBloc>().state,
-      context.watch<IntifaceConfigurationCubit>().state,
-    ];
-    var cubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-    var engineIsRunning = BlocProvider.of<EngineControlBloc>(context).isRunning;
+    var cubit = context.watch<IntifaceConfigurationCubit>();
+    var engineIsRunning = context.watch<EngineControlBloc>().isRunning;
     List<AbstractSettingsSection> tiles = [];
 
     if (!cubit.useSideNavigationBar) {

@@ -4,7 +4,7 @@ import 'package:flutter_multi_slider/flutter_multi_slider.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
-import 'package:intiface_central/util/debouncer.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:loggy/loggy.dart';
 
 class FeatureOutputConfigWidget extends StatelessWidget {
@@ -25,7 +25,7 @@ class FeatureOutputConfigWidget extends StatelessWidget {
     ExposedServerDeviceFeatureOutputProperties props,
     Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
   ) {
-    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
     if (props.value == null) {
       logWarning("Null prop value, cannot render.");
       return;
@@ -53,9 +53,11 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                   var v = props.value!;
                   v.user = (value[0].floor(), value[1].ceil());
                   props.value = v;
-                  d.run(() async {
-                    await updateFunc(props);
-                  });
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () async => await updateFunc(props),
+                  );
                 }),
         ),
       ),
@@ -69,7 +71,7 @@ class FeatureOutputConfigWidget extends StatelessWidget {
     ExposedServerDeviceFeatureOutputProperties props,
     Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
   ) {
-    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
     if (props.position == null) {
       logWarning("Null prop position, cannot render.");
       return;
@@ -97,9 +99,11 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                   var v = props.position!;
                   v.user = (value[0].floor(), value[1].ceil());
                   props.position = v;
-                  d.run(() async {
-                    await updateFunc(props);
-                  });
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () async => await updateFunc(props),
+                  );
                 }),
         ),
       ),
@@ -113,7 +117,7 @@ class FeatureOutputConfigWidget extends StatelessWidget {
     ExposedServerDeviceFeatureOutputProperties props,
     Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
   ) {
-    Debouncer d = Debouncer(delay: const Duration(milliseconds: 30));
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
     outputList.addAll([
       ListTile(
         subtitle: Text(
@@ -137,9 +141,11 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                   var v = props.position!;
                   v.user = (value[0].floor(), value[1].ceil());
                   props.position = v;
-                  d.run(() async {
-                    await updateFunc(props);
-                  });
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () async => await updateFunc(props),
+                  );
                 }),
         ),
       ),
