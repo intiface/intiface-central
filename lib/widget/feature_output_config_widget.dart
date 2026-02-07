@@ -118,6 +118,10 @@ class FeatureOutputConfigWidget extends StatelessWidget {
     Function(ExposedServerDeviceFeatureOutputProperties) updateFunc,
   ) {
     final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
+    if (props.value == null || props.position == null) {
+      logWarning("Null prop value/position, cannot render.");
+      return;
+    }
     outputList.addAll([
       ListTile(
         subtitle: Text(
@@ -194,7 +198,7 @@ class FeatureOutputConfigWidget extends StatelessWidget {
               rangeUpdate,
             );
           }
-          if (feature.output?.spray != null) {
+          if (feature.output?.rotate != null) {
             buildOutputValueTile(
               engineIsRunning,
               outputList,
