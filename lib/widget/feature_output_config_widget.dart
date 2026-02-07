@@ -107,6 +107,18 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                 }),
         ),
       ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text("Reverse"),
+          value: props.reversePosition,
+          onChanged: engineIsRunning
+              ? null
+              : (value) async {
+                  props.reversePosition = value ?? false;
+                  await updateFunc(props);
+                },
+        ),
+      ),
     ]);
   }
 
@@ -151,6 +163,18 @@ class FeatureOutputConfigWidget extends StatelessWidget {
                     () async => await updateFunc(props),
                   );
                 }),
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text("Reverse"),
+          value: props.reversePosition,
+          onChanged: engineIsRunning
+              ? null
+              : (value) async {
+                  props.reversePosition = value ?? false;
+                  await updateFunc(props);
+                },
         ),
       ),
     ]);
