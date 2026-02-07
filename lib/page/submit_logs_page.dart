@@ -76,43 +76,49 @@ class SendLogsPage extends StatelessWidget {
                 child: TextButton(
                   child: const Text("Send Logs..."),
                   onPressed: () {
+                    var contactText = contactController.value.text;
+                    var messageText = textController.value.text;
+
                     showDialog<void>(
                       context: context,
-                      barrierDismissible: false, // user must tap button!
+                      barrierDismissible: false,
                       builder: (BuildContext context) {
                         var contentText = "Sending logs...";
                         var sendFinished = false;
                         var sendFailed = false;
+                        var sendStarted = false;
 
-                        var builder = StatefulBuilder(
+                        return StatefulBuilder(
                           builder: (context, setState) {
-                            Sentry.captureMessage(
-                                  """Contact Info: ${contactController.value.text}
+                            if (!sendStarted) {
+                              sendStarted = true;
+                              Sentry.captureMessage(
+                                """Contact Info: $contactText
 
 Message:
 
-${textController.value.text}""",
-                                  withScope: (scope) {
-                                    scope.setTag(
-                                      "ManualLogSubmit",
-                                      true.toString(),
-                                    );
-                                  },
-                                )
-                                .then((value) {
-                                  setState(() {
-                                    contentText = "Logs sent!";
-                                    sendFinished = true;
-                                  });
-                                })
-                                .onError((error, stackTrace) {
+$messageText""",
+                                withScope: (scope) {
+                                  scope.setTag(
+                                    "ManualLogSubmit",
+                                    true.toString(),
+                                  );
+                                },
+                              ).then((value) {
+                                setState(() {
+                                  contentText = "Logs sent!";
+                                  sendFinished = true;
+                                });
+                              }).onError((error, stackTrace) {
+                                setState(() {
                                   contentText =
                                       "Error sending logs, please try again.";
                                   sendFinished = true;
                                   sendFailed = true;
                                 });
+                              });
+                            }
                             return AlertDialog(
-                              //title: const Text('Sending Logs'),
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[Text(contentText)],
@@ -136,8 +142,6 @@ ${textController.value.text}""",
                             );
                           },
                         );
-
-                        return builder;
                       },
                     );
                   },

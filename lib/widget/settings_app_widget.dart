@@ -71,10 +71,8 @@ class SettingsAppWidget extends AbstractSettingsSection {
       ),
       SettingsTile.navigation(
         title: const Text("Send Logs to Developers"),
-        onPressed: cubit.canUseCrashReporting
-            ? ((context) =>
-                  BlocProvider.of<NavigationCubit>(context).goSendLogs())
-            : null,
+        onPressed: (context) =>
+            BlocProvider.of<NavigationCubit>(context).goSendLogs(),
       ),
     ];
 
