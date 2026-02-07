@@ -8,6 +8,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/widget/settings_version_widget.dart';
 import 'package:intiface_central/widget/settings_app_widget.dart';
 import 'package:intiface_central/widget/settings_reset_widget.dart';
+import 'package:intiface_central/util/intiface_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SettingPage extends StatelessWidget {
@@ -45,6 +46,12 @@ class SettingPage extends StatelessWidget {
             onToggle: (value) => cubit.allowExperimentalRestServer = value,
             title: const Text("REST Server"),
           ),
+          if (isDesktop())
+            SettingsTile.switchTile(
+              initialValue: cubit.usePrereleaseVersion,
+              onToggle: (value) => cubit.usePrereleaseVersion = value,
+              title: const Text("Use Prerelease (Beta) Version"),
+            ),
         ],
       ),
       SettingsResetWidget(cubit: cubit, engineIsRunning: engineIsRunning),

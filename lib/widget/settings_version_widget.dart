@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/update/github_update_provider.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/util/intiface_util.dart';
-import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -131,7 +131,7 @@ class SettingsVersionWidget extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final versionCard = Card(
+    return Card(
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -144,7 +144,7 @@ class SettingsVersionWidget extends AbstractSettingsSection {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Versions",
+              "Versions and Updates",
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -155,44 +155,20 @@ class SettingsVersionWidget extends AbstractSettingsSection {
               context,
             ),
             ..._buildUpdateLinks(context),
+            const Divider(),
+            Center(
+              child: OutlinedButton(
+                onPressed: !engineIsRunning
+                    ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
+                    : null,
+                child: isDesktop()
+                    ? const Text("Check For App and Config Updates")
+                    : const Text("Check for Config Updates"),
+              ),
+            ),
           ],
         ),
       ),
-    );
-
-    List<AbstractSettingsTile> updateTiles = [
-      SettingsTile(
-        title: TextButton(
-          onPressed: !engineIsRunning
-              ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
-              : null,
-          child: isDesktop()
-              ? const Text("Check For App and Config Updates")
-              : const Text("Check for Config Updates"),
-        ),
-      ),
-    ];
-
-    if (isDesktop()) {
-      updateTiles.add(
-        SettingsTile.switchTile(
-          initialValue: cubit.usePrereleaseVersion,
-          onToggle: (value) => cubit.usePrereleaseVersion = value,
-          title: const Text("Use Prerelease (Beta) Version"),
-        ),
-      );
-    }
-
-    final updatesSection = SettingsSection(
-      title: const Text("Updates"),
-      tiles: updateTiles,
-    );
-
-    return Column(
-      children: [
-        versionCard,
-        updatesSection,
-      ],
     );
   }
 }
