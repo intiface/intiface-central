@@ -7,10 +7,11 @@ use flutter_rust_bridge::frb;
 use crate::frb_generated::{StreamSink};
 use futures::{pin_mut, StreamExt};
 use lazy_static::lazy_static;
+use parking_lot::{Mutex, RwLock};
 use std::{
   sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex, RwLock,
+    Arc,
   },
   thread,
   time::Duration,
@@ -76,7 +77,7 @@ pub struct _EngineOptionsExternal {
 }
 
 pub fn rust_runtime_started() -> bool {
-  RUNTIME.lock().unwrap().is_some()
+  RUNTIME.lock().is_some()
 }
 
 /// Check if the engine is currently shutting down.
@@ -93,7 +94,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   // Clear the shutdown flag for the new engine run
   ENGINE_SHUTDOWN.store(false, Ordering::SeqCst);
 
-  let mut runtime_storage = RUNTIME.lock().unwrap();
+  let mut runtime_storage = RUNTIME.lock();
 
   if runtime_storage.is_some() {
     return Err(anyhow::Error::msg("Runtime already created!"));
@@ -107,7 +108,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   info!("Creating fresh notifier for engine run");
   let notify = Arc::new(Notify::new());
   {
-    let mut notifier_guard = ENGINE_NOTIFIER.write().unwrap();
+    let mut notifier_guard = ENGINE_NOTIFIER.write();
     *notifier_guard = Some(notify.clone());
   }
 
@@ -117,7 +118,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
   ));
   // Store weak reference to frontend for closing during shutdown
   {
-    let mut frontend_guard = ENGINE_FRONTEND.write().unwrap();
+    let mut frontend_guard = ENGINE_FRONTEND.write();
     *frontend_guard = Some(Arc::downgrade(&frontend));
   }
   info!("Frontend logging set up.");
@@ -133,7 +134,7 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
 
   // TODO This is not doing what its supposed to. We're taking our Arc from the read guard, then
   // just dropping the read guard.
-  let dcm = (*DEVICE_CONFIG_MANAGER.read().unwrap()).clone();
+  let dcm = (*DEVICE_CONFIG_MANAGER.read()).clone();
   runtime.spawn(
     async move {
       info!("Entering main join.");
@@ -241,7 +242,7 @@ pub fn stop_engine() {
 
   // Notify all waiters to stop the engine
   {
-    let notifier_guard = ENGINE_NOTIFIER.read().unwrap();
+    let notifier_guard = ENGINE_NOTIFIER.read();
     if let Some(ref notifier) = *notifier_guard {
       notifier.notify_waiters();
     }
@@ -268,7 +269,7 @@ pub fn stop_engine() {
 
   let runtime;
   {
-    runtime = RUNTIME.lock().unwrap().take();
+    runtime = RUNTIME.lock().take();
   }
   if let Some(rt) = runtime {
     info!("Shutting down runtime");
@@ -283,14 +284,14 @@ pub fn stop_engine() {
   // Clear the notifier so a fresh one is created on next run.
   // This prevents stale state from accumulating across app restarts.
   {
-    let mut notifier_guard = ENGINE_NOTIFIER.write().unwrap();
+    let mut notifier_guard = ENGINE_NOTIFIER.write();
     *notifier_guard = None;
     info!("Engine notifier cleared for next run");
   }
 
   // Clear the frontend reference
   {
-    let mut frontend_guard = ENGINE_FRONTEND.write().unwrap();
+    let mut frontend_guard = ENGINE_FRONTEND.write();
     *frontend_guard = None;
     info!("Engine frontend reference cleared for next run");
   }

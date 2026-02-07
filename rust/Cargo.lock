@@ -2990,6 +2990,7 @@ dependencies = [
  "log",
  "log-panics",
  "once_cell",
+ "parking_lot",
  "sentry",
  "serde",
  "serde_json",

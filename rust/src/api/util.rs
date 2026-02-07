@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 use once_cell::sync::OnceCell;
 use sentry::ClientInitGuard;
 use log::*;
-use std::sync::Mutex;
+use parking_lot::Mutex;
 
 use crate::{frb_generated::StreamSink, logging::FlutterTracingWriter};
 
@@ -24,11 +24,11 @@ pub fn setup_logging(sink: StreamSink<String>) {
       format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
     );
   }
-  *LOGGER.lock().unwrap() = Some(FlutterTracingWriter::new(sink));
+  *LOGGER.lock() = Some(FlutterTracingWriter::new(sink));
 }
 
 pub fn shutdown_logging() {
-  *LOGGER.lock().unwrap() = None;
+  *LOGGER.lock() = None;
 }
 
 pub fn crash_reporting(sentry_api_key: String) {
