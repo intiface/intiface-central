@@ -112,7 +112,13 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
         return;
       }
       _scanning = true;
-      await _internalClient!.startScanning();
+      try {
+        await _internalClient!.startScanning();
+      } catch (e) {
+        logError("Error starting scan: $e");
+        _scanning = false;
+        return;
+      }
       emit(DeviceManagerStartScanningState());
     }));
 
@@ -121,7 +127,12 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
         return;
       }
       _scanning = false;
-      await _internalClient!.stopScanning();
+      try {
+        await _internalClient!.stopScanning();
+      } catch (e) {
+        logError("Error stopping scan: $e");
+        return;
+      }
       emit(DeviceManagerStopScanningState());
     }));
   }

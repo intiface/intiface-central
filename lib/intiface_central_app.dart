@@ -24,6 +24,7 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
+import 'package:intiface_central/util/bluetooth_check.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/util/logging.dart';
 import 'package:intiface_central/widget/body_widget.dart';
@@ -402,9 +403,14 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     }
 
     if (configCubit.startServerOnStartup) {
-      engineControlBloc.add(
-        EngineControlEventStart(options: await configCubit.getEngineOptions()),
-      );
+      var btProblem = await checkBluetoothReady();
+      if (btProblem != null) {
+        logWarning('Skipping autostart: $btProblem');
+      } else {
+        engineControlBloc.add(
+          EngineControlEventStart(options: await configCubit.getEngineOptions()),
+        );
+      }
     }
 
     // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.

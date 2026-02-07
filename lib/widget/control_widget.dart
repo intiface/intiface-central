@@ -5,6 +5,7 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
+import 'package:intiface_central/util/bluetooth_check.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 
@@ -55,14 +56,35 @@ class ControlWidget extends StatelessWidget {
             } else if (state is EngineStoppedState) {
               statusMessage = "Server not running";
               statusIcon = Icons.bedtime;
-              buttonAction = () async => engineControlBloc.add(
-                EngineControlEventStart(
-                  options: await BlocProvider.of<IntifaceConfigurationCubit>(
-                    context,
-                    listen: false,
-                  ).getEngineOptions(),
-                ),
-              );
+              buttonAction = () async {
+                var btProblem = await checkBluetoothReady();
+                if (btProblem != null) {
+                  if (!context.mounted) return;
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Bluetooth Not Ready'),
+                      content: Text(btProblem),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
+                if (!context.mounted) return;
+                engineControlBloc.add(
+                  EngineControlEventStart(
+                    options: await BlocProvider.of<IntifaceConfigurationCubit>(
+                      context,
+                      listen: false,
+                    ).getEngineOptions(),
+                  ),
+                );
+              };
             } else if (state is EngineStartingState) {
               statusIcon = Icons.start;
               statusMessage = "Server starting";
