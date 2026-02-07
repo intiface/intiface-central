@@ -19,31 +19,34 @@ class SettingsVersionWidget extends AbstractSettingsSection {
     required this.engineIsRunning,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    List<AbstractSettingsTile> versionTiles = [
-      SettingsTile(
-        title: TextButton(
-          onPressed: !engineIsRunning
-              ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
-              : null,
-          child: isDesktop()
-              ? const Text("Check For App and Config Updates")
-              : const Text("Check for Config Updates"),
-        ),
+  Widget _buildVersionRow(String label, String version, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: colorScheme.onSurface)),
+          Text(version, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+        ],
       ),
-      SettingsTile(
-        title: const Text("App Version"),
-        value: Text(cubit.currentAppVersion),
-      ),
-    ];
-    if (isDesktop() &&
-        canShowUpdate() &&
-        cubit.currentAppVersion != cubit.latestAppVersion) {
-      if (Platform.isWindows) {
-        versionTiles.add(
-          SettingsTile.navigation(
-            onPressed: (context) async {
+    );
+  }
+
+  List<Widget> _buildUpdateLinks(BuildContext context) {
+    final links = <Widget>[];
+    if (!isDesktop() ||
+        !canShowUpdate() ||
+        cubit.currentAppVersion == cubit.latestAppVersion) {
+      return links;
+    }
+
+    if (Platform.isWindows) {
+      links.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: InkWell(
+            onTap: () {
               showDialog<void>(
                 context: context,
                 barrierDismissible: false,
@@ -75,64 +78,121 @@ class SettingsVersionWidget extends AbstractSettingsSection {
                 },
               );
             },
-            title: Text(
+            child: Text(
               "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to update now.",
               style: const TextStyle(color: Colors.green),
             ),
           ),
-        );
-        versionTiles.add(
-          SettingsTile.navigation(
-            onPressed: (context) async {
+        ),
+      );
+      links.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: InkWell(
+            onTap: () async {
               const url =
                   "https://github.com/intiface/intiface-central/releases";
               if (await canLaunchUrlString(url)) {
                 await launchUrlString(url);
               }
             },
-            title: const Text(
+            child: const Text(
               "If autoupdate doesn't work, or you want to install manually, click here to visit downloads site.",
               style: TextStyle(color: Colors.green),
             ),
           ),
-        );
-      } else {
-        versionTiles.add(
-          SettingsTile.navigation(
-            onPressed: (context) async {
+        ),
+      );
+    } else {
+      links.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: InkWell(
+            onTap: () async {
               const url =
                   "https://github.com/intiface/intiface-central/releases";
               if (await canLaunchUrlString(url)) {
                 await launchUrlString(url);
               }
             },
-            title: Text(
+            child: Text(
               "Intiface Central Desktop version ${cubit.latestAppVersion} is available, click here to visit releases site.",
               style: const TextStyle(color: Colors.green),
             ),
           ),
-        );
-      }
+        ),
+      );
     }
-    versionTiles.addAll([
-      SettingsTile(
-        title: const Text("Device Config Version"),
-        value: Text(cubit.currentDeviceConfigVersion),
+
+    return links;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final versionCard = Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outlineVariant),
       ),
-    ]);
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Versions",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            _buildVersionRow("App Version", cubit.currentAppVersion, context),
+            _buildVersionRow(
+              "Device Config Version",
+              cubit.currentDeviceConfigVersion,
+              context,
+            ),
+            ..._buildUpdateLinks(context),
+          ],
+        ),
+      ),
+    );
+
+    List<AbstractSettingsTile> updateTiles = [
+      SettingsTile(
+        title: TextButton(
+          onPressed: !engineIsRunning
+              ? () => BlocProvider.of<UpdateBloc>(context).add(RunUpdate())
+              : null,
+          child: isDesktop()
+              ? const Text("Check For App and Config Updates")
+              : const Text("Check for Config Updates"),
+        ),
+      ),
+    ];
+
     if (isDesktop()) {
-      versionTiles.addAll([
+      updateTiles.add(
         SettingsTile.switchTile(
           initialValue: cubit.usePrereleaseVersion,
           onToggle: (value) => cubit.usePrereleaseVersion = value,
           title: const Text("Use Prerelease (Beta) Version"),
         ),
-      ]);
+      );
     }
 
-    return SettingsSection(
-      title: const Text("Versions and Updates"),
-      tiles: versionTiles,
+    final updatesSection = SettingsSection(
+      title: const Text("Updates"),
+      tiles: updateTiles,
+    );
+
+    return Column(
+      children: [
+        versionCard,
+        updatesSection,
+      ],
     );
   }
 }
