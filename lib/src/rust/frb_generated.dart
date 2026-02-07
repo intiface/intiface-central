@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -1919980017;
+  int get rustContentHash => -1340759120;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -140,6 +140,11 @@ abstract class RustLibApi extends BaseApi {
   void crateApiDeviceConfigExposedServerDeviceDefinitionSetDisplayName({
     required ExposedServerDeviceDefinition that,
     String? displayName,
+  });
+
+  void crateApiDeviceConfigExposedServerDeviceDefinitionSetMessageGapMs({
+    required ExposedServerDeviceDefinition that,
+    int? messageGapMs,
   });
 
   void crateApiDeviceConfigExposedServerDeviceDefinitionUpdateFeature({
@@ -934,6 +939,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         debugName:
             "ExposedServerDeviceDefinition_set_display_name(dart_style=display_name)",
         argNames: ["that", "displayName"],
+      );
+
+  @override
+  void crateApiDeviceConfigExposedServerDeviceDefinitionSetMessageGapMs({
+    required ExposedServerDeviceDefinition that,
+    int? messageGapMs,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          var arg0 =
+              cst_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
+                that,
+              );
+          var arg1 = cst_encode_opt_box_autoadd_u_32(messageGapMs);
+          return wire
+              .wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+                arg0,
+                arg1,
+              );
+        },
+        codec: DcoCodec(
+          decodeSuccessData: dco_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiDeviceConfigExposedServerDeviceDefinitionSetMessageGapMsConstMeta,
+        argValues: [that, messageGapMs],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiDeviceConfigExposedServerDeviceDefinitionSetMessageGapMsConstMeta =>
+      const TaskConstMeta(
+        debugName:
+            "ExposedServerDeviceDefinition_set_message_gap_ms(dart_style=message_gap_ms)",
+        argNames: ["that", "messageGapMs"],
       );
 
   @override
@@ -5467,6 +5511,12 @@ class ExposedServerDeviceDefinitionImpl extends RustOpaque
       .crateApiDeviceConfigExposedServerDeviceDefinitionSetDisplayName(
         that: this,
         displayName: displayName,
+      );
+
+  set messageGapMs(int? messageGapMs) => RustLib.instance.api
+      .crateApiDeviceConfigExposedServerDeviceDefinitionSetMessageGapMs(
+        that: this,
+        messageGapMs: messageGapMs,
       );
 
   void updateFeature({required ExposedServerDeviceFeature feature}) => RustLib

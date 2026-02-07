@@ -1740,6 +1740,16 @@ class RustLibWire implements BaseWire {
       );
 
   JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+    int that,
+    int? message_gap_ms,
+  ) => wasmModule
+      .wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+        that,
+        message_gap_ms,
+      );
+
+  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
   wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
     int that,
     int feature,
@@ -2322,6 +2332,12 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(
     int that,
     String? display_name,
+  );
+
+  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+    int that,
+    int? message_gap_ms,
   );
 
   external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */

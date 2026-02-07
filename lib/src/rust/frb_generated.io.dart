@@ -2026,6 +2026,31 @@ class RustLibWire implements BaseWire {
           >();
 
   WireSyncRust2DartDco
+  wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+    int that,
+    ffi.Pointer<ffi.Uint32> message_gap_ms,
+  ) {
+    return _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+      that,
+      message_gap_ms,
+    );
+  }
+
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_msPtr =
+      _lookup<
+        ffi.NativeFunction<
+          WireSyncRust2DartDco Function(ffi.UintPtr, ffi.Pointer<ffi.Uint32>)
+        >
+      >(
+        'frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms',
+      );
+  late final _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms =
+      _wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_msPtr
+          .asFunction<
+            WireSyncRust2DartDco Function(int, ffi.Pointer<ffi.Uint32>)
+          >();
+
+  WireSyncRust2DartDco
   wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
     int that,
     int feature,

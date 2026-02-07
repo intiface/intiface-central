@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1919980017;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1340759120;
 
 // Section: executor
 
@@ -605,6 +605,50 @@ fn wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_na
                     crate::api::device_config::ExposedServerDeviceDefinition::set_display_name(
                         &mut *api_that_guard,
                         api_display_name,
+                    );
+                })?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms_impl(
+    that: impl CstDecode<
+        RustOpaqueNom<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>,
+        >,
+    >,
+    message_gap_ms: impl CstDecode<Option<u32>>,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name:
+                "ExposedServerDeviceDefinition_set_message_gap_ms(dart_style=message_gap_ms)",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let api_that = that.cst_decode();
+            let api_message_gap_ms = message_gap_ms.cst_decode();
+            transform_result_dco::<_, _, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, true,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
+                        _ => unreachable!(),
+                    }
+                }
+                let mut api_that_guard = api_that_guard.unwrap();
+                let output_ok = Result::<_, ()>::Ok({
+                    crate::api::device_config::ExposedServerDeviceDefinition::set_message_gap_ms(
+                        &mut *api_that_guard,
+                        api_message_gap_ms,
                     );
                 })?;
                 Ok(output_ok)
@@ -4554,6 +4598,17 @@ field1: Default::default(), }
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+        that: usize,
+        message_gap_ms: *mut u32,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms_impl(
+            that,
+            message_gap_ms,
+        )
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(
         that: usize,
         feature: usize,
@@ -6131,6 +6186,17 @@ mod web {
         wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name_impl(
             that,
             display_name,
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(
+        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+        message_gap_ms: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
+        wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms_impl(
+            that,
+            message_gap_ms,
         )
     }
 

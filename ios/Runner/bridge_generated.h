@@ -143,6 +143,9 @@ WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__Ex
 WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name(uintptr_t that,
                                                                                                                              struct wire_cst_list_prim_u_8_strict *display_name);
 
+WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms(uintptr_t that,
+                                                                                                                               uint32_t *message_gap_ms);
+
 WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature(uintptr_t that,
                                                                                                                            uintptr_t feature);
 
@@ -334,6 +337,7 @@ struct wire_cst_list_record_string_exposed_serial_specifier *frbgen_intiface_cen
 
 struct wire_cst_list_record_string_exposed_websocket_specifier *frbgen_intiface_central_cst_new_list_record_string_exposed_websocket_specifier(int32_t len);
 
+jint JNI_OnLoad(JavaVM vm, const void *_res);
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit);
@@ -378,6 +382,7 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_allow);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_deny);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_display_name);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled);

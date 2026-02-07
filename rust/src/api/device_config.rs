@@ -99,11 +99,18 @@ impl ExposedServerDeviceDefinition {
     self.definition.message_gap_ms().clone()
   }
 
+  #[frb(sync, setter)]
+  pub fn set_message_gap_ms(&mut self, message_gap_ms: Option<u32>) {
+    let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);
+    builder.message_gap_ms(message_gap_ms);
+    self.definition = builder.finish();
+  }
+
   #[frb(sync, getter)]
   pub fn display_name(&self) -> Option<String> {
     self.definition.display_name().clone()
   }
-  
+
   #[frb(sync, setter)]
   pub fn set_display_name(&mut self, display_name: Option<String>) {
     let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);

@@ -145,6 +145,15 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     await updateDefinition(deviceIdentifier, def);
   }
 
+  Future<void> updateMessageGapMs(
+    ExposedUserDeviceIdentifier deviceIdentifier,
+    ExposedServerDeviceDefinition def,
+    int? messageGapMs,
+  ) async {
+    def.messageGapMs = messageGapMs;
+    await updateDefinition(deviceIdentifier, def);
+  }
+
   Future<void> updateDefinition(
     ExposedUserDeviceIdentifier deviceIdentifier,
     ExposedServerDeviceDefinition def,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
@@ -81,6 +82,79 @@ class DeviceConfigWidget extends StatelessWidget {
                                           identifier,
                                           config,
                                           nameController.text,
+                                        );
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      SettingsTile.navigation(
+                        enabled: !engineIsRunning,
+                        title: const Text("Message Gap (ms)"),
+                        value: Text(
+                          config.messageGapMs?.toString() ?? "Default",
+                        ),
+                        onPressed: (context) {
+                          final TextEditingController gapController =
+                              TextEditingController(
+                                text: config.messageGapMs?.toString() ?? "",
+                              );
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Message Gap (ms)'),
+                              content: TextField(
+                                controller: gapController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: const InputDecoration(
+                                  hintText: "Leave empty for default",
+                                ),
+                                onSubmitted: (value) async {
+                                  Navigator.pop(context);
+                                  final parsed = int.tryParse(value);
+                                  await userDeviceConfigCubit
+                                      .updateMessageGapMs(
+                                        identifier,
+                                        config,
+                                        parsed,
+                                      );
+                                },
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Ok'),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    final parsed =
+                                        int.tryParse(gapController.text);
+                                    await userDeviceConfigCubit
+                                        .updateMessageGapMs(
+                                          identifier,
+                                          config,
+                                          parsed,
+                                        );
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Clear'),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await userDeviceConfigCubit
+                                        .updateMessageGapMs(
+                                          identifier,
+                                          config,
+                                          null,
                                         );
                                   },
                                 ),

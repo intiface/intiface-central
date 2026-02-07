@@ -515,7 +515,7 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_device_config"
-version = "10.0.0"
+version = "10.0.1"
 dependencies = [
  "buttplug_core",
  "dashmap 6.1.0",

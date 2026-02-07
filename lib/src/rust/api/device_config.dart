@@ -64,6 +64,8 @@ abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
 
   set displayName(String? displayName);
 
+  set messageGapMs(int? messageGapMs);
+
   void updateFeature({required ExposedServerDeviceFeature feature});
 
   void updateFeatureOutputProperties({
