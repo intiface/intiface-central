@@ -8,6 +8,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/widget/settings_version_widget.dart';
 import 'package:intiface_central/widget/settings_app_widget.dart';
 import 'package:intiface_central/widget/settings_reset_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -85,6 +86,39 @@ class SettingPage extends StatelessWidget {
                 );
               },
               title: const Text("Use Foreground Process"),
+            ),
+            SettingsTile.navigation(
+              title: const Text("Request Bluetooth Permissions"),
+              onPressed: (context) async {
+                var statuses = await [
+                  Permission.bluetoothConnect,
+                  Permission.bluetoothScan,
+                ].request();
+                if (!context.mounted) return;
+                if (statuses[Permission.bluetoothConnect] ==
+                        PermissionStatus.permanentlyDenied ||
+                    statuses[Permission.bluetoothScan] ==
+                        PermissionStatus.permanentlyDenied) {
+                  await openAppSettings();
+                } else if (statuses[Permission.bluetoothConnect] ==
+                        PermissionStatus.granted &&
+                    statuses[Permission.bluetoothScan] ==
+                        PermissionStatus.granted) {
+                  if (!context.mounted) return;
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Bluetooth permissions granted'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Ok'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
