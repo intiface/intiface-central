@@ -16,7 +16,7 @@ crate-type = ["cdylib", "staticlib"]
 flutter_rust_bridge = { version = "=2.11.1", features = ["uuid"] }
 buttplug_core = { version = "10.0.0", path = "../../buttplug/crates/buttplug_core" }
 buttplug_server = { version = "10.0.0", path = "../../buttplug/crates/buttplug_server" }
-buttplug_server_device_config = { version = "10.0.0", path = "../../buttplug/crates/buttplug_server_device_config" }
+buttplug_server_device_config = { version = "10.0.1", path = "../../buttplug/crates/buttplug_server_device_config" }
 intiface-engine = { version = "4.0.0", path = "../../buttplug/crates/intiface_engine" }
 log = "0.4.27"
 lazy_static = "1.5.0"
