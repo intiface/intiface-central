@@ -24,11 +24,16 @@ class SettingPage extends StatelessWidget {
       tiles.add(
         SettingsSection(
           tiles: [
-            SettingsTile.navigation(
-              title: const Text("Help / About"),
-              onPressed: (context) {
-                BlocProvider.of<NavigationCubit>(context).goAbout();
-              },
+            SettingsTile(
+              title: Center(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.help_outline),
+                  label: const Text("Help / About"),
+                  onPressed: () {
+                    BlocProvider.of<NavigationCubit>(context).goAbout();
+                  },
+                ),
+              ),
             ),
           ],
         ),
