@@ -24,6 +24,9 @@ pub fn setup_logging(sink: StreamSink<String>) {
       format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
     );
   }
+  // Shut down the old writer first, so its Drop doesn't clear the new sender
+  // that FlutterTracingWriter::new() is about to install.
+  shutdown_logging();
   *LOGGER.lock() = Some(FlutterTracingWriter::new(sink));
 }
 
