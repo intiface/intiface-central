@@ -92,11 +92,15 @@ latest and greatest hardware. We have multiple ways to donate!
 - [Github Sponsors](https://github.com/sponsors/qdot)
 - [Ko-Fi](https://ko-fi.com/qdot76367)
 
+## Inclusion of LLM Generated Code
+
+Buttplug, Intiface, and related projects may contain LLM generated ("agentic") code. All code is reviewed by a developer, no vibecoding allowed. Agentic coding is mostly used for refactors and cleanup. We will do our best to call out where this happens, usually in commit messages.
+
 ## License
 
 Intiface® is a registered trademark of Nonpolynomial Labs, LLC.
 
-Intiface Central and its components are Copyright Nonpolynomial Labs, LLC, 2022-2024
+Intiface Central and its components are Copyright Nonpolynomial Labs, LLC, 2022-2026
 
 Intiface Central is covered under a dual GPL 3/Commercial license. For inquiries
 about commercial licensing, or other questions pertaining to licenses around Buttplug/Intiface,
