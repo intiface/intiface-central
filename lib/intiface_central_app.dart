@@ -34,16 +34,22 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/src/rust/api/util.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-class IntifaceCentralApp extends StatelessWidget with WindowListener {
+// ignore: must_be_immutable
+class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListener {
   IntifaceCentralApp._create({required this.guiSettingsCubit});
 
   static List<bool Function(SentryEvent, {Hint? hint})> eventProcessors = [];
   final GuiSettingsCubit guiSettingsCubit;
+
+  // Stored so tray listener callbacks (outside widget tree) can access BLoC/config.
+  EngineControlBloc? _engineControlBloc;
+  IntifaceConfigurationCubit? _configCubit;
 
   // Cache the buildApp() future to prevent multiple concurrent initializations.
   // This fixes a race condition where FutureBuilder would call buildApp() on every
@@ -82,6 +88,96 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
   void onWindowMove() async {
     var windowPosition = await windowManager.getPosition();
     guiSettingsCubit.setWindowPosition(windowPosition);
+  }
+
+  @override
+  void onWindowClose() async {
+    var isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      await windowManager.hide();
+    }
+  }
+
+  Future<void> _setupTray(IntifaceConfigurationCubit configCubit) async {
+    if (configCubit.trayIconMode == "none") {
+      await trayManager.destroy();
+      trayManager.removeListener(this);
+      await windowManager.setPreventClose(false);
+      return;
+    }
+
+    await trayManager.setIcon(
+      Platform.isWindows
+          ? 'assets/icons/intiface_central_icon.ico'
+          : 'assets/icons/intiface_central_icon.png',
+    );
+    await trayManager.setToolTip('Intiface Central');
+    await _updateTrayMenu();
+    trayManager.addListener(this);
+
+    // In tray_only mode, intercept window close to hide instead
+    await windowManager.setPreventClose(configCubit.trayIconMode == "tray_only");
+  }
+
+  Future<void> _updateTrayMenu() async {
+    var isRunning = _engineControlBloc?.isRunning ?? false;
+    Menu menu = Menu(
+      items: [
+        MenuItem(key: 'show_window', label: 'Show Window'),
+        MenuItem.separator(),
+        MenuItem(
+          key: 'toggle_server',
+          label: isRunning ? 'Stop Server' : 'Start Server',
+        ),
+        MenuItem.separator(),
+        MenuItem(key: 'quit', label: 'Quit'),
+      ],
+    );
+    await trayManager.setContextMenu(menu);
+  }
+
+  @override
+  void onTrayIconMouseDown() {
+    if (Platform.isMacOS) {
+      // macOS menu bar extras conventionally show menu on any click
+      trayManager.popUpContextMenu();
+    } else {
+      windowManager.show();
+      windowManager.focus();
+    }
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) async {
+    switch (menuItem.key) {
+      case 'show_window':
+        await windowManager.show();
+        await windowManager.focus();
+      case 'toggle_server':
+        if (_engineControlBloc != null && _configCubit != null) {
+          if (_engineControlBloc!.isRunning) {
+            _engineControlBloc!.add(EngineControlEventStop());
+          } else {
+            _engineControlBloc!.add(
+              EngineControlEventStart(
+                options: await _configCubit!.getEngineOptions(),
+              ),
+            );
+          }
+        }
+      case 'quit':
+        if (_engineControlBloc?.isRunning ?? false) {
+          _engineControlBloc!.add(EngineControlEventStop());
+          await Future.delayed(const Duration(milliseconds: 1500));
+        }
+        await trayManager.destroy();
+        exit(0);
+    }
   }
 
   Future<Widget> buildApp() async {
@@ -149,6 +245,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
       windowManager.setTitle(windowTitle);
 
       windowManager.addListener(this);
+      _configCubit = configCubit;
 
       // #87: Fetch our displays and make sure what we're trying to show is in bounds. If it isn't, set to top left of
       // main display.
@@ -291,6 +388,28 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener {
     }
 
     var engineControlBloc = EngineControlBloc(engineRepo);
+    _engineControlBloc = engineControlBloc;
+
+    // Set up system tray on desktop
+    if (isDesktop()) {
+      await _setupTray(configCubit);
+
+      // Update tray menu when engine state changes
+      engineControlBloc.stream.listen((state) {
+        if (state is EngineStartedState ||
+            state is EngineStoppedState ||
+            state is EngineServerCreatedState) {
+          _updateTrayMenu();
+        }
+      });
+
+      // React to tray setting changes
+      configCubit.stream.listen((event) {
+        if (event is TrayIconModeState) {
+          _setupTray(configCubit);
+        }
+      });
+    }
 
     var deviceControlBloc = DeviceManagerBloc(
       engineControlBloc.stream,

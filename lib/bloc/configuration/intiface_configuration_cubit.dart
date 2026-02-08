@@ -179,6 +179,11 @@ class UsePrereleaseVersion extends IntifaceConfigurationState {
   UsePrereleaseVersion(this.value);
 }
 
+class TrayIconModeState extends IntifaceConfigurationState {
+  final String value;
+  TrayIconModeState(this.value);
+}
+
 class ConfigurationResetState extends IntifaceConfigurationState {}
 
 class AllowExperimentalRestServer extends IntifaceConfigurationState {
@@ -235,6 +240,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     }
     restoreWindowLocation = _prefs.getBool("restoreWindowLocation") ?? true;
     useDiscordRichPresence = _prefs.getBool("useDiscordRichPresence") ?? false;
+    trayIconMode = _prefs.getString("trayIconMode") ?? "both";
 
     // True on all platforms
     useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
@@ -335,6 +341,16 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set restoreWindowLocation(bool value) {
     _prefs.setBool("restoreWindowLocation", value);
     emit(RestoreWindowLocation(value));
+  }
+
+  String get trayIconMode {
+    if (isDesktop()) return _prefs.getString("trayIconMode")!;
+    return "none";
+  }
+
+  set trayIconMode(String value) {
+    _prefs.setString("trayIconMode", value);
+    emit(TrayIconModeState(value));
   }
 
   bool get useDiscordRichPresence {

@@ -77,6 +77,12 @@ class SettingsAppWidget extends AbstractSettingsSection {
     ];
 
     if (isDesktop()) {
+      const trayIconModeLabels = {
+        "none": "No Tray Icon",
+        "both": "Tray + Taskbar",
+        "tray_only": "Tray Only",
+      };
+
       appSettingsTiles.insert(
         2,
         SettingsTile.switchTile(
@@ -88,6 +94,44 @@ class SettingsAppWidget extends AbstractSettingsSection {
 
       appSettingsTiles.insert(
         3,
+        SettingsTile.navigation(
+          title: const Text("System Tray Icon"),
+          value: Text(trayIconModeLabels[cubit.trayIconMode] ?? "Tray + Taskbar"),
+          onPressed: (context) {
+            showDialog<String>(
+              context: context,
+              builder: (context) => SimpleDialog(
+                title: const Text("System Tray Icon"),
+                children: [
+                  RadioGroup<String>(
+                    groupValue: cubit.trayIconMode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        cubit.trayIconMode = value;
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: trayIconModeLabels.entries
+                          .map(
+                            (e) => RadioListTile<String>(
+                              title: Text(e.value),
+                              value: e.key,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+
+      appSettingsTiles.insert(
+        4,
         SettingsTile.switchTile(
           initialValue: cubit.useDiscordRichPresence,
           onToggle: (value) => cubit.useDiscordRichPresence = value,
