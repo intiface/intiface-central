@@ -337,7 +337,6 @@ struct wire_cst_list_record_string_exposed_serial_specifier *frbgen_intiface_cen
 
 struct wire_cst_list_record_string_exposed_websocket_specifier *frbgen_intiface_central_cst_new_list_record_string_exposed_websocket_specifier(int32_t len);
 
-jint JNI_OnLoad(JavaVM vm, const void *_res);
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedRangeWithLimit);
