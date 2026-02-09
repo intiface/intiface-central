@@ -68,7 +68,7 @@ case "$PLATFORM" in
     SYMBOL_PATH="build/ios/Release-iphoneos"
     ;;
   android)
-    SYMBOL_PATH="build/app/intermediates/merged_native_libs/release/out/lib"
+    SYMBOL_PATH="build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib"
     ;;
 esac
 
