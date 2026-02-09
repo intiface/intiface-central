@@ -1,4 +1,11 @@
-# v3.0.1 - 2026/02/08 (All Platforms)
+# v3.0.2 - 2026/02/08 (iOS only)
+
+## Bugfixes
+
+- Fixed issue with bluetooth permissions checks not working on iOS
+- Fixed issues with not being able to test iOS builds locally
+
+# v3.0.1 - 2026/02/07 (All Platforms)
 
 ## Features
 

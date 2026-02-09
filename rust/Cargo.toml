@@ -1,6 +1,6 @@
 [package]
 name = "rust_lib_intiface_central"
-version = "2.0.1"
+version = "2.0.2"
 license-file = "../LICENSE.md"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
