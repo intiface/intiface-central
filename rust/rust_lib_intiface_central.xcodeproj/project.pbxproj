@@ -210,10 +210,6 @@
 		CAF781B727CF3CC16B37690B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
 				CARGO_XCODE_BUILD_PROFILE = release;
@@ -223,7 +219,6 @@
 				MARKETING_VERSION = 2.0.0;
 				PRODUCT_NAME = rust_lib_intiface_central;
 				RUSTUP_TOOLCHAIN = "";
-				SDKROOT = macosx;
 				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Release;
@@ -231,10 +226,6 @@
 		CAF881B727CF228BE02872F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"ADDITIONAL_SDKS[sdk=a*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=i*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=w*]" = macosx;
-				"ADDITIONAL_SDKS[sdk=x*]" = macosx;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CARGO_TARGET_DIR = "$(PROJECT_TEMP_DIR)/cargo_target";
 				CARGO_XCODE_BUILD_PROFILE = debug;
@@ -245,7 +236,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = rust_lib_intiface_central;
 				RUSTUP_TOOLCHAIN = "";
-				SDKROOT = macosx;
 				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Debug;
