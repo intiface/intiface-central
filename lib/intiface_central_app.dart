@@ -312,7 +312,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           ].request();
         }
       }
-      await [Permission.bluetoothConnect, Permission.bluetoothScan].request();
+      if (Platform.isAndroid) {
+        await [Permission.bluetoothConnect, Permission.bluetoothScan].request();
+      } else if (Platform.isIOS) {
+        await Permission.bluetooth.request();
+      }
 
       if (configCubit.useForegroundProcess) {
         FlutterForegroundTask.init(

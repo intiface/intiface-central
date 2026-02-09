@@ -102,20 +102,29 @@ class SettingPage extends StatelessWidget {
             SettingsTile.navigation(
               title: const Text("Request Bluetooth Permissions"),
               onPressed: (context) async {
-                var statuses = await [
-                  Permission.bluetoothConnect,
-                  Permission.bluetoothScan,
-                ].request();
+                bool allGranted;
+                bool anyPermanentlyDenied;
+                if (Platform.isAndroid) {
+                  var statuses = await [
+                    Permission.bluetoothConnect,
+                    Permission.bluetoothScan,
+                  ].request();
+                  allGranted = statuses.values.every(
+                    (s) => s == PermissionStatus.granted,
+                  );
+                  anyPermanentlyDenied = statuses.values.any(
+                    (s) => s == PermissionStatus.permanentlyDenied,
+                  );
+                } else {
+                  var status = await Permission.bluetooth.request();
+                  allGranted = status == PermissionStatus.granted;
+                  anyPermanentlyDenied =
+                      status == PermissionStatus.permanentlyDenied;
+                }
                 if (!context.mounted) return;
-                if (statuses[Permission.bluetoothConnect] ==
-                        PermissionStatus.permanentlyDenied ||
-                    statuses[Permission.bluetoothScan] ==
-                        PermissionStatus.permanentlyDenied) {
+                if (anyPermanentlyDenied) {
                   await openAppSettings();
-                } else if (statuses[Permission.bluetoothConnect] ==
-                        PermissionStatus.granted &&
-                    statuses[Permission.bluetoothScan] ==
-                        PermissionStatus.granted) {
+                } else if (allGranted) {
                   if (!context.mounted) return;
                   showDialog<void>(
                     context: context,
