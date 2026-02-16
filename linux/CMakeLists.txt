@@ -103,22 +103,20 @@ set_target_properties(${BINARY_NAME}
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
-include(flutter/generated_plugins.cmake)
-
+#
 # --- tray_manager exclusion (Linux) ---
 # tray_manager requires libayatana-appindicator3 which is not reliably available
 # across Linux desktop environments. It is only used on Windows and macOS.
-# This block removes it from the plugin build so the native .so is not compiled/linked.
-list(REMOVE_ITEM FLUTTER_PLUGIN_LIST tray_manager)
-
-# Build guard: fail if tray_manager somehow remains in the list
-list(FIND FLUTTER_PLUGIN_LIST tray_manager _tray_idx)
-if(NOT _tray_idx EQUAL -1)
-  message(FATAL_ERROR
-    "tray_manager must not be included in Linux builds — "
-    "it requires libayatana-appindicator3. "
-    "Ensure it is removed from FLUTTER_PLUGIN_LIST.")
-endif()
+# We must filter it out BEFORE including generated_plugins.cmake, because that
+# file's foreach loop immediately calls add_subdirectory() for each plugin,
+# which triggers tray_manager's own CMakeLists.txt and its pkg_check_modules().
+set(GENERATED_PLUGINS_CMAKE "${FLUTTER_MANAGED_DIR}/generated_plugins.cmake")
+set(FILTERED_PLUGINS_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/filtered_plugins.cmake")
+execute_process(
+  COMMAND grep -vi tray_manager "${GENERATED_PLUGINS_CMAKE}"
+  OUTPUT_FILE "${FILTERED_PLUGINS_CMAKE}"
+)
+include("${FILTERED_PLUGINS_CMAKE}")
 
 include(./rust.cmake)
 
