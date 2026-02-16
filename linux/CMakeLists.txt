@@ -85,6 +85,10 @@ add_executable(${BINARY_NAME}
 # that need different build settings.
 apply_standard_settings(${BINARY_NAME})
 
+# The filtered registrant lives in the build dir but #includes
+# "generated_plugin_registrant.h" from the flutter managed dir.
+target_include_directories(${BINARY_NAME} PRIVATE "${FLUTTER_MANAGED_DIR}")
+
 # Add dependency libraries. Add any application-specific dependencies here.
 target_link_libraries(${BINARY_NAME} PRIVATE flutter)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
