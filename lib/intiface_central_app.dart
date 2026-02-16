@@ -394,8 +394,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     var engineControlBloc = EngineControlBloc(engineRepo);
     _engineControlBloc = engineControlBloc;
 
-    // Set up system tray on desktop
-    if (isDesktop()) {
+    // Set up system tray on supported platforms (Windows/macOS only, not Linux)
+    if (supportsTray()) {
       await _setupTray(configCubit);
 
       // Update tray menu when engine state changes

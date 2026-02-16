@@ -60,10 +60,25 @@ add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 # not the value here, or `flutter run` will no longer work.
 #
 # Any new source files that you add to the application should be added here.
+
+# Auto-filter tray_manager from the generated plugin registrant.
+# tray_manager requires libayatana-appindicator3 which is not reliably available
+# across Linux desktop environments. This re-runs whenever flutter pub get
+# regenerates the file.
+set(FILTERED_REGISTRANT "${CMAKE_CURRENT_BINARY_DIR}/filtered_plugin_registrant.cc")
+add_custom_command(
+  OUTPUT "${FILTERED_REGISTRANT}"
+  COMMAND grep -vi tray_manager
+    "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
+    > "${FILTERED_REGISTRANT}"
+  DEPENDS "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
+  COMMENT "Filtering tray_manager from plugin registrant for Linux build"
+)
+
 add_executable(${BINARY_NAME}
   "main.cc"
   "my_application.cc"
-  "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
+  "${FILTERED_REGISTRANT}"
 )
 
 # Apply the standard set of build settings. This can be removed for applications
@@ -89,6 +104,21 @@ set_target_properties(${BINARY_NAME}
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)
+
+# --- tray_manager exclusion (Linux) ---
+# tray_manager requires libayatana-appindicator3 which is not reliably available
+# across Linux desktop environments. It is only used on Windows and macOS.
+# This block removes it from the plugin build so the native .so is not compiled/linked.
+list(REMOVE_ITEM FLUTTER_PLUGIN_LIST tray_manager)
+
+# Build guard: fail if tray_manager somehow remains in the list
+list(FIND FLUTTER_PLUGIN_LIST tray_manager _tray_idx)
+if(NOT _tray_idx EQUAL -1)
+  message(FATAL_ERROR
+    "tray_manager must not be included in Linux builds — "
+    "it requires libayatana-appindicator3. "
+    "Ensure it is removed from FLUTTER_PLUGIN_LIST.")
+endif()
 
 include(./rust.cmake)
 

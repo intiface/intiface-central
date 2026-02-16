@@ -344,7 +344,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   }
 
   String get trayIconMode {
-    if (isDesktop()) return _prefs.getString("trayIconMode")!;
+    if (supportsTray()) return _prefs.getString("trayIconMode")!;
     return "none";
   }
 

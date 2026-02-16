@@ -77,12 +77,6 @@ class SettingsAppWidget extends AbstractSettingsSection {
     ];
 
     if (isDesktop()) {
-      const trayIconModeLabels = {
-        "none": "No Tray Icon",
-        "both": "Tray + Taskbar",
-        "tray_only": "Tray Only",
-      };
-
       appSettingsTiles.insert(
         2,
         SettingsTile.switchTile(
@@ -94,6 +88,23 @@ class SettingsAppWidget extends AbstractSettingsSection {
 
       appSettingsTiles.insert(
         3,
+        SettingsTile.switchTile(
+          initialValue: cubit.useDiscordRichPresence,
+          onToggle: (value) => cubit.useDiscordRichPresence = value,
+          title: const Text("Enable Discord Rich Presence"),
+        ),
+      );
+    }
+
+    if (supportsTray()) {
+      const trayIconModeLabels = {
+        "none": "No Tray Icon",
+        "both": "Tray + Taskbar",
+        "tray_only": "Tray Only",
+      };
+
+      appSettingsTiles.insert(
+        isDesktop() ? 4 : 2,
         SettingsTile.navigation(
           title: const Text("System Tray Icon"),
           value: Text(trayIconModeLabels[cubit.trayIconMode] ?? "Tray + Taskbar"),
@@ -127,15 +138,6 @@ class SettingsAppWidget extends AbstractSettingsSection {
               ),
             );
           },
-        ),
-      );
-
-      appSettingsTiles.insert(
-        4,
-        SettingsTile.switchTile(
-          initialValue: cubit.useDiscordRichPresence,
-          onToggle: (value) => cubit.useDiscordRichPresence = value,
-          title: const Text("Enable Discord Rich Presence"),
         ),
       );
     }
