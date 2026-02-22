@@ -26,7 +26,7 @@ anyhow = "1.0.98"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 # btleplug = { path = "../../btleplug" }
-btleplug = "0.11.8"
+btleplug = { version = "0.11.8", path = "../../btleplug" }
 thiserror = "2.0.12"
 getset = "0.1.6"
 serde = "1.0.219"
