@@ -330,7 +330,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           ),
           iosNotificationOptions: const IOSNotificationOptions(),
           foregroundTaskOptions: ForegroundTaskOptions(
-            eventAction: ForegroundTaskEventAction.repeat(1000),
+            eventAction: ForegroundTaskEventAction.nothing(),
+            allowWakeLock: false,
             allowWifiLock: true,
           ),
         );
