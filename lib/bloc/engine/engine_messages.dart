@@ -177,6 +177,8 @@ class DeviceConnected {
   final SerializableUserConfigDeviceIdentifier identifier;
   @JsonKey(name: "display_name", defaultValue: null)
   final String? displayName;
+  @JsonKey(name: "needs_keepalive", defaultValue: false)
+  final bool needsKeepalive;
   factory DeviceConnected.fromJson(Map<String, dynamic> json) =>
       _$DeviceConnectedFromJson(json);
   DeviceConnected({
@@ -184,6 +186,7 @@ class DeviceConnected {
     required this.index,
     required this.identifier,
     this.displayName,
+    this.needsKeepalive = false,
   });
 }
 

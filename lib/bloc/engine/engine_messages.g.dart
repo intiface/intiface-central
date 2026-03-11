@@ -160,6 +160,7 @@ DeviceConnected _$DeviceConnectedFromJson(Map<String, dynamic> json) =>
         json['identifier'] as Map<String, dynamic>,
       ),
       displayName: json['display_name'] as String?,
+      needsKeepalive: json['needs_keepalive'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$DeviceConnectedToJson(DeviceConnected instance) =>
@@ -168,6 +169,7 @@ Map<String, dynamic> _$DeviceConnectedToJson(DeviceConnected instance) =>
       'index': instance.index,
       'identifier': instance.identifier,
       'display_name': instance.displayName,
+      'needs_keepalive': instance.needsKeepalive,
     };
 
 DeviceDisconnected _$DeviceDisconnectedFromJson(Map<String, dynamic> json) =>
