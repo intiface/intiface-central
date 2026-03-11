@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:buttplug/messages/messages.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/bloc/engine/engine_repository.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
@@ -31,13 +33,15 @@ class DeviceConnectedState extends EngineControlState {
   final String? displayName;
   final int index;
   final ExposedUserDeviceIdentifier identifier;
+  final bool needsKeepalive;
 
   DeviceConnectedState(
     this.name,
     this.displayName,
     this.index,
-    this.identifier,
-  );
+    this.identifier, {
+    this.needsKeepalive = false,
+  });
 }
 
 class DeviceDisconnectedState extends EngineControlState {
@@ -76,14 +80,30 @@ class EngineDevice {
   final int index;
   final String name;
   final ExposedUserDeviceIdentifier identifier;
+  final bool needsKeepalive;
 
-  const EngineDevice(this.index, this.name, this.identifier);
+  const EngineDevice(this.index, this.name, this.identifier, {this.needsKeepalive = false});
 }
 
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   final EngineRepository _repo;
   final Map<int, EngineDevice> _devices = {};
   bool _isRunning = false;
+  int _keepaliveDeviceCount = 0;
+
+  bool get anyDeviceNeedsKeepalive => _keepaliveDeviceCount > 0;
+
+  void _updateWakelockIfNeeded(bool previouslyNeeded) {
+    if (!Platform.isAndroid) return;
+    if (anyDeviceNeedsKeepalive == previouslyNeeded) return;
+    FlutterForegroundTask.updateService(
+      foregroundTaskOptions: ForegroundTaskOptions(
+        eventAction: ForegroundTaskEventAction.nothing(),
+        allowWakeLock: anyDeviceNeedsKeepalive,
+        allowWifiLock: true,
+      ),
+    );
+  }
 
   // HACK We have the engine control bloc representing too many things right now, as it handles both the engine control
   // and messages about the engine sessions. This should be divided out into a EngineControlBloc that handles engine
@@ -142,16 +162,28 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
                 deviceInfo.index,
                 deviceInfo.name,
                 deviceInfo.identifier.toExposedUserDeviceIdentifier(),
+                needsKeepalive: deviceInfo.needsKeepalive,
               );
+              if (deviceInfo.needsKeepalive) {
+                var wasPreviouslyNeeded = anyDeviceNeedsKeepalive;
+                _keepaliveDeviceCount++;
+                _updateWakelockIfNeeded(wasPreviouslyNeeded);
+              }
               return DeviceConnectedState(
                 deviceInfo.name,
                 deviceInfo.displayName,
                 deviceInfo.index,
                 deviceInfo.identifier.toExposedUserDeviceIdentifier(),
+                needsKeepalive: deviceInfo.needsKeepalive,
               );
             }
             if (engineMessage.deviceDisconnected != null) {
-              _devices.remove(engineMessage.deviceDisconnected!.index);
+              var removedDevice = _devices.remove(engineMessage.deviceDisconnected!.index);
+              if (removedDevice != null && removedDevice.needsKeepalive) {
+                var wasPreviouslyNeeded = anyDeviceNeedsKeepalive;
+                _keepaliveDeviceCount--;
+                _updateWakelockIfNeeded(wasPreviouslyNeeded);
+              }
               return DeviceDisconnectedState(
                 engineMessage.deviceDisconnected!.index,
               );
@@ -159,6 +191,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             if (engineMessage.engineStopped != null) {
               logInfo("Received EngineStopped message");
               _isRunning = false;
+              _keepaliveDeviceCount = 0;
               return EngineStoppedState();
             }
           } else if (message.buttplugServerMessage != null) {
