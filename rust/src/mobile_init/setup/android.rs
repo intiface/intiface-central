@@ -97,7 +97,6 @@ fn setup_class_loader(env: &JNIEnv) -> Result<(), MobileInitError> {
 #[unsafe(no_mangle)]
 pub extern "C" fn JNI_OnLoad(vm: jni::JavaVM, _res: *const std::os::raw::c_void) -> jni::sys::jint {
   let env = vm.get_env().unwrap();
-  jni_utils::init(&env).unwrap();
   btleplug::platform::init(&env).unwrap();
   let _ = JAVAVM.set(vm);
   jni::JNIVersion::V6.into()
