@@ -209,8 +209,6 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             }
             if (engineMessage.engineStopped != null) {
               logInfo("Received EngineStopped message");
-              _isRunning = false;
-              _keepaliveDeviceCount = 0;
               return EngineStoppedState();
             }
           } else if (message.buttplugServerMessage != null) {
@@ -226,11 +224,13 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
     on<EngineControlEventStop>((event, emit) async {
       logInfo("EngineControlEventStop: _isRunning=$_isRunning, currentState=${state.runtimeType}");
       await _repo.stop();
-      // Do NOT set _isRunning = false here. The engineStopped message (always sent
-      // before the shutdown completer fires) already clears it in emit.forEach above.
-      // Setting it here races with concurrent EngineControlEventStart handlers that
-      // may have already set _isRunning = true while stop() was awaiting, causing a
-      // second start to proceed concurrently and hit "Server already running!" in Rust.
+      // Clear _isRunning here, after stop() has fully completed. We cannot rely
+      // on emit.forEach receiving the engineStopped message to clear it: stop()
+      // can return before the async stream delivery chain delivers engineStopped
+      // to emit.forEach, leaving _isRunning stuck true and silently dropping all
+      // future start events even though the UI shows stopped.
+      _isRunning = false;
+      _keepaliveDeviceCount = 0;
       logInfo("EngineControlEventStop: repo stop complete, emitting EngineStoppedState. _isRunning=$_isRunning");
       emit(EngineStoppedState());
     });

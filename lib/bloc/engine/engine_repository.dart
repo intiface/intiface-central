@@ -20,14 +20,17 @@ class EngineOutput {
 
 class EngineRepository {
   final EngineProvider _provider;
-  StreamController<EngineOutput> _engineMessageStream =
-      StreamController.broadcast();
+  StreamController<EngineOutput> _engineMessageStream = StreamController();
 
   EngineRepository(this._provider);
 
   Future<void> start({required EngineOptionsExternal options}) async {
     _engineMessageStream.close();
-    _engineMessageStream = StreamController.broadcast();
+    _engineMessageStream = StreamController();
+    // Capture the stream for this run. The listener closure uses this reference
+    // so that if start() is called again concurrently (replacing _engineMessageStream),
+    // the old listener still closes only its own stream and not the new one.
+    final capturedStream = _engineMessageStream;
     _provider.cycleStream();
     _provider.engineRawMessageStream.listen((element) {
       dynamic jsonElement;
@@ -41,19 +44,26 @@ class EngineRepository {
       try {
         // If we've got valid JSON, see if it's an engine message or a server message.
         var message = EngineMessage.fromJson(jsonElement);
-        if (!_engineMessageStream.isClosed)
-          _engineMessageStream.add(EngineOutput(message, null));
+        if (!capturedStream.isClosed) {
+          capturedStream.add(EngineOutput(message, null));
+        }
         if (message.engineStarted != null) {
           _provider.onEngineStart();
         }
         if (message.engineStopped != null) {
           _provider.onEngineStop();
+          // Close the stream after adding engineStopped. Closing here (rather
+          // than in stop()) ensures the message is queued before the done event,
+          // so emit.forEach always receives engineStopped and clears _isRunning.
+          // Closing in stop() races with async stream delivery and can cause
+          // _isRunning to be stuck true, silently dropping all future start events.
+          capturedStream.close();
         }
         return;
       } catch (_) {}
       try {
         var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);
-        _engineMessageStream.add(EngineOutput(null, buttplugMessage));
+        capturedStream.add(EngineOutput(null, buttplugMessage));
         return;
       } catch (_) {}
       logError("Error deserializing engine message $element");
@@ -66,12 +76,10 @@ class EngineRepository {
     // a concurrent EngineControlEventStart replaced it while we were waiting.
     final streamToClose = _engineMessageStream;
     await _provider.stop();
-    // Only close the stream if it hasn't been replaced by a new start() call that
-    // ran concurrently while _provider.stop() was awaiting. If start() ran first,
-    // it already closed the old stream and created a new one — closing the new one
-    // here would drop the new foreground service's messages and wedge the UI in
-    // EngineStartingState forever.
-    if (identical(streamToClose, _engineMessageStream)) {
+    // The stream is normally closed by the engineStopped message handler above.
+    // This is a safety-net close for cases where engineStopped never arrives
+    // (e.g. Rust panic, service killed). Skip if already closed or replaced.
+    if (!streamToClose.isClosed && identical(streamToClose, _engineMessageStream)) {
       await _engineMessageStream.close();
     }
   }

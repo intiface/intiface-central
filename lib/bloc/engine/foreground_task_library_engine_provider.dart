@@ -132,9 +132,23 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   @override
   Future<void> onDestroy(DateTime timestamp, bool whatever) async {
     _sendProviderLog("INFO", "Shutting down foreground task");
-    IsolateNameServer.removePortNameMapping(_kMainServerPortName);
-    IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
-    IsolateNameServer.removePortNameMapping(_kMainShutdownPortName);
+    // Only remove port mappings that still point to OUR ports. If a new
+    // ForegroundService instance started before onDestroy() fires, it already
+    // removed our mappings and registered its own. Unconditionally removing
+    // here would steal the new instance's ports, making its shutdown port
+    // unreachable and causing _shutdownCompleter to wait forever.
+    if (IsolateNameServer.lookupPortByName(_kMainServerPortName) ==
+        _serverMessageReceivePort.sendPort) {
+      IsolateNameServer.removePortNameMapping(_kMainServerPortName);
+    }
+    if (IsolateNameServer.lookupPortByName(_kMainBackdoorPortName) ==
+        _backdoorMessageReceivePort.sendPort) {
+      IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
+    }
+    if (IsolateNameServer.lookupPortByName(_kMainShutdownPortName) ==
+        _shutdownReceivePort.sendPort) {
+      IsolateNameServer.removePortNameMapping(_kMainShutdownPortName);
+    }
   }
 
   @override
@@ -202,6 +216,15 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   @override
   Future<void> stop() async {
     logInfo("ForegroundProvider.stop() called: _shutdownSendPort=${_shutdownSendPort != null ? 'SET' : 'NULL'}, _serverSendPort=${_serverSendPort != null ? 'SET' : 'NULL'}");
+    if (_shutdownCompleter != null) {
+      // A concurrent stop() is already in progress. Join it rather than
+      // creating a second Completer — overwriting the field would orphan the
+      // first Completer and leave that caller awaiting a future that never
+      // completes (deadlock).
+      logInfo("ForegroundProvider.stop(): already stopping, joining existing shutdown");
+      await _shutdownCompleter!.future;
+      return;
+    }
     _shutdownCompleter = Completer<void>();
     if (_shutdownSendPort == null) {
       // Foreground service is still starting — shutdown port not registered yet.
@@ -243,6 +266,12 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       await FlutterForegroundTask.stopService();
       logInfo("_startForegroundTask: existing service stopped");
     }
+    // Register the data callback BEFORE starting the service so that messages
+    // sent by the FGS during onStart() are received. startService() suspends
+    // the Dart event loop, allowing FGS messages to arrive and be dispatched
+    // before startService() returns; without pre-registration those messages
+    // are silently dropped.
+    _registerReceivePort();
     logInfo("_startForegroundTask: calling startService()");
     var reqResult = await FlutterForegroundTask.startService(
       notificationTitle: 'Intiface Engine is running',
@@ -252,8 +281,6 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       ],
       callback: startCallback,
     );
-
-    _registerReceivePort();
 
     return reqResult;
   }
