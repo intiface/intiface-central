@@ -115,13 +115,32 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
-      if (await _repo.runtimeStarted()) {
-        logWarning("Runtime already started, ignoring restart request.");
+      // Guard against concurrent start requests. _isRunning is set synchronously
+      // before any await, making the check+set atomic within Dart's single-threaded
+      // event loop. Any second Start event that starts executing will see _isRunning=true
+      // before it reaches its first await.
+      if (_isRunning) {
+        logWarning("EngineControlEventStart: already starting/running (_isRunning=true), dropping duplicate start request. currentState=${state.runtimeType}");
+        return;
+      }
+      _isRunning = true;
+
+      var alreadyRunning = await _repo.runtimeStarted();
+      logInfo("EngineControlEventStart: runtimeStarted=$alreadyRunning, currentState=${state.runtimeType}");
+      if (alreadyRunning) {
+        logWarning("Runtime already started (Rust-side), ignoring restart request.");
+        _isRunning = false;
         return;
       }
       logInfo("Trying to start engine...");
-      await _repo.start(options: event.options);
-      _isRunning = true;
+      try {
+        await _repo.start(options: event.options);
+      } catch (e) {
+        logError("Failed to start engine repo: $e");
+        _isRunning = false;
+        emit(EngineStoppedState());
+        return;
+      }
       emit(EngineStartingState());
       return emit.forEach(
         _repo.messageStream,
@@ -205,8 +224,14 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
       _repo.sendBackdoorMessage(event.message);
     });
     on<EngineControlEventStop>((event, emit) async {
+      logInfo("EngineControlEventStop: _isRunning=$_isRunning, currentState=${state.runtimeType}");
       await _repo.stop();
-      _isRunning = false;
+      // Do NOT set _isRunning = false here. The engineStopped message (always sent
+      // before the shutdown completer fires) already clears it in emit.forEach above.
+      // Setting it here races with concurrent EngineControlEventStart handlers that
+      // may have already set _isRunning = true while stop() was awaiting, causing a
+      // second start to proceed concurrently and hit "Server already running!" in Rust.
+      logInfo("EngineControlEventStop: repo stop complete, emitting EngineStoppedState. _isRunning=$_isRunning");
       emit(EngineStoppedState());
     });
   }

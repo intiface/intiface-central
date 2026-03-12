@@ -43,22 +43,18 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     : _serverMessageReceivePort = ReceivePort(),
       _backdoorMessageReceivePort = ReceivePort(),
       _shutdownReceivePort = ReceivePort() {
-    // Once we've started everything up, register our receive port
     final serverSendPort = _serverMessageReceivePort.sendPort;
     final backdoorSendPort = _backdoorMessageReceivePort.sendPort;
     final shutdownSendPort = _shutdownReceivePort.sendPort;
-    IsolateNameServer.registerPortWithName(
-      serverSendPort,
-      _kMainServerPortName,
-    );
-    IsolateNameServer.registerPortWithName(
-      backdoorSendPort,
-      _kMainBackdoorPortName,
-    );
-    IsolateNameServer.registerPortWithName(
-      shutdownSendPort,
-      _kMainShutdownPortName,
-    );
+    // Defensively remove any stale mappings before registering. registerPortWithName()
+    // returns false without overwriting if a name is already taken, so without this
+    // a restarted service would silently fail to register its ports.
+    IsolateNameServer.removePortNameMapping(_kMainServerPortName);
+    IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
+    IsolateNameServer.removePortNameMapping(_kMainShutdownPortName);
+    IsolateNameServer.registerPortWithName(serverSendPort, _kMainServerPortName);
+    IsolateNameServer.registerPortWithName(backdoorSendPort, _kMainBackdoorPortName);
+    IsolateNameServer.registerPortWithName(shutdownSendPort, _kMainShutdownPortName);
   }
 
   @override
@@ -158,6 +154,10 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   SendPort? _serverSendPort;
   SendPort? _backdoorSendPort;
   SendPort? _shutdownSendPort;
+  Completer<void>? _shutdownCompleter;
+  // Set when stop() is called before the shutdown port is ready. onEngineStart()
+  // checks this and sends the shutdown signal as soon as the port becomes available.
+  bool _pendingShutdown = false;
 
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
@@ -178,28 +178,46 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   @override
   void onEngineStart() {
     _serverSendPort = IsolateNameServer.lookupPortByName(_kMainServerPortName);
-    _backdoorSendPort = IsolateNameServer.lookupPortByName(
-      _kMainBackdoorPortName,
-    );
-    _shutdownSendPort = IsolateNameServer.lookupPortByName(
-      _kMainShutdownPortName,
-    );
+    _backdoorSendPort = IsolateNameServer.lookupPortByName(_kMainBackdoorPortName);
+    _shutdownSendPort = IsolateNameServer.lookupPortByName(_kMainShutdownPortName);
+    logInfo("onEngineStart(): server=${_serverSendPort != null ? 'SET' : 'NULL'}, backdoor=${_backdoorSendPort != null ? 'SET' : 'NULL'}, shutdown=${_shutdownSendPort != null ? 'SET' : 'NULL'}, pendingShutdown=$_pendingShutdown");
+    if (_pendingShutdown && _shutdownSendPort != null) {
+      // stop() was called before the shutdown port was ready. Now that we have the
+      // port, send the graceful shutdown immediately. This ensures stop_engine() is
+      // called on the Rust side, which clears RUNTIME/RUN_STATUS. A force-stop via
+      // stopService() would skip stop_engine() and leave those globals set, causing
+      // the next run_engine() call to fail with "Server already running!".
+      logInfo("onEngineStart(): executing pending shutdown request");
+      _shutdownSendPort!.send(null);
+    }
   }
 
   @override
   void onEngineStop() {
-    logInfo("Engine foreground process stopped");
+    logInfo("onEngineStop(): clearing send ports");
     _serverSendPort = null;
     _backdoorSendPort = null;
   }
 
   @override
   Future<void> stop() async {
+    logInfo("ForegroundProvider.stop() called: _shutdownSendPort=${_shutdownSendPort != null ? 'SET' : 'NULL'}, _serverSendPort=${_serverSendPort != null ? 'SET' : 'NULL'}");
+    _shutdownCompleter = Completer<void>();
     if (_shutdownSendPort == null) {
-      return;
+      // Foreground service is still starting — shutdown port not registered yet.
+      // Set the pending flag; onEngineStart() will send the signal as soon as the
+      // port is available. We then wait on the same completer as normal shutdown.
+      logWarning("ForegroundProvider.stop(): shutdown port not ready, queuing graceful shutdown");
+      _pendingShutdown = true;
+    } else {
+      _shutdownSendPort!.send(null);
     }
-    _shutdownSendPort!.send(null);
-    logInfo("Engine foreground stop request sent");
+    logInfo("Engine foreground stop request sent, awaiting completion");
+    await _shutdownCompleter!.future;
+    _pendingShutdown = false;
+    _shutdownCompleter = null;
+    _shutdownSendPort = null;
+    logInfo("Engine foreground stop completed");
   }
 
   @override
@@ -213,19 +231,27 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   }
 
   Future<ServiceRequestResult> _startForegroundTask() async {
-    ServiceRequestResult reqResult;
-    if (await FlutterForegroundTask.isRunningService) {
-      reqResult = await FlutterForegroundTask.restartService();
-    } else {
-      reqResult = await FlutterForegroundTask.startService(
-        notificationTitle: 'Intiface Engine is running',
-        notificationText: 'Tap to return to the app',
-        notificationButtons: [
-          const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
-        ],
-        callback: startCallback,
-      );
+    var isRunning = await FlutterForegroundTask.isRunningService;
+    logInfo("_startForegroundTask: isRunningService=$isRunning");
+    if (isRunning) {
+      // Do NOT use restartService() — it starts the new instance before the old one's
+      // onDestroy runs, causing two concurrent IntifaceEngineTaskHandlers. The new
+      // instance's IsolateNameServer.registerPortWithName() calls silently fail (returns
+      // false) because the old instance's ports are still registered, leaving the new
+      // service completely unreachable. Force a clean stop first.
+      logInfo("_startForegroundTask: stopping existing service before fresh start");
+      await FlutterForegroundTask.stopService();
+      logInfo("_startForegroundTask: existing service stopped");
     }
+    logInfo("_startForegroundTask: calling startService()");
+    var reqResult = await FlutterForegroundTask.startService(
+      notificationTitle: 'Intiface Engine is running',
+      notificationText: 'Tap to return to the app',
+      notificationButtons: [
+        const NotificationButton(id: 'stopServerButton', text: 'Stop Server'),
+      ],
+      callback: startCallback,
+    );
 
     _registerReceivePort();
 
@@ -241,10 +267,16 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     if (message is String) {
       _processMessageStream.add(message);
     } else if (message is bool) {
+      logInfo("_onReceiveTaskData: bool received (shutdown complete signal), _shutdownCompleter=${_shutdownCompleter != null ? 'SET' : 'NULL'}");
       logInfo("Shutdown complete message received, stopping foreground task.");
-      FlutterForegroundTask.stopService().then(
-        (_) => logInfo("Foreground task shutdown complete."),
-      );
+      // Complete the shutdown completer only AFTER the foreground service is fully stopped.
+      // This ensures isRunningService returns false before stop() unblocks, so any
+      // subsequent _startForegroundTask() sees a clean state and calls startService()
+      // rather than trying to stop a still-running service again.
+      FlutterForegroundTask.stopService().then((_) {
+        logInfo("Foreground task shutdown complete.");
+        _shutdownCompleter?.complete();
+      });
     }
   }
 

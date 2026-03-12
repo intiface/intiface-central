@@ -62,9 +62,18 @@ class EngineRepository {
   }
 
   Future<void> stop() async {
+    // Snapshot the current stream BEFORE awaiting, so we can check later whether
+    // a concurrent EngineControlEventStart replaced it while we were waiting.
+    final streamToClose = _engineMessageStream;
     await _provider.stop();
-    // Close the stream to end any emit.forEach listeners in the bloc
-    await _engineMessageStream.close();
+    // Only close the stream if it hasn't been replaced by a new start() call that
+    // ran concurrently while _provider.stop() was awaiting. If start() ran first,
+    // it already closed the old stream and created a new one — closing the new one
+    // here would drop the new foreground service's messages and wedge the UI in
+    // EngineStartingState forever.
+    if (identical(streamToClose, _engineMessageStream)) {
+      await _engineMessageStream.close();
+    }
   }
 
   Future<bool> runtimeStarted() async {
