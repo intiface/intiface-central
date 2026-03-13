@@ -1,6 +1,6 @@
 [package]
 name = "rust_lib_intiface_central"
-version = "2.0.2"
+version = "2.0.3"
 license-file = "../LICENSE.md"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
@@ -25,8 +25,7 @@ tokio = { version = "1.45.1", features = ["rt", "tracing"] }
 anyhow = "1.0.98"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
-# btleplug = { path = "../../btleplug" }
-btleplug = { version = "0.11.8", path = "../../btleplug" }
+btleplug = { version = "0.12", path = "../../btleplug" }
 thiserror = "2.0.12"
 getset = "0.1.6"
 serde = "1.0.219"
@@ -46,7 +45,6 @@ uuid = "1.17.0"
 # THESE VERSIONS ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 jni = "0.19.0"
-jni-utils = "0.1.1"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

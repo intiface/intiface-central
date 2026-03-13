@@ -2,7 +2,7 @@ name: intiface_central
 description: Intiface® Central
 
 publish_to: 'none'
-version: 3.0.2+38
+version: 3.0.3+39
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   bloc: ^9.2.0
+  bloc_concurrency: ^0.3.0
   #buttplug: ^0.0.4
   buttplug: 
     path: ../buttplug_dart
