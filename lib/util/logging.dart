@@ -97,11 +97,26 @@ class ErrorNotifier extends LoggyPrinter {
   }
 }
 
+class LogcatPrinter extends LoggyPrinter {
+  LogcatPrinter() : super();
+
+  @override
+  void onLog(LogRecord record) {
+    // ignore: avoid_print
+    print(
+      "[${record.level.toString().substring(0, 1)}] ${record.loggerName}: ${record.message}",
+    );
+  }
+}
+
 class MultiPrinter extends LoggyPrinter {
   MultiPrinter(ErrorNotifier errorNotifier) {
     _printers.add(errorNotifier);
     if (!kReleaseMode) {
       _printers.add(const PrettyPrinter());
+    }
+    if (Platform.isAndroid) {
+      _printers.add(LogcatPrinter());
     }
   }
 

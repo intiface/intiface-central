@@ -10,10 +10,6 @@ abstract class EngineProvider {
   Future<void> start({required EngineOptionsExternal options});
   Future<void> stop();
   Future<bool> runtimeStarted();
-  void cycleStream();
-
-  void onEngineStart();
-  void onEngineStop();
 
   void send(String msg);
   void sendBackdoorMessage(String msg);

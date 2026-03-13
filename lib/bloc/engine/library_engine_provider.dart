@@ -9,6 +9,8 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> start({required EngineOptionsExternal options}) async {
+    _processMessageStream.close();
+    _processMessageStream = StreamController();
     logInfo(
       "Starting library internal engine with the following arguments: $options",
     );
@@ -38,12 +40,6 @@ class LibraryEngineProvider implements EngineProvider {
   }
 
   @override
-  void cycleStream() {
-    _processMessageStream.close();
-    _processMessageStream = StreamController();
-  }
-
-  @override
   Future<void> stop() async {
     stopEngine();
     logInfo("Engine stopped");
@@ -59,12 +55,6 @@ class LibraryEngineProvider implements EngineProvider {
     //logInfo("Outgoing: $msg");
     sendBackendServerMessage(msg: msg);
   }
-
-  @override
-  void onEngineStart() {}
-
-  @override
-  void onEngineStop() {}
 
   @override
   Stream<String> get engineRawMessageStream => _processMessageStream.stream;

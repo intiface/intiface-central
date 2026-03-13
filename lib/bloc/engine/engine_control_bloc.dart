@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:buttplug/messages/messages.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -88,7 +89,6 @@ class EngineDevice {
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   final EngineRepository _repo;
   final Map<int, EngineDevice> _devices = {};
-  bool _isRunning = false;
   int _keepaliveDeviceCount = 0;
 
   bool get anyDeviceNeedsKeepalive => _keepaliveDeviceCount > 0;
@@ -109,21 +109,21 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
   // and messages about the engine sessions. This should be divided out into a EngineControlBloc that handles engine
   // started/stopped/etc, and an EngineSessionBloc that handles events while the engine is running. However, that's a
   // good bit of refactoring and I just want to get foregrounding out, so for now we're doing this the gross way.
-  bool get isRunning {
-    return _isRunning;
-  }
+  bool get isRunning => state is! EngineStoppedState;
 
   EngineControlBloc(this._repo) : super(EngineStoppedState()) {
     on<EngineControlEventStart>((event, emit) async {
-      if (await _repo.runtimeStarted()) {
-        logWarning("Runtime already started, ignoring restart request.");
+      logInfo("EngineControlEventStart: currentState=${state.runtimeType}");
+      logInfo("Trying to start engine...");
+      try {
+        await _repo.start(options: event.options);
+      } catch (e) {
+        logError("Failed to start engine repo: $e");
+        emit(EngineStoppedState());
         return;
       }
-      logInfo("Trying to start engine...");
-      await _repo.start(options: event.options);
-      _isRunning = true;
       emit(EngineStartingState());
-      return emit.forEach(
+      await emit.forEach(
         _repo.messageStream,
         onData: (EngineOutput message) {
           if (message.engineMessage != null) {
@@ -190,9 +190,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             }
             if (engineMessage.engineStopped != null) {
               logInfo("Received EngineStopped message");
-              _isRunning = false;
-              _keepaliveDeviceCount = 0;
-              return EngineStoppedState();
+              return state;
             }
           } else if (message.buttplugServerMessage != null) {
             return ButtplugServerMessageState(message.buttplugServerMessage!);
@@ -200,14 +198,21 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
           return state;
         },
       );
-    });
+      _keepaliveDeviceCount = 0;
+      _devices.clear();
+      emit(EngineStoppedState());
+    }, transformer: droppable());
     on<EngineControlEventBackdoorMessage>((event, emit) async {
       _repo.sendBackdoorMessage(event.message);
     });
     on<EngineControlEventStop>((event, emit) async {
+      logInfo("EngineControlEventStop: currentState=${state.runtimeType}");
+      if (!isRunning) {
+        logInfo("EngineControlEventStop: already stopped, ignoring");
+        return;
+      }
       await _repo.stop();
-      _isRunning = false;
-      emit(EngineStoppedState());
+      logInfo("EngineControlEventStop: repo stop complete");
     });
   }
 

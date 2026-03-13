@@ -20,51 +20,52 @@ class EngineOutput {
 
 class EngineRepository {
   final EngineProvider _provider;
-  StreamController<EngineOutput> _engineMessageStream =
-      StreamController.broadcast();
+  StreamController<EngineOutput> _engineMessageStream = StreamController();
 
   EngineRepository(this._provider);
 
   Future<void> start({required EngineOptionsExternal options}) async {
     _engineMessageStream.close();
-    _engineMessageStream = StreamController.broadcast();
-    _provider.cycleStream();
+    _engineMessageStream = StreamController();
+    // Start the provider first so it creates a fresh engineRawMessageStream,
+    // then attach the listener. Non-broadcast StreamControllers buffer events
+    // until listened, so no messages are lost.
+    await _provider.start(options: options);
     _provider.engineRawMessageStream.listen((element) {
       dynamic jsonElement;
       try {
-        // Try parsing the JSON first to make sure it's even valid JSON.
         jsonElement = jsonDecode(element);
       } catch (e) {
         logError("Error decoding json for engine message $element: $e");
         return;
       }
       try {
-        // If we've got valid JSON, see if it's an engine message or a server message.
         var message = EngineMessage.fromJson(jsonElement);
-        if (!_engineMessageStream.isClosed)
+        if (!_engineMessageStream.isClosed) {
           _engineMessageStream.add(EngineOutput(message, null));
-        if (message.engineStarted != null) {
-          _provider.onEngineStart();
         }
         if (message.engineStopped != null) {
-          _provider.onEngineStop();
+          _engineMessageStream.close();
         }
         return;
       } catch (_) {}
       try {
         var buttplugMessage = ButtplugServerMessage.fromJson(jsonElement[0]);
-        _engineMessageStream.add(EngineOutput(null, buttplugMessage));
+        if (!_engineMessageStream.isClosed) {
+          _engineMessageStream.add(EngineOutput(null, buttplugMessage));
+        }
         return;
       } catch (_) {}
       logError("Error deserializing engine message $element");
     });
-    await _provider.start(options: options);
   }
 
   Future<void> stop() async {
+    final streamToClose = _engineMessageStream;
     await _provider.stop();
-    // Close the stream to end any emit.forEach listeners in the bloc
-    await _engineMessageStream.close();
+    if (!streamToClose.isClosed) {
+      await streamToClose.close();
+    }
   }
 
   Future<bool> runtimeStarted() async {
