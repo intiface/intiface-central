@@ -20,8 +20,6 @@ class EngineConfigWidget extends StatefulWidget {
 class _EngineConfigWidgetState extends State<EngineConfigWidget> {
   late TextEditingController _serverNameController;
   late TextEditingController _websocketPortController;
-  bool _hasCheckedDeprecation = false;
-
   Future<void> _showDeprecationDialog(
       BuildContext context, String title, String message, String docUrl) {
     return showDialog<void>(
@@ -272,35 +270,6 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
         ),
       ),
     );
-
-    if (!_hasCheckedDeprecation) {
-      _hasCheckedDeprecation = true;
-      final capturedContext = context;
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted) return;
-        if (cubit.useLovenseConnectService &&
-            !cubit.hasAcknowledgedLovenseConnectDeprecation) {
-          cubit.hasAcknowledgedLovenseConnectDeprecation = true;
-          await _showDeprecationDialog(
-            capturedContext,
-            "Lovense Connect Service Deprecated",
-            "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central.",
-            "https://docs.intiface.com/deprecation/lovense-connect",
-          );
-        }
-        if (!mounted) return;
-        if ((cubit.useLovenseHIDDongle || cubit.useLovenseSerialDongle) &&
-            !cubit.hasAcknowledgedLovenseDongleDeprecation) {
-          cubit.hasAcknowledgedLovenseDongleDeprecation = true;
-          await _showDeprecationDialog(
-            capturedContext, // ignore: use_build_context_synchronously
-            "Lovense USB Dongle Deprecated",
-            "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
-            "https://docs.intiface.com/deprecation/lovense-dongle",
-          );
-        }
-      });
-    }
 
     tiles.add(
       SettingsSection(
