@@ -1,3 +1,18 @@
+# v3.0.3 - 2026/03/14 (All Platforms)
+
+## Features
+
+- Add deprecation notice for Lovense Connect and Lovense Dongle
+
+## Bugfixes
+
+- Remove icon tray on linux
+  - Too much platform variation, requires libraries a bunch of people don't have
+- Fix issues with foreground startup races on mobile
+  - Should make start/stop server on Android not lock up as often, if at all
+- Update to Buttplug w/ btleplug 0.12
+  - Should fix several Android crashes
+
 # v3.0.2 - 2026/02/08 (iOS only)
 
 ## Bugfixes
