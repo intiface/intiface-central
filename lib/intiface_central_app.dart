@@ -680,73 +680,83 @@ class IntifaceCentralPage extends StatelessWidget {
             context,
           );
           var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-          if (configCubit.useLovenseConnectService &&
-              !configCubit.hasAcknowledgedLovenseConnectDeprecation) {
-            configCubit.hasAcknowledgedLovenseConnectDeprecation = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              showDialog<void>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Lovense Connect Service Deprecated"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                          "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central."),
-                      const SizedBox(height: 12),
-                      InkWell(
-                        onTap: () => launchUrlString(
-                            "https://docs.intiface.com/deprecation/lovense-connect"),
-                        child: const Text("Learn more",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline)),
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('OK')),
-                  ],
-                ),
-              );
-            });
-          }
-          if ((configCubit.useLovenseHIDDongle ||
+          final showConnectDeprecation = configCubit.useLovenseConnectService &&
+              !configCubit.hasAcknowledgedLovenseConnectDeprecation;
+          final showDongleDeprecation =
+              (configCubit.useLovenseHIDDongle ||
                   configCubit.useLovenseSerialDongle) &&
-              !configCubit.hasAcknowledgedLovenseDongleDeprecation) {
+                  !configCubit.hasAcknowledgedLovenseDongleDeprecation;
+          if (showConnectDeprecation) {
+            configCubit.hasAcknowledgedLovenseConnectDeprecation = true;
+          }
+          if (showDongleDeprecation) {
             configCubit.hasAcknowledgedLovenseDongleDeprecation = true;
+          }
+          if (showConnectDeprecation || showDongleDeprecation) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              showDialog<void>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Lovense USB Dongle Deprecated"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                          "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central."),
-                      const SizedBox(height: 12),
-                      InkWell(
-                        onTap: () => launchUrlString(
-                            "https://docs.intiface.com/deprecation/lovense-dongle"),
-                        child: const Text("Learn more",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline)),
+              Future<void> showDongleDialog() => showDialog<void>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Lovense USB Dongle Deprecated"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                              "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central."),
+                          const SizedBox(height: 12),
+                          InkWell(
+                            onTap: () => launchUrlString(
+                                "https://docs.intiface.com/deprecation/lovense-dongle"),
+                            child: const Text("Learn more",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline)),
+                          ),
+                        ],
                       ),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('OK')),
+                      ],
+                    ),
+                  );
+
+              if (showConnectDeprecation) {
+                showDialog<void>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Lovense Connect Service Deprecated"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                            "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central."),
+                        const SizedBox(height: 12),
+                        InkWell(
+                          onTap: () => launchUrlString(
+                              "https://docs.intiface.com/deprecation/lovense-connect"),
+                          child: const Text("Learn more",
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline)),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('OK')),
                     ],
                   ),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('OK')),
-                  ],
-                ),
-              );
+                ).then((_) {
+                  if (showDongleDeprecation) showDongleDialog();
+                });
+              } else {
+                showDongleDialog();
+              }
             });
           }
           if (userCubit.createError != null) {
