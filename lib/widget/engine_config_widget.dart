@@ -20,8 +20,7 @@ class EngineConfigWidget extends StatefulWidget {
 class _EngineConfigWidgetState extends State<EngineConfigWidget> {
   late TextEditingController _serverNameController;
   late TextEditingController _websocketPortController;
-  Future<void> _showDeprecationDialog(
-      BuildContext context, String title, String message, String docUrl) {
+  Future<void> _showDeprecationDialog(BuildContext context, String title, String message, String docUrl) {
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -36,19 +35,12 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
               onTap: () => launchUrlString(docUrl),
               child: const Text(
                 "Learn more",
-                style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline),
+                style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
               ),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
       ),
     );
   }
@@ -78,10 +70,7 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
   @override
   Widget build(BuildContext context) {
     context.select<EngineControlBloc, EngineControlState?>(
-      (bloc) =>
-          bloc.state is EngineStartedState || bloc.state is EngineStoppedState
-          ? bloc.state
-          : null,
+      (bloc) => bloc.state is EngineStartedState || bloc.state is EngineStoppedState ? bloc.state : null,
     );
     var cubit = context.watch<IntifaceConfigurationCubit>();
     var guiSettingsCubit = context.watch<GuiSettingsCubit>();
@@ -116,15 +105,10 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
                       cubit.serverName = value;
                       Navigator.pop(context);
                     },
-                    decoration: const InputDecoration(
-                      hintText: "Server Name Entry",
-                    ),
+                    decoration: const InputDecoration(hintText: "Server Name Entry"),
                   ),
                   actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: const Text('Cancel'),
-                    ),
+                    TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
                     TextButton(
                       onPressed: () {
                         cubit.serverName = _serverNameController.text;
@@ -149,35 +133,22 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
                   content: TextField(
                     keyboardType: TextInputType.number,
                     controller: _websocketPortController,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                     onSubmitted: (value) {
                       var newPort = int.tryParse(value);
-                      if (newPort != null &&
-                          newPort > 1024 &&
-                          newPort < 65536) {
+                      if (newPort != null && newPort > 1024 && newPort < 65536) {
                         cubit.websocketServerPort = newPort;
                       }
                       Navigator.pop(context);
                     },
-                    decoration: const InputDecoration(
-                      hintText: "Server Port Entry",
-                    ),
+                    decoration: const InputDecoration(hintText: "Server Port Entry"),
                   ),
                   actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: const Text('Cancel'),
-                    ),
+                    TextButton(onPressed: () => Navigator.pop(context, 'Cancel'), child: const Text('Cancel')),
                     TextButton(
                       onPressed: () {
-                        var newPort = int.tryParse(
-                          _websocketPortController.text,
-                        );
-                        if (newPort != null &&
-                            newPort > 1024 &&
-                            newPort < 65536) {
+                        var newPort = int.tryParse(_websocketPortController.text);
+                        if (newPort != null && newPort > 1024 && newPort < 65536) {
                           cubit.websocketServerPort = newPort;
                         }
                         Navigator.pop(context);
@@ -236,7 +207,7 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
                 context,
                 "Lovense Connect Service Deprecated",
                 "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central.",
-                "https://docs.intiface.com/deprecation/lovense-connect",
+                "https://intiface.com/docs/intiface-central/brands/lovense/",
               );
             }
           },
@@ -252,39 +223,29 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
                 context,
                 "Lovense USB Dongle Deprecated",
                 "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
-                "https://docs.intiface.com/deprecation/lovense-dongle",
+                "https://intiface.com/docs/intiface-central/brands/lovense/",
               );
             }
           },
-          title: const Text(
-              "Lovense USB Dongle (HID/White Circuit Board) (DEPRECATED)"),
+          title: const Text("Lovense USB Dongle (HID/White Circuit Board) (DEPRECATED)"),
         ),
       ]);
     }
 
     deviceSettings.add(
       SettingsTile(
-        title: const Text(
-          "Other Device Managers are in Advanced Settings Below",
-          textAlign: TextAlign.center,
-        ),
+        title: const Text("Other Device Managers are in Advanced Settings Below", textAlign: TextAlign.center),
       ),
     );
 
-    tiles.add(
-      SettingsSection(
-        title: const Text("Device Managers"),
-        tiles: deviceSettings,
-      ),
-    );
+    tiles.add(SettingsSection(title: const Text("Device Managers"), tiles: deviceSettings));
 
     var expansionName = "advanced-settings";
     var advancedSettingsTiles = [
       SettingsTile.switchTile(
         enabled: true,
         initialValue: guiSettingsCubit.getExpansionValue(expansionName),
-        onToggle: (value) =>
-            guiSettingsCubit.setExpansionValue(expansionName, value),
+        onToggle: (value) => guiSettingsCubit.setExpansionValue(expansionName, value),
         title: const Text("Show Advanced/Experimental Settings"),
       ),
     ];
@@ -314,9 +275,7 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
                     cubit.mdnsSuffix = value;
                     Navigator.pop(context);
                   },
-                  decoration: const InputDecoration(
-                    hintText: "mDNS Suffix Entry",
-                  ),
+                  decoration: const InputDecoration(hintText: "mDNS Suffix Entry"),
                 ),
               ),
             );
@@ -358,8 +317,7 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
               );
             }
           },
-          title: const Text(
-              "Lovense USB Dongle (Serial/Black Circuit Board) (DEPRECATED)"),
+          title: const Text("Lovense USB Dongle (Serial/Black Circuit Board) (DEPRECATED)"),
         ),
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
@@ -371,17 +329,10 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
     }
 
     if (guiSettingsCubit.getExpansionValue(expansionName) ?? false) {
-      tiles.add(
-        SettingsSection(
-          title: const Text("Advanced Device Managers"),
-          tiles: advancedManagers,
-        ),
-      );
+      tiles.add(SettingsSection(title: const Text("Advanced Device Managers"), tiles: advancedManagers));
     }
 
-    List<Widget> widgets = [
-      Expanded(child: SettingsList(shrinkWrap: true, sections: tiles)),
-    ];
+    List<Widget> widgets = [Expanded(child: SettingsList(shrinkWrap: true, sections: tiles))];
 
     if (engineIsRunning) {
       widgets.add(
