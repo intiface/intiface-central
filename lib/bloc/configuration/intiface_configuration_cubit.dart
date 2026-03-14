@@ -257,6 +257,10 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useHID = _prefs.getBool("useHID") ?? false;
     useLovenseHIDDongle = _prefs.getBool("useLovenseHIDDongle") ?? false;
     useLovenseSerialDongle = _prefs.getBool("useLovenseSerialDongle") ?? false;
+    hasAcknowledgedLovenseConnectDeprecation =
+        _prefs.getBool("hasAcknowledgedLovenseConnectDeprecation") ?? false;
+    hasAcknowledgedLovenseDongleDeprecation =
+        _prefs.getBool("hasAcknowledgedLovenseDongleDeprecation") ?? false;
 
     // Update settings
     currentNewsEtag = _prefs.getString("currentNewsEtag") ?? "";
@@ -468,6 +472,18 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   bool get hasRunFirstUse => _prefs.getBool("hasRunFirstUse")!;
   set hasRunFirstUse(bool value) {
     _prefs.setBool("hasRunFirstUse", value);
+  }
+
+  bool get hasAcknowledgedLovenseConnectDeprecation =>
+      _prefs.getBool("hasAcknowledgedLovenseConnectDeprecation")!;
+  set hasAcknowledgedLovenseConnectDeprecation(bool value) {
+    _prefs.setBool("hasAcknowledgedLovenseConnectDeprecation", value);
+  }
+
+  bool get hasAcknowledgedLovenseDongleDeprecation =>
+      _prefs.getBool("hasAcknowledgedLovenseDongleDeprecation")!;
+  set hasAcknowledgedLovenseDongleDeprecation(bool value) {
+    _prefs.setBool("hasAcknowledgedLovenseDongleDeprecation", value);
   }
 
   bool get showExtendedUI => _prefs.getBool("showExtendedUI")!;
