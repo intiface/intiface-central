@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
@@ -19,6 +20,40 @@ class EngineConfigWidget extends StatefulWidget {
 class _EngineConfigWidgetState extends State<EngineConfigWidget> {
   late TextEditingController _serverNameController;
   late TextEditingController _websocketPortController;
+  bool _hasCheckedDeprecation = false;
+
+  Future<void> _showDeprecationDialog(
+      BuildContext context, String title, String message, String docUrl) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(message),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: () => launchUrlString(docUrl),
+              child: const Text(
+                "Learn more",
+                style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -196,14 +231,35 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
           initialValue: cubit.useLovenseConnectService,
-          onToggle: (value) => cubit.useLovenseConnectService = value,
-          title: const Text("Lovense Connect Service"),
+          onToggle: (value) {
+            cubit.useLovenseConnectService = value;
+            if (value) {
+              _showDeprecationDialog(
+                context,
+                "Lovense Connect Service Deprecated",
+                "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central.",
+                "https://docs.intiface.com/deprecation/lovense-connect",
+              );
+            }
+          },
+          title: const Text("Lovense Connect Service (DEPRECATED)"),
         ),
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
           initialValue: cubit.useLovenseHIDDongle,
-          onToggle: (value) => cubit.useLovenseHIDDongle = value,
-          title: const Text("Lovense USB Dongle (HID/White Circuit Board)"),
+          onToggle: (value) {
+            cubit.useLovenseHIDDongle = value;
+            if (value) {
+              _showDeprecationDialog(
+                context,
+                "Lovense USB Dongle Deprecated",
+                "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
+                "https://docs.intiface.com/deprecation/lovense-dongle",
+              );
+            }
+          },
+          title: const Text(
+              "Lovense USB Dongle (HID/White Circuit Board) (DEPRECATED)"),
         ),
       ]);
     }
@@ -216,6 +272,35 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
         ),
       ),
     );
+
+    if (!_hasCheckedDeprecation) {
+      _hasCheckedDeprecation = true;
+      final capturedContext = context;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        if (cubit.useLovenseConnectService &&
+            !cubit.hasAcknowledgedLovenseConnectDeprecation) {
+          cubit.hasAcknowledgedLovenseConnectDeprecation = true;
+          await _showDeprecationDialog(
+            capturedContext,
+            "Lovense Connect Service Deprecated",
+            "The Lovense Connect Service is deprecated and will be removed in the next version of Intiface Central.",
+            "https://docs.intiface.com/deprecation/lovense-connect",
+          );
+        }
+        if (!mounted) return;
+        if ((cubit.useLovenseHIDDongle || cubit.useLovenseSerialDongle) &&
+            !cubit.hasAcknowledgedLovenseDongleDeprecation) {
+          cubit.hasAcknowledgedLovenseDongleDeprecation = true;
+          await _showDeprecationDialog(
+            capturedContext, // ignore: use_build_context_synchronously
+            "Lovense USB Dongle Deprecated",
+            "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
+            "https://docs.intiface.com/deprecation/lovense-dongle",
+          );
+        }
+      });
+    }
 
     tiles.add(
       SettingsSection(
@@ -293,8 +378,19 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
           initialValue: cubit.useLovenseSerialDongle,
-          onToggle: (value) => cubit.useLovenseSerialDongle = value,
-          title: const Text("Lovense USB Dongle (Serial/Black Circuit Board)"),
+          onToggle: (value) {
+            cubit.useLovenseSerialDongle = value;
+            if (value) {
+              _showDeprecationDialog(
+                context,
+                "Lovense USB Dongle Deprecated",
+                "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
+                "https://docs.intiface.com/deprecation/lovense-dongle",
+              );
+            }
+          },
+          title: const Text(
+              "Lovense USB Dongle (Serial/Black Circuit Board) (DEPRECATED)"),
         ),
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
