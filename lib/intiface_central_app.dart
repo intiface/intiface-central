@@ -306,6 +306,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
             eventAction: ForegroundTaskEventAction.nothing(),
             allowWakeLock: false,
             allowWifiLock: true,
+            stopWithTask: true,
+            allowAutoRestart: false,
           ),
         );
         FlutterForegroundTask.initCommunicationPort();
