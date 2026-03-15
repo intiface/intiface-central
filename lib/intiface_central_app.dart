@@ -287,7 +287,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         }
       }
       if (Platform.isAndroid) {
-        await [Permission.bluetoothConnect, Permission.bluetoothScan].request();
+        await [Permission.bluetoothConnect, Permission.bluetoothScan, Permission.notification].request();
       } else if (Platform.isIOS) {
         await Permission.bluetooth.request();
       }
