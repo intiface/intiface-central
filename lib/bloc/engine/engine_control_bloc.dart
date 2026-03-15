@@ -101,6 +101,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
         eventAction: ForegroundTaskEventAction.nothing(),
         allowWakeLock: anyDeviceNeedsKeepalive,
         allowWifiLock: true,
+        allowAutoRestart: false,
       ),
     );
   }
