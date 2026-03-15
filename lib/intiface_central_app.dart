@@ -298,8 +298,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
             channelId: 'notification_channel_id',
             channelName: 'Intiface Engine Notification',
             channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
-            channelImportance: NotificationChannelImportance.LOW,
-            priority: NotificationPriority.LOW,
+            channelImportance: NotificationChannelImportance.DEFAULT,
+            priority: NotificationPriority.DEFAULT,
           ),
           iosNotificationOptions: const IOSNotificationOptions(),
           foregroundTaskOptions: ForegroundTaskOptions(
