@@ -131,6 +131,14 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   @override
   Future<void> onDestroy(DateTime timestamp, bool whatever) async {
     _sendProviderLog("INFO", "Shutting down foreground task");
+    // If the engine is still running (e.g. app was swiped away without a
+    // graceful shutdown), stop it directly. In the normal shutdown path,
+    // stopEngine() was already called by the _shutdownReceivePort listener,
+    // so rustRuntimeStarted() returns false and this is a no-op.
+    if (await rustRuntimeStarted()) {
+      _sendProviderLog("INFO", "Engine still running in onDestroy, stopping directly");
+      await stopEngine();
+    }
     // Only remove port mappings that still point to OUR ports. If a new
     // ForegroundService instance started before onDestroy() fires, it already
     // removed our mappings and registered its own. Unconditionally removing
