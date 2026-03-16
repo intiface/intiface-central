@@ -133,7 +133,11 @@ impl FlutterTracingWriter {
           // Exhaust all waiting messages, but only if engine is not shutting down.
           while let Ok(msg) = receiver.try_recv() {
             if !is_engine_shutdown() && !should_filter_log(&msg) {
-              let _ = sink.add(msg);
+              if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let _ = sink.add(msg);
+              })).is_err() {
+                break;
+              }
             }
           }
           break;
@@ -145,7 +149,11 @@ impl FlutterTracingWriter {
         if let Ok(msg) = receiver.recv_timeout(Duration::from_millis(10))
           && !is_engine_shutdown() && !should_filter_log(&msg)
         {
-          let _ = sink.add(msg);
+          if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _ = sink.add(msg);
+          })).is_err() {
+            break;
+          }
         }
       }
     });
