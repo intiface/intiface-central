@@ -1,3 +1,17 @@
+# v3.0.4 - 2026/04/01 (All Platforms)
+
+## Features
+
+- Device Support
+  - TryFun
+  - MyMuse Plus
+  - Various Joyhub Devices
+
+## Bugfixes
+
+- Fix issues with devices not being rediscovered after disconnect
+- Fix issues with DeviceList messages having incorrect message IDs
+
 # v3.0.3 - 2026/03/14 (All Platforms)
 
 ## Features
