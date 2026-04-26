@@ -1,6 +1,8 @@
-use std::{collections::HashMap, ops::RangeInclusive};
+use std::collections::HashMap;
 
 use buttplug_core::message::OutputType;
+use buttplug_core::util::range::RangeInclusive;
+use buttplug_core::util::small_vec_enum_map::SmallVecEnumMap;
 use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputHwPositionWithDurationProperties, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
@@ -154,7 +156,7 @@ impl ExposedServerDeviceDefinition {
 
   #[frb(sync)]
   pub fn update_feature(&mut self, feature: &ExposedServerDeviceFeature) {
-    if let Some(f) = self.definition.features().values().find(|x| x.id() == feature.id()) {
+    if self.definition.features().values().any(|x| x.id() == feature.id()) {
       ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&feature.feature);
     }
   }
@@ -164,27 +166,22 @@ impl ExposedServerDeviceDefinition {
     if let Some(f) = self.definition.features().values().find(|x| x.id() == props.feature_id) {
       let mut f = f.clone();
       info!("Has feature");
-      // Why let chaining won't work here, I don't know. Something is conflicting with the edition setting in Cargo.
-      if let Some(output) = f.output() {
-        info!("Has output");
-        let mut output = output.clone();
-        if output.contains(props.output_type) {
-          info!("Has output type");
-          match props.output_type {
-            OutputType::Constrict => output.set_constrict(Some(props.clone().into())),
-            OutputType::Temperature => output.set_temperature(Some(props.clone().into())),
-            OutputType::Led => output.set_led(Some(props.clone().into())),
-            OutputType::Oscillate => output.set_oscillate(Some(props.clone().into())),
-            OutputType::Position => output.set_position(Some(props.clone().into())),
-            OutputType::HwPositionWithDuration => output.set_hw_position_with_duration(Some(props.clone().into())),
-            OutputType::Rotate => output.set_rotate(Some(props.clone().into())),
-            OutputType::Spray => output.set_spray(Some(props.clone().into())),
-            OutputType::Vibrate => output.set_vibrate(Some(props.clone().into())),
-            _ => return
-          };
-          f.set_output(Some(output));
-          self.definition = ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&f).finish();
-        }        
+      if f.output.contains_key(&props.output_type) {
+        info!("Has output type");
+        f.output.retain(|o| o.output_type() != props.output_type);
+        let new_output = match props.output_type {
+          OutputType::Vibrate => ServerDeviceFeatureOutput::Vibrate(props.clone().into()),
+          OutputType::Rotate => ServerDeviceFeatureOutput::Rotate(props.clone().into()),
+          OutputType::Oscillate => ServerDeviceFeatureOutput::Oscillate(props.clone().into()),
+          OutputType::Constrict => ServerDeviceFeatureOutput::Constrict(props.clone().into()),
+          OutputType::Temperature => ServerDeviceFeatureOutput::Temperature(props.clone().into()),
+          OutputType::Led => ServerDeviceFeatureOutput::Led(props.clone().into()),
+          OutputType::Spray => ServerDeviceFeatureOutput::Spray(props.clone().into()),
+          OutputType::Position => ServerDeviceFeatureOutput::Position(props.clone().into()),
+          OutputType::HwPositionWithDuration => ServerDeviceFeatureOutput::HwPositionWithDuration(props.clone().into()),
+        };
+        f.output.push(new_output);
+        self.definition = ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&f).finish();
       }
     }
   }
@@ -204,22 +201,30 @@ impl ExposedServerDeviceFeature {
 
   #[frb(sync, getter)]
   pub fn description(&self) -> String {
-    self.feature.description().clone()
+    self.feature.description.clone()
   }
 
   #[frb(sync, getter)]
   pub fn output(&self) -> Option<ExposedServerDeviceFeatureOutput> {
-    self.feature.output().clone().map(|x| ExposedServerDeviceFeatureOutput::new(self.feature.id(), x))
+    if self.feature.output.is_empty() {
+      None
+    } else {
+      Some(ExposedServerDeviceFeatureOutput::new(self.feature.id(), self.feature.output.clone()))
+    }
   }
 
   #[frb(sync, setter)]
   pub fn set_output(&mut self, output: Option<ExposedServerDeviceFeatureOutput>) {
-    self.feature.set_output(output.map(|x| x.output));
+    self.feature.output = output.map(|x| x.output).unwrap_or_default();
   }
 
   #[frb(sync, getter)]
   pub fn input(&self) -> Option<ExposedServerDeviceFeatureInput> {
-    self.feature.input().clone().map(|x| x.into())
+    if self.feature.input.is_empty() {
+      None
+    } else {
+      Some(ExposedServerDeviceFeatureInput { input: self.feature.input.clone() })
+    }
   }
 }
 
@@ -238,60 +243,75 @@ pub struct ExposedServerDeviceFeatureOutput {
   #[ignore]
   feature_id: Uuid,
   #[ignore]
-  output: ServerDeviceFeatureOutput
+  output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1>
 }
 
 impl ExposedServerDeviceFeatureOutput {
-  fn new(feature_id: Uuid, value: ServerDeviceFeatureOutput) -> Self {
-    Self {
-      feature_id,
-      output: value.clone()
-    }
+  fn new(feature_id: Uuid, output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1>) -> Self {
+    Self { feature_id, output }
+  }
+
+  fn find_value_props(&self, output_type: OutputType) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.find_by_key(&output_type).and_then(|o| o.as_value_properties().map(|p| {
+      ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, output_type, p.clone())
+    }))
   }
 
   #[frb(sync, getter)]
   pub fn vibrate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.vibrate().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Vibrate, x))
+    self.find_value_props(OutputType::Vibrate)
   }
 
   #[frb(sync, getter)]
   pub fn rotate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.rotate().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Rotate, x))
+    self.find_value_props(OutputType::Rotate)
   }
 
   #[frb(sync, getter)]
   pub fn oscillate(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.oscillate().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Oscillate, x))
+    self.find_value_props(OutputType::Oscillate)
   }
 
   #[frb(sync, getter)]
   pub fn constrict(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.constrict().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Constrict, x))
+    self.find_value_props(OutputType::Constrict)
   }
 
   #[frb(sync, getter)]
   pub fn temperature(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.temperature().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Temperature, x))
+    self.find_value_props(OutputType::Temperature)
   }
 
   #[frb(sync, getter)]
   pub fn led(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.led().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Led, x))
+    self.find_value_props(OutputType::Led)
   }
 
   #[frb(sync, getter)]
   pub fn spray(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.spray().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, OutputType::Spray, x))
+    self.find_value_props(OutputType::Spray)
   }
 
   #[frb(sync, getter)]
   pub fn position(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.position().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_position(self.feature_id, OutputType::Position, x))
+    self.output.find_by_key(&OutputType::Position).and_then(|o| {
+      if let ServerDeviceFeatureOutput::Position(p) = o {
+        Some(ExposedServerDeviceFeatureOutputProperties::new_from_position(self.feature_id, OutputType::Position, p.clone()))
+      } else {
+        None
+      }
+    })
   }
 
   #[frb(sync, getter)]
   pub fn position_with_duration(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.hw_position_with_duration().clone().map(|x| ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(self.feature_id, OutputType::HwPositionWithDuration, x))
+    self.output.find_by_key(&OutputType::HwPositionWithDuration).and_then(|o| {
+      if let ServerDeviceFeatureOutput::HwPositionWithDuration(p) = o {
+        Some(ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(self.feature_id, OutputType::HwPositionWithDuration, p.clone()))
+      } else {
+        None
+      }
+    })
   }
 }
 
@@ -299,18 +319,7 @@ impl ExposedServerDeviceFeatureOutput {
 #[derive(Debug, Clone)]
 pub struct ExposedServerDeviceFeatureInput {
   #[ignore]
-  input: ServerDeviceFeatureInput
-}
-
-impl ExposedServerDeviceFeatureInput {
-}
-
-impl From<ServerDeviceFeatureInput> for ExposedServerDeviceFeatureInput {
-  fn from(value: ServerDeviceFeatureInput) -> Self {
-    Self {
-      input: value.clone()
-    }
-  }
+  input: SmallVecEnumMap<ServerDeviceFeatureInput, 1>
 }
 
 #[frb(unignore, opaque, ignore_all)]
@@ -330,10 +339,10 @@ impl ExposedServerDeviceFeatureOutputProperties {
     Self {
       feature_id,
       output_type,
-      value: Some(props.value().into()),
+      value: Some((&props.value).into()),
       position: None,
       duration: None,
-      disabled: props.disabled(),
+      disabled: props.disabled,
       reverse_position: false
     }
   }
@@ -343,10 +352,10 @@ impl ExposedServerDeviceFeatureOutputProperties {
       feature_id,
       output_type,
       value: None,
-      position: Some(props.value().into()),
-      duration: Some(props.duration().into()),
-      disabled: props.disabled(),
-      reverse_position: props.reverse_position()
+      position: Some((&props.value).into()),
+      duration: Some((&props.duration).into()),
+      disabled: props.disabled,
+      reverse_position: props.reverse_position
     }
   }
 
@@ -355,10 +364,10 @@ impl ExposedServerDeviceFeatureOutputProperties {
       feature_id,
       output_type,
       value: None,
-      position: Some(props.value().into()),
+      position: Some((&props.value).into()),
       duration: None,
-      disabled: props.disabled(),
-      reverse_position: props.reverse_position()
+      disabled: props.disabled,
+      reverse_position: props.reverse_position
     }
   }
 
@@ -416,21 +425,21 @@ impl ExposedServerDeviceFeatureOutputProperties {
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
 impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputValueProperties {
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputValueProperties::new(&value.value.unwrap().into(), value.disabled)
+    ServerDeviceFeatureOutputValueProperties::new(value.value.unwrap().into(), value.disabled)
   }
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
 impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputPositionProperties {
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputPositionProperties::new(&value.position.unwrap().into(), value.disabled, value.reverse_position)
+    ServerDeviceFeatureOutputPositionProperties::new(value.position.unwrap().into(), value.disabled, value.reverse_position)
   } 
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
 impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputHwPositionWithDurationProperties {
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(&value.position.unwrap().into(), &value.duration.unwrap().into(), value.disabled, value.reverse_position)
+    ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(value.position.unwrap().into(), value.duration.unwrap().into(), value.disabled, value.reverse_position)
   }
 }
 
@@ -444,15 +453,15 @@ pub struct ExposedRangeWithLimit {
 impl ExposedRangeWithLimit {
   #[frb(sync, getter)]
   pub fn base(&self) -> (i32, i32) {
-    (*self.base.start(), *self.base.end())
+    (self.base.start(), self.base.end())
   }
 
   #[frb(sync, getter)]
   pub fn user(&self) -> (u32, u32) {
     if let Some(user) = &self.user {
-      (*user.start(), *user.end())
+      (user.start(), user.end())
     } else {
-      (0, *self.base.end() as u32)
+      (0, self.base.end() as u32)
     }
   }
 
@@ -465,15 +474,15 @@ impl ExposedRangeWithLimit {
 impl From<&RangeWithLimit> for ExposedRangeWithLimit {
   fn from(value: &RangeWithLimit) -> Self {
     Self {
-      base: value.base().clone(),
-      user: value.user().clone()
+      base: value.base.clone(),
+      user: value.user.clone()
     }
   }
 }
 
 impl From<ExposedRangeWithLimit> for RangeWithLimit {
   fn from(value: ExposedRangeWithLimit) -> Self {
-    RangeWithLimit::new_with_user(&value.base, &value.user)
+    RangeWithLimit::new_with_user(value.base, value.user)
   }
 }
 

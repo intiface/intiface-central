@@ -11,29 +11,23 @@ pub enum _InputCommandType {
 
 #[frb(mirror(InputType), unignore)]
 pub enum _InputType {
-  Unknown,
   Battery,
   Rssi,
   Button,
   Pressure,
-  // Temperature,
-  // Accelerometer,
-  // Gyro,
+  Depth,
+  Position,
 }
 
 #[frb(mirror(OutputType), unignore)]
 pub enum _OutputType {
-  Unknown,
   Vibrate,
-  // Single Direction Rotation Speed
   Rotate,
   Oscillate,
   Constrict,
-  Spray,
   Temperature,
   Led,
-  // For instances where we specify a position to move to ASAP. Usually servos, probably for the
-  // OSR-2/SR-6.
   Position,
   HwPositionWithDuration,
+  Spray,
 }

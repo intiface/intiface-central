@@ -8,17 +8,16 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 enum InputCommandType { read, subscribe, unsubscribe }
 
-enum InputType { unknown, battery, rssi, button, pressure }
+enum InputType { battery, rssi, button, pressure, depth, position }
 
 enum OutputType {
-  unknown,
   vibrate,
   rotate,
   oscillate,
   constrict,
-  spray,
   temperature,
   led,
   position,
   hwPositionWithDuration,
+  spray,
 }

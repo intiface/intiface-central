@@ -7,8 +7,8 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
-// These functions are ignored because they are not marked as `pub`: `new_from_position_with_duration`, `new_from_position`, `new_from_value`, `new`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_receiver_is_total_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `hash`, `into`, `into`
+// These functions are ignored because they are not marked as `pub`: `find_value_props`, `new_from_position_with_duration`, `new_from_position`, `new_from_value`, `new`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `hash`, `into`, `into`
 
 Future<void> updateUserConfig({
   required ExposedUserDeviceIdentifier identifier,
@@ -31,7 +31,7 @@ Future<Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>>
 getDeviceDefinitions() =>
     RustLib.instance.api.crateApiDeviceConfigGetDeviceDefinitions();
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>>
 abstract class ExposedRangeWithLimit implements RustOpaqueInterface {
   (int, int) get base;
 
@@ -40,7 +40,7 @@ abstract class ExposedRangeWithLimit implements RustOpaqueInterface {
   (int, int) get user;
 }
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>
 abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
   bool get allow;
 
@@ -73,7 +73,7 @@ abstract class ExposedServerDeviceDefinition implements RustOpaqueInterface {
   });
 }
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeature>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeature>>
 abstract class ExposedServerDeviceFeature implements RustOpaqueInterface {
   String get description;
 
@@ -86,10 +86,10 @@ abstract class ExposedServerDeviceFeature implements RustOpaqueInterface {
   set output(ExposedServerDeviceFeatureOutput? output);
 }
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureInput>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureInput>>
 abstract class ExposedServerDeviceFeatureInput implements RustOpaqueInterface {}
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutput>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutput>>
 abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
   ExposedServerDeviceFeatureOutputProperties? get constrict;
 
@@ -110,7 +110,7 @@ abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
   ExposedServerDeviceFeatureOutputProperties? get vibrate;
 }
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutputProperties>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutputProperties>>
 abstract class ExposedServerDeviceFeatureOutputProperties
     implements RustOpaqueInterface {
   bool get disabled;
@@ -134,7 +134,7 @@ abstract class ExposedServerDeviceFeatureOutputProperties
   ExposedRangeWithLimit? get value;
 }
 
-// Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>
 abstract class ExposedUserDeviceIdentifier implements RustOpaqueInterface {
   String get address;
 
