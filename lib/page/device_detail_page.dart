@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
+import 'package:intiface_central/bloc/device/device_input_cubit.dart';
+import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/src/rust/api/enums.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceDetailPage extends StatelessWidget {
   final ExposedUserDeviceIdentifier identifier;
@@ -61,7 +65,9 @@ class DeviceDetailPage extends StatelessWidget {
                       userDeviceConfigCubit: userDeviceConfigCubit,
                     ),
                     const Divider(),
-                    // TODO: Phase 3 — Device controls section (connected only)
+                    if (deviceCubit != null &&
+                        deviceCubit!.state is DeviceStateOnline)
+                      _DeviceControlsSection(deviceCubit: deviceCubit!),
                     // TODO: Phase 4 — Feature output config section
                     _ForgetDeviceButton(
                       enabled: !engineRunning,
@@ -304,6 +310,146 @@ class _DeviceConfigSection extends StatelessWidget {
             onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeviceControlsSection extends StatelessWidget {
+  final DeviceCubit deviceCubit;
+
+  const _DeviceControlsSection({required this.deviceCubit});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final List<Widget> controls = [];
+
+    for (var output in deviceCubit.outputs) {
+      if (output is ValueOutputCubit) {
+        var range = output.feature.feature.output![output.type]!.value!;
+        controls.addAll([
+          ListTile(
+            title: Text(output.type.name),
+            subtitle: Text(
+              'Description: ${output.feature.feature.featureDescription} - '
+              'Step Count: $range',
+            ),
+          ),
+          BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
+            bloc: output,
+            buildWhen: (previous, current) =>
+                current is DeviceOutputStateUpdate,
+            builder: (context, state) => Slider(
+              min: range[0].toDouble(),
+              max: range[1].toDouble(),
+              value: output.currentValue.floorToDouble(),
+              divisions: (range[0].abs() + range[1].abs()),
+              onChanged: (value) async {
+                output.setValue(value.ceil());
+              },
+            ),
+          ),
+        ]);
+      } else if (output is PositionWithDurationOutputCubit) {
+        var range = output.feature.feature.output![output.type]!.value!;
+        controls.addAll([
+          ListTile(
+            title: const Text('Linear'),
+            subtitle: Text(
+              'Description: ${output.feature.feature.featureDescription} - '
+              'Step Count: $range',
+            ),
+          ),
+          BlocBuilder<DeviceOutputCubit, DeviceOutputState>(
+            bloc: output,
+            buildWhen: (previous, current) =>
+                current is DeviceOutputStateUpdate,
+            builder: (context, state) {
+              return Column(
+                children: [
+                  RangeSlider(
+                    max: range[1].toDouble(),
+                    values: RangeValues(output.currentMin, output.currentMax),
+                    divisions: range[1],
+                    onChanged: (values) async {
+                      output.setPosition(values.start, values.end);
+                    },
+                  ),
+                  Slider(
+                    max: 3000,
+                    value: output.currentDuration.floorToDouble(),
+                    onChanged: (value) async {
+                      output.duration(value);
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Toggle Oscillation'),
+                    onPressed: () => output.toggleRunning(),
+                  ),
+                ],
+              );
+            },
+          ),
+        ]);
+      }
+    }
+
+    for (var input in deviceCubit.inputs) {
+      if (input is InputReadBloc) {
+        controls.addAll([
+          ListTile(
+            title: Text(input.inputType.name),
+            subtitle: Text(
+              'Description: ${input.descriptor} - '
+              'Sensor Range: ${input.sensorRange}',
+            ),
+          ),
+          BlocBuilder<DeviceInputBloc, DeviceInputState>(
+            bloc: input,
+            buildWhen: (previous, current) => current is DeviceInputStateUpdate,
+            builder: (context, state) {
+              if (input.inputType.name == InputType.battery.name) {
+                double percentage = input.currentData / 100.0;
+                return LinearPercentIndicator(
+                  percent: percentage,
+                  animation: true,
+                  lineHeight: 20.0,
+                  animationDuration: 1000,
+                  backgroundColor: Colors.grey,
+                  progressColor: Colors.blue,
+                  center: Text('${(percentage * 100).toInt()}%'),
+                );
+              }
+              return Text('${input.currentData}');
+            },
+          ),
+          TextButton(
+            child: const Text('Read Sensor'),
+            onPressed: () => input.add(DeviceInputReadEvent()),
+          ),
+        ]);
+      }
+    }
+
+    if (controls.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Device Controls',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...controls,
+          const Divider(),
         ],
       ),
     );
