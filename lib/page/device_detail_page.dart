@@ -7,6 +7,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_input_cubit.dart';
 import 'package:intiface_central/bloc/device/device_output_cubit.dart';
+import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
@@ -17,12 +18,12 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceDetailPage extends StatelessWidget {
   final ExposedUserDeviceIdentifier identifier;
-  final DeviceCubit? deviceCubit;
+  final VoidCallback onBack;
 
   const DeviceDetailPage({
     super.key,
     required this.identifier,
-    this.deviceCubit,
+    required this.onBack,
   });
 
   @override
@@ -34,65 +35,125 @@ class DeviceDetailPage extends StatelessWidget {
           current is DeviceConnectedState ||
           current is DeviceDisconnectedState,
       builder: (context, engineState) {
-        return BlocBuilder<
-          UserDeviceConfigurationCubit,
-          UserDeviceConfigurationState
-        >(
-          builder: (context, userConfigState) {
-            final userDeviceConfigCubit =
-                BlocProvider.of<UserDeviceConfigurationCubit>(context);
-            final config = userDeviceConfigCubit.configs[identifier];
-            if (config == null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (context.mounted) Navigator.of(context).pop();
-              });
-              return const SizedBox.shrink();
-            }
+        return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
+          builder: (context, deviceManagerState) {
+            return BlocBuilder<
+              UserDeviceConfigurationCubit,
+              UserDeviceConfigurationState
+            >(
+              builder: (context, userConfigState) {
+                final userDeviceConfigCubit =
+                    BlocProvider.of<UserDeviceConfigurationCubit>(context);
+                final config = userDeviceConfigCubit.configs[identifier];
+                if (config == null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) => onBack());
+                  return const SizedBox.shrink();
+                }
 
-            final engineRunning = BlocProvider.of<EngineControlBloc>(
-              context,
-            ).isRunning;
-            final displayName = config.displayName ?? config.name;
+                final engineRunning = BlocProvider.of<EngineControlBloc>(
+                  context,
+                ).isRunning;
+                final displayName = config.displayName ?? config.name;
 
-            return Scaffold(
-              appBar: AppBar(title: Text(displayName)),
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _DeviceInfoSection(config: config, identifier: identifier),
-                    const Divider(),
-                    _DeviceConfigSection(
-                      identifier: identifier,
-                      config: config,
-                      engineRunning: engineRunning,
-                      userDeviceConfigCubit: userDeviceConfigCubit,
-                    ),
-                    const Divider(),
-                    if (deviceCubit != null &&
-                        deviceCubit!.state is DeviceStateOnline)
-                      _DeviceControlsSection(deviceCubit: deviceCubit!),
-                    _FeatureConfigSection(
-                      identifier: identifier,
-                      definition: config,
-                      engineRunning: engineRunning,
-                    ),
-                    _ForgetDeviceButton(
-                      enabled: !engineRunning,
-                      onPressed: () async {
-                        await userDeviceConfigCubit.removeDeviceConfig(
-                          identifier,
-                        );
-                        if (context.mounted) Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                final deviceBloc =
+                    BlocProvider.of<DeviceManagerBloc>(context);
+                DeviceCubit? deviceCubit;
+                try {
+                  deviceCubit = deviceBloc.devices.firstWhere(
+                    (d) => d.device!.index == config.index,
+                  );
+                } catch (_) {}
+                final isConnected =
+                    deviceCubit != null &&
+                    deviceCubit.state is DeviceStateOnline;
+
+                return Expanded(
+                  child: Column(
+                    children: [
+                      _DetailHeader(
+                        title: displayName,
+                        onBack: onBack,
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _DeviceInfoSection(
+                                config: config,
+                                identifier: identifier,
+                              ),
+                              const Divider(),
+                              _DeviceConfigSection(
+                                identifier: identifier,
+                                config: config,
+                                engineRunning: engineRunning,
+                                userDeviceConfigCubit: userDeviceConfigCubit,
+                              ),
+                              const Divider(),
+                              if (isConnected)
+                                _DeviceControlsSection(
+                                  deviceCubit: deviceCubit,
+                                ),
+                              _FeatureConfigSection(
+                                identifier: identifier,
+                                definition: config,
+                                engineRunning: engineRunning,
+                              ),
+                              _ForgetDeviceButton(
+                                enabled: !engineRunning,
+                                onPressed: () async {
+                                  await userDeviceConfigCubit
+                                      .removeDeviceConfig(identifier);
+                                  onBack();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             );
           },
         );
       },
+    );
+  }
+}
+
+class _DetailHeader extends StatelessWidget {
+  final String title;
+  final VoidCallback onBack;
+
+  const _DetailHeader({required this.title, required this.onBack});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: onBack,
+            tooltip: 'Back to device list',
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -713,19 +774,19 @@ class _FeatureCard extends StatelessWidget {
     widgets.addAll([
       ListTile(
         subtitle: Text(
-          '$type - Step Range - '
-          'Min: ${props.value!.base.$1} Max: ${props.value!.base.$2} '
-          'Step Limit - Min: ${props.value!.user.$1} Max: ${props.value!.user.$2}',
+          '$type - Position Range - '
+          'Min: ${props.position!.base.$1} Max: ${props.position!.base.$2} '
+          'Step Limit - Min: ${props.position!.user.$1} Max: ${props.position!.user.$2}',
         ),
       ),
       BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
         builder: (context, state) => MultiSlider(
-          max: props.value!.base.$2.toDouble(),
+          max: props.position!.base.$2.toDouble(),
           values: [
-            props.value!.user.$1.floorToDouble(),
-            props.value!.user.$2.floorToDouble(),
+            props.position!.user.$1.floorToDouble(),
+            props.position!.user.$2.floorToDouble(),
           ],
-          divisions: props.value!.base.$2,
+          divisions: props.position!.base.$2,
           onChanged: engineRunning
               ? null
               : (value) {

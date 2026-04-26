@@ -1,15 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/page/add_device_type_page.dart';
+import 'package:intiface_central/page/add_serial_device_page.dart';
+import 'package:intiface_central/page/add_websocket_device_page.dart';
 import 'package:intiface_central/page/device_detail_page.dart';
+import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/widget/device_list_card_widget.dart';
 
-class DevicePage extends StatelessWidget {
+enum _DeviceSubPage { list, detail, addType, addWebsocket, addSerial }
+
+class DevicePage extends StatefulWidget {
   const DevicePage({super.key});
+
+  @override
+  State<DevicePage> createState() => _DevicePageState();
+}
+
+class _DevicePageState extends State<DevicePage> {
+  _DeviceSubPage _currentPage = _DeviceSubPage.list;
+  ExposedUserDeviceIdentifier? _selectedIdentifier;
+
+  void _goToDetail(ExposedUserDeviceIdentifier identifier) {
+    setState(() {
+      _currentPage = _DeviceSubPage.detail;
+      _selectedIdentifier = identifier;
+    });
+  }
+
+  void _goToAddType() {
+    setState(() {
+      _currentPage = _DeviceSubPage.addType;
+    });
+  }
+
+  void _goToAddWebsocket() {
+    setState(() {
+      _currentPage = _DeviceSubPage.addWebsocket;
+    });
+  }
+
+  void _goToAddSerial() {
+    setState(() {
+      _currentPage = _DeviceSubPage.addSerial;
+    });
+  }
+
+  void _goBack() {
+    setState(() {
+      _currentPage = _DeviceSubPage.list;
+      _selectedIdentifier = null;
+    });
+  }
+
+  void _goBackToAddType() {
+    setState(() {
+      _currentPage = _DeviceSubPage.addType;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (_currentPage) {
+      _DeviceSubPage.list => _DeviceListView(
+          onDeviceTap: _goToDetail,
+          onAddDeviceTap: _goToAddType,
+        ),
+      _DeviceSubPage.detail => DeviceDetailPage(
+          identifier: _selectedIdentifier!,
+          onBack: _goBack,
+        ),
+      _DeviceSubPage.addType => AddDeviceTypePage(
+          onBack: _goBack,
+          onWebsocket: _goToAddWebsocket,
+          onSerial: _goToAddSerial,
+        ),
+      _DeviceSubPage.addWebsocket => AddWebsocketDevicePage(
+          onBack: _goBackToAddType,
+        ),
+      _DeviceSubPage.addSerial => AddSerialDevicePage(
+          onBack: _goBackToAddType,
+        ),
+    };
+  }
+}
+
+class _DeviceListView extends StatelessWidget {
+  final void Function(ExposedUserDeviceIdentifier identifier) onDeviceTap;
+  final VoidCallback onAddDeviceTap;
+
+  const _DeviceListView({
+    required this.onDeviceTap,
+    required this.onAddDeviceTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,25 +118,24 @@ class DevicePage extends StatelessWidget {
                 final userDeviceConfigCubit =
                     BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 final connectedDevices = deviceBloc.devices;
-                final connectedIndexes = connectedDevices
-                    .map((d) => d.device!.index)
-                    .toSet();
+                final connectedIndexes =
+                    connectedDevices.map((d) => d.device!.index).toSet();
                 final anyAllowed = userDeviceConfigCubit.configs.values.any(
                   (def) => def.allow,
                 );
 
-                final sortedEntries = userDeviceConfigCubit.configs.entries
-                    .toList();
+                final sortedEntries =
+                    userDeviceConfigCubit.configs.entries.toList();
                 sortedEntries.sort((a, b) {
                   final aConnected = connectedIndexes.contains(a.value.index);
                   final bConnected = connectedIndexes.contains(b.value.index);
                   if (aConnected != bConnected) {
                     return aConnected ? -1 : 1;
                   }
-                  final aName = (a.value.displayName ?? a.value.name)
-                      .toLowerCase();
-                  final bName = (b.value.displayName ?? b.value.name)
-                      .toLowerCase();
+                  final aName =
+                      (a.value.displayName ?? a.value.name).toLowerCase();
+                  final bName =
+                      (b.value.displayName ?? b.value.name).toLowerCase();
                   return aName.compareTo(bName);
                 });
 
@@ -95,41 +179,18 @@ class DevicePage extends StatelessWidget {
                             if (index == sortedEntries.length) {
                               return _AddDeviceButton(
                                 enabled: !engineRunning,
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const AddDeviceTypePage(),
-                                    ),
-                                  );
-                                },
+                                onTap: onAddDeviceTap,
                               );
                             }
                             final entry = sortedEntries[index];
                             final isConnected = connectedIndexes.contains(
                               entry.value.index,
                             );
-                            DeviceCubit? deviceCubit;
-                            if (isConnected) {
-                              try {
-                                deviceCubit = connectedDevices.firstWhere(
-                                  (d) => d.device!.index == entry.value.index,
-                                );
-                              } catch (_) {}
-                            }
                             return DeviceListCard(
                               identifier: entry.key,
                               definition: entry.value,
                               isConnected: isConnected,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => DeviceDetailPage(
-                                      identifier: entry.key,
-                                      deviceCubit: deviceCubit,
-                                    ),
-                                  ),
-                                );
-                              },
+                              onTap: () => onDeviceTap(entry.key),
                             );
                           },
                         ),
