@@ -93,30 +93,32 @@ class SendLogsPage extends StatelessWidget {
                             if (!sendStarted) {
                               sendStarted = true;
                               Sentry.captureMessage(
-                                """Contact Info: $contactText
+                                    """Contact Info: $contactText
 
 Message:
 
 $messageText""",
-                                withScope: (scope) {
-                                  scope.setTag(
-                                    "ManualLogSubmit",
-                                    true.toString(),
-                                  );
-                                },
-                              ).then((value) {
-                                setState(() {
-                                  contentText = "Logs sent!";
-                                  sendFinished = true;
-                                });
-                              }).onError((error, stackTrace) {
-                                setState(() {
-                                  contentText =
-                                      "Error sending logs, please try again.";
-                                  sendFinished = true;
-                                  sendFailed = true;
-                                });
-                              });
+                                    withScope: (scope) {
+                                      scope.setTag(
+                                        "ManualLogSubmit",
+                                        true.toString(),
+                                      );
+                                    },
+                                  )
+                                  .then((value) {
+                                    setState(() {
+                                      contentText = "Logs sent!";
+                                      sendFinished = true;
+                                    });
+                                  })
+                                  .onError((error, stackTrace) {
+                                    setState(() {
+                                      contentText =
+                                          "Error sending logs, please try again.";
+                                      sendFinished = true;
+                                      sendFailed = true;
+                                    });
+                                  });
                             }
                             return AlertDialog(
                               content: SingleChildScrollView(
