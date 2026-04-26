@@ -4,6 +4,7 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import 'enums.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:uuid/uuid.dart';
 
@@ -87,7 +88,9 @@ abstract class ExposedServerDeviceFeature implements RustOpaqueInterface {
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureInput>>
-abstract class ExposedServerDeviceFeatureInput implements RustOpaqueInterface {}
+abstract class ExposedServerDeviceFeatureInput implements RustOpaqueInterface {
+  List<InputType> get inputTypes;
+}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutput>>
 abstract class ExposedServerDeviceFeatureOutput implements RustOpaqueInterface {
