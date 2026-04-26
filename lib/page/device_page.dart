@@ -4,6 +4,7 @@ import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/page/add_device_type_page.dart';
 import 'package:intiface_central/page/device_detail_page.dart';
 import 'package:intiface_central/widget/device_list_card_widget.dart';
 
@@ -95,7 +96,11 @@ class DevicePage extends StatelessWidget {
                               return _AddDeviceButton(
                                 enabled: !engineRunning,
                                 onTap: () {
-                                  // TODO: Phase 5 — Navigator.push AddDeviceTypePage
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const AddDeviceTypePage(),
+                                    ),
+                                  );
                                 },
                               );
                             }
