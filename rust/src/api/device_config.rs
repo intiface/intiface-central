@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use buttplug_core::message::OutputType;
+use buttplug_core::message::{InputType, OutputType};
 use buttplug_core::util::range::RangeInclusive;
-use buttplug_core::util::small_vec_enum_map::SmallVecEnumMap;
+use buttplug_core::util::small_vec_enum_map::{SmallVecEnumMap, VariantKey};
 use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputHwPositionWithDurationProperties, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
@@ -320,6 +320,13 @@ impl ExposedServerDeviceFeatureOutput {
 pub struct ExposedServerDeviceFeatureInput {
   #[ignore]
   input: SmallVecEnumMap<ServerDeviceFeatureInput, 1>
+}
+
+impl ExposedServerDeviceFeatureInput {
+  #[frb(sync, getter)]
+  pub fn input_types(&self) -> Vec<InputType> {
+    self.input.iter().map(|i| i.variant_key()).collect()
+  }
 }
 
 #[frb(unignore, opaque, ignore_all)]
