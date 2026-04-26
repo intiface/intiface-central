@@ -1,6 +1,8 @@
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_multi_slider/flutter_multi_slider.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_input_cubit.dart';
@@ -9,6 +11,8 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
+import 'package:intiface_central/widget/expandable_card_widget.dart';
+import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceDetailPage extends StatelessWidget {
@@ -68,7 +72,11 @@ class DeviceDetailPage extends StatelessWidget {
                     if (deviceCubit != null &&
                         deviceCubit!.state is DeviceStateOnline)
                       _DeviceControlsSection(deviceCubit: deviceCubit!),
-                    // TODO: Phase 4 — Feature output config section
+                    _FeatureConfigSection(
+                      identifier: identifier,
+                      definition: config,
+                      engineRunning: engineRunning,
+                    ),
                     _ForgetDeviceButton(
                       enabled: !engineRunning,
                       onPressed: () async {
@@ -453,6 +461,299 @@ class _DeviceControlsSection extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _FeatureConfigSection extends StatelessWidget {
+  final ExposedUserDeviceIdentifier identifier;
+  final ExposedServerDeviceDefinition definition;
+  final bool engineRunning;
+
+  const _FeatureConfigSection({
+    required this.identifier,
+    required this.definition,
+    required this.engineRunning,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final features = definition.features;
+    if (features.isEmpty) return const SizedBox.shrink();
+
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8, top: 8, bottom: 4),
+            child: Text(
+              'Feature Configuration',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          for (var feature in features)
+            _FeatureCard(
+              feature: feature,
+              identifier: identifier,
+              definition: definition,
+              engineRunning: engineRunning,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeatureCard extends StatelessWidget {
+  final ExposedServerDeviceFeature feature;
+  final ExposedUserDeviceIdentifier identifier;
+  final ExposedServerDeviceDefinition definition;
+  final bool engineRunning;
+
+  const _FeatureCard({
+    required this.feature,
+    required this.identifier,
+    required this.definition,
+    required this.engineRunning,
+  });
+
+  void _updateOutputProps(
+    BuildContext context,
+    ExposedServerDeviceFeatureOutputProperties props,
+  ) {
+    definition.updateFeatureOutputProperties(props: props);
+    final cubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+    cubit.updateDefinition(identifier, definition);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> outputWidgets = [];
+    final output = feature.output;
+
+    if (output != null) {
+      final valueTypes = {
+        'Vibrate': output.vibrate,
+        'Rotate': output.rotate,
+        'Oscillate': output.oscillate,
+        'Constrict': output.constrict,
+        'Temperature': output.temperature,
+        'LED': output.led,
+        'Spray': output.spray,
+      };
+
+      for (var entry in valueTypes.entries) {
+        if (entry.value != null) {
+          _buildValueSlider(context, outputWidgets, entry.key, entry.value!);
+        }
+      }
+
+      if (output.position != null) {
+        _buildPositionSlider(
+          context,
+          outputWidgets,
+          'Position',
+          output.position!,
+        );
+      }
+
+      if (output.positionWithDuration != null) {
+        _buildPositionWithDurationSlider(
+          context,
+          outputWidgets,
+          'PositionWithDuration',
+          output.positionWithDuration!,
+        );
+      }
+    }
+
+    if (feature.input != null) {
+      outputWidgets.add(
+        const ListTile(
+          leading: Icon(Icons.sensors),
+          title: Text('Sensor Input'),
+          subtitle: Text('Available when connected'),
+        ),
+      );
+    }
+
+    return ExpandableCardWidget(
+      expansionName: 'feature-config-${feature.id}',
+      title: Text(
+        'Feature: ${feature.description}',
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        child: Column(children: outputWidgets),
+      ),
+    );
+  }
+
+  void _buildValueSlider(
+    BuildContext context,
+    List<Widget> widgets,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+  ) {
+    if (props.value == null) {
+      logWarning('Null prop value for $type, cannot render.');
+      return;
+    }
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
+    widgets.addAll([
+      ListTile(
+        subtitle: Text(
+          '$type - Step Range - '
+          'Min: ${props.value!.base.$1} Max: ${props.value!.base.$2} '
+          'Step Limit - Min: ${props.value!.user.$1} Max: ${props.value!.user.$2}',
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.value!.base.$2.toDouble(),
+          values: [
+            props.value!.user.$1.floorToDouble(),
+            props.value!.user.$2.floorToDouble(),
+          ],
+          divisions: props.value!.base.$2,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  if (value[0].toInt() == value[1].toInt()) return;
+                  var v = props.value!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.value = v;
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () => _updateOutputProps(context, props),
+                  );
+                },
+        ),
+      ),
+    ]);
+  }
+
+  void _buildPositionSlider(
+    BuildContext context,
+    List<Widget> widgets,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+  ) {
+    if (props.position == null) {
+      logWarning('Null prop position for $type, cannot render.');
+      return;
+    }
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
+    widgets.addAll([
+      ListTile(
+        subtitle: Text(
+          '$type - Step Range - '
+          'Min: ${props.position!.base.$1} Max: ${props.position!.base.$2} '
+          'Step Limit - Min: ${props.position!.user.$1} Max: ${props.position!.user.$2}',
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.position!.base.$2.toDouble(),
+          values: [
+            props.position!.user.$1.floorToDouble(),
+            props.position!.user.$2.floorToDouble(),
+          ],
+          divisions: props.position!.base.$2,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  if (value[0].toInt() == value[1].toInt()) return;
+                  var v = props.position!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.position = v;
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () => _updateOutputProps(context, props),
+                  );
+                },
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text('Reverse'),
+          value: props.reversePosition,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  props.reversePosition = value ?? false;
+                  _updateOutputProps(context, props);
+                },
+        ),
+      ),
+    ]);
+  }
+
+  void _buildPositionWithDurationSlider(
+    BuildContext context,
+    List<Widget> widgets,
+    String type,
+    ExposedServerDeviceFeatureOutputProperties props,
+  ) {
+    if (props.value == null || props.position == null) {
+      logWarning('Null prop value/position for $type, cannot render.');
+      return;
+    }
+    final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';
+    widgets.addAll([
+      ListTile(
+        subtitle: Text(
+          '$type - Step Range - '
+          'Min: ${props.value!.base.$1} Max: ${props.value!.base.$2} '
+          'Step Limit - Min: ${props.value!.user.$1} Max: ${props.value!.user.$2}',
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => MultiSlider(
+          max: props.value!.base.$2.toDouble(),
+          values: [
+            props.value!.user.$1.floorToDouble(),
+            props.value!.user.$2.floorToDouble(),
+          ],
+          divisions: props.value!.base.$2,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  if (value[0].toInt() == value[1].toInt()) return;
+                  var v = props.position!;
+                  v.user = (value[0].floor(), value[1].ceil());
+                  props.position = v;
+                  EasyDebounce.debounce(
+                    debouncerId,
+                    const Duration(milliseconds: 30),
+                    () => _updateOutputProps(context, props),
+                  );
+                },
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text('Reverse'),
+          value: props.reversePosition,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  props.reversePosition = value ?? false;
+                  _updateOutputProps(context, props);
+                },
+        ),
+      ),
+    ]);
   }
 }
 
