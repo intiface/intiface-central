@@ -646,7 +646,7 @@ class _FeatureCard extends StatelessWidget {
     return ExpandableCardWidget(
       expansionName: 'feature-config-${feature.id}',
       title: Text(
-        'Feature: ${feature.description}',
+        'Feature: ${_featureName(feature)}',
         style: Theme.of(
           context,
         ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -656,6 +656,40 @@ class _FeatureCard extends StatelessWidget {
         child: Column(children: outputWidgets),
       ),
     );
+  }
+
+  String _featureName(ExposedServerDeviceFeature feature) {
+    if (feature.description.isNotEmpty) return feature.description;
+
+    final output = feature.output;
+    if (output != null) {
+      if (output.vibrate != null) return 'Vibrate';
+      if (output.rotate != null) return 'Rotate';
+      if (output.oscillate != null) return 'Oscillate';
+      if (output.constrict != null) return 'Constrict';
+      if (output.temperature != null) return 'Temperature';
+      if (output.led != null) return 'LED';
+      if (output.spray != null) return 'Spray';
+      if (output.position != null) return 'Position';
+      if (output.positionWithDuration != null) return 'Position With Duration';
+    }
+
+    final input = feature.input;
+    if (input != null) {
+      final types = input.inputTypes;
+      if (types.isNotEmpty) {
+        return switch (types.first) {
+          InputType.battery => 'Battery',
+          InputType.rssi => 'RSSI',
+          InputType.button => 'Button',
+          InputType.pressure => 'Pressure',
+          InputType.depth => 'Depth',
+          InputType.position => 'Position',
+        };
+      }
+    }
+
+    return 'Unknown';
   }
 
   void _buildValueSlider(
@@ -678,6 +712,18 @@ class _FeatureCard extends StatelessWidget {
         ),
       ),
       BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text('Disabled'),
+          value: props.disabled,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  props.disabled = value ?? false;
+                  _updateOutputProps(context, props);
+                },
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
         builder: (context, state) => MultiSlider(
           max: props.value!.base.$2.toDouble(),
           values: [
@@ -685,7 +731,7 @@ class _FeatureCard extends StatelessWidget {
             props.value!.user.$2.floorToDouble(),
           ],
           divisions: props.value!.base.$2,
-          onChanged: engineRunning
+          onChanged: (engineRunning || props.disabled)
               ? null
               : (value) {
                   if (value[0].toInt() == value[1].toInt()) return;
@@ -723,6 +769,18 @@ class _FeatureCard extends StatelessWidget {
         ),
       ),
       BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text('Disabled'),
+          value: props.disabled,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  props.disabled = value ?? false;
+                  _updateOutputProps(context, props);
+                },
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
         builder: (context, state) => MultiSlider(
           max: props.position!.base.$2.toDouble(),
           values: [
@@ -730,7 +788,7 @@ class _FeatureCard extends StatelessWidget {
             props.position!.user.$2.floorToDouble(),
           ],
           divisions: props.position!.base.$2,
-          onChanged: engineRunning
+          onChanged: (engineRunning || props.disabled)
               ? null
               : (value) {
                   if (value[0].toInt() == value[1].toInt()) return;
@@ -749,7 +807,7 @@ class _FeatureCard extends StatelessWidget {
         builder: (context, state) => CheckboxListTile(
           title: const Text('Reverse'),
           value: props.reversePosition,
-          onChanged: engineRunning
+          onChanged: (engineRunning || props.disabled)
               ? null
               : (value) {
                   props.reversePosition = value ?? false;
@@ -780,6 +838,18 @@ class _FeatureCard extends StatelessWidget {
         ),
       ),
       BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+        builder: (context, state) => CheckboxListTile(
+          title: const Text('Disabled'),
+          value: props.disabled,
+          onChanged: engineRunning
+              ? null
+              : (value) {
+                  props.disabled = value ?? false;
+                  _updateOutputProps(context, props);
+                },
+        ),
+      ),
+      BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
         builder: (context, state) => MultiSlider(
           max: props.position!.base.$2.toDouble(),
           values: [
@@ -787,7 +857,7 @@ class _FeatureCard extends StatelessWidget {
             props.position!.user.$2.floorToDouble(),
           ],
           divisions: props.position!.base.$2,
-          onChanged: engineRunning
+          onChanged: (engineRunning || props.disabled)
               ? null
               : (value) {
                   if (value[0].toInt() == value[1].toInt()) return;
@@ -806,7 +876,7 @@ class _FeatureCard extends StatelessWidget {
         builder: (context, state) => CheckboxListTile(
           title: const Text('Reverse'),
           value: props.reversePosition,
-          onChanged: engineRunning
+          onChanged: (engineRunning || props.disabled)
               ? null
               : (value) {
                   props.reversePosition = value ?? false;
