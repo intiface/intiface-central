@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/page/device_detail_page.dart';
 import 'package:intiface_central/widget/device_list_card_widget.dart';
 
 class DevicePage extends StatelessWidget {
@@ -101,12 +103,27 @@ class DevicePage extends StatelessWidget {
                             final isConnected = connectedIndexes.contains(
                               entry.value.index,
                             );
+                            DeviceCubit? deviceCubit;
+                            if (isConnected) {
+                              try {
+                                deviceCubit = connectedDevices.firstWhere(
+                                  (d) => d.device!.index == entry.value.index,
+                                );
+                              } catch (_) {}
+                            }
                             return DeviceListCard(
                               identifier: entry.key,
                               definition: entry.value,
                               isConnected: isConnected,
                               onTap: () {
-                                // TODO: Phase 2 — Navigator.push DeviceDetailPage
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => DeviceDetailPage(
+                                      identifier: entry.key,
+                                      deviceCubit: deviceCubit,
+                                    ),
+                                  ),
+                                );
                               },
                             );
                           },
