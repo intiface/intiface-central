@@ -1,45 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
-import 'package:intiface_central/widget/connected_devices_widget.dart';
-import 'package:intiface_central/widget/disconnected_devices_widget.dart';
-import 'package:intiface_central/widget/advanced_device_config_widget.dart';
-import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
+import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/widget/device_list_card_widget.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
-
-  static Widget _sectionHeader(
-    BuildContext context,
-    String title, {
-    bool addTopSpacing = false,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: EdgeInsets.only(
-        top: addTopSpacing ? 24 : 8,
-        bottom: 8,
-        left: 4,
-        right: 4,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (addTopSpacing) Divider(color: colorScheme.outlineVariant),
-          if (addTopSpacing) const SizedBox(height: 8),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,26 +17,8 @@ class DevicePage extends StatelessWidget {
           current is ClientDisconnectedState ||
           current is EngineStoppedState,
       builder: (context, engineState) {
-        var deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
-        var guiSettingsCubit = BlocProvider.of<GuiSettingsCubit>(context);
-
-        // When a device connects, force its connected card expanded.
-        // When a device disconnects, force its disconnected card collapsed.
-        if (engineState is DeviceConnectedState) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            guiSettingsCubit.setExpansionValue(
-              "device-connected-${engineState.index}",
-              true,
-            );
-          });
-        } else if (engineState is DeviceDisconnectedState) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            guiSettingsCubit.setExpansionValue(
-              "device-settings-${engineState.index}",
-              false,
-            );
-          });
-        }
+        final deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
+        final engineRunning = engineState is! EngineStoppedState;
 
         return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
           builder: (context, state) {
@@ -78,46 +27,40 @@ class DevicePage extends StatelessWidget {
               UserDeviceConfigurationState
             >(
               builder: (context, userConfigState) {
-                List<int> connectedIndexes = [];
-                List<Widget> deviceWidgets = [];
-
-                if (engineState is! EngineStoppedState) {
-                  deviceWidgets.add(
-                    _sectionHeader(context, "Connected Devices"),
-                  );
-                  deviceWidgets.add(
-                    ConnectedDevicesWidget(connectedIndexes: connectedIndexes),
-                  );
-                }
-
-                deviceWidgets.add(
-                  _sectionHeader(
-                    context,
-                    "Disconnected Devices",
-                    addTopSpacing: engineState is! EngineStoppedState,
-                  ),
-                );
-                deviceWidgets.add(
-                  DisconnectedDevicesWidget(connectedIndexes: connectedIndexes),
+                final userDeviceConfigCubit =
+                    BlocProvider.of<UserDeviceConfigurationCubit>(context);
+                final connectedDevices = deviceBloc.devices;
+                final connectedIndexes = connectedDevices
+                    .map((d) => d.device!.index)
+                    .toSet();
+                final anyAllowed = userDeviceConfigCubit.configs.values.any(
+                  (def) => def.allow,
                 );
 
-                deviceWidgets.add(
-                  _sectionHeader(
-                    context,
-                    "Advanced Device Config",
-                    addTopSpacing: true,
-                  ),
-                );
-                deviceWidgets.add(const AdvancedDeviceConfigWidget());
+                final sortedEntries = userDeviceConfigCubit.configs.entries
+                    .toList();
+                sortedEntries.sort((a, b) {
+                  final aConnected = connectedIndexes.contains(a.value.index);
+                  final bConnected = connectedIndexes.contains(b.value.index);
+                  if (aConnected != bConnected) {
+                    return aConnected ? -1 : 1;
+                  }
+                  final aName = (a.value.displayName ?? a.value.name)
+                      .toLowerCase();
+                  final bName = (b.value.displayName ?? b.value.name)
+                      .toLowerCase();
+                  return aName.compareTo(bName);
+                });
 
                 return Expanded(
                   child: Column(
                     children: [
+                      if (anyAllowed) _AllowModeBanner(),
                       Row(
                         children: [
                           !deviceBloc.scanning
                               ? TextButton(
-                                  onPressed: engineState is! EngineStoppedState
+                                  onPressed: engineRunning
                                       ? () {
                                           deviceBloc.add(
                                             DeviceManagerStartScanningEvent(),
@@ -127,7 +70,7 @@ class DevicePage extends StatelessWidget {
                                   child: const Text("Start Scanning"),
                                 )
                               : TextButton(
-                                  onPressed: engineState is! EngineStoppedState
+                                  onPressed: engineRunning
                                       ? () {
                                           deviceBloc.add(
                                             DeviceManagerStopScanningEvent(),
@@ -139,12 +82,34 @@ class DevicePage extends StatelessWidget {
                         ],
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: deviceWidgets,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
+                          itemCount: sortedEntries.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == sortedEntries.length) {
+                              return _AddDeviceButton(
+                                enabled: !engineRunning,
+                                onTap: () {
+                                  // TODO: Phase 5 — Navigator.push AddDeviceTypePage
+                                },
+                              );
+                            }
+                            final entry = sortedEntries[index];
+                            final isConnected = connectedIndexes.contains(
+                              entry.value.index,
+                            );
+                            return DeviceListCard(
+                              identifier: entry.key,
+                              definition: entry.value,
+                              isConnected: isConnected,
+                              onTap: () {
+                                // TODO: Phase 2 — Navigator.push DeviceDetailPage
+                              },
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -155,6 +120,59 @@ class DevicePage extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class _AllowModeBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.green.withValues(alpha: 0.15),
+      child: Row(
+        children: [
+          Icon(Icons.filter_alt, size: 18, color: Colors.green[700]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Allow-mode active: only devices marked "Allow" will connect',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.green[700]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddDeviceButton extends StatelessWidget {
+  final bool enabled;
+  final VoidCallback onTap;
+
+  const _AddDeviceButton({required this.enabled, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: OutlinedButton.icon(
+        onPressed: enabled ? onTap : null,
+        icon: const Icon(Icons.add),
+        label: const Text('Add New Device'),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 48),
+          side: BorderSide(
+            color: enabled
+                ? colorScheme.primary
+                : colorScheme.onSurface.withValues(alpha: 0.12),
+          ),
+        ),
+      ),
     );
   }
 }
