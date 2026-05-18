@@ -3174,8 +3174,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EngineOptionsExternal dco_decode_engine_options_external(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 27)
-      throw Exception('unexpected arr length: expect 27 but see ${arr.length}');
+    if (arr.length != 28)
+      throw Exception('unexpected arr length: expect 28 but see ${arr.length}');
     return EngineOptionsExternal(
       deviceConfigJson: dco_decode_opt_String(arr[0]),
       userDeviceConfigJson: dco_decode_opt_String(arr[1]),
@@ -3204,6 +3204,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       repeaterLocalPort: dco_decode_opt_box_autoadd_u_16(arr[24]),
       repeaterRemoteAddress: dco_decode_opt_String(arr[25]),
       restApiPort: dco_decode_opt_box_autoadd_u_16(arr[26]),
+      emitOutputObservations: dco_decode_bool(arr[27]),
     );
   }
 
@@ -3943,6 +3944,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_repeaterLocalPort = sse_decode_opt_box_autoadd_u_16(deserializer);
     var var_repeaterRemoteAddress = sse_decode_opt_String(deserializer);
     var var_restApiPort = sse_decode_opt_box_autoadd_u_16(deserializer);
+    var var_emitOutputObservations = sse_decode_bool(deserializer);
     return EngineOptionsExternal(
       deviceConfigJson: var_deviceConfigJson,
       userDeviceConfigJson: var_userDeviceConfigJson,
@@ -3971,6 +3973,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       repeaterLocalPort: var_repeaterLocalPort,
       repeaterRemoteAddress: var_repeaterRemoteAddress,
       restApiPort: var_restApiPort,
+      emitOutputObservations: var_emitOutputObservations,
     );
   }
 
@@ -4842,6 +4845,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_u_16(self.repeaterLocalPort, serializer);
     sse_encode_opt_String(self.repeaterRemoteAddress, serializer);
     sse_encode_opt_box_autoadd_u_16(self.restApiPort, serializer);
+    sse_encode_bool(self.emitOutputObservations, serializer);
   }
 
   @protected

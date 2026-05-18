@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1340759120;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 724012384;
 
 // Section: executor
 
@@ -914,6 +914,58 @@ let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decod
 let api_props_guard = api_props_guard.unwrap();
  let output_ok = Result::<_,()>::Ok({ crate::api::device_config::ExposedServerDeviceDefinition::update_feature_output_properties(&mut *api_that_guard, &*api_props_guard); })?;   Ok(output_ok)
                 })()) })
+}
+fn wire__crate__api__device_config__ExposedServerDeviceFeatureInput_input_types_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "ExposedServerDeviceFeatureInput_input_types",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<
+                    ExposedServerDeviceFeatureInput,
+                >,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = Result::<_, ()>::Ok(
+                    crate::api::device_config::ExposedServerDeviceFeatureInput::input_types(
+                        &*api_that_guard,
+                    ),
+                )?;
+                Ok(output_ok)
+            })())
+        },
+    )
 }
 fn wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2921,6 +2973,7 @@ const _: fn() = || {
     let _: Option<u16> = EngineOptionsExternal.repeater_local_port;
     let _: Option<String> = EngineOptionsExternal.repeater_remote_address;
     let _: Option<u16> = EngineOptionsExternal.rest_api_port;
+    let _: bool = EngineOptionsExternal.emit_output_observations;
 };
 
 // Section: related_funcs
@@ -3195,6 +3248,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
         let mut var_repeaterLocalPort = <Option<u16>>::sse_decode(deserializer);
         let mut var_repeaterRemoteAddress = <Option<String>>::sse_decode(deserializer);
         let mut var_restApiPort = <Option<u16>>::sse_decode(deserializer);
+        let mut var_emitOutputObservations = <bool>::sse_decode(deserializer);
         return crate::api::runtime::EngineOptionsExternal {
             device_config_json: var_deviceConfigJson,
             user_device_config_json: var_userDeviceConfigJson,
@@ -3223,6 +3277,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
             repeater_local_port: var_repeaterLocalPort,
             repeater_remote_address: var_repeaterRemoteAddress,
             rest_api_port: var_restApiPort,
+            emit_output_observations: var_emitOutputObservations,
         };
     }
 }
@@ -3308,6 +3363,18 @@ impl SseDecode for Vec<String> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::enums::InputType> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::enums::InputType>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -3560,86 +3627,86 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        46 => wire__crate__api__specifiers__add_serial_specifier_impl(
+        47 => wire__crate__api__specifiers__add_serial_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        47 => wire__crate__api__specifiers__add_websocket_specifier_impl(
+        48 => wire__crate__api__specifiers__add_websocket_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        48 => wire__crate__api__util__crash_reporting_impl(port, ptr, rust_vec_len, data_len),
-        49 => wire__crate__api__device_config__get_device_definitions_impl(
+        49 => wire__crate__api__util__crash_reporting_impl(port, ptr, rust_vec_len, data_len),
+        50 => wire__crate__api__device_config__get_device_definitions_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        50 => {
+        51 => {
             wire__crate__api__specifiers__get_protocol_names_impl(port, ptr, rust_vec_len, data_len)
         }
-        51 => wire__crate__api__device_config__get_user_config_str_impl(
+        52 => wire__crate__api__device_config__get_user_config_str_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        52 => wire__crate__api__specifiers__get_user_serial_communication_specifiers_impl(
+        53 => wire__crate__api__specifiers__get_user_serial_communication_specifiers_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        53 => wire__crate__api__specifiers__get_user_websocket_communication_specifiers_impl(
+        54 => wire__crate__api__specifiers__get_user_websocket_communication_specifiers_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        54 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
-        55 => wire__crate__api__specifiers__remove_serial_specifier_impl(
+        55 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
+        56 => wire__crate__api__specifiers__remove_serial_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        56 => wire__crate__api__device_config__remove_user_config_impl(
+        57 => wire__crate__api__device_config__remove_user_config_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        57 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
+        58 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        58 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
-        59 => {
+        59 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
+        60 => {
             wire__crate__api__runtime__rust_runtime_started_impl(port, ptr, rust_vec_len, data_len)
         }
-        60 => wire__crate__api__runtime__send_backend_server_message_impl(
+        61 => wire__crate__api__runtime__send_backend_server_message_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        61 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-        62 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+        62 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        63 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
-        64 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
-        65 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
-        66 => wire__crate__api__device_config__update_user_config_impl(
+        64 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
+        66 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
+        67 => wire__crate__api__device_config__update_user_config_impl(
             port,
             ptr,
             rust_vec_len,
@@ -3674,34 +3741,35 @@ fn pde_ffi_dispatcher_sync_impl(
 15 => wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms_impl(ptr, rust_vec_len, data_len),
 16 => wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_impl(ptr, rust_vec_len, data_len),
 17 => wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties_impl(ptr, rust_vec_len, data_len),
-18 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled_impl(ptr, rust_vec_len, data_len),
-19 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration_impl(ptr, rust_vec_len, data_len),
-20 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position_impl(ptr, rust_vec_len, data_len),
-21 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position_impl(ptr, rust_vec_len, data_len),
-22 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled_impl(ptr, rust_vec_len, data_len),
-23 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration_impl(ptr, rust_vec_len, data_len),
-24 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position_impl(ptr, rust_vec_len, data_len),
-25 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position_impl(ptr, rust_vec_len, data_len),
-26 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value_impl(ptr, rust_vec_len, data_len),
-27 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value_impl(ptr, rust_vec_len, data_len),
-28 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict_impl(ptr, rust_vec_len, data_len),
-29 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led_impl(ptr, rust_vec_len, data_len),
-30 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate_impl(ptr, rust_vec_len, data_len),
-31 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_impl(ptr, rust_vec_len, data_len),
-32 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration_impl(ptr, rust_vec_len, data_len),
-33 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate_impl(ptr, rust_vec_len, data_len),
-34 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray_impl(ptr, rust_vec_len, data_len),
-35 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature_impl(ptr, rust_vec_len, data_len),
-36 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate_impl(ptr, rust_vec_len, data_len),
-37 => wire__crate__api__device_config__ExposedServerDeviceFeature_description_impl(ptr, rust_vec_len, data_len),
-38 => wire__crate__api__device_config__ExposedServerDeviceFeature_id_impl(ptr, rust_vec_len, data_len),
-39 => wire__crate__api__device_config__ExposedServerDeviceFeature_input_impl(ptr, rust_vec_len, data_len),
-40 => wire__crate__api__device_config__ExposedServerDeviceFeature_output_impl(ptr, rust_vec_len, data_len),
-41 => wire__crate__api__device_config__ExposedServerDeviceFeature_set_output_impl(ptr, rust_vec_len, data_len),
-42 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_address_impl(ptr, rust_vec_len, data_len),
-43 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier_impl(ptr, rust_vec_len, data_len),
-44 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_new_impl(ptr, rust_vec_len, data_len),
-45 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol_impl(ptr, rust_vec_len, data_len),
+18 => wire__crate__api__device_config__ExposedServerDeviceFeatureInput_input_types_impl(ptr, rust_vec_len, data_len),
+19 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled_impl(ptr, rust_vec_len, data_len),
+20 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration_impl(ptr, rust_vec_len, data_len),
+21 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position_impl(ptr, rust_vec_len, data_len),
+22 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_reverse_position_impl(ptr, rust_vec_len, data_len),
+23 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_disabled_impl(ptr, rust_vec_len, data_len),
+24 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_duration_impl(ptr, rust_vec_len, data_len),
+25 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_position_impl(ptr, rust_vec_len, data_len),
+26 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_reverse_position_impl(ptr, rust_vec_len, data_len),
+27 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_set_value_impl(ptr, rust_vec_len, data_len),
+28 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_value_impl(ptr, rust_vec_len, data_len),
+29 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_constrict_impl(ptr, rust_vec_len, data_len),
+30 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_led_impl(ptr, rust_vec_len, data_len),
+31 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_oscillate_impl(ptr, rust_vec_len, data_len),
+32 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_impl(ptr, rust_vec_len, data_len),
+33 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_position_with_duration_impl(ptr, rust_vec_len, data_len),
+34 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_rotate_impl(ptr, rust_vec_len, data_len),
+35 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_spray_impl(ptr, rust_vec_len, data_len),
+36 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_temperature_impl(ptr, rust_vec_len, data_len),
+37 => wire__crate__api__device_config__ExposedServerDeviceFeatureOutput_vibrate_impl(ptr, rust_vec_len, data_len),
+38 => wire__crate__api__device_config__ExposedServerDeviceFeature_description_impl(ptr, rust_vec_len, data_len),
+39 => wire__crate__api__device_config__ExposedServerDeviceFeature_id_impl(ptr, rust_vec_len, data_len),
+40 => wire__crate__api__device_config__ExposedServerDeviceFeature_input_impl(ptr, rust_vec_len, data_len),
+41 => wire__crate__api__device_config__ExposedServerDeviceFeature_output_impl(ptr, rust_vec_len, data_len),
+42 => wire__crate__api__device_config__ExposedServerDeviceFeature_set_output_impl(ptr, rust_vec_len, data_len),
+43 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_address_impl(ptr, rust_vec_len, data_len),
+44 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_identifier_impl(ptr, rust_vec_len, data_len),
+45 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_new_impl(ptr, rust_vec_len, data_len),
+46 => wire__crate__api__device_config__ExposedUserDeviceIdentifier_protocol_impl(ptr, rust_vec_len, data_len),
                         _ => unreachable!(),
                     }
 }
@@ -3894,6 +3962,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
             self.0.repeater_local_port.into_into_dart().into_dart(),
             self.0.repeater_remote_address.into_into_dart().into_dart(),
             self.0.rest_api_port.into_into_dart().into_dart(),
+            self.0.emit_output_observations.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4286,6 +4355,7 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
         <Option<u16>>::sse_encode(self.repeater_local_port, serializer);
         <Option<String>>::sse_encode(self.repeater_remote_address, serializer);
         <Option<u16>>::sse_encode(self.rest_api_port, serializer);
+        <bool>::sse_encode(self.emit_output_observations, serializer);
     }
 }
 
@@ -4367,6 +4437,16 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::enums::InputType> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::enums::InputType>::sse_encode(item, serializer);
         }
     }
 }
