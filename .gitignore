@@ -143,3 +143,6 @@ app.*.symbols
 **/.cxx
 
 target
+
+# Git worktrees
+.worktrees/
