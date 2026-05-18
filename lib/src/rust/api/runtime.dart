@@ -56,6 +56,7 @@ class EngineOptionsExternal {
   final int? repeaterLocalPort;
   final String? repeaterRemoteAddress;
   final int? restApiPort;
+  final bool emitOutputObservations;
 
   const EngineOptionsExternal({
     this.deviceConfigJson,
@@ -85,6 +86,7 @@ class EngineOptionsExternal {
     this.repeaterLocalPort,
     this.repeaterRemoteAddress,
     this.restApiPort,
+    required this.emitOutputObservations,
   });
 
   @override
@@ -115,7 +117,8 @@ class EngineOptionsExternal {
       repeaterMode.hashCode ^
       repeaterLocalPort.hashCode ^
       repeaterRemoteAddress.hashCode ^
-      restApiPort.hashCode;
+      restApiPort.hashCode ^
+      emitOutputObservations.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -148,5 +151,6 @@ class EngineOptionsExternal {
           repeaterMode == other.repeaterMode &&
           repeaterLocalPort == other.repeaterLocalPort &&
           repeaterRemoteAddress == other.repeaterRemoteAddress &&
-          restApiPort == other.restApiPort;
+          restApiPort == other.restApiPort &&
+          emitOutputObservations == other.emitOutputObservations;
 }
