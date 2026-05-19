@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
+import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/widget/compact_observation_widget.dart';
 
@@ -134,8 +135,15 @@ class DeviceListCard extends StatelessWidget {
                         deviceCubit != null &&
                         deviceCubit!.observations.isNotEmpty) ...[
                       const SizedBox(height: 4),
-                      CompactObservationWidget(
-                          observations: deviceCubit!.observations),
+                      for (var i = 0;
+                          i < deviceCubit!.observations.length;
+                          i++)
+                        CompactObservationWidget(
+                          label: i < deviceCubit!.outputs.length
+                              ? _shortLabel(deviceCubit!.outputs[i])
+                              : '',
+                          observation: deviceCubit!.observations[i],
+                        ),
                     ],
                   ],
                 ),
@@ -146,6 +154,21 @@ class DeviceListCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static String _shortLabel(DeviceOutputCubit output) {
+    return switch (output.type.name) {
+      'vibrate' => 'Vib',
+      'rotate' => 'Rot',
+      'oscillate' => 'Osc',
+      'constrict' => 'Con',
+      'temperature' => 'Tmp',
+      'led' => 'LED',
+      'spray' => 'Spr',
+      'position' => 'Pos',
+      'hwPositionWithDuration' => 'Lin',
+      _ => output.type.name.substring(0, 3),
+    };
   }
 
   Widget _buildBadge(BuildContext context, String label, Color color) {
