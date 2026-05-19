@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/bloc/device/device_input_cubit.dart';
+import 'package:intiface_central/bloc/device/observation_cubit.dart';
+import 'package:intiface_central/bloc/engine/engine_messages.dart';
 
 class DeviceState {}
 
@@ -14,10 +16,12 @@ class DeviceStateOffline extends DeviceState {}
 class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? _clientDevice;
   List<DeviceOutputCubit> _outputs = [];
+  List<ObservationCubit> _observations = [];
   final List<DeviceInputBloc> _inputs = [];
-  // DeviceConfiguration _deviceConfiguration;
+  final Stream<DeviceOutputObservation> _observationStream;
 
-  DeviceCubit(this._clientDevice) : super(DeviceStateInitial()) {
+  DeviceCubit(this._clientDevice, this._observationStream)
+      : super(DeviceStateInitial()) {
     setOnline(_clientDevice!);
   }
 
@@ -31,6 +35,12 @@ class DeviceCubit extends Cubit<DeviceState> {
           } else {
             _outputs.add(ValueOutputCubit(feature, output.key));
           }
+          _observations.add(ObservationCubit(
+            deviceIndex: _clientDevice!.index,
+            featureIndex: feature.feature.featureIndex,
+            maxSteps: output.value.value![1],
+            observationStream: _observationStream,
+          ));
         }
       }
       if (feature.feature.input != null) {
@@ -51,6 +61,10 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   void setOffline() {
     _clientDevice = null;
+    for (var obs in _observations) {
+      obs.close();
+    }
+    _observations = [];
     _outputs = [];
     emit(DeviceStateOffline());
   }
@@ -58,4 +72,5 @@ class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? get device => _clientDevice;
   List<DeviceOutputCubit> get outputs => _outputs;
   List<DeviceInputBloc> get inputs => _inputs;
+  List<ObservationCubit> get observations => _observations;
 }

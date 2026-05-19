@@ -218,6 +218,21 @@ class EngineProviderLog {
   EngineProviderLog();
 }
 
+@JsonSerializable(fieldRename: FieldRename.snake)
+class DeviceOutputObservation {
+  int deviceIndex = 0;
+  int featureIndex = 0;
+  String outputType = "";
+  double value = 0.0;
+
+  DeviceOutputObservation();
+
+  factory DeviceOutputObservation.fromJson(Map<String, dynamic> json) =>
+      _$DeviceOutputObservationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DeviceOutputObservationToJson(this);
+}
+
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class EngineMessage {
   EngineVersion? messageVersion;
@@ -232,6 +247,7 @@ class EngineMessage {
   DeviceDisconnected? deviceDisconnected;
   ClientRejected? clientRejected;
   EngineProviderLog? engineProviderLog;
+  DeviceOutputObservation? deviceOutputObservation;
 
   factory EngineMessage.fromJson(Map<String, dynamic> json) =>
       _$EngineMessageFromJson(json);

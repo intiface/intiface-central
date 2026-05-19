@@ -21,12 +21,19 @@ class EngineOutput {
 class EngineRepository {
   final EngineProvider _provider;
   StreamController<EngineOutput> _engineMessageStream = StreamController();
+  StreamController<DeviceOutputObservation> _observationStream =
+      StreamController.broadcast();
 
   EngineRepository(this._provider);
+
+  Stream<DeviceOutputObservation> get observationStream =>
+      _observationStream.stream;
 
   Future<void> start({required EngineOptionsExternal options}) async {
     _engineMessageStream.close();
     _engineMessageStream = StreamController();
+    _observationStream.close();
+    _observationStream = StreamController.broadcast();
     // Start the provider first so it creates a fresh engineRawMessageStream,
     // then attach the listener. Non-broadcast StreamControllers buffer events
     // until listened, so no messages are lost.
@@ -41,11 +48,17 @@ class EngineRepository {
       }
       try {
         var message = EngineMessage.fromJson(jsonElement);
-        if (!_engineMessageStream.isClosed) {
-          _engineMessageStream.add(EngineOutput(message, null));
-        }
-        if (message.engineStopped != null) {
-          _engineMessageStream.close();
+        if (message.deviceOutputObservation != null) {
+          if (!_observationStream.isClosed) {
+            _observationStream.add(message.deviceOutputObservation!);
+          }
+        } else {
+          if (!_engineMessageStream.isClosed) {
+            _engineMessageStream.add(EngineOutput(message, null));
+          }
+          if (message.engineStopped != null) {
+            _engineMessageStream.close();
+          }
         }
         return;
       } catch (_) {}
@@ -66,6 +79,7 @@ class EngineRepository {
     if (!streamToClose.isClosed) {
       await streamToClose.close();
     }
+    _observationStream.close();
   }
 
   Future<bool> runtimeStarted() async {

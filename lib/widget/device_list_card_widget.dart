@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/widget/compact_observation_widget.dart';
 
 class DeviceListCard extends StatelessWidget {
   final ExposedUserDeviceIdentifier identifier;
   final ExposedServerDeviceDefinition definition;
   final bool isConnected;
+  final DeviceCubit? deviceCubit;
   final VoidCallback onTap;
 
   const DeviceListCard({
@@ -12,6 +15,7 @@ class DeviceListCard extends StatelessWidget {
     required this.identifier,
     required this.definition,
     required this.isConnected,
+    this.deviceCubit,
     required this.onTap,
   });
 
@@ -125,6 +129,13 @@ class DeviceListCard extends StatelessWidget {
                             )
                             .toList(),
                       ),
+                    ],
+                    if (isConnected &&
+                        deviceCubit != null &&
+                        deviceCubit!.observations.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      CompactObservationWidget(
+                          observations: deviceCubit!.observations),
                     ],
                   ],
                 ),

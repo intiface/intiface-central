@@ -21,6 +21,7 @@ dependencies:
   equatable: ^2.0.7
   # Needed for rust ffigen
   ffi: ^2.1.4
+  fl_chart: ^1.2.0
   flutter_bloc: ^9.1.1
   flutter_foreground_task: ^9.2.0
   flutter_loggy: ^2.0.3+1

@@ -3,6 +3,7 @@ import 'package:buttplug/buttplug.dart';
 import 'package:intiface_central/util/backdoor_connector.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:loggy/loggy.dart';
 
 class DeviceManagerEvent {}
@@ -53,8 +54,9 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
   final List<DeviceCubit> _devices = [];
   final Stream<EngineControlState> _outputStream;
   final SendFunc _sendFunc;
+  final Stream<DeviceOutputObservation> Function() _getObservationStream;
 
-  DeviceManagerBloc(this._outputStream, this._sendFunc)
+  DeviceManagerBloc(this._outputStream, this._sendFunc, this._getObservationStream)
     : super(DeviceManagerInitialState()) {
     on<DeviceManagerEngineStartedEvent>((event, emit) async {
       // Start our internal buttplug client.
@@ -78,17 +80,17 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
     });
 
     on<DeviceManagerDeviceAddedEvent>((event, emit) {
-      var deviceBloc = DeviceCubit(event.device);
+      var deviceBloc = DeviceCubit(event.device, _getObservationStream());
       _devices.add(deviceBloc);
       emit(DeviceManagerDeviceOnlineState(deviceBloc));
     });
 
     on<DeviceManagerDeviceRemovedEvent>(((event, emit) {
       try {
-        // This will throw if it doesn't find anything.
         var deviceBloc = _devices.firstWhere(
           (deviceBloc) => deviceBloc.device?.index == event.device.index,
         );
+        deviceBloc.setOffline();
         _devices.remove(deviceBloc);
         emit(DeviceManagerDeviceOfflineState(deviceBloc));
       } catch (e) {
@@ -103,7 +105,9 @@ class DeviceManagerBloc extends Bloc<DeviceManagerEvent, DeviceManagerState> {
         _internalClient = null;
       }
       _scanning = false;
-      // Move all devices to offline.
+      for (var device in _devices) {
+        device.setOffline();
+      }
       _devices.clear();
     });
 

@@ -197,6 +197,23 @@ Map<String, dynamic> _$EngineProviderLogToJson(EngineProviderLog instance) =>
       'message': instance.message,
     };
 
+DeviceOutputObservation _$DeviceOutputObservationFromJson(
+  Map<String, dynamic> json,
+) => DeviceOutputObservation()
+  ..deviceIndex = (json['device_index'] as num).toInt()
+  ..featureIndex = (json['feature_index'] as num).toInt()
+  ..outputType = json['output_type'] as String
+  ..value = (json['value'] as num).toDouble();
+
+Map<String, dynamic> _$DeviceOutputObservationToJson(
+  DeviceOutputObservation instance,
+) => <String, dynamic>{
+  'device_index': instance.deviceIndex,
+  'feature_index': instance.featureIndex,
+  'output_type': instance.outputType,
+  'value': instance.value,
+};
+
 EngineMessage _$EngineMessageFromJson(
   Map<String, dynamic> json,
 ) => EngineMessage()
@@ -247,6 +264,11 @@ EngineMessage _$EngineMessageFromJson(
       ? null
       : EngineProviderLog.fromJson(
           json['EngineProviderLog'] as Map<String, dynamic>,
+        )
+  ..deviceOutputObservation = json['DeviceOutputObservation'] == null
+      ? null
+      : DeviceOutputObservation.fromJson(
+          json['DeviceOutputObservation'] as Map<String, dynamic>,
         );
 
 Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
@@ -263,4 +285,5 @@ Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
       'DeviceDisconnected': instance.deviceDisconnected,
       'ClientRejected': instance.clientRejected,
       'EngineProviderLog': instance.engineProviderLog,
+      'DeviceOutputObservation': instance.deviceOutputObservation,
     };
