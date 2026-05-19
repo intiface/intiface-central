@@ -477,6 +477,7 @@ dependencies = [
  "derive_builder",
  "displaydoc",
  "enum_dispatch",
+ "enumflags2",
  "futures",
  "futures-util",
  "getset",
@@ -485,6 +486,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_repr",
+ "smallvec 1.15.1",
  "strum",
  "strum_macros",
  "thiserror 2.0.18",
@@ -518,7 +520,7 @@ dependencies = [
  "paste",
  "prost",
  "rand 0.10.0",
- "regex",
+ "regex-lite",
  "serde",
  "serde_json",
  "sha2",
@@ -539,6 +541,7 @@ dependencies = [
  "buttplug_core",
  "dashmap 6.1.0",
  "displaydoc",
+ "enumflags2",
  "futures",
  "futures-util",
  "getset",
@@ -1169,6 +1172,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa18ce2bc66555b3218614519ac839ddb759a7d6720732f979ef8d13be147ecd"
 dependencies = [
  "once_cell",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "enumflags2"
+version = "0.7.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1027f7680c853e056ebcec683615fb6fbbc07dbaa13b4d5d9442b146ded4ecef"
+dependencies = [
+ "enumflags2_derive",
+]
+
+[[package]]
+name = "enumflags2_derive"
+version = "0.7.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67c78a4d8fdf9953a5c9d458f9efe940fd97a0cab0941c075a813ac594733827"
+dependencies = [
  "proc-macro2",
  "quote",
  "syn",
@@ -3066,6 +3089,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "regex-lite"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cab834c73d247e67f4fae452806d17d3c7501756d98c8808d7c9c7aa7d18f973"
+
+[[package]]
 name = "regex-syntax"
 version = "0.6.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3689,6 +3718,9 @@ name = "smallvec"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "socket2"

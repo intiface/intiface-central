@@ -386,7 +386,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       });
     }
 
-    var deviceControlBloc = DeviceManagerBloc(engineControlBloc.stream, engineControlBloc.add);
+    var deviceControlBloc = DeviceManagerBloc(
+        engineControlBloc.stream, engineControlBloc.add, () => engineRepo.observationStream);
 
     ///
     /// ORDER MATTERS HERE

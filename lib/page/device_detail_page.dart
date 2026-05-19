@@ -13,6 +13,7 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
 import 'package:intiface_central/widget/expandable_card_widget.dart';
+import 'package:intiface_central/widget/observation_chart_widget.dart';
 import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -395,7 +396,12 @@ class _DeviceControlsSection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final List<Widget> controls = [];
 
-    for (var output in deviceCubit.outputs) {
+    for (var i = 0; i < deviceCubit.outputs.length; i++) {
+      final output = deviceCubit.outputs[i];
+      final observationCubit = i < deviceCubit.observations.length
+          ? deviceCubit.observations[i]
+          : null;
+
       if (output is ValueOutputCubit) {
         var range = output.feature.feature.output![output.type]!.value!;
         controls.addAll([
@@ -420,6 +426,8 @@ class _DeviceControlsSection extends StatelessWidget {
               },
             ),
           ),
+          if (observationCubit != null)
+            ObservationChartWidget(observationCubit: observationCubit),
         ]);
       } else if (output is PositionWithDurationOutputCubit) {
         var range = output.feature.feature.output![output.type]!.value!;
@@ -461,6 +469,8 @@ class _DeviceControlsSection extends StatelessWidget {
               );
             },
           ),
+          if (observationCubit != null)
+            ObservationChartWidget(observationCubit: observationCubit),
         ]);
       }
     }
