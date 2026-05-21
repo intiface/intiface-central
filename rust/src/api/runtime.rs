@@ -64,6 +64,7 @@ pub struct _EngineOptionsExternal {
   pub use_xinput: bool,
   pub use_lovense_connect: bool,
   pub use_device_websocket_server: bool,
+  pub use_simulated_devices: bool,
   pub device_websocket_server_port: Option<u16>,
   pub crash_main_thread: bool,
   pub crash_task_thread: bool,

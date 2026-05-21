@@ -54,6 +54,11 @@ class UseDeviceWebsocketServerState extends IntifaceConfigurationState {
   UseDeviceWebsocketServerState(this.value);
 }
 
+class UseSimulatedDevicesState extends IntifaceConfigurationState {
+  final bool value;
+  UseSimulatedDevicesState(this.value);
+}
+
 class UseSerialPortState extends IntifaceConfigurationState {
   final bool value;
   UseSerialPortState(this.value);
@@ -253,6 +258,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
         _prefs.getBool("useLovenseConnectService") ?? false;
     useDeviceWebsocketServer =
         _prefs.getBool("useDeviceWebsocketServer") ?? false;
+    useSimulatedDevices = _prefs.getBool("useSimulatedDevices") ?? false;
     useSerialPort = _prefs.getBool("useSerialPort") ?? false;
     useHID = _prefs.getBool("useHID") ?? false;
     useLovenseHIDDongle = _prefs.getBool("useLovenseHIDDongle") ?? false;
@@ -458,6 +464,12 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseDeviceWebsocketServerState(value));
   }
 
+  bool get useSimulatedDevices => _prefs.getBool("useSimulatedDevices")!;
+  set useSimulatedDevices(bool value) {
+    _prefs.setBool("useSimulatedDevices", value);
+    emit(UseSimulatedDevicesState(value));
+  }
+
   bool get crashReporting => _prefs.getBool("crashReporting2")!;
   set crashReporting(bool value) {
     _prefs.setBool("crashReporting2", value);
@@ -618,6 +630,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       useXinput: isDesktop() ? useXInput : false,
       useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
       useDeviceWebsocketServer: useDeviceWebsocketServer,
+      useSimulatedDevices: useSimulatedDevices,
       crashMainThread: false,
       crashTaskThread: false,
       broadcastServerMdns: broadcastServerMdns,

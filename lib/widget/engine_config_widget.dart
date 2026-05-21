@@ -299,6 +299,12 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
         onToggle: (value) => cubit.useDeviceWebsocketServer = value,
         title: const Text("Device Websocket Server"),
       ),
+      SettingsTile.switchTile(
+        enabled: !engineIsRunning,
+        initialValue: cubit.useSimulatedDevices,
+        onToggle: (value) => cubit.useSimulatedDevices = value,
+        title: const Text("Simulated Devices"),
+      ),
     ];
 
     if (!isMobile()) {
