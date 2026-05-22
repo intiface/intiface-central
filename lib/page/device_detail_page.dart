@@ -834,8 +834,8 @@ class _FeatureCard extends StatelessWidget {
     String type,
     ExposedServerDeviceFeatureOutputProperties props,
   ) {
-    if (props.value == null || props.position == null) {
-      logWarning('Null prop value/position for $type, cannot render.');
+    if (props.position == null || props.duration == null) {
+      logWarning('Null prop position/duration for $type, cannot render.');
       return;
     }
     final debouncerId = 'feature-output-${type.hashCode}-${props.hashCode}';

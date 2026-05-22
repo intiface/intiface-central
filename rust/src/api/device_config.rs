@@ -532,3 +532,280 @@ pub fn get_device_definitions(
     })
     .collect()
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use buttplug_core::util::range::RangeInclusive;
+  use std::sync::Mutex;
+
+  // Tests that touch DEVICE_CONFIG_MANAGER must hold this lock
+  static DCM_TEST_MUTEX: Mutex<()> = Mutex::new(());
+  use buttplug_server_device_config::{
+    ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureOutput,
+    ServerDeviceFeatureOutputHwPositionWithDurationProperties,
+    ServerDeviceFeatureOutputPositionProperties, RangeWithLimit,
+    load_protocol_configs, save_user_config, UserDeviceIdentifier,
+  };
+  use buttplug_core::util::small_vec_enum_map::SmallVecEnumMap;
+  use uuid::Uuid;
+
+  fn tcode_like_feature() -> ServerDeviceFeature {
+    let position_props = ServerDeviceFeatureOutputPositionProperties::new(
+      RangeWithLimit::new(RangeInclusive::new(0, 1000)),
+      false,
+      false,
+    );
+    let hw_pos_duration_props = ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(
+      RangeWithLimit::new(RangeInclusive::new(0, 1000)),
+      RangeWithLimit::new(RangeInclusive::new(0, 100000)),
+      false,
+      false,
+    );
+
+    let output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1> = vec![
+      ServerDeviceFeatureOutput::Position(position_props),
+      ServerDeviceFeatureOutput::HwPositionWithDuration(hw_pos_duration_props),
+    ].into();
+
+    let base_id = Uuid::new_v4();
+    let feature_id = Uuid::new_v4();
+    ServerDeviceFeature::new(0, String::new(), feature_id, Some(base_id), None, output, Default::default())
+  }
+
+  fn build_tcode_definition() -> ExposedServerDeviceDefinition {
+    let base_def_id = Uuid::new_v4();
+    let user_def_id = Uuid::new_v4();
+    let feature = tcode_like_feature();
+
+    let mut builder = ServerDeviceDefinitionBuilder::new("TCode Test Device", &base_def_id);
+    builder.add_feature(&feature);
+    let base_def = builder.finish();
+
+    let user_builder = ServerDeviceDefinitionBuilder::from_base(&base_def, user_def_id, true);
+    let user_def = user_builder.finish();
+
+    ExposedServerDeviceDefinition { definition: user_def }
+  }
+
+  #[test]
+  fn disable_hw_position_with_duration_preserves_position() {
+    let mut def = build_tcode_definition();
+    let features = def.features();
+    assert_eq!(features.len(), 1);
+
+    let feature = &features[0];
+    let output = feature.output().expect("Feature should have output");
+
+    // Both output types should be present
+    let position_props = output.position().expect("Should have Position output");
+    let hw_pos_props = output.position_with_duration().expect("Should have HwPositionWithDuration output");
+
+    assert!(!position_props.disabled, "Position should start enabled");
+    assert!(!hw_pos_props.disabled, "HwPositionWithDuration should start enabled");
+
+    // Disable HwPositionWithDuration (mimics what the UI does)
+    let mut hw_pos_props = output.position_with_duration().unwrap();
+    hw_pos_props.set_disabled(true);
+    def.update_feature_output_properties(&hw_pos_props);
+
+    // Verify: HwPositionWithDuration should be disabled, Position should NOT be
+    let features = def.features();
+    let feature = &features[0];
+    let output = feature.output().expect("Feature should have output");
+
+    let position_after = output.position().expect("Position should still exist");
+    let hw_pos_after = output.position_with_duration().expect("HwPositionWithDuration should still exist");
+
+    assert!(
+      !position_after.disabled,
+      "Position should remain ENABLED after disabling HwPositionWithDuration"
+    );
+    assert!(
+      hw_pos_after.disabled,
+      "HwPositionWithDuration should be DISABLED"
+    );
+  }
+
+  #[test]
+  fn disable_hw_position_with_duration_survives_serialization_roundtrip() {
+    let _guard = DCM_TEST_MUTEX.lock().unwrap();
+    // Set up the config manager with base config
+    let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    *dcm_lock = std::sync::Arc::new(base_dcm);
+    drop(dcm_lock);
+
+    // Create a user definition for a TCode-like device
+    let mut def = build_tcode_definition();
+    let identifier = UserDeviceIdentifier::new("test-tcode-001", "tcode-v03", &Some("default".to_owned()));
+
+    // Disable HwPositionWithDuration
+    let features = def.features();
+    let feature = &features[0];
+    let output = feature.output().unwrap();
+    let mut hw_pos_props = output.position_with_duration().unwrap();
+    hw_pos_props.set_disabled(true);
+    def.update_feature_output_properties(&hw_pos_props);
+
+    // Store in config manager
+    let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
+    dcm.add_user_device_definition(&identifier, &def.definition);
+
+    // Serialize to JSON
+    let config_json = save_user_config(&dcm).unwrap();
+    drop(dcm);
+
+    // Parse the JSON and verify the disabled flags are on the correct output types
+    let parsed: serde_json::Value = serde_json::from_str(&config_json).unwrap();
+    let devices = parsed["user_configs"]["devices"].as_array()
+      .expect(&format!("Expected devices array in config JSON:\n{config_json}"));
+    let device = &devices[0];
+    let features = device["config"]["features"].as_array()
+      .expect(&format!("Expected features array in device.config:\n{}", serde_json::to_string_pretty(device).unwrap()));
+    let feature = &features[0];
+    let output = &feature["output"];
+
+    // The output map should have both position and hw_position_with_duration keys
+    assert!(
+      output.get("position").is_some() || output.get("hw_position_with_duration").is_some(),
+      "Expected output map with position types. Got:\n{}",
+      serde_json::to_string_pretty(&output).unwrap()
+    );
+
+    let position_disabled = output.get("position")
+      .and_then(|p| p.get("disabled"))
+      .and_then(|d| d.as_bool())
+      .unwrap_or(false);
+    let hw_pos_disabled = output.get("hw_position_with_duration")
+      .and_then(|p| p.get("disabled"))
+      .and_then(|d| d.as_bool())
+      .unwrap_or(false);
+
+    assert!(
+      !position_disabled,
+      "Position should remain ENABLED in serialized config. Full JSON:\n{config_json}"
+    );
+    assert!(
+      hw_pos_disabled,
+      "HwPositionWithDuration should be DISABLED in serialized config. Full JSON:\n{config_json}"
+    );
+  }
+
+  #[test]
+  fn disable_hw_position_with_duration_roundtrip_with_real_tcode_device() {
+    let _guard = DCM_TEST_MUTEX.lock().unwrap();
+    // Use the REAL TCode base definition from the config system
+    let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    *dcm_lock = std::sync::Arc::new(base_dcm);
+    drop(dcm_lock);
+
+    // Look up a TCode device definition (simulates first connection)
+    let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
+    let identifier = UserDeviceIdentifier::new("test-serial-tcode", "tcode-v03", &Some("default".to_owned()));
+    let base_def = dcm.device_definition(&identifier)
+      .expect("TCode v03 should exist in base config");
+    drop(dcm);
+
+    // Wrap in our exposed type
+    let mut exposed_def = ExposedServerDeviceDefinition { definition: base_def };
+
+    // Verify the feature has both Position and HwPositionWithDuration
+    let features = exposed_def.features();
+    assert!(!features.is_empty(), "TCode should have at least one feature");
+    let feature = &features[0];
+    let output = feature.output().expect("TCode feature should have output");
+    assert!(output.position().is_some(), "TCode should have Position output");
+    assert!(output.position_with_duration().is_some(), "TCode should have HwPositionWithDuration output");
+
+    // Disable HwPositionWithDuration
+    let mut hw_pos_props = output.position_with_duration().unwrap();
+    assert!(!hw_pos_props.disabled, "Should start enabled");
+    hw_pos_props.set_disabled(true);
+    exposed_def.update_feature_output_properties(&hw_pos_props);
+
+    // Store back in config manager
+    let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
+    dcm.add_user_device_definition(&identifier, &exposed_def.definition);
+
+    // Serialize
+    let config_json = save_user_config(&dcm).unwrap();
+    drop(dcm);
+
+    // Reload with the serialized user config
+    let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
+    let reloaded_dcm = load_protocol_configs(&None, &Some(config_json.clone()), false)
+      .unwrap()
+      .finish()
+      .unwrap();
+    *dcm_lock = std::sync::Arc::new(reloaded_dcm);
+    drop(dcm_lock);
+
+    // Retrieve the reloaded definition
+    let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
+    let reloaded_def = dcm.device_definition(&identifier)
+      .expect("Should find TCode device after reload");
+
+    let exposed_reloaded = ExposedServerDeviceDefinition { definition: reloaded_def };
+    let features = exposed_reloaded.features();
+    let feature = &features[0];
+    let output = feature.output().expect("Should have output after reload");
+
+    let position_after = output.position().expect("Position should exist after reload");
+    let hw_pos_after = output.position_with_duration().expect("HwPositionWithDuration should exist after reload");
+
+    assert!(
+      !position_after.disabled,
+      "Position should remain ENABLED after full roundtrip through real TCode base config"
+    );
+    assert!(
+      hw_pos_after.disabled,
+      "HwPositionWithDuration should be DISABLED after full roundtrip through real TCode base config"
+    );
+  }
+
+  #[test]
+  fn simulated_stroker_has_both_position_outputs_in_user_definition() {
+    let _guard = DCM_TEST_MUTEX.lock().unwrap();
+    // Load fresh config
+    let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    *dcm_lock = std::sync::Arc::new(base_dcm);
+    drop(dcm_lock);
+
+    // Simulate what happens when a simulated stroker "connects":
+    // The engine calls device_definition() with the simulated device's identifier
+    let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
+    let identifier = UserDeviceIdentifier::new(
+      "simulated-stroker-0001",
+      "simulated",
+      &Some("simulated-stroker".to_owned()),
+    );
+    let def = dcm.device_definition(&identifier)
+      .expect("Simulated stroker should resolve a definition");
+    drop(dcm);
+
+    // Wrap and inspect via the same Exposed types the UI uses
+    let exposed_def = ExposedServerDeviceDefinition { definition: def };
+    let features = exposed_def.features();
+    assert_eq!(features.len(), 1, "Simulated stroker should have 1 feature");
+
+    let feature = &features[0];
+    assert_eq!(feature.description(), "Linear Axis");
+
+    let output = feature.output()
+      .expect("Feature should have output");
+    let position = output.position();
+    let hw_pos = output.position_with_duration();
+
+    assert!(
+      position.is_some(),
+      "Simulated stroker user definition should have Position output"
+    );
+    assert!(
+      hw_pos.is_some(),
+      "Simulated stroker user definition should have HwPositionWithDuration output"
+    );
+  }
+}
