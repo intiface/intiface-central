@@ -10,6 +10,7 @@ import 'api/device_config.dart';
 import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
+import 'api/simulated_devices.dart';
 import 'api/specifiers.dart';
 import 'api/util.dart';
 import 'dart:async';
@@ -270,6 +271,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ExposedSerialSpecifier dco_decode_exposed_serial_specifier(dynamic raw);
 
   @protected
+  ExposedSimulatedDeviceArchetype dco_decode_exposed_simulated_device_archetype(
+    dynamic raw,
+  );
+
+  @protected
+  ExposedSimulatedDeviceConfigEntry
+  dco_decode_exposed_simulated_device_config_entry(dynamic raw);
+
+  @protected
+  ExposedSimulatedDeviceFeatureSummary
+  dco_decode_exposed_simulated_device_feature_summary(dynamic raw);
+
+  @protected
   ExposedWebsocketSpecifier dco_decode_exposed_websocket_specifier(dynamic raw);
 
   @protected
@@ -289,6 +303,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<ExposedSimulatedDeviceArchetype>
+  dco_decode_list_exposed_simulated_device_archetype(dynamic raw);
+
+  @protected
+  List<ExposedSimulatedDeviceConfigEntry>
+  dco_decode_list_exposed_simulated_device_config_entry(dynamic raw);
+
+  @protected
+  List<ExposedSimulatedDeviceFeatureSummary>
+  dco_decode_list_exposed_simulated_device_feature_summary(dynamic raw);
 
   @protected
   List<InputType> dco_decode_list_input_type(dynamic raw);
@@ -605,6 +631,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExposedSimulatedDeviceArchetype sse_decode_exposed_simulated_device_archetype(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedSimulatedDeviceConfigEntry
+  sse_decode_exposed_simulated_device_config_entry(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ExposedSimulatedDeviceFeatureSummary
+  sse_decode_exposed_simulated_device_feature_summary(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExposedWebsocketSpecifier sse_decode_exposed_websocket_specifier(
     SseDeserializer deserializer,
   );
@@ -626,6 +669,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<ExposedSimulatedDeviceArchetype>
+  sse_decode_list_exposed_simulated_device_archetype(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ExposedSimulatedDeviceConfigEntry>
+  sse_decode_list_exposed_simulated_device_config_entry(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ExposedSimulatedDeviceFeatureSummary>
+  sse_decode_list_exposed_simulated_device_feature_summary(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<InputType> sse_decode_list_input_type(SseDeserializer deserializer);
@@ -988,6 +1049,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_exposed_simulated_device_archetype(
+    ExposedSimulatedDeviceArchetype self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_exposed_simulated_device_config_entry(
+    ExposedSimulatedDeviceConfigEntry self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_exposed_simulated_device_feature_summary(
+    ExposedSimulatedDeviceFeatureSummary self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_exposed_websocket_specifier(
     ExposedWebsocketSpecifier self,
     SseSerializer serializer,
@@ -1014,6 +1093,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_archetype(
+    List<ExposedSimulatedDeviceArchetype> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_config_entry(
+    List<ExposedSimulatedDeviceConfigEntry> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_feature_summary(
+    List<ExposedSimulatedDeviceFeatureSummary> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_input_type(

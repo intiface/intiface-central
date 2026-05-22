@@ -7,6 +7,7 @@ import 'api/device_config.dart';
 import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
+import 'api/simulated_devices.dart';
 import 'api/specifiers.dart';
 import 'api/util.dart';
 import 'dart:async';
@@ -70,7 +71,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 724012384;
+  int get rustContentHash => -2084900219;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -313,12 +314,20 @@ abstract class RustLibApi extends BaseApi {
     required String parity,
   });
 
+  Future<void> crateApiSimulatedDevicesAddSimulatedDevice({
+    required String identifier,
+    String? displayName,
+  });
+
   Future<void> crateApiSpecifiersAddWebsocketSpecifier({
     required String protocol,
     required String name,
   });
 
   Future<void> crateApiUtilCrashReporting({required String sentryApiKey});
+
+  Future<List<ExposedSimulatedDeviceArchetype>>
+  crateApiSimulatedDevicesGetAvailableSimulatedArchetypes();
 
   Future<Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>>
   crateApiDeviceConfigGetDeviceDefinitions();
@@ -330,6 +339,9 @@ abstract class RustLibApi extends BaseApi {
   Future<List<(String, ExposedSerialSpecifier)>>
   crateApiSpecifiersGetUserSerialCommunicationSpecifiers();
 
+  Future<List<ExposedSimulatedDeviceConfigEntry>>
+  crateApiSimulatedDevicesGetUserSimulatedDevices();
+
   Future<List<(String, ExposedWebsocketSpecifier)>>
   crateApiSpecifiersGetUserWebsocketCommunicationSpecifiers();
 
@@ -338,6 +350,10 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateApiSpecifiersRemoveSerialSpecifier({
     required String protocol,
     required String port,
+  });
+
+  Future<void> crateApiSimulatedDevicesRemoveSimulatedDevice({
+    required String address,
   });
 
   Future<void> crateApiDeviceConfigRemoveUserConfig({
@@ -2102,6 +2118,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiSimulatedDevicesAddSimulatedDevice({
+    required String identifier,
+    String? displayName,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(identifier, serializer);
+          sse_encode_opt_String(displayName, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 48,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiSimulatedDevicesAddSimulatedDeviceConstMeta,
+        argValues: [identifier, displayName],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiSimulatedDevicesAddSimulatedDeviceConstMeta =>
+      const TaskConstMeta(
+        debugName: "add_simulated_device",
+        argNames: ["identifier", "displayName"],
+      );
+
+  @override
   Future<void> crateApiSpecifiersAddWebsocketSpecifier({
     required String protocol,
     required String name,
@@ -2115,7 +2166,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 48,
+            funcId: 49,
             port: port_,
           );
         },
@@ -2146,7 +2197,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 49,
+            funcId: 50,
             port: port_,
           );
         },
@@ -2167,6 +2218,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
+  Future<List<ExposedSimulatedDeviceArchetype>>
+  crateApiSimulatedDevicesGetAvailableSimulatedArchetypes() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 51,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_exposed_simulated_device_archetype,
+          decodeErrorData: null,
+        ),
+        constMeta:
+            kCrateApiSimulatedDevicesGetAvailableSimulatedArchetypesConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiSimulatedDevicesGetAvailableSimulatedArchetypesConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_available_simulated_archetypes",
+        argNames: [],
+      );
+
+  @override
   Future<Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>>
   crateApiDeviceConfigGetDeviceDefinitions() {
     return handler.executeNormal(
@@ -2176,7 +2260,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 50,
+            funcId: 52,
             port: port_,
           );
         },
@@ -2204,7 +2288,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 51,
+            funcId: 53,
             port: port_,
           );
         },
@@ -2231,7 +2315,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 52,
+            funcId: 54,
             port: port_,
           );
         },
@@ -2259,7 +2343,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 53,
+            funcId: 55,
             port: port_,
           );
         },
@@ -2284,6 +2368,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<List<ExposedSimulatedDeviceConfigEntry>>
+  crateApiSimulatedDevicesGetUserSimulatedDevices() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 56,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_list_exposed_simulated_device_config_entry,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiSimulatedDevicesGetUserSimulatedDevicesConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiSimulatedDevicesGetUserSimulatedDevicesConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_user_simulated_devices",
+        argNames: [],
+      );
+
+  @override
   Future<List<(String, ExposedWebsocketSpecifier)>>
   crateApiSpecifiersGetUserWebsocketCommunicationSpecifiers() {
     return handler.executeNormal(
@@ -2293,7 +2409,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 54,
+            funcId: 57,
             port: port_,
           );
         },
@@ -2326,7 +2442,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 55,
+            funcId: 58,
             port: port_,
           );
         },
@@ -2358,7 +2474,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 56,
+            funcId: 59,
             port: port_,
           );
         },
@@ -2380,6 +2496,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiSimulatedDevicesRemoveSimulatedDevice({
+    required String address,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(address, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 60,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiSimulatedDevicesRemoveSimulatedDeviceConstMeta,
+        argValues: [address],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiSimulatedDevicesRemoveSimulatedDeviceConstMeta =>
+      const TaskConstMeta(
+        debugName: "remove_simulated_device",
+        argNames: ["address"],
+      );
+
+  @override
   Future<void> crateApiDeviceConfigRemoveUserConfig({
     required ExposedUserDeviceIdentifier identifier,
   }) {
@@ -2394,7 +2543,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 57,
+            funcId: 61,
             port: port_,
           );
         },
@@ -2429,7 +2578,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 58,
+            funcId: 62,
             port: port_,
           );
         },
@@ -2465,7 +2614,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 59,
+              funcId: 63,
               port: port_,
             );
           },
@@ -2494,7 +2643,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 60,
+            funcId: 64,
             port: port_,
           );
         },
@@ -2522,7 +2671,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 61,
+            funcId: 65,
             port: port_,
           );
         },
@@ -2553,7 +2702,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 62,
+            funcId: 66,
             port: port_,
           );
         },
@@ -2585,7 +2734,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 63,
+            funcId: 67,
             port: port_,
           );
         },
@@ -2620,7 +2769,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 64,
+              funcId: 68,
               port: port_,
             );
           },
@@ -2649,7 +2798,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 65,
+            funcId: 69,
             port: port_,
           );
         },
@@ -2676,7 +2825,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 66,
+            funcId: 70,
             port: port_,
           );
         },
@@ -2714,7 +2863,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 67,
+            funcId: 71,
             port: port_,
           );
         },
@@ -3226,6 +3375,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedSimulatedDeviceArchetype dco_decode_exposed_simulated_device_archetype(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ExposedSimulatedDeviceArchetype(
+      identifier: dco_decode_String(arr[0]),
+      displayName: dco_decode_String(arr[1]),
+      outputFeatures: dco_decode_list_exposed_simulated_device_feature_summary(
+        arr[2],
+      ),
+    );
+  }
+
+  @protected
+  ExposedSimulatedDeviceConfigEntry
+  dco_decode_exposed_simulated_device_config_entry(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ExposedSimulatedDeviceConfigEntry(
+      identifier: dco_decode_String(arr[0]),
+      displayName: dco_decode_opt_String(arr[1]),
+      address: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  ExposedSimulatedDeviceFeatureSummary
+  dco_decode_exposed_simulated_device_feature_summary(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ExposedSimulatedDeviceFeatureSummary(
+      description: dco_decode_String(arr[0]),
+      outputType: dco_decode_String(arr[1]),
+      index: dco_decode_u_32(arr[2]),
+    );
+  }
+
+  @protected
   ExposedWebsocketSpecifier dco_decode_exposed_websocket_specifier(
     dynamic raw,
   ) {
@@ -3271,6 +3465,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceArchetype>
+  dco_decode_list_exposed_simulated_device_archetype(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_exposed_simulated_device_archetype)
+        .toList();
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceConfigEntry>
+  dco_decode_list_exposed_simulated_device_config_entry(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_exposed_simulated_device_config_entry)
+        .toList();
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceFeatureSummary>
+  dco_decode_list_exposed_simulated_device_feature_summary(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_exposed_simulated_device_feature_summary)
+        .toList();
   }
 
   @protected
@@ -4001,6 +4222,54 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedSimulatedDeviceArchetype sse_decode_exposed_simulated_device_archetype(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_identifier = sse_decode_String(deserializer);
+    var var_displayName = sse_decode_String(deserializer);
+    var var_outputFeatures =
+        sse_decode_list_exposed_simulated_device_feature_summary(deserializer);
+    return ExposedSimulatedDeviceArchetype(
+      identifier: var_identifier,
+      displayName: var_displayName,
+      outputFeatures: var_outputFeatures,
+    );
+  }
+
+  @protected
+  ExposedSimulatedDeviceConfigEntry
+  sse_decode_exposed_simulated_device_config_entry(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_identifier = sse_decode_String(deserializer);
+    var var_displayName = sse_decode_opt_String(deserializer);
+    var var_address = sse_decode_String(deserializer);
+    return ExposedSimulatedDeviceConfigEntry(
+      identifier: var_identifier,
+      displayName: var_displayName,
+      address: var_address,
+    );
+  }
+
+  @protected
+  ExposedSimulatedDeviceFeatureSummary
+  sse_decode_exposed_simulated_device_feature_summary(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_description = sse_decode_String(deserializer);
+    var var_outputType = sse_decode_String(deserializer);
+    var var_index = sse_decode_u_32(deserializer);
+    return ExposedSimulatedDeviceFeatureSummary(
+      description: var_description,
+      outputType: var_outputType,
+      index: var_index,
+    );
+  }
+
+  @protected
   ExposedWebsocketSpecifier sse_decode_exposed_websocket_specifier(
     SseDeserializer deserializer,
   ) {
@@ -4056,6 +4325,53 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceArchetype>
+  sse_decode_list_exposed_simulated_device_archetype(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ExposedSimulatedDeviceArchetype>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_exposed_simulated_device_archetype(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceConfigEntry>
+  sse_decode_list_exposed_simulated_device_config_entry(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ExposedSimulatedDeviceConfigEntry>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_exposed_simulated_device_config_entry(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ExposedSimulatedDeviceFeatureSummary>
+  sse_decode_list_exposed_simulated_device_feature_summary(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ExposedSimulatedDeviceFeatureSummary>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(
+        sse_decode_exposed_simulated_device_feature_summary(deserializer),
+      );
     }
     return ans_;
   }
@@ -4867,6 +5183,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_exposed_simulated_device_archetype(
+    ExposedSimulatedDeviceArchetype self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.identifier, serializer);
+    sse_encode_String(self.displayName, serializer);
+    sse_encode_list_exposed_simulated_device_feature_summary(
+      self.outputFeatures,
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_exposed_simulated_device_config_entry(
+    ExposedSimulatedDeviceConfigEntry self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.identifier, serializer);
+    sse_encode_opt_String(self.displayName, serializer);
+    sse_encode_String(self.address, serializer);
+  }
+
+  @protected
+  void sse_encode_exposed_simulated_device_feature_summary(
+    ExposedSimulatedDeviceFeatureSummary self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.description, serializer);
+    sse_encode_String(self.outputType, serializer);
+    sse_encode_u_32(self.index, serializer);
+  }
+
+  @protected
   void sse_encode_exposed_websocket_specifier(
     ExposedWebsocketSpecifier self,
     SseSerializer serializer,
@@ -4918,6 +5270,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_archetype(
+    List<ExposedSimulatedDeviceArchetype> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_exposed_simulated_device_archetype(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_config_entry(
+    List<ExposedSimulatedDeviceConfigEntry> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_exposed_simulated_device_config_entry(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_exposed_simulated_device_feature_summary(
+    List<ExposedSimulatedDeviceFeatureSummary> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_exposed_simulated_device_feature_summary(item, serializer);
     }
   }
 
