@@ -28,7 +28,7 @@
 
 use crate::api::device_config::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 724012384;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2084900219;
 
 // Section: executor
 
@@ -2239,6 +2239,45 @@ fn wire__crate__api__specifiers__add_serial_specifier_impl(
         },
     )
 }
+fn wire__crate__api__simulated_devices__add_simulated_device_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "add_simulated_device",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_identifier = <String>::sse_decode(&mut deserializer);
+            let api_display_name = <Option<String>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok = crate::api::simulated_devices::add_simulated_device(
+                            api_identifier,
+                            api_display_name,
+                        )?;
+                        Ok(output_ok)
+                    })(),
+                )
+            }
+        },
+    )
+}
 fn wire__crate__api__specifiers__add_websocket_specifier_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2304,6 +2343,40 @@ fn wire__crate__api__util__crash_reporting_impl(
                     let output_ok = Result::<_, ()>::Ok({
                         crate::api::util::crash_reporting(api_sentry_api_key);
                     })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__simulated_devices__get_available_simulated_archetypes_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_available_simulated_archetypes",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::simulated_devices::get_available_simulated_archetypes(),
+                    )?;
                     Ok(output_ok)
                 })())
             }
@@ -2443,6 +2516,40 @@ fn wire__crate__api__specifiers__get_user_serial_communication_specifiers_impl(
         },
     )
 }
+fn wire__crate__api__simulated_devices__get_user_simulated_devices_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_user_simulated_devices",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(
+                        crate::api::simulated_devices::get_user_simulated_devices(),
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__specifiers__get_user_websocket_communication_specifiers_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2538,6 +2645,41 @@ fn wire__crate__api__specifiers__remove_serial_specifier_impl(
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
                         crate::api::specifiers::remove_serial_specifier(api_protocol, api_port);
+                    })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__simulated_devices__remove_simulated_device_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "remove_simulated_device",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_address = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok({
+                        crate::api::simulated_devices::remove_simulated_device(api_address);
                     })?;
                     Ok(output_ok)
                 })())
@@ -3304,6 +3446,50 @@ impl SseDecode for crate::api::specifiers::ExposedSerialSpecifier {
     }
 }
 
+impl SseDecode for crate::api::simulated_devices::ExposedSimulatedDeviceArchetype {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_identifier = <String>::sse_decode(deserializer);
+        let mut var_displayName = <String>::sse_decode(deserializer);
+        let mut var_outputFeatures = <Vec<
+            crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary,
+        >>::sse_decode(deserializer);
+        return crate::api::simulated_devices::ExposedSimulatedDeviceArchetype {
+            identifier: var_identifier,
+            display_name: var_displayName,
+            output_features: var_outputFeatures,
+        };
+    }
+}
+
+impl SseDecode for crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_identifier = <String>::sse_decode(deserializer);
+        let mut var_displayName = <Option<String>>::sse_decode(deserializer);
+        let mut var_address = <String>::sse_decode(deserializer);
+        return crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry {
+            identifier: var_identifier,
+            display_name: var_displayName,
+            address: var_address,
+        };
+    }
+}
+
+impl SseDecode for crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_description = <String>::sse_decode(deserializer);
+        let mut var_outputType = <String>::sse_decode(deserializer);
+        let mut var_index = <u32>::sse_decode(deserializer);
+        return crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary {
+            description: var_description,
+            output_type: var_outputType,
+            index: var_index,
+        };
+    }
+}
+
 impl SseDecode for crate::api::specifiers::ExposedWebsocketSpecifier {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3367,6 +3553,54 @@ impl SseDecode for Vec<String> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceArchetype> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(
+                <crate::api::simulated_devices::ExposedSimulatedDeviceArchetype>::sse_decode(
+                    deserializer,
+                ),
+            );
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(
+                <crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry>::sse_decode(
+                    deserializer,
+                ),
+            );
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(
+                <crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary>::sse_decode(
+                    deserializer,
+                ),
+            );
         }
         return ans_;
     }
@@ -3637,80 +3871,104 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        48 => wire__crate__api__specifiers__add_websocket_specifier_impl(
+        48 => wire__crate__api__simulated_devices__add_simulated_device_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        49 => wire__crate__api__util__crash_reporting_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__device_config__get_device_definitions_impl(
+        49 => wire__crate__api__specifiers__add_websocket_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        51 => {
+        50 => wire__crate__api__util__crash_reporting_impl(port, ptr, rust_vec_len, data_len),
+        51 => wire__crate__api__simulated_devices__get_available_simulated_archetypes_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        52 => wire__crate__api__device_config__get_device_definitions_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        53 => {
             wire__crate__api__specifiers__get_protocol_names_impl(port, ptr, rust_vec_len, data_len)
         }
-        52 => wire__crate__api__device_config__get_user_config_str_impl(
+        54 => wire__crate__api__device_config__get_user_config_str_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        53 => wire__crate__api__specifiers__get_user_serial_communication_specifiers_impl(
+        55 => wire__crate__api__specifiers__get_user_serial_communication_specifiers_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        54 => wire__crate__api__specifiers__get_user_websocket_communication_specifiers_impl(
+        56 => wire__crate__api__simulated_devices__get_user_simulated_devices_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        55 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__specifiers__remove_serial_specifier_impl(
+        57 => wire__crate__api__specifiers__get_user_websocket_communication_specifiers_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        57 => wire__crate__api__device_config__remove_user_config_impl(
+        58 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
+        59 => wire__crate__api__specifiers__remove_serial_specifier_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        58 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
+        60 => wire__crate__api__simulated_devices__remove_simulated_device_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        59 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
-        60 => {
+        61 => wire__crate__api__device_config__remove_user_config_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        62 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        63 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
+        64 => {
             wire__crate__api__runtime__rust_runtime_started_impl(port, ptr, rust_vec_len, data_len)
         }
-        61 => wire__crate__api__runtime__send_backend_server_message_impl(
+        65 => wire__crate__api__runtime__send_backend_server_message_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        62 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+        66 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
+        67 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        64 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
-        65 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
-        66 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
-        67 => wire__crate__api__device_config__update_user_config_impl(
+        68 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
+        69 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
+        70 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
+        71 => wire__crate__api__device_config__update_user_config_impl(
             port,
             ptr,
             rust_vec_len,
@@ -4004,6 +4262,84 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::specifiers::ExposedSerialSpec
     for crate::api::specifiers::ExposedSerialSpecifier
 {
     fn into_into_dart(self) -> crate::api::specifiers::ExposedSerialSpecifier {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::simulated_devices::ExposedSimulatedDeviceArchetype
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.identifier.into_into_dart().into_dart(),
+            self.display_name.into_into_dart().into_dart(),
+            self.output_features.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::simulated_devices::ExposedSimulatedDeviceArchetype
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::simulated_devices::ExposedSimulatedDeviceArchetype,
+    > for crate::api::simulated_devices::ExposedSimulatedDeviceArchetype
+{
+    fn into_into_dart(self) -> crate::api::simulated_devices::ExposedSimulatedDeviceArchetype {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.identifier.into_into_dart().into_dart(),
+            self.display_name.into_into_dart().into_dart(),
+            self.address.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry,
+    > for crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry
+{
+    fn into_into_dart(self) -> crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart
+    for crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary
+{
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.description.into_into_dart().into_dart(),
+            self.output_type.into_into_dart().into_dart(),
+            self.index.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary
+{
+}
+impl
+    flutter_rust_bridge::IntoIntoDart<
+        crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary,
+    > for crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary
+{
+    fn into_into_dart(self) -> crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary {
         self
     }
 }
@@ -4376,6 +4712,36 @@ impl SseEncode for crate::api::specifiers::ExposedSerialSpecifier {
     }
 }
 
+impl SseEncode for crate::api::simulated_devices::ExposedSimulatedDeviceArchetype {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.identifier, serializer);
+        <String>::sse_encode(self.display_name, serializer);
+        <Vec<crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary>>::sse_encode(
+            self.output_features,
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.identifier, serializer);
+        <Option<String>>::sse_encode(self.display_name, serializer);
+        <String>::sse_encode(self.address, serializer);
+    }
+}
+
+impl SseEncode for crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.description, serializer);
+        <String>::sse_encode(self.output_type, serializer);
+        <u32>::sse_encode(self.index, serializer);
+    }
+}
+
 impl SseEncode for crate::api::specifiers::ExposedWebsocketSpecifier {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4443,6 +4809,42 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceArchetype> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::simulated_devices::ExposedSimulatedDeviceArchetype>::sse_encode(
+                item, serializer,
+            );
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::simulated_devices::ExposedSimulatedDeviceConfigEntry>::sse_encode(
+                item, serializer,
+            );
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::simulated_devices::ExposedSimulatedDeviceFeatureSummary>::sse_encode(
+                item, serializer,
+            );
         }
     }
 }
@@ -4684,7 +5086,7 @@ mod io {
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
     };
-    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate
@@ -4839,7 +5241,7 @@ mod web {
     };
     use flutter_rust_bridge::for_generated::wasm_bindgen;
     use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate

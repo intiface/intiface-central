@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/device_config_manager.dart';
+import 'package:intiface_central/src/rust/api/simulated_devices.dart'
+    as simulated_api;
 import 'package:intiface_central/src/rust/api/specifiers.dart';
 import 'package:loggy/loggy.dart';
 
@@ -25,9 +27,15 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
   List<String> _protocols = List.empty(growable: true);
   List<(String, ExposedWebsocketSpecifier)> _specifiers = [];
   List<(String, ExposedSerialSpecifier)> _serialSpecifiers = [];
+  List<simulated_api.ExposedSimulatedDeviceArchetype> _simulatedArchetypes = [];
+  List<simulated_api.ExposedSimulatedDeviceConfigEntry> _simulatedDevices = [];
   List<(String, ExposedWebsocketSpecifier)> get specifiers => _specifiers;
   List<(String, ExposedSerialSpecifier)> get serialSpecifiers =>
       _serialSpecifiers;
+  List<simulated_api.ExposedSimulatedDeviceArchetype> get simulatedArchetypes =>
+      _simulatedArchetypes;
+  List<simulated_api.ExposedSimulatedDeviceConfigEntry> get simulatedDevices =>
+      _simulatedDevices;
   List<String> get protocols => _protocols;
   Object? get createError => _createError;
 
@@ -80,6 +88,9 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
     _protocols = await getProtocolNames();
     _specifiers = await getUserWebsocketCommunicationSpecifiers();
     _serialSpecifiers = await getUserSerialCommunicationSpecifiers();
+    _simulatedArchetypes = await simulated_api
+        .getAvailableSimulatedArchetypes();
+    _simulatedDevices = await simulated_api.getUserSimulatedDevices();
     _configs = await getDeviceDefinitions();
     emit(UserDeviceConfigurationStateUpdated());
   }
@@ -115,6 +126,22 @@ class UserDeviceConfigurationCubit extends Cubit<UserDeviceConfigurationState> {
 
   Future<void> removeSerialPort(String protocol, String port) async {
     await removeSerialSpecifier(protocol: protocol, port: port);
+    await _saveConfigFile();
+  }
+
+  Future<void> addSimulatedDevice(
+    String identifier,
+    String? displayName,
+  ) async {
+    await simulated_api.addSimulatedDevice(
+      identifier: identifier,
+      displayName: displayName,
+    );
+    await _saveConfigFile();
+  }
+
+  Future<void> removeSimulatedDevice(String address) async {
+    await simulated_api.removeSimulatedDevice(address: address);
     await _saveConfigFile();
   }
 

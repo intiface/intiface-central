@@ -6,12 +6,20 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/page/add_device_type_page.dart';
 import 'package:intiface_central/page/add_serial_device_page.dart';
+import 'package:intiface_central/page/add_simulated_device_page.dart';
 import 'package:intiface_central/page/add_websocket_device_page.dart';
 import 'package:intiface_central/page/device_detail_page.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/widget/device_list_card_widget.dart';
 
-enum _DeviceSubPage { list, detail, addType, addWebsocket, addSerial }
+enum _DeviceSubPage {
+  list,
+  detail,
+  addType,
+  addWebsocket,
+  addSerial,
+  addSimulated,
+}
 
 class DevicePage extends StatefulWidget {
   const DevicePage({super.key});
@@ -49,6 +57,12 @@ class _DevicePageState extends State<DevicePage> {
     });
   }
 
+  void _goToAddSimulated() {
+    setState(() {
+      _currentPage = _DeviceSubPage.addSimulated;
+    });
+  }
+
   void _goBack() {
     setState(() {
       _currentPage = _DeviceSubPage.list;
@@ -66,24 +80,26 @@ class _DevicePageState extends State<DevicePage> {
   Widget build(BuildContext context) {
     return switch (_currentPage) {
       _DeviceSubPage.list => _DeviceListView(
-          onDeviceTap: _goToDetail,
-          onAddDeviceTap: _goToAddType,
-        ),
+        onDeviceTap: _goToDetail,
+        onAddDeviceTap: _goToAddType,
+      ),
       _DeviceSubPage.detail => DeviceDetailPage(
-          identifier: _selectedIdentifier!,
-          onBack: _goBack,
-        ),
+        identifier: _selectedIdentifier!,
+        onBack: _goBack,
+      ),
       _DeviceSubPage.addType => AddDeviceTypePage(
-          onBack: _goBack,
-          onWebsocket: _goToAddWebsocket,
-          onSerial: _goToAddSerial,
-        ),
+        onBack: _goBack,
+        onWebsocket: _goToAddWebsocket,
+        onSerial: _goToAddSerial,
+        onSimulated: _goToAddSimulated,
+      ),
       _DeviceSubPage.addWebsocket => AddWebsocketDevicePage(
-          onBack: _goBackToAddType,
-        ),
-      _DeviceSubPage.addSerial => AddSerialDevicePage(
-          onBack: _goBackToAddType,
-        ),
+        onBack: _goBackToAddType,
+      ),
+      _DeviceSubPage.addSerial => AddSerialDevicePage(onBack: _goBackToAddType),
+      _DeviceSubPage.addSimulated => AddSimulatedDevicePage(
+        onBack: _goBackToAddType,
+      ),
     };
   }
 }
@@ -119,24 +135,25 @@ class _DeviceListView extends StatelessWidget {
                 final userDeviceConfigCubit =
                     BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 final connectedDevices = deviceBloc.devices;
-                final connectedIndexes =
-                    connectedDevices.map((d) => d.device!.index).toSet();
+                final connectedIndexes = connectedDevices
+                    .map((d) => d.device!.index)
+                    .toSet();
                 final anyAllowed = userDeviceConfigCubit.configs.values.any(
                   (def) => def.allow,
                 );
 
-                final sortedEntries =
-                    userDeviceConfigCubit.configs.entries.toList();
+                final sortedEntries = userDeviceConfigCubit.configs.entries
+                    .toList();
                 sortedEntries.sort((a, b) {
                   final aConnected = connectedIndexes.contains(a.value.index);
                   final bConnected = connectedIndexes.contains(b.value.index);
                   if (aConnected != bConnected) {
                     return aConnected ? -1 : 1;
                   }
-                  final aName =
-                      (a.value.displayName ?? a.value.name).toLowerCase();
-                  final bName =
-                      (b.value.displayName ?? b.value.name).toLowerCase();
+                  final aName = (a.value.displayName ?? a.value.name)
+                      .toLowerCase();
+                  final bName = (b.value.displayName ?? b.value.name)
+                      .toLowerCase();
                   return aName.compareTo(bName);
                 });
 

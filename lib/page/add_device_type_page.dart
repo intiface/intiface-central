@@ -8,12 +8,14 @@ class AddDeviceTypePage extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback onWebsocket;
   final VoidCallback onSerial;
+  final VoidCallback onSimulated;
 
   const AddDeviceTypePage({
     super.key,
     required this.onBack,
     required this.onWebsocket,
     required this.onSerial,
+    required this.onSimulated,
   });
 
   @override
@@ -24,6 +26,7 @@ class AddDeviceTypePage extends StatelessWidget {
 
     final websocketEnabled = configCubit.useDeviceWebsocketServer;
     final serialEnabled = isDesktop && configCubit.useSerialPort;
+    final simulatedEnabled = configCubit.useSimulatedDevices;
 
     return Expanded(
       child: Column(
@@ -43,16 +46,25 @@ class AddDeviceTypePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (!websocketEnabled && !serialEnabled)
+                  if (!websocketEnabled && !serialEnabled && !simulatedEnabled)
                     const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 32,
+                      ),
                       child: Text(
-                        'Advanced device managers (Websocket, Serial Port) can '
+                        'Advanced device managers can '
                         'be turned on in the Advanced Settings section of the '
                         'App Modes panel.',
                         textAlign: TextAlign.center,
                       ),
+                    ),
+                  if (simulatedEnabled)
+                    _DeviceTypeCard(
+                      icon: Icons.memory,
+                      title: 'Simulated Device',
+                      subtitle: 'Add a test device from built-in templates',
+                      onTap: onSimulated,
                     ),
                   if (websocketEnabled)
                     _DeviceTypeCard(
@@ -99,10 +111,9 @@ class _DetailHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),
