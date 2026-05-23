@@ -19,7 +19,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
 
       // Mock the pubspec.yaml asset so Pubspec.parse works
-      ServicesBinding.instance.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler('flutter/assets', (message) async {
         final key = utf8.decode(message!.buffer.asUint8List());
         if (key == 'pubspec.yaml') {
@@ -33,7 +33,7 @@ void main() {
     });
 
     tearDown(() async {
-      ServicesBinding.instance.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler('flutter/assets', null);
       await tempDir.delete(recursive: true);
     });
