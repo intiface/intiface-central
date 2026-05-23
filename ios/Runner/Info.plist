@@ -32,6 +32,12 @@
 	<string>We need Bluetooth to discover and communicate with nearby Intiface compatible devices. Only hardware that works with Intiface will be accessed.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>We need Bluetooth to discover and communicate with nearby Intiface compatible devices.   Only hardware that works with Intiface will be accessed.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_intiface_engine._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Intiface Central uses your local network to advertise the Intiface server for clients on the same network.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
