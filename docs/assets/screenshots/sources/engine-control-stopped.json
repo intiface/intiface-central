@@ -1,0 +1,24 @@
+{
+  "id": "engine-control-stopped",
+  "title": "Engine control in stopped state",
+  "mode": "widget",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "theme": "light",
+  "entrypoint": "controlWidget",
+  "fixture": {
+    "engine": "stopped"
+  },
+  "callouts": [
+    {
+      "id": "start-server-control",
+      "target": {
+        "key": "docs.engineControlButton"
+      },
+      "label": "Start the Intiface server from the primary control.",
+      "placement": "top"
+    }
+  ]
+}

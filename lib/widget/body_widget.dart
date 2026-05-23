@@ -14,6 +14,7 @@ import 'package:intiface_central/widget/news_card_widget.dart';
 import 'package:intiface_central/page/device_page.dart';
 import 'package:intiface_central/page/settings_page.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 
 class NavigationDestination {
@@ -184,6 +185,7 @@ class BodyWidget extends StatelessWidget {
       return Row(
         children: <Widget>[
           NavigationRail(
+            key: DocsScreenshotKeys.sideNavigation,
             selectedIndex: navSelectedIndex,
             groupAlignment: -1.0,
             onDestinationSelected: (int index) {
@@ -201,8 +203,12 @@ class BodyWidget extends StatelessWidget {
                 .toList(),
           ),
           Expanded(
-            child: Column(
-              children: [destinations[selectedIndex].widgetProvider()],
+            child: ColoredBox(
+              key: DocsScreenshotKeys.mainBody,
+              color: Colors.transparent,
+              child: Column(
+                children: [destinations[selectedIndex].widgetProvider()],
+              ),
             ),
           ),
         ],
@@ -220,8 +226,12 @@ class BodyWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         Expanded(
-          child: Column(
-            children: [destinations[selectedIndex].widgetProvider()],
+          child: ColoredBox(
+            key: DocsScreenshotKeys.mainBody,
+            color: Colors.transparent,
+            child: Column(
+              children: [destinations[selectedIndex].widgetProvider()],
+            ),
           ),
         ),
         BottomNavigationBar(

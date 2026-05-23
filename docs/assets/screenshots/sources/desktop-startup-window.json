@@ -1,0 +1,49 @@
+{
+  "id": "desktop-startup-window",
+  "title": "Desktop startup window",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "theme": "light",
+  "presentation": "window",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "newsMarkdown": "# Intiface News\n\nWelcome to Intiface Central. News and update notes appear here."
+  },
+  "callouts": [
+    {
+      "id": "control-panel",
+      "target": {
+        "key": "docs.engineControlPanel"
+      },
+      "label": "Control panel",
+      "placement": "top",
+      "highlightPadding": -4
+    },
+    {
+      "id": "navigation",
+      "target": {
+        "key": "docs.sideNavigation"
+      },
+      "label": "Navigation",
+      "placement": "left",
+      "highlightPadding": -4
+    },
+    {
+      "id": "main-body",
+      "target": {
+        "key": "docs.mainBody"
+      },
+      "label": "Main body",
+      "placement": "right",
+      "highlightPadding": -4
+    }
+  ]
+}

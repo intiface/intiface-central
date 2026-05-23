@@ -1,0 +1,21 @@
+{
+  "id": "device-list-connected-integration",
+  "title": "Device list with a connected simulated device",
+  "mode": "integration",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "theme": "light",
+  "entrypoint": "simulatedDeviceJourney",
+  "fixture": {
+    "devices": [
+      {
+        "id": "simulated-1vibe",
+        "displayName": "Test Domi",
+        "connected": true
+      }
+    ]
+  },
+  "callouts": []
+}

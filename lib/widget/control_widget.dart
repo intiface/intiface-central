@@ -6,6 +6,7 @@ import 'package:intiface_central/bloc/util/error_notifier_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/util/bluetooth_check.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -63,6 +64,7 @@ class ControlWidget extends StatelessWidget {
               (EngineControlState previous, EngineControlState current) =>
                   current is EngineStartingState ||
                   current is EngineStartedState ||
+                  current is EngineServerCreatedState ||
                   current is EngineStoppedState ||
                   current is ClientConnectedState ||
                   current is ClientDisconnectedState,
@@ -138,6 +140,7 @@ class ControlWidget extends StatelessWidget {
                 configCubit.useProcessEngine &&
                 !IntifacePaths.engineFile.existsSync()) {
               controlButton = IconButton(
+                key: DocsScreenshotKeys.engineControlButton,
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onPrimary,
                   backgroundColor: colors.primary,
@@ -155,6 +158,7 @@ class ControlWidget extends StatelessWidget {
               );
             } else {
               controlButton = IconButton(
+                key: DocsScreenshotKeys.engineControlButton,
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onPrimary,
                   backgroundColor: colors.primary,
@@ -248,6 +252,7 @@ class ControlWidget extends StatelessWidget {
             }
 
             return Row(
+              key: DocsScreenshotKeys.engineControlPanel,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(5.0),

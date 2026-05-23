@@ -1,0 +1,24 @@
+{
+  "id": "engine-control-running",
+  "title": "Engine control in running state",
+  "mode": "widget",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "theme": "light",
+  "entrypoint": "controlWidget",
+  "fixture": {
+    "engine": "running"
+  },
+  "callouts": [
+    {
+      "id": "stop-server-control",
+      "target": {
+        "key": "docs.engineControlButton"
+      },
+      "label": "Stop the server from the same primary control.",
+      "placement": "top"
+    }
+  ]
+}
