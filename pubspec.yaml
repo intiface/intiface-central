@@ -65,14 +65,16 @@ dev_dependencies:
   ffigen: ^20.1.1
   flutter_launcher_icons: ^0.14.4
   flutter_lints: ^6.0.0
-  #flutter_test:
-  #  sdk: flutter
+  flutter_test:
+    sdk: flutter
   freezed: ^3.2.3
-  #integration_test:
-  #  sdk: flutter
+  integration_test:
+    sdk: flutter
   json_serializable: ^6.11.2
   msix: ^3.16.12
-  #test: ^1.28.0
+  test: ^1.28.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
 
 flutter:
   uses-material-design: true
