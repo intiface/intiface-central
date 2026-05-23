@@ -42,6 +42,7 @@ typedef struct wire_cst_engine_options_external {
   bool use_xinput;
   bool use_lovense_connect;
   bool use_device_websocket_server;
+  bool use_simulated_devices;
   uint16_t *device_websocket_server_port;
   bool crash_main_thread;
   bool crash_task_thread;
@@ -52,6 +53,7 @@ typedef struct wire_cst_engine_options_external {
   uint16_t *repeater_local_port;
   struct wire_cst_list_prim_u_8_strict *repeater_remote_address;
   uint16_t *rest_api_port;
+  bool emit_output_observations;
 } wire_cst_engine_options_external;
 
 typedef struct wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature {
@@ -63,6 +65,44 @@ typedef struct wire_cst_list_String {
   struct wire_cst_list_prim_u_8_strict **ptr;
   int32_t len;
 } wire_cst_list_String;
+
+typedef struct wire_cst_exposed_simulated_device_feature_summary {
+  struct wire_cst_list_prim_u_8_strict *description;
+  struct wire_cst_list_prim_u_8_strict *output_type;
+  uint32_t index;
+} wire_cst_exposed_simulated_device_feature_summary;
+
+typedef struct wire_cst_list_exposed_simulated_device_feature_summary {
+  struct wire_cst_exposed_simulated_device_feature_summary *ptr;
+  int32_t len;
+} wire_cst_list_exposed_simulated_device_feature_summary;
+
+typedef struct wire_cst_exposed_simulated_device_archetype {
+  struct wire_cst_list_prim_u_8_strict *identifier;
+  struct wire_cst_list_prim_u_8_strict *display_name;
+  struct wire_cst_list_exposed_simulated_device_feature_summary *output_features;
+} wire_cst_exposed_simulated_device_archetype;
+
+typedef struct wire_cst_list_exposed_simulated_device_archetype {
+  struct wire_cst_exposed_simulated_device_archetype *ptr;
+  int32_t len;
+} wire_cst_list_exposed_simulated_device_archetype;
+
+typedef struct wire_cst_exposed_simulated_device_config_entry {
+  struct wire_cst_list_prim_u_8_strict *identifier;
+  struct wire_cst_list_prim_u_8_strict *display_name;
+  struct wire_cst_list_prim_u_8_strict *address;
+} wire_cst_exposed_simulated_device_config_entry;
+
+typedef struct wire_cst_list_exposed_simulated_device_config_entry {
+  struct wire_cst_exposed_simulated_device_config_entry *ptr;
+  int32_t len;
+} wire_cst_list_exposed_simulated_device_config_entry;
+
+typedef struct wire_cst_list_input_type {
+  int32_t *ptr;
+  int32_t len;
+} wire_cst_list_input_type;
 
 typedef struct wire_cst_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition {
   uintptr_t field0;
@@ -152,6 +192,8 @@ WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__Ex
 WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties(uintptr_t that,
                                                                                                                                              uintptr_t props);
 
+WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureInput_input_types(uintptr_t that);
+
 WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled(uintptr_t that);
 
 WireSyncRust2DartDco frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration(uintptr_t that);
@@ -224,12 +266,18 @@ void frbgen_intiface_central_wire__crate__api__specifiers__add_serial_specifier(
                                                                                 uint8_t stop_bits,
                                                                                 struct wire_cst_list_prim_u_8_strict *parity);
 
+void frbgen_intiface_central_wire__crate__api__simulated_devices__add_simulated_device(int64_t port_,
+                                                                                       struct wire_cst_list_prim_u_8_strict *identifier,
+                                                                                       struct wire_cst_list_prim_u_8_strict *display_name);
+
 void frbgen_intiface_central_wire__crate__api__specifiers__add_websocket_specifier(int64_t port_,
                                                                                    struct wire_cst_list_prim_u_8_strict *protocol,
                                                                                    struct wire_cst_list_prim_u_8_strict *name);
 
 void frbgen_intiface_central_wire__crate__api__util__crash_reporting(int64_t port_,
                                                                      struct wire_cst_list_prim_u_8_strict *sentry_api_key);
+
+void frbgen_intiface_central_wire__crate__api__simulated_devices__get_available_simulated_archetypes(int64_t port_);
 
 void frbgen_intiface_central_wire__crate__api__device_config__get_device_definitions(int64_t port_);
 
@@ -239,6 +287,8 @@ void frbgen_intiface_central_wire__crate__api__device_config__get_user_config_st
 
 void frbgen_intiface_central_wire__crate__api__specifiers__get_user_serial_communication_specifiers(int64_t port_);
 
+void frbgen_intiface_central_wire__crate__api__simulated_devices__get_user_simulated_devices(int64_t port_);
+
 void frbgen_intiface_central_wire__crate__api__specifiers__get_user_websocket_communication_specifiers(int64_t port_);
 
 void frbgen_intiface_central_wire__crate__api__runtime__is_engine_shutdown(int64_t port_);
@@ -246,6 +296,9 @@ void frbgen_intiface_central_wire__crate__api__runtime__is_engine_shutdown(int64
 void frbgen_intiface_central_wire__crate__api__specifiers__remove_serial_specifier(int64_t port_,
                                                                                    struct wire_cst_list_prim_u_8_strict *protocol,
                                                                                    struct wire_cst_list_prim_u_8_strict *port);
+
+void frbgen_intiface_central_wire__crate__api__simulated_devices__remove_simulated_device(int64_t port_,
+                                                                                          struct wire_cst_list_prim_u_8_strict *address);
 
 void frbgen_intiface_central_wire__crate__api__device_config__remove_user_config(int64_t port_,
                                                                                  uintptr_t identifier);
@@ -329,6 +382,14 @@ struct wire_cst_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustA
 
 struct wire_cst_list_String *frbgen_intiface_central_cst_new_list_String(int32_t len);
 
+struct wire_cst_list_exposed_simulated_device_archetype *frbgen_intiface_central_cst_new_list_exposed_simulated_device_archetype(int32_t len);
+
+struct wire_cst_list_exposed_simulated_device_config_entry *frbgen_intiface_central_cst_new_list_exposed_simulated_device_config_entry(int32_t len);
+
+struct wire_cst_list_exposed_simulated_device_feature_summary *frbgen_intiface_central_cst_new_list_exposed_simulated_device_feature_summary(int32_t len);
+
+struct wire_cst_list_input_type *frbgen_intiface_central_cst_new_list_input_type(int32_t len);
+
 struct wire_cst_list_prim_u_8_strict *frbgen_intiface_central_cst_new_list_prim_u_8_strict(int32_t len);
 
 struct wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition *frbgen_intiface_central_cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition(int32_t len);
@@ -336,6 +397,7 @@ struct wire_cst_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_genera
 struct wire_cst_list_record_string_exposed_serial_specifier *frbgen_intiface_central_cst_new_list_record_string_exposed_serial_specifier(int32_t len);
 
 struct wire_cst_list_record_string_exposed_websocket_specifier *frbgen_intiface_central_cst_new_list_record_string_exposed_websocket_specifier(int32_t len);
+
 
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
@@ -349,6 +411,10 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_box_autoadd_u_32);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceFeature);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_String);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_exposed_simulated_device_archetype);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_exposed_simulated_device_config_entry);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_exposed_simulated_device_feature_summary);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_input_type);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_prim_u_8_strict);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_user_device_identifier_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_exposed_server_device_definition);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_cst_new_list_record_string_exposed_serial_specifier);
@@ -384,6 +450,7 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_set_message_gap_ms);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceDefinition_update_feature_output_properties);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureInput_input_types);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_disabled);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_duration);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__device_config__ExposedServerDeviceFeatureOutputProperties_position);
@@ -423,6 +490,10 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__runtime__send_backend_server_message);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__runtime__send_runtime_msg);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__runtime__stop_engine);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__simulated_devices__add_simulated_device);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__simulated_devices__get_available_simulated_archetypes);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__simulated_devices__get_user_simulated_devices);
+    dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__simulated_devices__remove_simulated_device);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__specifiers__add_serial_specifier);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__specifiers__add_websocket_specifier);
     dummy_var ^= ((int64_t) (void*) frbgen_intiface_central_wire__crate__api__specifiers__get_protocol_names);
