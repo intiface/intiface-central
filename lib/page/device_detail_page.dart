@@ -18,14 +18,30 @@ import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class DeviceDetailPage extends StatelessWidget {
-  final ExposedUserDeviceIdentifier identifier;
+  final String _address;
+  final String _protocol;
+  final String? _identifier;
   final VoidCallback onBack;
 
-  const DeviceDetailPage({
+  DeviceDetailPage({
     super.key,
-    required this.identifier,
+    required ExposedUserDeviceIdentifier identifier,
     required this.onBack,
-  });
+  })  : _address = identifier.address,
+        _protocol = identifier.protocol,
+        _identifier = identifier.identifier;
+
+  MapEntry<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>?
+      _findConfig(UserDeviceConfigurationCubit cubit) {
+    for (final entry in cubit.configs.entries) {
+      if (entry.key.address == _address &&
+          entry.key.protocol == _protocol &&
+          entry.key.identifier == _identifier) {
+        return entry;
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +61,13 @@ class DeviceDetailPage extends StatelessWidget {
               builder: (context, userConfigState) {
                 final userDeviceConfigCubit =
                     BlocProvider.of<UserDeviceConfigurationCubit>(context);
-                final config = userDeviceConfigCubit.configs[identifier];
-                if (config == null) {
+                final configEntry = _findConfig(userDeviceConfigCubit);
+                if (configEntry == null) {
                   WidgetsBinding.instance.addPostFrameCallback((_) => onBack());
                   return const SizedBox.shrink();
                 }
+                final currentIdentifier = configEntry.key;
+                final config = configEntry.value;
 
                 final engineRunning = BlocProvider.of<EngineControlBloc>(
                   context,
@@ -82,11 +100,11 @@ class DeviceDetailPage extends StatelessWidget {
                             children: [
                               _DeviceInfoSection(
                                 config: config,
-                                identifier: identifier,
+                                identifier: currentIdentifier,
                               ),
                               const Divider(),
                               _DeviceConfigSection(
-                                identifier: identifier,
+                                identifier: currentIdentifier,
                                 config: config,
                                 engineRunning: engineRunning,
                                 userDeviceConfigCubit: userDeviceConfigCubit,
@@ -97,7 +115,7 @@ class DeviceDetailPage extends StatelessWidget {
                                   deviceCubit: deviceCubit,
                                 ),
                               _FeatureConfigSection(
-                                identifier: identifier,
+                                identifier: currentIdentifier,
                                 definition: config,
                                 engineRunning: engineRunning,
                               ),
@@ -105,7 +123,7 @@ class DeviceDetailPage extends StatelessWidget {
                                 enabled: !engineRunning,
                                 onPressed: () async {
                                   await userDeviceConfigCubit
-                                      .removeDeviceConfig(identifier);
+                                      .removeDeviceConfig(currentIdentifier);
                                   onBack();
                                 },
                               ),
