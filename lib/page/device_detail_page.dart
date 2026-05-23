@@ -413,11 +413,17 @@ class _DeviceControlsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final List<Widget> controls = [];
+    final chartedFeatures = <int>{};
 
     for (var i = 0; i < deviceCubit.outputs.length; i++) {
       final output = deviceCubit.outputs[i];
-      final observationCubit = i < deviceCubit.observations.length
-          ? deviceCubit.observations[i]
+      final featureIdx = output.feature.feature.featureIndex;
+      final isLastOutputForFeature = !deviceCubit.outputs
+          .skip(i + 1)
+          .any((o) => o.feature.feature.featureIndex == featureIdx);
+      final observationCubit = (isLastOutputForFeature &&
+              chartedFeatures.add(featureIdx))
+          ? deviceCubit.observations[featureIdx]
           : null;
 
       if (output is ValueOutputCubit) {

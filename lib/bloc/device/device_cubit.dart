@@ -16,7 +16,7 @@ class DeviceStateOffline extends DeviceState {}
 class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? _clientDevice;
   List<DeviceOutputCubit> _outputs = [];
-  List<ObservationCubit> _observations = [];
+  Map<int, ObservationCubit> _observations = {};
   final List<DeviceInputBloc> _inputs = [];
   final Stream<DeviceOutputObservation> _observationStream;
 
@@ -29,19 +29,24 @@ class DeviceCubit extends Cubit<DeviceState> {
     _clientDevice = device;
     for (var feature in _clientDevice!.features.values) {
       if (feature.feature.output != null) {
+        int? maxSteps;
         for (var output in feature.feature.output!.entries) {
           if (output.key == OutputType.hwPositionWithDuration) {
             _outputs.add(PositionWithDurationOutputCubit(feature));
           } else {
             _outputs.add(ValueOutputCubit(feature, output.key));
           }
-          _observations.add(ObservationCubit(
-            deviceIndex: _clientDevice!.index,
-            featureIndex: feature.feature.featureIndex,
-            maxSteps: output.value.value![1],
-            observationStream: _observationStream,
-          ));
+          final steps = output.value.value![1];
+          if (maxSteps == null || steps > maxSteps) {
+            maxSteps = steps;
+          }
         }
+        _observations[feature.feature.featureIndex] = ObservationCubit(
+          deviceIndex: _clientDevice!.index,
+          featureIndex: feature.feature.featureIndex,
+          maxSteps: maxSteps!,
+          observationStream: _observationStream,
+        );
       }
       if (feature.feature.input != null) {
         for (var input in feature.feature.input!.entries) {
@@ -61,10 +66,10 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   void setOffline() {
     _clientDevice = null;
-    for (var obs in _observations) {
+    for (var obs in _observations.values) {
       obs.close();
     }
-    _observations = [];
+    _observations = {};
     _outputs = [];
     emit(DeviceStateOffline());
   }
@@ -72,5 +77,5 @@ class DeviceCubit extends Cubit<DeviceState> {
   ButtplugClientDevice? get device => _clientDevice;
   List<DeviceOutputCubit> get outputs => _outputs;
   List<DeviceInputBloc> get inputs => _inputs;
-  List<ObservationCubit> get observations => _observations;
+  Map<int, ObservationCubit> get observations => _observations;
 }

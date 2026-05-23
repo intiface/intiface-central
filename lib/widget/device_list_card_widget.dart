@@ -135,14 +135,11 @@ class DeviceListCard extends StatelessWidget {
                         deviceCubit != null &&
                         deviceCubit!.observations.isNotEmpty) ...[
                       const SizedBox(height: 4),
-                      for (var i = 0;
-                          i < deviceCubit!.observations.length;
-                          i++)
+                      for (final entry
+                          in deviceCubit!.observations.entries)
                         CompactObservationWidget(
-                          label: i < deviceCubit!.outputs.length
-                              ? _shortLabel(deviceCubit!.outputs[i])
-                              : '',
-                          observation: deviceCubit!.observations[i],
+                          label: _featureLabel(deviceCubit!, entry.key),
+                          observation: entry.value,
                         ),
                     ],
                   ],
@@ -169,6 +166,17 @@ class DeviceListCard extends StatelessWidget {
       'hwPositionWithDuration' => 'Lin',
       _ => output.type.name.substring(0, 3),
     };
+  }
+
+  static String _featureLabel(DeviceCubit cubit, int featureIndex) {
+    try {
+      final output = cubit.outputs.firstWhere(
+        (o) => o.feature.feature.featureIndex == featureIndex,
+      );
+      return _shortLabel(output);
+    } catch (_) {
+      return '';
+    }
   }
 
   Widget _buildBadge(BuildContext context, String label, Color color) {
