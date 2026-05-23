@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const GUI_WINDOW_WIDTH = "gui_window_width";
-const GUI_WINDOW_HEIGHT = "gui_window_height";
+const guiWindowWidth = "gui_window_width";
+const guiWindowHeight = "gui_window_height";
 
-const GUI_WINDOW_POSX = "gui_window_posx";
-const GUI_WINDOW_POSY = "gui_window_posy";
+const guiWindowPosX = "gui_window_posx";
+const guiWindowPosY = "gui_window_posy";
 
 class GuiSettingsState {}
 
@@ -40,14 +40,14 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
 
   void setExpansionValue(String expansionName, bool isExpanded) {
     _prefs.setBool(expansionName, isExpanded);
-    emit(GuiSettingStateUpdate(valueName: expansionName));
+    _emitUpdate(expansionName);
   }
 
   Size getWindowSize() {
     try {
       return Size(
-        _prefs.getInt(GUI_WINDOW_WIDTH)!.floorToDouble(),
-        _prefs.getInt(GUI_WINDOW_HEIGHT)!.floorToDouble(),
+        _prefs.getInt(guiWindowWidth)!.floorToDouble(),
+        _prefs.getInt(guiWindowHeight)!.floorToDouble(),
       );
     } catch (e) {
       return const Size(800, 600);
@@ -55,16 +55,16 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
   }
 
   void setWindowSize(Size windowSize) {
-    _prefs.setInt(GUI_WINDOW_WIDTH, windowSize.width.floor());
-    _prefs.setInt(GUI_WINDOW_HEIGHT, windowSize.height.floor());
-    emit(GuiSettingStateUpdate(valueName: GUI_WINDOW_WIDTH));
+    _prefs.setInt(guiWindowWidth, windowSize.width.floor());
+    _prefs.setInt(guiWindowHeight, windowSize.height.floor());
+    _emitUpdate(guiWindowWidth);
   }
 
   Offset getWindowPosition() {
     try {
       return Offset(
-        _prefs.getInt(GUI_WINDOW_POSX)!.floorToDouble(),
-        _prefs.getInt(GUI_WINDOW_POSY)!.floorToDouble(),
+        _prefs.getInt(guiWindowPosX)!.floorToDouble(),
+        _prefs.getInt(guiWindowPosY)!.floorToDouble(),
       );
     } catch (e) {
       return const Offset(0, 0);
@@ -72,8 +72,15 @@ class GuiSettingsCubit extends Cubit<GuiSettingsState> {
   }
 
   void setWindowPosition(Offset windowSize) {
-    _prefs.setInt(GUI_WINDOW_POSX, windowSize.dx.floor());
-    _prefs.setInt(GUI_WINDOW_POSY, windowSize.dy.floor());
-    emit(GuiSettingStateUpdate(valueName: GUI_WINDOW_POSX));
+    _prefs.setInt(guiWindowPosX, windowSize.dx.floor());
+    _prefs.setInt(guiWindowPosY, windowSize.dy.floor());
+    _emitUpdate(guiWindowPosX);
+  }
+
+  void _emitUpdate(String valueName) {
+    if (isClosed) {
+      return;
+    }
+    emit(GuiSettingStateUpdate(valueName: valueName));
   }
 }
