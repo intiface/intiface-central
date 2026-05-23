@@ -9,7 +9,7 @@ class NativeApiLog {
   static final NativeApiLog _instance = NativeApiLog._internal();
   late Stream<String> _logStream;
   final StreamController<EngineLogMessage> _logMessageStream =
-      StreamController();
+      StreamController.broadcast();
 
   factory NativeApiLog() {
     return _instance;

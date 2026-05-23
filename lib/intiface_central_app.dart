@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart' show ExternalLibrary;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +52,7 @@ class IntifaceCentralBootstrapOptions {
   final bool initializeSentry;
   final bool initializeDiscord;
   final bool requestPlatformPermissions;
+  final ExternalLibrary? rustExternalLibrary;
   final Future<void> Function()? afterRustInit;
   final Future<void> Function(UserDeviceConfigurationCubit userConfigCubit)?
       afterUserDeviceConfigurationInit;
@@ -63,6 +66,7 @@ class IntifaceCentralBootstrapOptions {
     this.initializeSentry = true,
     this.initializeDiscord = true,
     this.requestPlatformPermissions = true,
+    this.rustExternalLibrary,
     this.afterRustInit,
     this.afterUserDeviceConfigurationInit,
   });
@@ -83,6 +87,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
   // This fixes a race condition where FutureBuilder would call buildApp() on every
   // rebuild, potentially causing FFI conflicts and window initialization issues.
   static Future<Widget>? _buildAppFuture;
+  static StreamSubscription? _apiLogSubscription;
 
   static Future<IntifaceCentralApp> create() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -433,11 +438,14 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     // Bring up the FFI now that we have logging available and crash logging set up.
     // initializeApi();
     try {
-      await RustLib.init();
+      await RustLib.init(externalLibrary: options.rustExternalLibrary);
     } catch (e) {
-      logError("Rust API already initialized! Error: $e");
-      RustLib.dispose();
-      await RustLib.init();
+      final message = e.toString().toLowerCase();
+      if (message.contains('already') && message.contains('initializ')) {
+        logWarning("Rust API already initialized, continuing. Error: $e");
+      } else {
+        rethrow;
+      }
     }
 
     if (options.afterRustInit != null) {
@@ -453,7 +461,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       await options.afterUserDeviceConfigurationInit!(userConfigCubit);
     }
 
-    apiLog.logMessageStream.listen((message) {
+    await _apiLogSubscription?.cancel();
+    _apiLogSubscription = apiLog.logMessageStream.listen((message) {
       var level = message.level;
       if (level == "DEBUG") {
         logDebug(message.fields["message"]);

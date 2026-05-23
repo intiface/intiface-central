@@ -6,9 +6,10 @@ import 'package:intiface_central/bloc/device/observation_cubit.dart';
 class ObservationChartWidget extends StatelessWidget {
   final ObservationCubit _observationCubit;
 
-  const ObservationChartWidget(
-      {super.key, required ObservationCubit observationCubit})
-      : _observationCubit = observationCubit;
+  const ObservationChartWidget({
+    super.key,
+    required ObservationCubit observationCubit,
+  }) : _observationCubit = observationCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -18,56 +19,64 @@ class ObservationChartWidget extends StatelessWidget {
       bloc: _observationCubit,
       builder: (context, state) {
         final spots = <FlSpot>[];
+        final latestValue = state.values.isEmpty ? 0.0 : state.values.first;
         final step = 10.0 / (state.values.length - 1);
         for (var i = 0; i < state.values.length; i++) {
           spots.add(FlSpot(-i * step, state.values[i]));
         }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: SizedBox(
-            height: 60,
-            child: LineChart(
-              LineChartData(
-                minX: -10,
-                maxX: 0,
-                minY: 0,
-                maxY: 1.0,
-                clipData: const FlClipData.all(),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: false,
-                    isStepLineChart: false,
-                    color: lineColor,
-                    barWidth: 2,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: lineColor.withValues(alpha: 0.15),
+        return Semantics(
+          label:
+              'Device output observation ${_observationCubit.deviceIndex}:${_observationCubit.featureIndex}',
+          value: latestValue.toStringAsFixed(2),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: SizedBox(
+              height: 60,
+              child: LineChart(
+                LineChartData(
+                  minX: -10,
+                  maxX: 0,
+                  minY: 0,
+                  maxY: 1.0,
+                  clipData: const FlClipData.all(),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: false,
+                      isStepLineChart: false,
+                      color: lineColor,
+                      barWidth: 2,
+                      dotData: const FlDotData(show: false),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: lineColor.withValues(alpha: 0.15),
+                      ),
+                    ),
+                  ],
+                  titlesData: const FlTitlesData(show: false),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 0.5,
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: Theme.of(
+                        context,
+                      ).dividerColor.withValues(alpha: 0.3),
+                      strokeWidth: 0.5,
                     ),
                   ),
-                ],
-                titlesData: const FlTitlesData(show: false),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 0.5,
-                  getDrawingHorizontalLine: (_) => FlLine(
-                    color:
-                        Theme.of(context).dividerColor.withValues(alpha: 0.3),
-                    strokeWidth: 0.5,
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(
+                      color: Theme.of(
+                        context,
+                      ).dividerColor.withValues(alpha: 0.3),
+                      width: 0.5,
+                    ),
                   ),
+                  lineTouchData: const LineTouchData(enabled: false),
                 ),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border.all(
-                    color:
-                        Theme.of(context).dividerColor.withValues(alpha: 0.3),
-                    width: 0.5,
-                  ),
-                ),
-                lineTouchData: const LineTouchData(enabled: false),
               ),
             ),
           ),

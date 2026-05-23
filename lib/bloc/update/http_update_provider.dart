@@ -90,7 +90,7 @@ class DeviceConfigUpdateProvider extends HttpUpdateProvider {
   DeviceConfigUpdateProvider(String expectedVersion)
     : super(
         IntifacePaths.deviceConfigFile,
-        "https://intiface-engine-device-config.intiface.com/buttplug-device-config-v4.json",
+        "https://intiface-engine-device-config.intiface.com/buttplug-device-config-v5.json",
         expectedVersion,
       );
 

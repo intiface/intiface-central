@@ -18,7 +18,7 @@ class LibraryEngineProvider implements EngineProvider {
       _stream = runEngine(args: options);
     } catch (e) {
       logError("Engine start failed!");
-      stop();
+      await stop();
       return;
     }
     logInfo("Engine started");
@@ -41,7 +41,7 @@ class LibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    stopEngine();
+    await stopEngine();
     logInfo("Engine stopped");
   }
 

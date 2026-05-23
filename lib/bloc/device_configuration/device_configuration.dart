@@ -44,9 +44,9 @@ class DeviceConfiguration {
         jsonDecode(configFileJson),
       );
       logInfo("${configFile.path} version: ${config.version}");
-      if (config.version!.major != 4) {
+      if (config.version!.major != 5) {
         logWarning(
-          "${configFile.path} is not v4, removing and letting system pull from repo.",
+          "${configFile.path} is not v5, removing and letting system pull from repo.",
         );
         return "0.0";
       }

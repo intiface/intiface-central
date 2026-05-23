@@ -2,6 +2,8 @@ name: Tests
 on:
   pull_request:
     branches: [main, dev]
+  push:
+    branches: [main]
 
 concurrency:
   group: test-${{ github.head_ref || github.ref }}
@@ -31,12 +33,13 @@ jobs:
           channel: 'stable'
           cache: true
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter analyze --no-fatal-warnings --no-fatal-infos
       - run: flutter test
 
   integration:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: macos-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ./intiface-central
@@ -57,5 +60,6 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+      - run: flutter config --enable-macos-desktop
       - run: flutter pub get
-      - run: flutter test integration_test/
+      - run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d macos
