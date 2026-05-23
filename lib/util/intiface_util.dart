@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
 import 'package:intl/intl.dart';
 
-const String userDeviceConfigFilename = 'buttplug-user-device-config-v4.json';
-const String deviceConfigFilename = 'buttplug-device-config-v4.json';
+const String userDeviceConfigFilename = 'buttplug-user-device-config-v5.json';
+const String deviceConfigFilename = 'buttplug-device-config-v5.json';
 const String intifaceNewsFilename = 'intiface.news.md';
 const String intifaceAppDirectoryName = 'IntifaceCentralFlutter';
 const String intifaceConfigDirectoryName = 'config';
@@ -32,26 +33,28 @@ class IntifacePaths {
   static File get engineFile => IntifacePaths._engineFile;
   static Directory get newsPath => IntifacePaths._newsPath;
   static File get newsFile => IntifacePaths._newsFile;
-  static Future<void> init() async {
-    (await getApplicationSupportDirectory()).create(recursive: true);
 
-    var docsDir = (await getApplicationSupportDirectory()).path;
+  static Future<void> init({Directory? baseDirectory}) async {
+    final docsDir = baseDirectory?.path ?? (await getApplicationSupportDirectory()).path;
+    await _initFromBaseDirectory(docsDir);
+  }
 
-    IntifacePaths._configPath = Directory(
-      p.join(docsDir, intifaceConfigDirectoryName),
-    );
+  @visibleForTesting
+  static Future<void> initForTest(Directory baseDirectory) async {
+    await _initFromBaseDirectory(baseDirectory.path);
+  }
+
+  static Future<void> _initFromBaseDirectory(String docsDir) async {
+    await Directory(docsDir).create(recursive: true);
+
+    IntifacePaths._configPath = Directory(p.join(docsDir, intifaceConfigDirectoryName));
     await IntifacePaths._configPath.create(recursive: true);
 
-    IntifacePaths._logPath = Directory(
-      p.join(docsDir, intifaceLoggingDirectoryName),
-    );
+    IntifacePaths._logPath = Directory(p.join(docsDir, intifaceLoggingDirectoryName));
     await IntifacePaths._logPath.create(recursive: true);
 
     // Take care of eliminating old log files here. Since we store date/time in their name, we can just use that.
-    var logFiles = IntifacePaths.logPath.listSync(
-      followLinks: false,
-      recursive: false,
-    );
+    var logFiles = IntifacePaths.logPath.listSync(followLinks: false, recursive: false);
     // Only keep last 5 log files.
     if (logFiles.length >= 5) {
       FileSystemEntity oldestFile = logFiles[0];
@@ -67,40 +70,26 @@ class IntifacePaths {
     final now = DateTime.now();
     var logFilename =
         "intiface-central-${now.year}-${formatter.format(now.month)}-${formatter.format(now.day)}-${formatter.format(now.hour)}-${formatter.format(now.minute)}-${formatter.format(now.second)}.log";
-    IntifacePaths._logFile = File(
-      p.join(IntifacePaths._logPath.path, logFilename),
-    );
+    IntifacePaths._logFile = File(p.join(IntifacePaths._logPath.path, logFilename));
     await IntifacePaths._logFile.create();
 
-    IntifacePaths._deviceConfigFile = File(
-      p.join(IntifacePaths._configPath.path, deviceConfigFilename),
-    );
-    IntifacePaths._userDeviceConfigFile = File(
-      p.join(IntifacePaths._configPath.path, userDeviceConfigFilename),
-    );
+    IntifacePaths._deviceConfigFile = File(p.join(IntifacePaths._configPath.path, deviceConfigFilename));
+    IntifacePaths._userDeviceConfigFile = File(p.join(IntifacePaths._configPath.path, userDeviceConfigFilename));
 
-    IntifacePaths._enginePath = Directory(
-      p.join(docsDir, intifaceEngineDirectoryName),
-    );
+    IntifacePaths._enginePath = Directory(p.join(docsDir, intifaceEngineDirectoryName));
     await IntifacePaths._enginePath.create(recursive: true);
 
     IntifacePaths._engineFile = File(
       p.join(
         IntifacePaths._enginePath.path,
-        Platform.isWindows
-            ? "$intifaceEngineFilename.exe"
-            : intifaceEngineFilename,
+        Platform.isWindows ? "$intifaceEngineFilename.exe" : intifaceEngineFilename,
       ),
     );
 
-    IntifacePaths._newsPath = Directory(
-      p.join(docsDir, intifaceNewsDirectoryName),
-    );
+    IntifacePaths._newsPath = Directory(p.join(docsDir, intifaceNewsDirectoryName));
     await IntifacePaths._newsPath.create(recursive: true);
 
-    IntifacePaths._newsFile = File(
-      p.join(IntifacePaths._newsPath.path, intifaceNewsFilename),
-    );
+    IntifacePaths._newsFile = File(p.join(IntifacePaths._newsPath.path, intifaceNewsFilename));
   }
 }
 

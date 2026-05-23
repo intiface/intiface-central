@@ -41,6 +41,33 @@ import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/src/rust/api/util.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+class IntifaceCentralBootstrapOptions {
+  final bool initializePaths;
+  final Directory? pathsBaseDirectory;
+  final bool initializeWindowing;
+  final bool initializeTray;
+  final bool initializeUpdates;
+  final bool initializeSentry;
+  final bool initializeDiscord;
+  final bool requestPlatformPermissions;
+  final Future<void> Function()? afterRustInit;
+  final Future<void> Function(UserDeviceConfigurationCubit userConfigCubit)?
+      afterUserDeviceConfigurationInit;
+
+  const IntifaceCentralBootstrapOptions({
+    this.initializePaths = true,
+    this.pathsBaseDirectory,
+    this.initializeWindowing = true,
+    this.initializeTray = true,
+    this.initializeUpdates = true,
+    this.initializeSentry = true,
+    this.initializeDiscord = true,
+    this.requestPlatformPermissions = true,
+    this.afterRustInit,
+    this.afterUserDeviceConfigurationInit,
+  });
+}
+
 // ignore: must_be_immutable
 class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListener {
   IntifaceCentralApp._create({required this.guiSettingsCubit});
@@ -169,7 +196,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     }
   }
 
-  Future<Widget> buildApp() async {
+  Future<Widget> buildApp({
+    IntifaceCentralBootstrapOptions options = const IntifaceCentralBootstrapOptions(),
+  }) async {
     var errorNotifier = ErrorNotifier();
     var multiPrinter = MultiPrinter(errorNotifier);
     // Logging setup needs to happen after we've done initial setup.
@@ -179,8 +208,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     logInfo("Intiface Central $packageVersion Starting...");
     logInfo("Running main builder");
 
-    logInfo("Initializing paths...");
-    await IntifacePaths.init();
+    if (options.initializePaths) {
+      logInfo("Initializing paths...");
+      await IntifacePaths.init(baseDirectory: options.pathsBaseDirectory);
+    }
     logInfo("Starting file logger...");
     multiPrinter.addFilePrinter();
 
@@ -190,7 +221,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
 
     // Set up attachments to be sent with sentry events.
-    if (configCubit.canUseCrashReporting) {
+    if (options.initializeSentry && configCubit.canUseCrashReporting) {
       logInfo("Sentry URL set, crash and log reporting available.");
       final dir = Directory(IntifacePaths.logPath.path);
       logInfo(IntifacePaths.logPath.path);
@@ -204,11 +235,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         }
         scope.addAttachment(userConfigAttachment);
       });
+    } else if (!options.initializeSentry) {
+      logInfo("Sentry initialization skipped by bootstrap options.");
     } else {
       logWarning("DSN not set, crash reporting cannot be used in this version of Intiface Central");
     }
 
-    if (isDesktop()) {
+    if (isDesktop() && options.initializeWindowing) {
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
@@ -269,8 +302,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       });
 
       // Only add app update checks on desktop, mobile apps will use stores.
-      updateRepo.addProvider(IntifaceCentralDesktopUpdater());
-    } else {
+      if (options.initializeUpdates) {
+        updateRepo.addProvider(IntifaceCentralDesktopUpdater());
+      }
+    } else if (!isDesktop() && options.requestPlatformPermissions) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
       // For older android builds, ask for location perms.
@@ -360,7 +395,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
     });
 
-    if (configCubit.checkForUpdateOnStart) {
+    if (options.initializeUpdates && configCubit.checkForUpdateOnStart) {
       updateBloc.add(RunUpdate());
     }
 
@@ -368,7 +403,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     _engineControlBloc = engineControlBloc;
 
     // Set up system tray on supported platforms (Windows/macOS only, not Linux)
-    if (supportsTray()) {
+    if (options.initializeTray && supportsTray()) {
       await _setupTray(configCubit);
 
       // Update tray menu when engine state changes
@@ -405,10 +440,18 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       await RustLib.init();
     }
 
+    if (options.afterRustInit != null) {
+      await options.afterRustInit!();
+    }
+
     // Setup logging before initializing the DCM
     var apiLog = NativeApiLog();
 
     var userConfigCubit = await UserDeviceConfigurationCubit.create();
+
+    if (options.afterUserDeviceConfigurationInit != null) {
+      await options.afterUserDeviceConfigurationInit!(userConfigCubit);
+    }
 
     apiLog.logMessageStream.listen((message) {
       var level = message.level;
@@ -426,12 +469,12 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
     });
 
-    if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
+    if (options.initializeSentry && const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
       await crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
     }
 
     DiscordBloc discordBloc = DiscordBloc();
-    if (isDesktop() && configCubit.useDiscordRichPresence) {
+    if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
       logInfo("Discord Rich Presence on.");
     } else {
       logInfo("Discord Rich Presence off.");
@@ -457,13 +500,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
       if (state is EngineServerCreatedState) {
         deviceControlBloc.add(DeviceManagerEngineStartedEvent());
-        if (isDesktop() && configCubit.useDiscordRichPresence) {
+        if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStartedEvent());
         }
       }
       if (state is EngineStoppedState) {
         deviceControlBloc.add(DeviceManagerEngineStoppedEvent());
-        if (isDesktop() && configCubit.useDiscordRichPresence) {
+        if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStoppedEvent());
         }
       }
@@ -473,7 +516,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
     });
 
-    if (isDesktop()) {
+    if (options.initializeDiscord && isDesktop()) {
       deviceControlBloc.stream.listen((state) async {
         if (!configCubit.useDiscordRichPresence) return;
 
@@ -529,7 +572,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         BlocProvider(create: (context) => userConfigCubit),
         BlocProvider(create: (context) => guiSettingsCubit),
         // Discord RPC won't work on mobile
-        if (isDesktop()) BlocProvider(create: (context) => discordBloc),
+        if (options.initializeDiscord && isDesktop()) BlocProvider(create: (context) => discordBloc),
       ],
       child: const IntifaceCentralView(),
     );

@@ -111,7 +111,7 @@ class DeviceDetailPage extends StatelessWidget {
                               ),
                               const Divider(),
                               if (isConnected)
-                                _DeviceControlsSection(
+                                DeviceControlsSection(
                                   deviceCubit: deviceCubit,
                                 ),
                               _FeatureConfigSection(
@@ -404,10 +404,10 @@ class _DeviceConfigSection extends StatelessWidget {
   }
 }
 
-class _DeviceControlsSection extends StatelessWidget {
+class DeviceControlsSection extends StatelessWidget {
   final DeviceCubit deviceCubit;
 
-  const _DeviceControlsSection({required this.deviceCubit});
+  const DeviceControlsSection({super.key, required this.deviceCubit});
 
   @override
   Widget build(BuildContext context) {
