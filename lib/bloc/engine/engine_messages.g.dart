@@ -112,11 +112,27 @@ Map<String, dynamic> _$EngineServerCreatedToJson(
   EngineServerCreated instance,
 ) => <String, dynamic>{};
 
-EngineError _$EngineErrorFromJson(Map<String, dynamic> json) =>
-    EngineError()..error = json['error'] as String;
+EngineErrorDetail _$EngineErrorDetailFromJson(Map<String, dynamic> json) =>
+    EngineErrorDetail()
+      ..code = json['code'] as String
+      ..port = (json['port'] as num?)?.toInt()
+      ..address = json['address'] as String?;
+
+Map<String, dynamic> _$EngineErrorDetailToJson(EngineErrorDetail instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'port': instance.port,
+      'address': instance.address,
+    };
+
+EngineError _$EngineErrorFromJson(Map<String, dynamic> json) => EngineError()
+  ..error = json['error'] as String
+  ..detail = json['detail'] == null
+      ? null
+      : EngineErrorDetail.fromJson(json['detail'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$EngineErrorToJson(EngineError instance) =>
-    <String, dynamic>{'error': instance.error};
+    <String, dynamic>{'error': instance.error, 'detail': instance.detail};
 
 EngineStopped _$EngineStoppedFromJson(Map<String, dynamic> json) =>
     EngineStopped();

@@ -8,6 +8,43 @@ import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/util/bluetooth_check.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+const _portInUseTroubleshootingUrl =
+    'https://intiface.com/docs/intiface-central/troubleshooting';
+
+Future<void> _showPortInUseDialog(
+  BuildContext context,
+  EnginePortInUseState state,
+) async {
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Port in use'),
+      content: Text(
+        [
+          'Engine error: ${state.error}',
+          if (state.address != null) 'Address: ${state.address}',
+          if (state.port != null) 'Port: ${state.port}',
+        ].join('\n'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            if (await canLaunchUrlString(_portInUseTroubleshootingUrl)) {
+              await launchUrlString(_portInUseTroubleshootingUrl);
+            }
+          },
+          child: const Text('Open Troubleshooting'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
 
 class ControlWidget extends StatelessWidget {
   const ControlWidget({super.key});
@@ -17,7 +54,11 @@ class ControlWidget extends StatelessWidget {
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
       buildWhen: (previous, current) => current is AppModeState,
       builder: (context, configState) {
-        return BlocBuilder<EngineControlBloc, EngineControlState>(
+        return BlocConsumer<EngineControlBloc, EngineControlState>(
+          listenWhen: (previous, current) => current is EnginePortInUseState,
+          listener: (context, state) {
+            _showPortInUseDialog(context, state as EnginePortInUseState);
+          },
           buildWhen:
               (EngineControlState previous, EngineControlState current) =>
                   current is EngineStartingState ||
@@ -100,10 +141,12 @@ class ControlWidget extends StatelessWidget {
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onPrimary,
                   backgroundColor: colors.primary,
-                  disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                  hoverColor: colors.onPrimary.withOpacity(0.08),
-                  focusColor: colors.onPrimary.withOpacity(0.12),
-                  highlightColor: colors.onPrimary.withOpacity(0.12),
+                  disabledBackgroundColor: colors.onSurface.withValues(
+                    alpha: 0.12,
+                  ),
+                  hoverColor: colors.onPrimary.withValues(alpha: 0.08),
+                  focusColor: colors.onPrimary.withValues(alpha: 0.12),
+                  highlightColor: colors.onPrimary.withValues(alpha: 0.12),
                 ),
                 iconSize: 90,
                 onPressed: null,
@@ -115,10 +158,12 @@ class ControlWidget extends StatelessWidget {
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onPrimary,
                   backgroundColor: colors.primary,
-                  disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                  hoverColor: colors.onPrimary.withOpacity(0.08),
-                  focusColor: colors.onPrimary.withOpacity(0.12),
-                  highlightColor: colors.onPrimary.withOpacity(0.12),
+                  disabledBackgroundColor: colors.onSurface.withValues(
+                    alpha: 0.12,
+                  ),
+                  hoverColor: colors.onPrimary.withValues(alpha: 0.08),
+                  focusColor: colors.onPrimary.withValues(alpha: 0.12),
+                  highlightColor: colors.onPrimary.withValues(alpha: 0.12),
                 ),
                 iconSize: 90,
                 onPressed: buttonAction,

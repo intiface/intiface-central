@@ -60,7 +60,13 @@ class ProviderLogMessageState extends EngineControlState {
   ProviderLogMessageState(this.message);
 }
 
-class EngineError extends EngineControlState {}
+class EnginePortInUseState extends EngineControlState {
+  final String error;
+  final int? port;
+  final String? address;
+
+  EnginePortInUseState(this.error, {this.port, this.address});
+}
 
 class EngineControlEvent {}
 
@@ -83,7 +89,12 @@ class EngineDevice {
   final ExposedUserDeviceIdentifier identifier;
   final bool needsKeepalive;
 
-  const EngineDevice(this.index, this.name, this.identifier, {this.needsKeepalive = false});
+  const EngineDevice(
+    this.index,
+    this.name,
+    this.identifier, {
+    this.needsKeepalive = false,
+  });
 }
 
 class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
@@ -145,6 +156,17 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             if (engineMessage.engineProviderLog != null) {
               return ProviderLogMessageState(engineMessage.engineProviderLog!);
             }
+            if (engineMessage.engineError != null) {
+              var engineError = engineMessage.engineError!;
+              var detail = engineError.detail;
+              if (detail?.code == "port_in_use") {
+                return EnginePortInUseState(
+                  engineError.error,
+                  port: detail?.port,
+                  address: detail?.address,
+                );
+              }
+            }
             if (engineMessage.messageVersion != null) {
               logDebug("Got message version return");
               return state;
@@ -179,7 +201,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
               );
             }
             if (engineMessage.deviceDisconnected != null) {
-              var removedDevice = _devices.remove(engineMessage.deviceDisconnected!.index);
+              var removedDevice = _devices.remove(
+                engineMessage.deviceDisconnected!.index,
+              );
               if (removedDevice != null && removedDevice.needsKeepalive) {
                 var wasPreviouslyNeeded = anyDeviceNeedsKeepalive;
                 _keepaliveDeviceCount--;

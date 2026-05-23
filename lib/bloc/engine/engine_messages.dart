@@ -110,8 +110,19 @@ class EngineServerCreated {
 }
 
 @JsonSerializable()
+class EngineErrorDetail {
+  String code = "";
+  int? port;
+  String? address;
+  factory EngineErrorDetail.fromJson(Map<String, dynamic> json) =>
+      _$EngineErrorDetailFromJson(json);
+  EngineErrorDetail();
+}
+
+@JsonSerializable()
 class EngineError {
   String error = "";
+  EngineErrorDetail? detail;
   factory EngineError.fromJson(Map<String, dynamic> json) =>
       _$EngineErrorFromJson(json);
   EngineError();

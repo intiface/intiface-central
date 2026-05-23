@@ -28,11 +28,13 @@ void main() {
     mockRustApi = MockRustLibApi();
     setUpRustLibMock(mockRustApi);
     final fakeId = fakeDeviceIdentifier();
-    when(() => mockRustApi.crateApiDeviceConfigExposedUserDeviceIdentifierNew(
-          address: any(named: 'address'),
-          protocol: any(named: 'protocol'),
-          identifier: any(named: 'identifier'),
-        )).thenReturn(fakeId);
+    when(
+      () => mockRustApi.crateApiDeviceConfigExposedUserDeviceIdentifierNew(
+        address: any(named: 'address'),
+        protocol: any(named: 'protocol'),
+        identifier: any(named: 'identifier'),
+      ),
+    ).thenReturn(fakeId);
   });
 
   tearDownAll(() {
@@ -42,10 +44,12 @@ void main() {
   EngineControlBloc buildBloc() {
     mockRepo = MockEngineRepository();
     streamController = StreamController<EngineOutput>();
-    when(() => mockRepo.messageStream)
-        .thenAnswer((_) => streamController.stream);
-    when(() => mockRepo.start(options: any(named: 'options')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockRepo.messageStream,
+    ).thenAnswer((_) => streamController.stream);
+    when(
+      () => mockRepo.start(options: any(named: 'options')),
+    ).thenAnswer((_) async {});
     when(() => mockRepo.stop()).thenAnswer((_) async {});
     when(() => mockRepo.send(any())).thenReturn(null);
     return EngineControlBloc(mockRepo);
@@ -74,9 +78,7 @@ void main() {
       'emits EngineStartingState then EngineStartedState on engine started',
       build: buildBloc,
       act: (bloc) async {
-        bloc.add(EngineControlEventStart(
-          options: FakeEngineOptionsExternal(),
-        ));
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
         await Future.delayed(const Duration(milliseconds: 50));
 
         final msg = EngineMessage()..engineStarted = EngineStarted();
@@ -101,9 +103,7 @@ void main() {
       'emits EngineServerCreatedState',
       build: buildBloc,
       act: (bloc) async {
-        bloc.add(EngineControlEventStart(
-          options: FakeEngineOptionsExternal(),
-        ));
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
         await Future.delayed(const Duration(milliseconds: 50));
 
         final msg = EngineMessage()
@@ -125,14 +125,13 @@ void main() {
       'emits EngineStoppedState when repo.start throws',
       build: () {
         final bloc = buildBloc();
-        when(() => mockRepo.start(options: any(named: 'options')))
-            .thenThrow(Exception('start failed'));
+        when(
+          () => mockRepo.start(options: any(named: 'options')),
+        ).thenThrow(Exception('start failed'));
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(EngineControlEventStart(
-          options: FakeEngineOptionsExternal(),
-        ));
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
         await Future.delayed(const Duration(milliseconds: 50));
       },
       expect: () => [isA<EngineStoppedState>()],
@@ -142,9 +141,7 @@ void main() {
       'emits ClientConnectedState then ClientDisconnectedState',
       build: buildBloc,
       act: (bloc) async {
-        bloc.add(EngineControlEventStart(
-          options: FakeEngineOptionsExternal(),
-        ));
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
         await Future.delayed(const Duration(milliseconds: 50));
 
         final connectMsg = EngineMessage()
@@ -162,11 +159,47 @@ void main() {
       },
       expect: () => [
         isA<EngineStartingState>(),
-        isA<ClientConnectedState>()
-            .having((s) => s.clientName, 'clientName', 'Test Client'),
+        isA<ClientConnectedState>().having(
+          (s) => s.clientName,
+          'clientName',
+          'Test Client',
+        ),
         isA<ClientDisconnectedState>(),
         isA<EngineStoppedState>(),
       ],
+    );
+
+    blocTest<EngineControlBloc, EngineControlState>(
+      'emits EnginePortInUseState on port_in_use engine error',
+      build: buildBloc,
+      act: (bloc) async {
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final msg = EngineMessage()
+          ..engineError = (EngineError()
+            ..error = 'Port already in use'
+            ..detail = (EngineErrorDetail()
+              ..code = 'port_in_use'
+              ..port = 12345
+              ..address = '127.0.0.1'));
+        streamController.add(EngineOutput(msg, null));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        await streamController.close();
+        await Future.delayed(const Duration(milliseconds: 50));
+      },
+      expect: () => [
+        isA<EngineStartingState>(),
+        isA<EnginePortInUseState>()
+            .having((s) => s.error, 'error', 'Port already in use')
+            .having((s) => s.port, 'port', 12345)
+            .having((s) => s.address, 'address', '127.0.0.1'),
+        isA<EngineStoppedState>(),
+      ],
+      verify: (_) {
+        verify(() => mockRepo.start(options: any(named: 'options'))).called(1);
+      },
     );
 
     blocTest<EngineControlBloc, EngineControlState>(
@@ -187,9 +220,9 @@ void main() {
         'emits DeviceConnectedState on device connected message',
         build: buildBloc,
         act: (bloc) async {
-          bloc.add(EngineControlEventStart(
-            options: FakeEngineOptionsExternal(),
-          ));
+          bloc.add(
+            EngineControlEventStart(options: FakeEngineOptionsExternal()),
+          );
           await Future.delayed(const Duration(milliseconds: 50));
 
           final msg = EngineMessage()
@@ -221,9 +254,9 @@ void main() {
         'emits DeviceDisconnectedState after device disconnected',
         build: buildBloc,
         act: (bloc) async {
-          bloc.add(EngineControlEventStart(
-            options: FakeEngineOptionsExternal(),
-          ));
+          bloc.add(
+            EngineControlEventStart(options: FakeEngineOptionsExternal()),
+          );
           await Future.delayed(const Duration(milliseconds: 50));
 
           final connectMsg = EngineMessage()
@@ -250,8 +283,7 @@ void main() {
         expect: () => [
           isA<EngineStartingState>(),
           isA<DeviceConnectedState>(),
-          isA<DeviceDisconnectedState>()
-              .having((s) => s.index, 'index', 0),
+          isA<DeviceDisconnectedState>().having((s) => s.index, 'index', 0),
           isA<EngineStoppedState>(),
         ],
       );
