@@ -106,11 +106,22 @@ Map<String, dynamic> _$EngineStartedToJson(EngineStarted instance) =>
     <String, dynamic>{};
 
 EngineServerCreated _$EngineServerCreatedFromJson(Map<String, dynamic> json) =>
-    EngineServerCreated();
+    EngineServerCreated()
+      ..serviceType = json['service_type'] as String?
+      ..instanceName = json['instance_name'] as String?
+      ..port = (json['port'] as num?)?.toInt()
+      ..txtRecords = (json['txt_records'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList();
 
 Map<String, dynamic> _$EngineServerCreatedToJson(
   EngineServerCreated instance,
-) => <String, dynamic>{};
+) => <String, dynamic>{
+  'service_type': instance.serviceType,
+  'instance_name': instance.instanceName,
+  'port': instance.port,
+  'txt_records': instance.txtRecords,
+};
 
 EngineErrorDetail _$EngineErrorDetailFromJson(Map<String, dynamic> json) =>
     EngineErrorDetail()

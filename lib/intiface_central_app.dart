@@ -30,6 +30,7 @@ import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/util/bluetooth_check.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:intiface_central/util/logging.dart';
+import 'package:intiface_central/util/mdns_platform_service.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/widget/control_widget.dart';
 import 'package:loggy/loggy.dart';
@@ -509,12 +510,33 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
       if (state is EngineServerCreatedState) {
         deviceControlBloc.add(DeviceManagerEngineStartedEvent());
+        if (Platform.isIOS) {
+          final service = state.service;
+          if (service?.serviceType != null &&
+              service?.instanceName != null &&
+              service?.port != null) {
+            final started = await MdnsPlatformService.instance.startMdnsPublisher(
+              serviceType: service!.serviceType!,
+              instanceName: service.instanceName!,
+              port: service.port!,
+              txtRecords: service.txtRecords ?? const [],
+            );
+            if (started) {
+              logInfo("Started native iOS mDNS publisher");
+            } else {
+              logWarning("Native iOS mDNS publisher did not start");
+            }
+          }
+        }
         if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStartedEvent());
         }
       }
       if (state is EngineStoppedState) {
         deviceControlBloc.add(DeviceManagerEngineStoppedEvent());
+        if (Platform.isIOS) {
+          await MdnsPlatformService.instance.stopMdnsPublisher();
+        }
         if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStoppedEvent());
         }

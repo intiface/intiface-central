@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'dart:isolate';
+import 'dart:io';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:intiface_central/src/rust/frb_generated.dart';
+import 'package:intiface_central/util/mdns_platform_service.dart';
 import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -28,6 +30,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
   final ReceivePort _shutdownReceivePort;
   Stream<String>? _stream;
   final Completer<void> _serverExited = Completer();
+  bool _mdnsMulticastLockAcquired = false;
 
   void _sendProviderLog(String level, String outgoingMessage) {
     var message = EngineProviderLog();
@@ -37,6 +40,44 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     var engineMessage = EngineMessage();
     engineMessage.engineProviderLog = message;
     FlutterForegroundTask.sendDataToMain(jsonEncode(engineMessage));
+  }
+
+  Future<void> _acquireMdnsMulticastLock() async {
+    if (_mdnsMulticastLockAcquired) {
+      return;
+    }
+    try {
+      _mdnsMulticastLockAcquired = await MdnsPlatformService.instance
+          .acquireMdnsMulticastLock();
+      if (_mdnsMulticastLockAcquired) {
+        _sendProviderLog("INFO", "Acquired mDNS multicast lock");
+      } else {
+        _sendProviderLog("WARN", "mDNS multicast lock was not acquired");
+      }
+    } catch (e) {
+      _sendProviderLog("ERROR", "Failed to acquire mDNS multicast lock: $e");
+    }
+  }
+
+  Future<void> _releaseMdnsMulticastLock() async {
+    if (!_mdnsMulticastLockAcquired) {
+      return;
+    }
+    _mdnsMulticastLockAcquired = false;
+    try {
+      final released = await MdnsPlatformService.instance
+          .releaseMdnsMulticastLock();
+      if (released) {
+        _sendProviderLog("INFO", "Released mDNS multicast lock");
+      } else {
+        _sendProviderLog(
+          "WARN",
+          "mDNS multicast lock release reported failure",
+        );
+      }
+    } catch (e) {
+      _sendProviderLog("ERROR", "Failed to release mDNS multicast lock: $e");
+    }
   }
 
   IntifaceEngineTaskHandler()
@@ -52,9 +93,18 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     IsolateNameServer.removePortNameMapping(_kMainServerPortName);
     IsolateNameServer.removePortNameMapping(_kMainBackdoorPortName);
     IsolateNameServer.removePortNameMapping(_kMainShutdownPortName);
-    IsolateNameServer.registerPortWithName(serverSendPort, _kMainServerPortName);
-    IsolateNameServer.registerPortWithName(backdoorSendPort, _kMainBackdoorPortName);
-    IsolateNameServer.registerPortWithName(shutdownSendPort, _kMainShutdownPortName);
+    IsolateNameServer.registerPortWithName(
+      serverSendPort,
+      _kMainServerPortName,
+    );
+    IsolateNameServer.registerPortWithName(
+      backdoorSendPort,
+      _kMainBackdoorPortName,
+    );
+    IsolateNameServer.registerPortWithName(
+      shutdownSendPort,
+      _kMainShutdownPortName,
+    );
   }
 
   @override
@@ -79,6 +129,9 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     // Ok, NOW we can build our engine options.
     var engineOptions = await configRepo.getEngineOptions();
     _sendProviderLog("INFO", "Starting engine");
+    if (Platform.isAndroid && engineOptions.broadcastServerMdns) {
+      await _acquireMdnsMulticastLock();
+    }
 
     _sendProviderLog(
       "INFO",
@@ -88,6 +141,7 @@ class IntifaceEngineTaskHandler extends TaskHandler {
       _stream = runEngine(args: engineOptions);
     } catch (e) {
       _sendProviderLog("ERROR", "Engine start failed!");
+      await _releaseMdnsMulticastLock();
       return;
     }
     _sendProviderLog("INFO", "Engine started");
@@ -114,7 +168,11 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     });
     _shutdownReceivePort.listen((element) async {
       _sendProviderLog("INFO", "Engine shutdown request received");
-      await stopEngine();
+      try {
+        await stopEngine();
+      } finally {
+        await _releaseMdnsMulticastLock();
+      }
       await _serverExited.future;
       _sendProviderLog("INFO", "Engine shutdown successful");
       // We'll never send a bool type over this port otherwise, so we can use that as a trigger to say we're done.
@@ -136,8 +194,17 @@ class IntifaceEngineTaskHandler extends TaskHandler {
     // stopEngine() was already called by the _shutdownReceivePort listener,
     // so rustRuntimeStarted() returns false and this is a no-op.
     if (await rustRuntimeStarted()) {
-      _sendProviderLog("INFO", "Engine still running in onDestroy, stopping directly");
-      await stopEngine();
+      _sendProviderLog(
+        "INFO",
+        "Engine still running in onDestroy, stopping directly",
+      );
+      try {
+        await stopEngine();
+      } finally {
+        await _releaseMdnsMulticastLock();
+      }
+    } else {
+      await _releaseMdnsMulticastLock();
     }
     // Only remove port mappings that still point to OUR ports. If a new
     // ForegroundService instance started before onDestroy() fires, it already
@@ -171,7 +238,6 @@ class IntifaceEngineTaskHandler extends TaskHandler {
 
 class ForegroundTaskLibraryEngineProvider implements EngineProvider {
   StreamController<String> _processMessageStream = StreamController();
-  ReceivePort? _receivePort;
   SendPort? _serverSendPort;
   SendPort? _backdoorSendPort;
   SendPort? _shutdownSendPort;
@@ -199,16 +265,22 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
 
   @override
   Future<void> stop() async {
-    logInfo("ForegroundProvider.stop() called: _shutdownSendPort=${_shutdownSendPort != null ? 'SET' : 'NULL'}");
+    logInfo(
+      "ForegroundProvider.stop() called: _shutdownSendPort=${_shutdownSendPort != null ? 'SET' : 'NULL'}",
+    );
     if (_portsReadyCompleter != null) {
       // start() is still in the FGS boot window — await ports before sending shutdown.
       // This replaces the _pendingShutdown flag: same guarantee, no extra state.
-      logWarning("ForegroundProvider.stop(): ports not ready yet, awaiting start completion");
+      logWarning(
+        "ForegroundProvider.stop(): ports not ready yet, awaiting start completion",
+      );
       await _portsReadyCompleter!.future;
     }
     if (_shutdownCompleter != null) {
       // A shutdown is already in flight — join it instead of sending a second signal.
-      logInfo("ForegroundProvider.stop(): shutdown already in flight, awaiting existing completer");
+      logInfo(
+        "ForegroundProvider.stop(): shutdown already in flight, awaiting existing completer",
+      );
       await _shutdownCompleter!.future;
       return;
     }
@@ -241,13 +313,17 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     var isRunning = await FlutterForegroundTask.isRunningService;
     logInfo("_startForegroundTask: isRunningService=$isRunning");
     if (isRunning) {
-      final oldShutdownPort = IsolateNameServer.lookupPortByName(_kMainShutdownPortName);
+      final oldShutdownPort = IsolateNameServer.lookupPortByName(
+        _kMainShutdownPortName,
+      );
       if (oldShutdownPort != null) {
         if (_shutdownCompleter != null) {
           // stop() already sent the shutdown signal to the old FGS — just wait for it.
           // Sending a second signal would cause the handler to call stopEngine() again
           // after RustLib.dispose(), potentially hitting the new runtime.
-          logInfo("_startForegroundTask: stop() already in flight, awaiting its completion");
+          logInfo(
+            "_startForegroundTask: stop() already in flight, awaiting its completion",
+          );
           await _shutdownCompleter!.future;
           logInfo("_startForegroundTask: in-flight stop completed");
         } else {
@@ -255,7 +331,9 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
           // Use the graceful shutdown protocol: the handler calls stopEngine(),
           // awaits engineStopped, sends `false` back, we call stopService() and
           // complete _shutdownCompleter.
-          logInfo("_startForegroundTask: found stale FGS shutdown port, requesting graceful stop");
+          logInfo(
+            "_startForegroundTask: found stale FGS shutdown port, requesting graceful stop",
+          );
           _shutdownCompleter = Completer<void>();
           oldShutdownPort.send(null);
           await _shutdownCompleter!.future;
@@ -265,17 +343,25 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
       } else {
         // Edge case: service is running but its ports are gone (e.g. crashed).
         // Force-stop the service, then stop the Rust runtime directly if still up.
-        logWarning("_startForegroundTask: stale FGS has no shutdown port, forcing stop");
+        logWarning(
+          "_startForegroundTask: stale FGS has no shutdown port, forcing stop",
+        );
         await FlutterForegroundTask.stopService();
+        if (Platform.isAndroid) {
+          await MdnsPlatformService.instance.releaseMdnsMulticastLock();
+        }
         if (await rustRuntimeStarted()) {
           await stopEngine();
           const timeout = Duration(seconds: 5);
           final deadline = DateTime.now().add(timeout);
-          while (await rustRuntimeStarted() && DateTime.now().isBefore(deadline)) {
+          while (await rustRuntimeStarted() &&
+              DateTime.now().isBefore(deadline)) {
             await Future.delayed(const Duration(milliseconds: 100));
           }
           if (await rustRuntimeStarted()) {
-            logWarning("_startForegroundTask: Rust runtime still active after 5s timeout");
+            logWarning(
+              "_startForegroundTask: Rust runtime still active after 5s timeout",
+            );
           }
         }
         logInfo("_startForegroundTask: forced stop complete");
@@ -294,12 +380,7 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
     return reqResult;
   }
 
-  void _closeReceivePort() {
-    _receivePort?.close();
-    _receivePort = null;
-  }
-
-  void _onReceiveTaskData(message) {
+  void _onReceiveTaskData(Object message) {
     if (message is String) {
       _processMessageStream.add(message);
       // Detect engineStarted directly here rather than relying on the repository
@@ -309,16 +390,26 @@ class ForegroundTaskLibraryEngineProvider implements EngineProvider {
         try {
           var engineMessage = EngineMessage.fromJson(jsonDecode(message));
           if (engineMessage.engineStarted != null) {
-            _serverSendPort = IsolateNameServer.lookupPortByName(_kMainServerPortName);
-            _backdoorSendPort = IsolateNameServer.lookupPortByName(_kMainBackdoorPortName);
-            _shutdownSendPort = IsolateNameServer.lookupPortByName(_kMainShutdownPortName);
-            logInfo("_onReceiveTaskData: engineStarted, ports: server=${_serverSendPort != null ? 'SET' : 'NULL'}, shutdown=${_shutdownSendPort != null ? 'SET' : 'NULL'}");
+            _serverSendPort = IsolateNameServer.lookupPortByName(
+              _kMainServerPortName,
+            );
+            _backdoorSendPort = IsolateNameServer.lookupPortByName(
+              _kMainBackdoorPortName,
+            );
+            _shutdownSendPort = IsolateNameServer.lookupPortByName(
+              _kMainShutdownPortName,
+            );
+            logInfo(
+              "_onReceiveTaskData: engineStarted, ports: server=${_serverSendPort != null ? 'SET' : 'NULL'}, shutdown=${_shutdownSendPort != null ? 'SET' : 'NULL'}",
+            );
             _portsReadyCompleter!.complete();
           }
         } catch (_) {}
       }
     } else if (message is bool) {
-      logInfo("_onReceiveTaskData: bool received (shutdown complete signal), _shutdownCompleter=${_shutdownCompleter != null ? 'SET' : 'NULL'}");
+      logInfo(
+        "_onReceiveTaskData: bool received (shutdown complete signal), _shutdownCompleter=${_shutdownCompleter != null ? 'SET' : 'NULL'}",
+      );
       logInfo("Shutdown complete message received, stopping foreground task.");
       // Complete the shutdown completer only AFTER the foreground service is fully stopped.
       // This ensures isRunningService returns false before stop() unblocks, so any

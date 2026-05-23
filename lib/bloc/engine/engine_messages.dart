@@ -104,6 +104,14 @@ class EngineStarted {
 
 @JsonSerializable()
 class EngineServerCreated {
+  @JsonKey(name: "service_type")
+  String? serviceType;
+  @JsonKey(name: "instance_name")
+  String? instanceName;
+  int? port;
+  @JsonKey(name: "txt_records")
+  List<String>? txtRecords;
+
   factory EngineServerCreated.fromJson(Map<String, dynamic> json) =>
       _$EngineServerCreatedFromJson(json);
   EngineServerCreated();

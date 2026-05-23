@@ -18,7 +18,11 @@ class EngineStartingState extends EngineControlState {}
 
 class EngineStartedState extends EngineControlState {}
 
-class EngineServerCreatedState extends EngineControlState {}
+class EngineServerCreatedState extends EngineControlState {
+  final EngineServerCreated? service;
+
+  EngineServerCreatedState([this.service]);
+}
 
 class EngineStoppedState extends EngineControlState {}
 
@@ -151,7 +155,9 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
               return state;
             }
             if (engineMessage.engineServerCreated != null) {
-              return EngineServerCreatedState();
+              return EngineServerCreatedState(
+                engineMessage.engineServerCreated,
+              );
             }
             if (engineMessage.engineProviderLog != null) {
               return ProviderLogMessageState(engineMessage.engineProviderLog!);

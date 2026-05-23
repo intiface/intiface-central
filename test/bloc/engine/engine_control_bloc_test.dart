@@ -56,6 +56,24 @@ void main() {
   }
 
   group('EngineControlBloc', () {
+    test('EngineServerCreated deserializes optional service metadata', () {
+      final message = EngineMessage.fromJson({
+        'EngineServerCreated': {
+          'service_type': '_intiface_engine._tcp',
+          'instance_name': 'Intiface Test',
+          'port': 12345,
+          'txt_records': ['path=/'],
+        },
+      });
+
+      final service = message.engineServerCreated;
+      expect(service, isNotNull);
+      expect(service!.serviceType, '_intiface_engine._tcp');
+      expect(service.instanceName, 'Intiface Test');
+      expect(service.port, 12345);
+      expect(service.txtRecords, ['path=/']);
+    });
+
     test('initial state is EngineStoppedState', () {
       final bloc = buildBloc();
       expect(bloc.state, isA<EngineStoppedState>());
@@ -107,7 +125,11 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 50));
 
         final msg = EngineMessage()
-          ..engineServerCreated = EngineServerCreated();
+          ..engineServerCreated = (EngineServerCreated()
+            ..serviceType = '_intiface_engine._tcp'
+            ..instanceName = 'Intiface Test'
+            ..port = 12345
+            ..txtRecords = ['path=/']);
         streamController.add(EngineOutput(msg, null));
         await Future.delayed(const Duration(milliseconds: 50));
 
@@ -116,7 +138,21 @@ void main() {
       },
       expect: () => [
         isA<EngineStartingState>(),
-        isA<EngineServerCreatedState>(),
+        isA<EngineServerCreatedState>()
+            .having(
+              (state) => state.service?.serviceType,
+              'serviceType',
+              '_intiface_engine._tcp',
+            )
+            .having(
+              (state) => state.service?.instanceName,
+              'instanceName',
+              'Intiface Test',
+            )
+            .having((state) => state.service?.port, 'port', 12345)
+            .having((state) => state.service?.txtRecords, 'txtRecords', [
+              'path=/',
+            ]),
         isA<EngineStoppedState>(),
       ],
     );
