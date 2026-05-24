@@ -14,8 +14,9 @@ Widget-mode screenshots are regenerated with:
 flutter test test/docs_screenshots --update-goldens
 ```
 
-CI runs the same command and then fails if `generated/` has committed or
-untracked changes, so source specs and generated widget artifacts stay in sync.
+Generated PNGs may be exported to another documentation assets repository. When
+that is the case, commit the source specs here and move the generated assets to
+the destination repository after review.
 
 Integration-mode screenshots use the real test app bootstrap and simulated
 devices. They are intentionally separate from the normal integration suite:
@@ -39,13 +40,21 @@ top-level fields are:
 - `title`: human-readable review title.
 - `mode`: `widget`, `integration`, or `manual`.
 - `viewport`: `{ "width": number, "height": number }`.
+- `pixelRatio`: optional raster scale for widget-mode PNG output, defaults to
+  `1`; use `2` for crisper docs images while keeping layout dimensions stable.
 - `theme`: currently `light`.
 - `presentation`: optional `card` or `window`, defaults to `card`.
+- `background`: optional `solid` or `transparent`, defaults to `solid`.
 - `window`: optional `{ "width": number, "height": number }` for `window`
   presentation.
 - `entrypoint`: renderer name, such as `controlWidget`.
 - `fixture`: deterministic state for the renderer.
 - `callouts`: up to five callout objects.
+
+Widget-mode fixtures currently support engine state, deterministic news content,
+and selected configuration values such as `useSideNavigationBar`,
+`useCompactDisplay`, `appMode`, websocket host/port display, and app version
+strings.
 
 Callout targets resolve in this order when the field is present: `key`, `text`,
 `tooltip`, `semanticsLabel`, then explicit `bounds`.

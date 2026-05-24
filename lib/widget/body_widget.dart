@@ -235,6 +235,7 @@ class BodyWidget extends StatelessWidget {
           ),
         ),
         BottomNavigationBar(
+          key: DocsScreenshotKeys.mobileNavigation,
           currentIndex: visualSelectedIndex,
           onTap: (int index) {
             destinations[index].navigate(navCubit);

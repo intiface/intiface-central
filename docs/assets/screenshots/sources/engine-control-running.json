@@ -6,6 +6,7 @@
     "width": 1280,
     "height": 800
   },
+  "pixelRatio": 2,
   "theme": "light",
   "entrypoint": "controlWidget",
   "fixture": {

@@ -5,13 +5,15 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/widget/control_widget.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
 
+import '../helpers/fake_blocs.dart';
 import '../helpers/mocks.dart';
 import '../helpers/pump_app.dart';
 import 'docs_screenshot_spec.dart';
@@ -57,6 +59,7 @@ class DocsWidgetScreenshotGenerator {
       tester,
       rawBoundaryKey,
       p.join(_artifactDirectory, '${spec.id}.png'),
+      pixelRatio: spec.pixelRatio,
     );
 
     if (spec.callouts.isEmpty) return;
@@ -70,6 +73,7 @@ class DocsWidgetScreenshotGenerator {
       tester,
       calloutBoundaryKey,
       p.join(_artifactDirectory, '${spec.id}-callouts.png'),
+      pixelRatio: spec.pixelRatio,
     );
   }
 
@@ -92,11 +96,13 @@ class DocsWidgetScreenshotGenerator {
         boundaryKey: boundaryKey,
         viewport: spec.viewport,
         presentation: spec.presentation,
+        background: spec.background,
         window: spec.window,
         callouts: callouts,
         child: _buildEntrypoint(),
       ),
       engineControlBloc: _engineBlocForFixture(),
+      configCubit: _configCubitForFixture(),
       assetCubit: _assetCubitForFixture(),
     );
     await tester.pump();
@@ -106,7 +112,7 @@ class DocsWidgetScreenshotGenerator {
   Widget _buildEntrypoint() {
     return switch (spec.entrypoint) {
       'controlWidget' => const ControlWidget(),
-      'desktopStartup' => const Scaffold(
+      'desktopStartup' || 'mobileStartup' => const Scaffold(
         body: Column(
           children: [
             ControlWidget(),
@@ -152,6 +158,35 @@ class DocsWidgetScreenshotGenerator {
     when(() => engineBloc.state).thenReturn(state);
     when(() => engineBloc.isRunning).thenReturn(isRunning);
     return engineBloc;
+  }
+
+  IntifaceConfigurationCubit _configCubitForFixture() {
+    final configCubit = MockIntifaceConfigurationCubit();
+    stubConfigurationCubit(
+      configCubit,
+      useCompactDisplay: spec.fixture['useCompactDisplay'] as bool? ?? false,
+      useSideNavigationBar:
+          spec.fixture['useSideNavigationBar'] as bool? ?? true,
+      websocketServerAllInterfaces:
+          spec.fixture['websocketServerAllInterfaces'] as bool? ?? false,
+      websocketServerPort: spec.fixture['websocketServerPort'] as int? ?? 12345,
+      currentAppVersion:
+          spec.fixture['currentAppVersion'] as String? ?? '3.0.0',
+      latestAppVersion: spec.fixture['latestAppVersion'] as String? ?? '3.0.0',
+      appMode: _appModeForFixture(),
+    );
+    return configCubit;
+  }
+
+  AppMode _appModeForFixture() {
+    return switch (spec.fixture['appMode'] as String? ?? 'engine') {
+      'engine' => AppMode.engine,
+      'repeater' => AppMode.repeater,
+      'restApi' => AppMode.restApi,
+      final value => throw TestFailure(
+        'Unsupported appMode fixture "$value" in ${spec.sourcePath}',
+      ),
+    };
   }
 
   AssetCubit _assetCubitForFixture() {
@@ -350,6 +385,7 @@ class DocsScreenshotFrame extends StatelessWidget {
     required this.boundaryKey,
     required this.viewport,
     required this.presentation,
+    required this.background,
     required this.window,
     required this.callouts,
     required this.child,
@@ -358,6 +394,7 @@ class DocsScreenshotFrame extends StatelessWidget {
   final GlobalKey boundaryKey;
   final Size viewport;
   final DocsScreenshotPresentation presentation;
+  final DocsScreenshotBackground background;
   final Size? window;
   final List<DocsLaidOutCallout> callouts;
   final Widget child;
@@ -379,8 +416,9 @@ class DocsScreenshotFrame extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              const ColoredBox(color: Color(0xfff5f7fb)),
-              _buildPresentedChild(screenshotTheme),
+              if (background == DocsScreenshotBackground.solid)
+                const ColoredBox(color: Color(0xfff5f7fb)),
+              _buildPresentedChild(context, screenshotTheme),
               if (callouts.isNotEmpty)
                 Positioned.fill(
                   child: IgnorePointer(
@@ -394,7 +432,7 @@ class DocsScreenshotFrame extends StatelessWidget {
     );
   }
 
-  Widget _buildPresentedChild(ThemeData screenshotTheme) {
+  Widget _buildPresentedChild(BuildContext context, ThemeData screenshotTheme) {
     return switch (presentation) {
       DocsScreenshotPresentation.card => Center(
         child: SizedBox(
@@ -429,7 +467,10 @@ class DocsScreenshotFrame extends StatelessWidget {
                   color: screenshotTheme.colorScheme.outlineVariant,
                 ),
               ),
-              child: child,
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(size: window ?? viewport),
+                child: child,
+              ),
             ),
           ),
         ),
@@ -558,8 +599,9 @@ class DocsCalloutPainter extends CustomPainter {
 Future<void> _writeBoundaryPng(
   WidgetTester tester,
   GlobalKey boundaryKey,
-  String outputPath,
-) async {
+  String outputPath, {
+  required double pixelRatio,
+}) async {
   final context = boundaryKey.currentContext;
   if (context == null) {
     throw TestFailure('Screenshot boundary was not mounted for $outputPath');
@@ -571,7 +613,7 @@ Future<void> _writeBoundaryPng(
   }
 
   await tester.runAsync(() async {
-    final image = await boundary.toImage(pixelRatio: 1.0);
+    final image = await boundary.toImage(pixelRatio: pixelRatio);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
       throw TestFailure('Unable to encode screenshot PNG $outputPath');

@@ -1,22 +1,23 @@
 {
-  "id": "desktop-startup-window",
-  "title": "Desktop startup window",
+  "id": "mobile-startup-window",
+  "title": "Mobile startup window",
   "mode": "widget",
   "viewport": {
-    "width": 1440,
-    "height": 900
+    "width": 1040,
+    "height": 1040
   },
   "pixelRatio": 2,
   "theme": "light",
   "presentation": "window",
   "background": "transparent",
   "window": {
-    "width": 900,
-    "height": 650
+    "width": 390,
+    "height": 844
   },
-  "entrypoint": "desktopStartup",
+  "entrypoint": "mobileStartup",
   "fixture": {
     "engine": "stopped",
+    "useSideNavigationBar": false,
     "newsMarkdown": "# Intiface News\n\nWelcome to Intiface Central. News and update notes appear here."
   },
   "callouts": [
@@ -32,10 +33,10 @@
     {
       "id": "navigation",
       "target": {
-        "key": "docs.sideNavigation"
+        "key": "docs.mobileNavigation"
       },
       "label": "Navigation",
-      "placement": "left",
+      "placement": "bottom",
       "highlightPadding": -4
     },
     {

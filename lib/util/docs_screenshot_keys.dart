@@ -6,5 +6,6 @@ class DocsScreenshotKeys {
     'docs.engineControlButton',
   );
   static const sideNavigation = ValueKey<String>('docs.sideNavigation');
+  static const mobileNavigation = ValueKey<String>('docs.mobileNavigation');
   static const mainBody = ValueKey<String>('docs.mainBody');
 }

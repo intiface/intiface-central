@@ -34,6 +34,21 @@ enum DocsScreenshotPresentation {
   }
 }
 
+enum DocsScreenshotBackground {
+  solid,
+  transparent;
+
+  static DocsScreenshotBackground parse(String? value, String source) {
+    return switch (value) {
+      null || 'solid' => DocsScreenshotBackground.solid,
+      'transparent' => DocsScreenshotBackground.transparent,
+      _ => throw FormatException(
+        'Unsupported screenshot background "$value" in $source',
+      ),
+    };
+  }
+}
+
 enum DocsCalloutPlacement {
   left,
   right,
@@ -60,8 +75,10 @@ class DocsScreenshotSpec {
     required this.title,
     required this.mode,
     required this.viewport,
+    required this.pixelRatio,
     required this.theme,
     required this.presentation,
+    required this.background,
     required this.window,
     required this.entrypoint,
     required this.fixture,
@@ -75,8 +92,10 @@ class DocsScreenshotSpec {
   final String title;
   final DocsScreenshotMode mode;
   final Size viewport;
+  final double pixelRatio;
   final String theme;
   final DocsScreenshotPresentation presentation;
+  final DocsScreenshotBackground background;
   final Size? window;
   final String entrypoint;
   final Map<String, Object?> fixture;
@@ -127,9 +146,14 @@ class DocsScreenshotSpec {
         _requiredNumber(viewportJson, 'width', source),
         _requiredNumber(viewportJson, 'height', source),
       ),
+      pixelRatio: _optionalNumber(json, 'pixelRatio', source) ?? 1,
       theme: _requiredString(json, 'theme', source),
       presentation: DocsScreenshotPresentation.parse(
         _optionalString(json, 'presentation', source),
+        source,
+      ),
+      background: DocsScreenshotBackground.parse(
+        _optionalString(json, 'background', source),
         source,
       ),
       window: windowJson == null
@@ -169,6 +193,9 @@ class DocsScreenshotSpec {
     }
     if (viewport.width <= 0 || viewport.height <= 0) {
       throw FormatException('Viewport dimensions must be positive', sourcePath);
+    }
+    if (pixelRatio <= 0) {
+      throw FormatException('Pixel ratio must be positive', sourcePath);
     }
     if (window != null && (window!.width <= 0 || window!.height <= 0)) {
       throw FormatException('Window dimensions must be positive', sourcePath);
