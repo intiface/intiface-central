@@ -112,15 +112,7 @@ class DocsWidgetScreenshotGenerator {
   Widget _buildEntrypoint() {
     return switch (spec.entrypoint) {
       'controlWidget' => const ControlWidget(),
-      'desktopStartup' || 'mobileStartup' => const Scaffold(
-        body: Column(
-          children: [
-            ControlWidget(),
-            Divider(height: 2),
-            Expanded(child: BodyWidget()),
-          ],
-        ),
-      ),
+      'desktopStartup' || 'mobileStartup' => const DocsStartupWindow(),
       _ => throw TestFailure(
         'Unsupported widget screenshot entrypoint "${spec.entrypoint}" '
         'in ${spec.sourcePath}',
@@ -379,6 +371,28 @@ class DocsWidgetScreenshotGenerator {
   }
 }
 
+class DocsStartupWindow extends StatelessWidget {
+  const DocsStartupWindow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: ColoredBox(
+        color: backgroundColor,
+        child: const Column(
+          children: [
+            ControlWidget(),
+            Divider(height: 2),
+            Expanded(child: BodyWidget()),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DocsScreenshotFrame extends StatelessWidget {
   const DocsScreenshotFrame({
     super.key,
@@ -405,6 +419,9 @@ class DocsScreenshotFrame extends StatelessWidget {
     final screenshotTheme = theme.copyWith(
       textTheme: theme.textTheme.apply(fontFamily: 'Roboto'),
       primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: 'Roboto'),
+      bottomNavigationBarTheme: theme.bottomNavigationBarTheme.copyWith(
+        elevation: 0,
+      ),
     );
 
     return Theme(

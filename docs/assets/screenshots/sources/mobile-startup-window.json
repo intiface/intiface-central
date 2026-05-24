@@ -4,7 +4,7 @@
   "mode": "widget",
   "viewport": {
     "width": 1040,
-    "height": 1040
+    "height": 790
   },
   "pixelRatio": 2,
   "theme": "light",
@@ -12,7 +12,7 @@
   "background": "transparent",
   "window": {
     "width": 390,
-    "height": 844
+    "height": 633
   },
   "entrypoint": "mobileStartup",
   "fixture": {
@@ -27,7 +27,7 @@
         "key": "docs.engineControlPanel"
       },
       "label": "Control panel",
-      "placement": "top",
+      "placement": "left",
       "highlightPadding": -4
     },
     {
@@ -36,7 +36,7 @@
         "key": "docs.mobileNavigation"
       },
       "label": "Navigation",
-      "placement": "bottom",
+      "placement": "left",
       "highlightPadding": -4
     },
     {
