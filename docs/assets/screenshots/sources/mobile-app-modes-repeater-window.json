@@ -1,0 +1,45 @@
+{
+  "id": "mobile-app-modes-repeater-window",
+  "title": "Mobile App Modes tab, Repeater mode",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "appControl",
+    "useSideNavigationBar": false,
+    "appMode": "repeater",
+    "repeaterLocalPort": 12345,
+    "repeaterRemoteAddress": "192.168.1.1:12345"
+  },
+  "callouts": [
+    {
+      "id": "app-mode-selector",
+      "target": {
+        "key": "docs.appModeSelector"
+      },
+      "label": "App mode selector",
+      "placement": "left"
+    },
+    {
+      "id": "settings-body",
+      "target": {
+        "key": "docs.appModeSettingsBody"
+      },
+      "label": "Settings body",
+      "placement": "right",
+      "highlightPadding": -4
+    }
+  ]
+}

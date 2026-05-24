@@ -8,4 +8,8 @@ class DocsScreenshotKeys {
   static const sideNavigation = ValueKey<String>('docs.sideNavigation');
   static const mobileNavigation = ValueKey<String>('docs.mobileNavigation');
   static const mainBody = ValueKey<String>('docs.mainBody');
+  static const appModeSelector = ValueKey<String>('docs.appModeSelector');
+  static const appModeSettingsBody = ValueKey<String>(
+    'docs.appModeSettingsBody',
+  );
 }

@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
+import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/widget/body_widget.dart';
 import 'package:intiface_central/widget/control_widget.dart';
 import 'package:mocktail/mocktail.dart';
@@ -102,6 +103,7 @@ class DocsWidgetScreenshotGenerator {
         child: _buildEntrypoint(),
       ),
       engineControlBloc: _engineBlocForFixture(),
+      navigationCubit: _navigationCubitForFixture(),
       configCubit: _configCubitForFixture(),
       assetCubit: _assetCubitForFixture(),
     );
@@ -152,6 +154,30 @@ class DocsWidgetScreenshotGenerator {
     return engineBloc;
   }
 
+  NavigationCubit _navigationCubitForFixture() {
+    final navigationCubit = NavigationCubit();
+    switch (spec.fixture['navigationPage'] as String? ?? 'news') {
+      case 'news':
+        break;
+      case 'appControl':
+        navigationCubit.goAppControl();
+      case 'deviceControl':
+        navigationCubit.goDeviceControl();
+      case 'logs':
+        navigationCubit.goLogs();
+      case 'settings':
+        navigationCubit.goSettings();
+      case 'about':
+        navigationCubit.goAbout();
+      default:
+        throw TestFailure(
+          'Unsupported navigationPage fixture '
+          '"${spec.fixture['navigationPage']}" in ${spec.sourcePath}',
+        );
+    }
+    return navigationCubit;
+  }
+
   IntifaceConfigurationCubit _configCubitForFixture() {
     final configCubit = MockIntifaceConfigurationCubit();
     stubConfigurationCubit(
@@ -166,6 +192,10 @@ class DocsWidgetScreenshotGenerator {
           spec.fixture['currentAppVersion'] as String? ?? '3.0.0',
       latestAppVersion: spec.fixture['latestAppVersion'] as String? ?? '3.0.0',
       appMode: _appModeForFixture(),
+      repeaterLocalPort: spec.fixture['repeaterLocalPort'] as int? ?? 12345,
+      repeaterRemoteAddress:
+          spec.fixture['repeaterRemoteAddress'] as String? ??
+          '192.168.1.1:12345',
     );
     return configCubit;
   }
@@ -426,23 +456,30 @@ class DocsScreenshotFrame extends StatelessWidget {
 
     return Theme(
       data: screenshotTheme,
-      child: RepaintBoundary(
-        key: boundaryKey,
-        child: SizedBox.fromSize(
-          size: viewport,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (background == DocsScreenshotBackground.solid)
-                const ColoredBox(color: Color(0xfff5f7fb)),
-              _buildPresentedChild(context, screenshotTheme),
-              if (callouts.isNotEmpty)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: CustomPaint(painter: DocsCalloutPainter(callouts)),
+      child: DefaultTextStyle(
+        style:
+            screenshotTheme.textTheme.bodyMedium?.copyWith(
+              fontFamily: 'Roboto',
+            ) ??
+            const TextStyle(fontFamily: 'Roboto'),
+        child: RepaintBoundary(
+          key: boundaryKey,
+          child: SizedBox.fromSize(
+            size: viewport,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (background == DocsScreenshotBackground.solid)
+                  const ColoredBox(color: Color(0xfff5f7fb)),
+                _buildPresentedChild(context, screenshotTheme),
+                if (callouts.isNotEmpty)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(painter: DocsCalloutPainter(callouts)),
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

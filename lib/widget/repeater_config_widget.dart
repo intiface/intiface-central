@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 class RepeaterConfigWidget extends StatefulWidget {
@@ -59,12 +60,12 @@ class _RepeaterConfigWidgetState extends State<RepeaterConfigWidget> {
               ).isRunning;
               List<AbstractSettingsSection> tiles = [
                 SettingsSection(
-                  title: const Text("Repeater Settings"),
+                  title: _settingsText("Repeater Settings"),
                   tiles: [
                     SettingsTile.navigation(
                       enabled: !engineIsRunning,
-                      title: const Text("Repeater Port"),
-                      value: Text(cubit.repeaterLocalPort.toString()),
+                      title: _settingsText("Repeater Port"),
+                      value: _settingsText(cubit.repeaterLocalPort.toString()),
                       onPressed: (context) {
                         showDialog(
                           context: context,
@@ -116,8 +117,8 @@ class _RepeaterConfigWidgetState extends State<RepeaterConfigWidget> {
                     ),
                     SettingsTile.navigation(
                       enabled: !engineIsRunning,
-                      title: const Text("Remote Server Address"),
-                      value: Text(cubit.repeaterRemoteAddress),
+                      title: _settingsText("Remote Server Address"),
+                      value: _settingsText(cubit.repeaterRemoteAddress),
                       onPressed: (context) {
                         showDialog(
                           context: context,
@@ -155,11 +156,20 @@ class _RepeaterConfigWidgetState extends State<RepeaterConfigWidget> {
                   ],
                 ),
               ];
-              return SettingsList(sections: tiles);
+              return SettingsList(
+                key: DocsScreenshotKeys.appModeSettingsBody,
+                sections: tiles,
+              );
             },
           );
         },
       ),
     );
   }
+}
+
+const _settingsTextStyle = TextStyle(fontFamily: 'Roboto');
+
+Text _settingsText(String text) {
+  return Text(text, style: _settingsTextStyle);
 }

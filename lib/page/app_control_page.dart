@@ -5,6 +5,7 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/widget/engine_config_widget.dart';
 import 'package:intiface_central/widget/repeater_config_widget.dart';
 import 'package:intiface_central/widget/rest_api_config_widget.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
 
@@ -30,6 +31,7 @@ class AppControlPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
                     child: DecoratedBox(
+                      key: DocsScreenshotKeys.appModeSelector,
                       decoration: BoxDecoration(
                         color: Colors
                             .deepPurpleAccent, //background color of dropdown button
@@ -89,6 +91,7 @@ class AppControlPage extends StatelessWidget {
                           style: const TextStyle(
                             //te
                             color: Colors.white, //Font color
+                            fontFamily: 'Roboto',
                             fontSize: 20, //font size on dropdown button
                           ),
                           dropdownColor: Colors

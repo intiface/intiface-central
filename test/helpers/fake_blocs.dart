@@ -16,9 +16,13 @@ void stubConfigurationCubit(
   bool checkForUpdateOnStart = false,
   bool useSimulatedDevices = false,
   bool useBluetoothLE = true,
+  bool useSerialPort = false,
+  bool useHID = true,
   bool useProcessEngine = false,
+  bool useDeviceWebsocketServer = false,
   bool websocketServerAllInterfaces = false,
   int websocketServerPort = 12345,
+  String serverName = 'Intiface Central',
   String currentAppVersion = '3.0.0',
   String latestAppVersion = '3.0.0',
   String currentDeviceConfigVersion = '0.0',
@@ -33,6 +37,11 @@ void stubConfigurationCubit(
   bool hasAcknowledgedLovenseConnectDeprecation = true,
   bool hasAcknowledgedLovenseDongleDeprecation = true,
   AppMode appMode = AppMode.engine,
+  bool broadcastServerMdns = true,
+  String mdnsSuffix = '',
+  bool allowExperimentalRestServer = false,
+  int repeaterLocalPort = 12345,
+  String repeaterRemoteAddress = '192.168.1.1:12345',
 }) {
   when(() => mock.state).thenReturn(IntifaceConfigurationStateNone());
   when(() => mock.stream).thenAnswer((_) => const Stream.empty());
@@ -43,27 +52,46 @@ void stubConfigurationCubit(
   when(() => mock.checkForUpdateOnStart).thenReturn(checkForUpdateOnStart);
   when(() => mock.useSimulatedDevices).thenReturn(useSimulatedDevices);
   when(() => mock.useBluetoothLE).thenReturn(useBluetoothLE);
+  when(() => mock.useSerialPort).thenReturn(useSerialPort);
+  when(() => mock.useHID).thenReturn(useHID);
   when(() => mock.useProcessEngine).thenReturn(useProcessEngine);
-  when(() => mock.websocketServerAllInterfaces)
-      .thenReturn(websocketServerAllInterfaces);
+  when(
+    () => mock.useDeviceWebsocketServer,
+  ).thenReturn(useDeviceWebsocketServer);
+  when(
+    () => mock.websocketServerAllInterfaces,
+  ).thenReturn(websocketServerAllInterfaces);
   when(() => mock.websocketServerPort).thenReturn(websocketServerPort);
+  when(() => mock.serverName).thenReturn(serverName);
   when(() => mock.currentAppVersion).thenReturn(currentAppVersion);
   when(() => mock.latestAppVersion).thenReturn(latestAppVersion);
-  when(() => mock.currentDeviceConfigVersion)
-      .thenReturn(currentDeviceConfigVersion);
+  when(
+    () => mock.currentDeviceConfigVersion,
+  ).thenReturn(currentDeviceConfigVersion);
   when(() => mock.crashReporting).thenReturn(crashReporting);
   when(() => mock.canUseCrashReporting).thenReturn(canUseCrashReporting);
   when(() => mock.restoreWindowLocation).thenReturn(restoreWindowLocation);
   when(() => mock.useDiscordRichPresence).thenReturn(useDiscordRichPresence);
   when(() => mock.trayIconMode).thenReturn(trayIconMode);
-  when(() => mock.useLovenseConnectService).thenReturn(useLovenseConnectService);
+  when(
+    () => mock.useLovenseConnectService,
+  ).thenReturn(useLovenseConnectService);
   when(() => mock.useLovenseHIDDongle).thenReturn(useLovenseHIDDongle);
   when(() => mock.useLovenseSerialDongle).thenReturn(useLovenseSerialDongle);
-  when(() => mock.hasAcknowledgedLovenseConnectDeprecation)
-      .thenReturn(hasAcknowledgedLovenseConnectDeprecation);
-  when(() => mock.hasAcknowledgedLovenseDongleDeprecation)
-      .thenReturn(hasAcknowledgedLovenseDongleDeprecation);
+  when(
+    () => mock.hasAcknowledgedLovenseConnectDeprecation,
+  ).thenReturn(hasAcknowledgedLovenseConnectDeprecation);
+  when(
+    () => mock.hasAcknowledgedLovenseDongleDeprecation,
+  ).thenReturn(hasAcknowledgedLovenseDongleDeprecation);
   when(() => mock.appMode).thenReturn(appMode);
+  when(() => mock.broadcastServerMdns).thenReturn(broadcastServerMdns);
+  when(() => mock.mdnsSuffix).thenReturn(mdnsSuffix);
+  when(
+    () => mock.allowExperimentalRestServer,
+  ).thenReturn(allowExperimentalRestServer);
+  when(() => mock.repeaterLocalPort).thenReturn(repeaterLocalPort);
+  when(() => mock.repeaterRemoteAddress).thenReturn(repeaterRemoteAddress);
 }
 
 void stubGuiSettingsCubit(MockGuiSettingsCubit mock) {
@@ -78,8 +106,7 @@ void stubUserDeviceConfigurationCubit(
       const {},
   Object? createError,
 }) {
-  when(() => mock.state)
-      .thenReturn(UserDeviceConfigurationStateInitial());
+  when(() => mock.state).thenReturn(UserDeviceConfigurationStateInitial());
   when(() => mock.stream).thenAnswer((_) => const Stream.empty());
   when(() => mock.configs).thenReturn(configs);
   when(() => mock.createError).thenReturn(createError);

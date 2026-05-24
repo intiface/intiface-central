@@ -1,0 +1,44 @@
+{
+  "id": "desktop-app-modes-repeater-window",
+  "title": "Desktop App Modes tab, Repeater mode",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "appControl",
+    "appMode": "repeater",
+    "repeaterLocalPort": 12345,
+    "repeaterRemoteAddress": "192.168.1.1:12345"
+  },
+  "callouts": [
+    {
+      "id": "app-mode-selector",
+      "target": {
+        "key": "docs.appModeSelector"
+      },
+      "label": "App mode selector",
+      "placement": "top"
+    },
+    {
+      "id": "settings-body",
+      "target": {
+        "key": "docs.appModeSettingsBody"
+      },
+      "label": "Settings body",
+      "placement": "right",
+      "highlightPadding": -4
+    }
+  ]
+}
