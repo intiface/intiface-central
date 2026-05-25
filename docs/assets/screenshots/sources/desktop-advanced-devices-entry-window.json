@@ -1,0 +1,60 @@
+{
+  "id": "desktop-advanced-devices-entry-window",
+  "title": "Desktop Devices tab advanced devices entry",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": true,
+    "useSimulatedDevices": true,
+    "devices": [
+      {
+        "id": "single-vibrator",
+        "kind": "single-vibrator",
+        "displayName": "Alpha Single Vibrator",
+        "index": 0,
+        "connected": false
+      },
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": false
+      },
+      {
+        "id": "stroker",
+        "kind": "stroker",
+        "displayName": "Gamma Stroker",
+        "index": 2,
+        "connected": false
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "manage-advanced-devices",
+      "target": {
+        "key": "docs.manageAdvancedDevicesCard"
+      },
+      "label": "Device Management",
+      "placement": "right",
+      "highlightPadding": -4
+    }
+  ]
+}

@@ -29,7 +29,9 @@ class _StatefulDropdownButtonState<T> extends State<StatefulDropdownButton<T>> {
       hint: Text(widget.label),
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(color: Colors.deepPurple),
       underline: Container(height: 2, color: Colors.deepPurpleAccent),
       onChanged: widget.enabled
           ? (T? value) {

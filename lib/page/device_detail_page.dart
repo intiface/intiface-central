@@ -12,10 +12,17 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/widget/expandable_card_widget.dart';
 import 'package:intiface_central/widget/observation_chart_widget.dart';
 import 'package:loggy/loggy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+
+const _settingsTextStyle = TextStyle(fontFamily: 'Roboto');
+
+Text _settingsText(String text) {
+  return Text(text, style: _settingsTextStyle);
+}
 
 class DeviceDetailPage extends StatelessWidget {
   final String _address;
@@ -27,12 +34,12 @@ class DeviceDetailPage extends StatelessWidget {
     super.key,
     required ExposedUserDeviceIdentifier identifier,
     required this.onBack,
-  })  : _address = identifier.address,
-        _protocol = identifier.protocol,
-        _identifier = identifier.identifier;
+  }) : _address = identifier.address,
+       _protocol = identifier.protocol,
+       _identifier = identifier.identifier;
 
   MapEntry<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition>?
-      _findConfig(UserDeviceConfigurationCubit cubit) {
+  _findConfig(UserDeviceConfigurationCubit cubit) {
     for (final entry in cubit.configs.entries) {
       if (entry.key.address == _address &&
           entry.key.protocol == _protocol &&
@@ -74,8 +81,7 @@ class DeviceDetailPage extends StatelessWidget {
                 ).isRunning;
                 final displayName = config.displayName ?? config.name;
 
-                final deviceBloc =
-                    BlocProvider.of<DeviceManagerBloc>(context);
+                final deviceBloc = BlocProvider.of<DeviceManagerBloc>(context);
                 DeviceCubit? deviceCubit;
                 try {
                   deviceCubit = deviceBloc.devices.firstWhere(
@@ -89,10 +95,7 @@ class DeviceDetailPage extends StatelessWidget {
                 return Expanded(
                   child: Column(
                     children: [
-                      _DetailHeader(
-                        title: displayName,
-                        onBack: onBack,
-                      ),
+                      _DetailHeader(title: displayName, onBack: onBack),
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
@@ -111,9 +114,7 @@ class DeviceDetailPage extends StatelessWidget {
                               ),
                               const Divider(),
                               if (isConnected)
-                                DeviceControlsSection(
-                                  deviceCubit: deviceCubit,
-                                ),
+                                DeviceControlsSection(deviceCubit: deviceCubit),
                               _FeatureConfigSection(
                                 identifier: currentIdentifier,
                                 definition: config,
@@ -164,10 +165,9 @@ class _DetailHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -187,6 +187,7 @@ class _DeviceInfoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
+      key: DocsScreenshotKeys.deviceDetailInfo,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,57 +255,62 @@ class _DeviceConfigSection extends StatelessWidget {
       settingsListBackground: Colors.transparent,
     );
 
-    return SettingsList(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      lightTheme: brightness == Brightness.light ? transparentBg : null,
-      darkTheme: brightness == Brightness.dark ? transparentBg : null,
-      sections: [
-        SettingsSection(
-          title: const Text('Configuration'),
-          tiles: [
-            SettingsTile.navigation(
-              enabled: !engineRunning,
-              title: const Text('Display Name'),
-              value: Text(config.displayName ?? ''),
-              onPressed: (context) => _showDisplayNameDialog(context),
-            ),
-            SettingsTile.navigation(
-              enabled: !engineRunning,
-              title: const Text('Message Gap (ms)'),
-              value: Text(config.messageGapMs?.toString() ?? 'Default'),
-              onPressed: (context) => _showMessageGapDialog(context),
-            ),
-            SettingsTile.switchTile(
-              enabled: !engineRunning,
-              initialValue: !config.deny,
-              onToggle: (value) async {
-                await userDeviceConfigCubit.updateDeviceDeny(
-                  identifier,
-                  config,
-                  !value,
-                );
-              },
-              title: const Text('Connect to this device'),
-            ),
-            SettingsTile.switchTile(
-              enabled: !engineRunning,
-              initialValue: config.allow,
-              onToggle: (value) async {
-                await userDeviceConfigCubit.updateDeviceAllow(
-                  identifier,
-                  config,
-                  value,
-                );
-              },
-              title: const Text('Only connect to this device'),
-              description: const Text(
-                'When enabled, only devices with this flag will connect',
+    return KeyedSubtree(
+      key: DocsScreenshotKeys.deviceDetailConfiguration,
+      child: SettingsList(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        lightTheme: brightness == Brightness.light ? transparentBg : null,
+        darkTheme: brightness == Brightness.dark ? transparentBg : null,
+        sections: [
+          SettingsSection(
+            title: _settingsText('Configuration'),
+            tiles: [
+              SettingsTile.navigation(
+                enabled: !engineRunning,
+                title: _settingsText('Display Name'),
+                value: _settingsText(config.displayName ?? ''),
+                onPressed: (context) => _showDisplayNameDialog(context),
               ),
-            ),
-          ],
-        ),
-      ],
+              SettingsTile.navigation(
+                enabled: !engineRunning,
+                title: _settingsText('Message Gap (ms)'),
+                value: _settingsText(
+                  config.messageGapMs?.toString() ?? 'Default',
+                ),
+                onPressed: (context) => _showMessageGapDialog(context),
+              ),
+              SettingsTile.switchTile(
+                enabled: !engineRunning,
+                initialValue: !config.deny,
+                onToggle: (value) async {
+                  await userDeviceConfigCubit.updateDeviceDeny(
+                    identifier,
+                    config,
+                    !value,
+                  );
+                },
+                title: _settingsText('Connect to this device'),
+              ),
+              SettingsTile.switchTile(
+                enabled: !engineRunning,
+                initialValue: config.allow,
+                onToggle: (value) async {
+                  await userDeviceConfigCubit.updateDeviceAllow(
+                    identifier,
+                    config,
+                    value,
+                  );
+                },
+                title: _settingsText('Only connect to this device'),
+                description: _settingsText(
+                  'When enabled, only devices with this flag will connect',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -421,8 +427,8 @@ class DeviceControlsSection extends StatelessWidget {
       final isLastOutputForFeature = !deviceCubit.outputs
           .skip(i + 1)
           .any((o) => o.feature.feature.featureIndex == featureIdx);
-      final observationCubit = (isLastOutputForFeature &&
-              chartedFeatures.add(featureIdx))
+      final observationCubit =
+          (isLastOutputForFeature && chartedFeatures.add(featureIdx))
           ? deviceCubit.observations[featureIdx]
           : null;
 
@@ -591,8 +597,9 @@ class _FeatureConfigSection extends StatelessWidget {
               ),
             ),
           ),
-          for (var feature in features)
+          for (final (index, feature) in features.indexed)
             _FeatureCard(
+              key: DocsScreenshotKeys.deviceDetailFeatureConfiguration(index),
               feature: feature,
               identifier: identifier,
               definition: definition,
@@ -611,6 +618,7 @@ class _FeatureCard extends StatelessWidget {
   final bool engineRunning;
 
   const _FeatureCard({
+    super.key,
     required this.feature,
     required this.identifier,
     required this.definition,
@@ -687,7 +695,10 @@ class _FeatureCard extends StatelessWidget {
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surfaceContainerLow,
-        child: Column(children: outputWidgets),
+        child: Material(
+          color: Colors.transparent,
+          child: Column(children: outputWidgets),
+        ),
       ),
     );
   }

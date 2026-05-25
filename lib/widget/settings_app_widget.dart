@@ -19,8 +19,10 @@ class SettingsAppWidget extends AbstractSettingsSection {
     };
     var appSettingsTiles = <AbstractSettingsTile>[
       SettingsTile.navigation(
-        title: const Text("Theme"),
-        value: Text(themeModeLabels[cubit.themeModeSetting] ?? "System"),
+        title: _settingsText("Theme"),
+        value: _settingsText(
+          themeModeLabels[cubit.themeModeSetting] ?? "System",
+        ),
         onPressed: (context) {
           showDialog<String>(
             context: context,
@@ -55,22 +57,24 @@ class SettingsAppWidget extends AbstractSettingsSection {
       SettingsTile.switchTile(
         initialValue: cubit.useSideNavigationBar,
         onToggle: (value) => cubit.useSideNavigationBar = value,
-        title: const Text("Side Navigation Bar"),
+        title: _settingsText("Side Navigation Bar"),
       ),
       SettingsTile.switchTile(
         initialValue: cubit.checkForUpdateOnStart,
         onToggle: (value) => cubit.checkForUpdateOnStart = value,
-        title: const Text("Check For Updates when Intiface Central Launches"),
+        title: _settingsText(
+          "Check For Updates when Intiface Central Launches",
+        ),
       ),
       SettingsTile.switchTile(
         initialValue: cubit.crashReporting,
         onToggle: cubit.canUseCrashReporting
             ? ((value) => cubit.crashReporting = value)
             : null,
-        title: const Text("Crash Reporting"),
+        title: _settingsText("Crash Reporting"),
       ),
       SettingsTile.navigation(
-        title: const Text("Send Logs to Developers"),
+        title: _settingsText("Send Logs to Developers"),
         onPressed: (context) =>
             BlocProvider.of<NavigationCubit>(context).goSendLogs(),
       ),
@@ -82,7 +86,7 @@ class SettingsAppWidget extends AbstractSettingsSection {
         SettingsTile.switchTile(
           initialValue: cubit.restoreWindowLocation,
           onToggle: (value) => cubit.restoreWindowLocation = value,
-          title: const Text("Restore Window Location on Start"),
+          title: _settingsText("Restore Window Location on Start"),
         ),
       );
 
@@ -91,7 +95,7 @@ class SettingsAppWidget extends AbstractSettingsSection {
         SettingsTile.switchTile(
           initialValue: cubit.useDiscordRichPresence,
           onToggle: (value) => cubit.useDiscordRichPresence = value,
-          title: const Text("Enable Discord Rich Presence"),
+          title: _settingsText("Enable Discord Rich Presence"),
         ),
       );
     }
@@ -106,8 +110,10 @@ class SettingsAppWidget extends AbstractSettingsSection {
       appSettingsTiles.insert(
         isDesktop() ? 4 : 2,
         SettingsTile.navigation(
-          title: const Text("System Tray Icon"),
-          value: Text(trayIconModeLabels[cubit.trayIconMode] ?? "Tray + Taskbar"),
+          title: _settingsText("System Tray Icon"),
+          value: _settingsText(
+            trayIconModeLabels[cubit.trayIconMode] ?? "Tray + Taskbar",
+          ),
           onPressed: (context) {
             showDialog<String>(
               context: context,
@@ -143,8 +149,14 @@ class SettingsAppWidget extends AbstractSettingsSection {
     }
 
     return SettingsSection(
-      title: const Text("App Settings"),
+      title: _settingsText("App Settings"),
       tiles: appSettingsTiles,
     );
   }
+}
+
+const _settingsTextStyle = TextStyle(fontFamily: 'Roboto');
+
+Text _settingsText(String text) {
+  return Text(text, style: _settingsTextStyle);
 }

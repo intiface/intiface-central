@@ -260,67 +260,73 @@ class ControlWidget extends StatelessWidget {
                 ),
                 Expanded(
                   child: Column(
+                    key: DocsScreenshotKeys.engineControlInfo,
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: columnWidgets,
                   ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    BlocBuilder(
-                      bloc: BlocProvider.of<ErrorNotifierCubit>(context),
-                      builder: (context, ErrorNotifierState state) {
-                        return Visibility(
-                          visible: state is ErrorNotifierTriggerState
-                              ? true
-                              : false,
-                          child: TextButton.icon(
-                            label: const Text("Error"),
-                            onPressed: () => navCubit.goLogs(),
-                            icon: const Icon(Icons.warning),
-                            style: ButtonStyle(
-                              foregroundColor: WidgetStateProperty.resolveWith(
-                                (s) => Colors.red,
+                KeyedSubtree(
+                  key: DocsScreenshotKeys.engineAppStatus,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BlocBuilder(
+                        bloc: BlocProvider.of<ErrorNotifierCubit>(context),
+                        builder: (context, ErrorNotifierState state) {
+                          return Visibility(
+                            visible: state is ErrorNotifierTriggerState
+                                ? true
+                                : false,
+                            child: TextButton.icon(
+                              label: const Text("Error"),
+                              onPressed: () => navCubit.goLogs(),
+                              icon: const Icon(Icons.warning),
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    WidgetStateProperty.resolveWith(
+                                      (s) => Colors.red,
+                                    ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    Visibility(
-                      visible:
-                          isDesktop() &&
-                          canShowUpdate() &&
-                          configCubit.currentAppVersion !=
-                              configCubit.latestAppVersion,
-                      child: TextButton.icon(
-                        label: const Text("Update"),
-                        onPressed: () => navCubit.goSettings(),
-                        icon: const Icon(Icons.update, color: Colors.green),
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.resolveWith(
-                            (s) => Colors.green,
+                          );
+                        },
+                      ),
+                      Visibility(
+                        visible:
+                            isDesktop() &&
+                            canShowUpdate() &&
+                            configCubit.currentAppVersion !=
+                                configCubit.latestAppVersion,
+                        child: TextButton.icon(
+                          label: const Text("Update"),
+                          onPressed: () => navCubit.goSettings(),
+                          icon: const Icon(Icons.update, color: Colors.green),
+                          style: ButtonStyle(
+                            foregroundColor: WidgetStateProperty.resolveWith(
+                              (s) => Colors.green,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Visibility(
-                      visible: false,
-                      child: TextButton.icon(
-                        onPressed: () => navCubit.goNews(),
-                        icon: const Icon(Icons.newspaper),
-                        label: const Text("News"),
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.resolveWith(
-                            (s) => Colors.blue,
+                      Visibility(
+                        visible: false,
+                        child: TextButton.icon(
+                          onPressed: () => navCubit.goNews(),
+                          icon: const Icon(Icons.newspaper),
+                          label: const Text("News"),
+                          style: ButtonStyle(
+                            foregroundColor: WidgetStateProperty.resolveWith(
+                              (s) => Colors.blue,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Tooltip(
+                  key: DocsScreenshotKeys.engineConnectionIcon,
                   message: statusMessage,
                   child: Icon(statusIcon, size: 70),
                 ),

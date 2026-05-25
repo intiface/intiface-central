@@ -1,0 +1,41 @@
+{
+  "id": "mobile-device-observability-window",
+  "title": "Mobile device controls and observability panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "clientConnected",
+    "clientName": "Docs Demo Client",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "devices": [
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": true
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Beta Double Vibrator"
+      },
+      {
+        "ensureVisibleText": "Device Controls"
+      }
+    ]
+  }
+}

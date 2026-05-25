@@ -331,6 +331,7 @@ class DocsCalloutSpec {
     required this.label,
     required this.placement,
     required this.highlightPadding,
+    required this.markerOnly,
     required this.manualReview,
   });
 
@@ -339,6 +340,7 @@ class DocsCalloutSpec {
   final String label;
   final DocsCalloutPlacement placement;
   final double highlightPadding;
+  final bool markerOnly;
   final bool manualReview;
 
   factory DocsCalloutSpec.fromJson(Map<String, Object?> json, String source) {
@@ -360,6 +362,7 @@ class DocsCalloutSpec {
             source,
           ) ??
           8,
+      markerOnly: json['markerOnly'] == true,
       manualReview: json['manualReview'] == true,
     );
   }

@@ -5,6 +5,9 @@ import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/bloc/util/network_info_cubit.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/src/rust/api/simulated_devices.dart'
+    as simulated_api;
+import 'package:intiface_central/src/rust/api/specifiers.dart';
 import 'mocks.dart';
 
 void stubConfigurationCubit(
@@ -30,7 +33,9 @@ void stubConfigurationCubit(
   bool canUseCrashReporting = false,
   bool restoreWindowLocation = true,
   bool useDiscordRichPresence = false,
-  String trayIconMode = 'none',
+  String trayIconMode = 'both',
+  bool usePrereleaseVersion = false,
+  bool useForegroundProcess = true,
   bool useLovenseConnectService = false,
   bool useLovenseHIDDongle = false,
   bool useLovenseSerialDongle = false,
@@ -42,6 +47,7 @@ void stubConfigurationCubit(
   bool allowExperimentalRestServer = false,
   int repeaterLocalPort = 12345,
   String repeaterRemoteAddress = '192.168.1.1:12345',
+  String displayLogLevel = 'info',
 }) {
   when(() => mock.state).thenReturn(IntifaceConfigurationStateNone());
   when(() => mock.stream).thenAnswer((_) => const Stream.empty());
@@ -73,6 +79,8 @@ void stubConfigurationCubit(
   when(() => mock.restoreWindowLocation).thenReturn(restoreWindowLocation);
   when(() => mock.useDiscordRichPresence).thenReturn(useDiscordRichPresence);
   when(() => mock.trayIconMode).thenReturn(trayIconMode);
+  when(() => mock.usePrereleaseVersion).thenReturn(usePrereleaseVersion);
+  when(() => mock.useForegroundProcess).thenReturn(useForegroundProcess);
   when(
     () => mock.useLovenseConnectService,
   ).thenReturn(useLovenseConnectService);
@@ -92,6 +100,7 @@ void stubConfigurationCubit(
   ).thenReturn(allowExperimentalRestServer);
   when(() => mock.repeaterLocalPort).thenReturn(repeaterLocalPort);
   when(() => mock.repeaterRemoteAddress).thenReturn(repeaterRemoteAddress);
+  when(() => mock.displayLogLevel).thenReturn(displayLogLevel);
 }
 
 void stubGuiSettingsCubit(MockGuiSettingsCubit mock) {
@@ -104,11 +113,23 @@ void stubUserDeviceConfigurationCubit(
   MockUserDeviceConfigurationCubit mock, {
   Map<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> configs =
       const {},
+  List<String> protocols = const [],
+  List<(String, ExposedWebsocketSpecifier)> specifiers = const [],
+  List<(String, ExposedSerialSpecifier)> serialSpecifiers = const [],
+  List<simulated_api.ExposedSimulatedDeviceArchetype> simulatedArchetypes =
+      const [],
+  List<simulated_api.ExposedSimulatedDeviceConfigEntry> simulatedDevices =
+      const [],
   Object? createError,
 }) {
   when(() => mock.state).thenReturn(UserDeviceConfigurationStateInitial());
   when(() => mock.stream).thenAnswer((_) => const Stream.empty());
   when(() => mock.configs).thenReturn(configs);
+  when(() => mock.protocols).thenReturn(protocols);
+  when(() => mock.specifiers).thenReturn(specifiers);
+  when(() => mock.serialSpecifiers).thenReturn(serialSpecifiers);
+  when(() => mock.simulatedArchetypes).thenReturn(simulatedArchetypes);
+  when(() => mock.simulatedDevices).thenReturn(simulatedDevices);
   when(() => mock.createError).thenReturn(createError);
 }
 

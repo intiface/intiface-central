@@ -5,6 +5,8 @@ import 'package:intiface_central/bloc/engine/engine_repository.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:intiface_central/bloc/device/device_manager_bloc.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
+import 'package:intiface_central/bloc/device/device_output_cubit.dart';
+import 'package:intiface_central/bloc/device/observation_cubit.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/bloc/update/update_bloc.dart';
@@ -57,7 +59,16 @@ class MockNetworkInfoCubit extends MockCubit<NetworkInfoState>
 
 class MockDeviceCubit extends MockCubit<DeviceState> implements DeviceCubit {}
 
+class MockDeviceOutputCubit extends MockCubit<DeviceOutputState>
+    implements DeviceOutputCubit {}
+
+class MockObservationCubit extends MockCubit<ObservationState>
+    implements ObservationCubit {}
+
 // FFI mocks
 class MockRustLibApi extends Mock implements RustLibApi {}
 
 class MockButtplugClientDevice extends Mock implements ButtplugClientDevice {}
+
+class MockButtplugClientDeviceFeature extends Mock
+    implements ButtplugClientDeviceFeature {}

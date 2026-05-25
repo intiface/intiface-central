@@ -1,0 +1,60 @@
+{
+  "id": "desktop-websocket-device-management-window",
+  "title": "Desktop websocket device management panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": true,
+    "useSimulatedDevices": true,
+    "websocketDevices": [
+      {
+        "protocol": "lovense",
+        "name": "ws-docs"
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Manage Advanced Devices"
+      },
+      {
+        "tapText": "Websocket Devices"
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-management",
+      "target": {
+        "key": "docs.advancedDevice.existingDevices"
+      },
+      "label": "Management",
+      "placement": "right",
+      "highlightPadding": 8
+    },
+    {
+      "id": "device-addition",
+      "target": {
+        "key": "docs.advancedDevice.addDevice"
+      },
+      "label": "Addition",
+      "placement": "right",
+      "highlightPadding": 8
+    }
+  ]
+}

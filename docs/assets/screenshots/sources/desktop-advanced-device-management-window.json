@@ -1,0 +1,43 @@
+{
+  "id": "desktop-advanced-device-management-window",
+  "title": "Desktop advanced device management panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": true,
+    "useSimulatedDevices": true,
+    "actions": [
+      {
+        "tapText": "Manage Advanced Devices"
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "simulated-devices",
+      "target": {
+        "key": "docs.advancedDeviceType.simulated"
+      },
+      "label": "Simulated devices",
+      "placement": "right",
+      "highlightPadding": 0,
+      "markerOnly": true
+    }
+  ]
+}

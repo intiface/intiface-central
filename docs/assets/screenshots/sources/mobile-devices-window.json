@@ -1,0 +1,84 @@
+{
+  "id": "mobile-devices-window",
+  "title": "Mobile Devices tab with simulated devices",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "clientConnected",
+    "clientName": "Docs Demo Client",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "devices": [
+      {
+        "id": "single-vibrator",
+        "kind": "single-vibrator",
+        "displayName": "Alpha Single Vibrator",
+        "index": 0,
+        "connected": true
+      },
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": true
+      },
+      {
+        "id": "stroker",
+        "kind": "stroker",
+        "displayName": "Gamma Stroker",
+        "index": 2,
+        "connected": true
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-status",
+      "target": {
+        "key": "docs.deviceCard.0.status"
+      },
+      "label": "Device Status",
+      "placement": "left",
+      "highlightPadding": 0
+    },
+    {
+      "id": "device-info",
+      "target": {
+        "key": "docs.deviceCard.1.info"
+      },
+      "label": "Device Info",
+      "placement": "right",
+      "highlightPadding": 0
+    },
+    {
+      "id": "connection-info",
+      "target": {
+        "key": "docs.deviceCard.1.connectionInfo"
+      },
+      "label": "Connection Info",
+      "placement": "left"
+    },
+    {
+      "id": "observability",
+      "target": {
+        "key": "docs.deviceCard.1.observability"
+      },
+      "label": "Observability",
+      "placement": "bottom",
+      "highlightPadding": 0
+    }
+  ]
+}

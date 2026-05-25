@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/widget/stateful_dropdown_button.dart';
 
 class AddWebsocketDevicePage extends StatefulWidget {
@@ -35,19 +36,11 @@ class _AddWebsocketDevicePageState extends State<AddWebsocketDevicePage> {
     return Expanded(
       child: Column(
         children: [
-          _DetailHeader(
-            title: 'Add Websocket Device',
-            onBack: widget.onBack,
-          ),
+          _DetailHeader(title: 'Manage Websocket Devices', onBack: widget.onBack),
           Expanded(
-            child: BlocBuilder<
-              UserDeviceConfigurationCubit,
-              UserDeviceConfigurationState
-            >(
+            child: BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
               builder: (context, state) {
-                final cubit = BlocProvider.of<UserDeviceConfigurationCubit>(
-                  context,
-                );
+                final cubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 final sortedProtocols = cubit.protocols.toList()..sort();
 
                 return SingleChildScrollView(
@@ -56,82 +49,96 @@ class _AddWebsocketDevicePageState extends State<AddWebsocketDevicePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (cubit.specifiers.isNotEmpty) ...[
-                        Text(
-                          'Existing Websocket Devices',
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        DataTable(
-                          columns: const [
-                            DataColumn(label: Text('Protocol')),
-                            DataColumn(label: Text('Name')),
-                            DataColumn(label: Text('Delete')),
-                          ],
-                          rows: cubit.specifiers.map((entry) {
-                            final (protocol, spec) = entry;
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(protocol)),
-                                DataCell(Text(spec.name)),
-                                DataCell(
-                                  TextButton(
-                                    onPressed: () =>
-                                        cubit.removeWebsocketDeviceName(
-                                          protocol,
-                                          spec.name,
-                                        ),
-                                    child: const Text('Delete'),
+                        KeyedSubtree(
+                          key: DocsScreenshotKeys.advancedDeviceExistingDevices,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Existing Websocket Devices',
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: DataTable(
+                                    columns: const [
+                                      DataColumn(label: Text('Protocol')),
+                                      DataColumn(label: Text('Name')),
+                                      DataColumn(label: Text('Delete')),
+                                    ],
+                                    rows: cubit.specifiers.map((entry) {
+                                      final (protocol, spec) = entry;
+                                      return DataRow(
+                                        cells: [
+                                          DataCell(Text(protocol)),
+                                          DataCell(Text(spec.name)),
+                                          DataCell(
+                                            TextButton(
+                                              onPressed: () => cubit.removeWebsocketDeviceName(protocol, spec.name),
+                                              child: const Text('Delete'),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                               ],
-                            );
-                          }).toList(),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 24),
                       ],
-                      Text(
-                        'Add New Websocket Device',
-                        style:
-                            Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      StatefulDropdownButton(
-                        label: 'Protocol Type',
-                        values: sortedProtocols,
-                        valueNotifier: _protocolNotifier,
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: 250,
-                        child: TextField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Device Address',
-                            border: OutlineInputBorder(),
+                      KeyedSubtree(
+                        key: DocsScreenshotKeys.advancedDeviceAddDevice,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Add New Websocket Device',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              StatefulDropdownButton(
+                                label: 'Protocol Type',
+                                values: sortedProtocols,
+                                valueNotifier: _protocolNotifier,
+                              ),
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                width: 250,
+                                child: TextField(
+                                  controller: _nameController,
+                                  decoration: const InputDecoration(hintText: 'Device Address', border: OutlineInputBorder()),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              FilledButton.icon(
+                                onPressed: () {
+                                  final protocol = _protocolNotifier.value;
+                                  final name = _nameController.text;
+                                  if (protocol.isEmpty || name.isEmpty) return;
+                                  cubit.addWebsocketDeviceName(protocol, name);
+                                  _nameController.clear();
+                                  _protocolNotifier.value = '';
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Add Websocket Device'),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: () {
-                          final protocol = _protocolNotifier.value;
-                          final name = _nameController.text;
-                          if (protocol.isEmpty || name.isEmpty) return;
-                          cubit.addWebsocketDeviceName(protocol, name);
-                          _nameController.clear();
-                          _protocolNotifier.value = '';
-                        },
-                        icon: const Icon(Icons.add),
-                        label: const Text('Add Websocket Device'),
                       ),
                     ],
                   ),
@@ -157,19 +164,12 @@ class _DetailHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBack,
-            tooltip: 'Back',
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack, tooltip: 'Back'),
           const SizedBox(width: 4),
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),

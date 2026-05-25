@@ -1,0 +1,67 @@
+{
+  "id": "desktop-engine-control-panel-window",
+  "title": "Desktop engine control panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1600,
+    "height": 620
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 170
+  },
+  "entrypoint": "controlWidget",
+  "fixture": {
+    "engine": "clientConnected",
+    "clientName": "Example App",
+    "currentAppVersion": "3.0.0",
+    "latestAppVersion": "3.1.0"
+  },
+  "callouts": [
+    {
+      "id": "start-stop-engine",
+      "target": {
+        "key": "docs.engineControlButton"
+      },
+      "label": "Start / stop engine",
+      "placement": "left",
+      "highlightPadding": 0
+    },
+    {
+      "id": "engine-info",
+      "target": {
+        "bounds": {
+          "x": 461,
+          "y": 255,
+          "width": 199,
+          "height": 95
+        }
+      },
+      "label": "Engine info",
+      "placement": "bottom",
+      "highlightPadding": 0
+    },
+    {
+      "id": "connection-icon",
+      "target": {
+        "key": "docs.engineConnectionIcon"
+      },
+      "label": "Connection icon",
+      "placement": "right",
+      "highlightPadding": 0
+    },
+    {
+      "id": "app-status",
+      "target": {
+        "key": "docs.engineAppStatus"
+      },
+      "label": "Update / app status",
+      "placement": "top",
+      "highlightPadding": 0
+    }
+  ]
+}

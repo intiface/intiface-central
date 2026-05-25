@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 
 class AddDeviceTypePage extends StatelessWidget {
   final VoidCallback onBack;
@@ -21,8 +22,7 @@ class AddDeviceTypePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-    final isDesktop =
-        Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final isDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
     final websocketEnabled = configCubit.useDeviceWebsocketServer;
     final serialEnabled = isDesktop && configCubit.useSerialPort;
@@ -31,7 +31,7 @@ class AddDeviceTypePage extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          _DetailHeader(title: 'Add New Device', onBack: onBack),
+          _DetailHeader(title: 'Manage Advanced Devices', onBack: onBack),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -48,10 +48,7 @@ class AddDeviceTypePage extends StatelessWidget {
                   const SizedBox(height: 16),
                   if (!websocketEnabled && !serialEnabled && !simulatedEnabled)
                     const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 32,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
                       child: Text(
                         'Advanced device managers can '
                         'be turned on in the Advanced Settings section of the '
@@ -61,23 +58,26 @@ class AddDeviceTypePage extends StatelessWidget {
                     ),
                   if (simulatedEnabled)
                     _DeviceTypeCard(
+                      key: DocsScreenshotKeys.advancedDeviceTypeSimulated,
                       icon: Icons.memory,
-                      title: 'Simulated Device',
-                      subtitle: 'Add a test device from built-in templates',
+                      title: 'Simulated Devices',
+                      subtitle: 'Add/Manage a fake test device defined from built-in templates',
                       onTap: onSimulated,
                     ),
                   if (websocketEnabled)
                     _DeviceTypeCard(
+                      key: DocsScreenshotKeys.advancedDeviceTypeWebsocket,
                       icon: Icons.language,
-                      title: 'Websocket Device',
-                      subtitle: 'Connect to a device over WebSocket protocol',
+                      title: 'Websocket Devices',
+                      subtitle: 'Add/Manage a device over WebSocket protocol',
                       onTap: onWebsocket,
                     ),
                   if (serialEnabled)
                     _DeviceTypeCard(
+                      key: DocsScreenshotKeys.advancedDeviceTypeSerial,
                       icon: Icons.usb,
-                      title: 'Serial Port Device',
-                      subtitle: 'Connect to a device via serial port',
+                      title: 'Serial Port Devices',
+                      subtitle: 'Add/Manage a serial port device',
                       onTap: onSerial,
                     ),
                 ],
@@ -102,18 +102,12 @@ class _DetailHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBack,
-            tooltip: 'Back to device list',
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack, tooltip: 'Back to device list'),
           const SizedBox(width: 4),
           Expanded(
             child: Text(
               title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -129,12 +123,7 @@ class _DeviceTypeCard extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
 
-  const _DeviceTypeCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+  const _DeviceTypeCard({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -159,18 +148,11 @@ class _DeviceTypeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),

@@ -1,0 +1,64 @@
+{
+  "id": "desktop-serial-device-management-window",
+  "title": "Desktop serial device management panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 850
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": true,
+    "useSimulatedDevices": true,
+    "serialDevices": [
+      {
+        "protocol": "lovense",
+        "port": "/dev/tty.docs",
+        "baudRate": 115200,
+        "dataBits": 8,
+        "stopBits": 1,
+        "parity": "N"
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Manage Advanced Devices"
+      },
+      {
+        "tapText": "Serial Port Devices"
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-management",
+      "target": {
+        "key": "docs.advancedDevice.existingDevices"
+      },
+      "label": "Management",
+      "placement": "right",
+      "highlightPadding": 8
+    },
+    {
+      "id": "device-addition",
+      "target": {
+        "key": "docs.advancedDevice.addDevice"
+      },
+      "label": "Addition",
+      "placement": "right",
+      "highlightPadding": 8
+    }
+  ]
+}

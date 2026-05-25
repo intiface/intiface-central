@@ -1,0 +1,43 @@
+{
+  "id": "mobile-advanced-device-management-window",
+  "title": "Mobile advanced device management panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": false,
+    "useSimulatedDevices": true,
+    "actions": [
+      {
+        "tapText": "Manage Advanced Devices"
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "simulated-devices",
+      "target": {
+        "key": "docs.advancedDeviceType.simulated"
+      },
+      "label": "Simulated devices",
+      "placement": "right",
+      "highlightPadding": 0,
+      "markerOnly": true
+    }
+  ]
+}

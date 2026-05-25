@@ -28,7 +28,7 @@ class SettingPage extends StatelessWidget {
               title: Center(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.help_outline),
-                  label: const Text("Help / About"),
+                  label: _settingsText("Help / About"),
                   onPressed: () {
                     BlocProvider.of<NavigationCubit>(context).goAbout();
                   },
@@ -44,18 +44,18 @@ class SettingPage extends StatelessWidget {
       SettingsVersionWidget(cubit: cubit, engineIsRunning: engineIsRunning),
       SettingsAppWidget(cubit: cubit),
       SettingsSection(
-        title: const Text("Experimental Features"),
+        title: _settingsText("Experimental Features"),
         tiles: [
           SettingsTile.switchTile(
             initialValue: cubit.allowExperimentalRestServer,
             onToggle: (value) => cubit.allowExperimentalRestServer = value,
-            title: const Text("REST Server"),
+            title: _settingsText("REST Server"),
           ),
           if (isDesktop())
             SettingsTile.switchTile(
               initialValue: cubit.usePrereleaseVersion,
               onToggle: (value) => cubit.usePrereleaseVersion = value,
-              title: const Text("Use Prerelease (Beta) Version"),
+              title: _settingsText("Use Prerelease (Beta) Version"),
             ),
         ],
       ),
@@ -65,7 +65,7 @@ class SettingPage extends StatelessWidget {
     if (Platform.isAndroid || Platform.isIOS) {
       tiles.add(
         SettingsSection(
-          title: const Text("Advanced Mobile Settings"),
+          title: _settingsText("Advanced Mobile Settings"),
           tiles: [
             SettingsTile.switchTile(
               enabled: !engineIsRunning,
@@ -97,10 +97,10 @@ class SettingPage extends StatelessWidget {
                   },
                 );
               },
-              title: const Text("Use Foreground Process"),
+              title: _settingsText("Use Foreground Process"),
             ),
             SettingsTile.navigation(
-              title: const Text("Request Bluetooth Permissions"),
+              title: _settingsText("Request Bluetooth Permissions"),
               onPressed: (context) async {
                 bool allGranted;
                 bool anyPermanentlyDenied;
@@ -163,4 +163,10 @@ class SettingPage extends StatelessWidget {
     // list views. It will work on desktop and break on mobile.
     return Expanded(child: Column(children: widgets));
   }
+}
+
+const _settingsTextStyle = TextStyle(fontFamily: 'Roboto');
+
+Text _settingsText(String text) {
+  return Text(text, style: _settingsTextStyle);
 }

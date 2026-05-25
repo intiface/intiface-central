@@ -1,0 +1,24 @@
+{
+  "id": "mobile-about-help-window",
+  "title": "Mobile About and Help panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "about",
+    "useSideNavigationBar": false,
+    "aboutMarkdown": "# Intiface Central Help\n\nDocumentation is available at [docs.intiface.com](https://docs.intiface.com/docs/intiface-central).\n\nHelp for current versions of Intiface Central is available via:\n\n- [Buttplug/Intiface Forum](https://discuss.buttplug.io)\n- [Buttplug Discord](https://discord.buttplug.io)\n\nLooking for apps and games to use with Intiface Central? Check out the [Awesome Buttplug List](https://awesome.buttplug.io)!\n\n# About Intiface Central\n\nCopyright [Nonpolynomial Labs, LLC](https://nonpolynomial.com), 2022-2026\n\nThe Intiface word mark is a registered trademark of Nonpolynomial Labs, LLC.\n\nFind us on:\n\n- [Bluesky](https://bsky.app/profile/buttplug.io)\n- [Mastodon](https://buttplug.zone/@buttplugio)\n- [Discord](https://discord.buttplug.io)\n- [Youtube](https://youtube.buttplug.io)\n- [Twitch](https://twitch.buttplug.io)\n"
+  }
+}

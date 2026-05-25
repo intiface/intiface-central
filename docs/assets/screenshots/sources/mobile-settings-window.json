@@ -1,0 +1,27 @@
+{
+  "id": "mobile-settings-window",
+  "title": "Mobile Settings panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "settings",
+    "useSideNavigationBar": false,
+    "currentAppVersion": "3.0.0",
+    "latestAppVersion": "3.0.0",
+    "currentDeviceConfigVersion": "2026.05",
+    "trayIconMode": "both"
+  }
+}

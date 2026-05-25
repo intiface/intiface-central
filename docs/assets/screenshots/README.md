@@ -52,16 +52,19 @@ top-level fields are:
 - `callouts`: up to five callout objects.
 
 Widget-mode fixtures currently support engine state, deterministic news content,
-and selected configuration values such as `useSideNavigationBar`,
-`useCompactDisplay`, `appMode`, websocket host/port display, and app version
-strings.
+simulated device-list entries, advanced device manager entries, simple tap
+actions, text/key-based scroll actions with optional `alignment`, and selected
+configuration values such as
+`useSideNavigationBar`, `useCompactDisplay`, `appMode`, websocket host/port
+display, log panel expansion/messages, and app version strings.
 
 Callout targets resolve in this order when the field is present: `key`, `text`,
 `tooltip`, `semanticsLabel`, then explicit `bounds`.
 
 Callouts use distinct colors by order. The optional `highlightPadding` field
 defaults to `8`; set it to `0` or a negative value for adjacent region callouts
-whose highlight boxes should not overlap.
+whose highlight boxes should not overlap. Set `markerOnly` to `true` to draw
+the numbered marker and target highlight without rendering a callout text box.
 
 ## Manual Review Checklist
 

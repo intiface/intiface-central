@@ -1,0 +1,41 @@
+{
+  "id": "desktop-device-observability-window",
+  "title": "Desktop device controls and observability panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "clientConnected",
+    "clientName": "Docs Demo Client",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "devices": [
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": true
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Beta Double Vibrator"
+      },
+      {
+        "ensureVisibleText": "Device Controls"
+      }
+    ]
+  }
+}

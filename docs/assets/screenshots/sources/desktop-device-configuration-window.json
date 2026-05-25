@@ -1,0 +1,58 @@
+{
+  "id": "desktop-device-configuration-window",
+  "title": "Desktop device configuration panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": true,
+    "devices": [
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": false
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Beta Double Vibrator"
+      },
+      {
+        "ensureVisibleKey": "docs.deviceDetail.configuration",
+        "alignment": 0.0
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-configuration",
+      "target": {
+        "bounds": {
+          "x": 360,
+          "y": 315,
+          "width": 810,
+          "height": 330
+        }
+      },
+      "label": "Device Configuration",
+      "placement": "right",
+      "highlightPadding": 0,
+      "markerOnly": true
+    }
+  ]
+}

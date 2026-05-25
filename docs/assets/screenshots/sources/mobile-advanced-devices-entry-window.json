@@ -1,0 +1,60 @@
+{
+  "id": "mobile-advanced-devices-entry-window",
+  "title": "Mobile Devices tab advanced devices entry",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": false,
+    "useSimulatedDevices": true,
+    "devices": [
+      {
+        "id": "single-vibrator",
+        "kind": "single-vibrator",
+        "displayName": "Alpha Single Vibrator",
+        "index": 0,
+        "connected": false
+      },
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": false
+      },
+      {
+        "id": "stroker",
+        "kind": "stroker",
+        "displayName": "Gamma Stroker",
+        "index": 2,
+        "connected": false
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "manage-advanced-devices",
+      "target": {
+        "key": "docs.manageAdvancedDevicesCard"
+      },
+      "label": "Device Management",
+      "placement": "right",
+      "highlightPadding": -4
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intiface_central/bloc/device/device_cubit.dart';
 import 'package:intiface_central/bloc/device/device_output_cubit.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/widget/compact_observation_widget.dart';
 
 class DeviceListCard extends StatelessWidget {
@@ -67,6 +68,7 @@ class DeviceListCard extends StatelessWidget {
     final icons = _featureIcons();
 
     return Card(
+      key: DocsScreenshotKeys.deviceCardStatus(definition.index),
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -80,67 +82,89 @@ class DeviceListCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              Icon(
-                isConnected
-                    ? Icons.bluetooth_connected
-                    : Icons.bluetooth_disabled,
-                color: isConnected
-                    ? Colors.green
-                    : colorScheme.onSurfaceVariant,
-                size: 24,
+              KeyedSubtree(
+                key: DocsScreenshotKeys.deviceCardConnectionInfo(
+                  definition.index,
+                ),
+                child: Icon(
+                  isConnected
+                      ? Icons.bluetooth_connected
+                      : Icons.bluetooth_disabled,
+                  color: isConnected
+                      ? Colors.green
+                      : colorScheme.onSurfaceVariant,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            displayName,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (definition.allow) ...[
-                          const SizedBox(width: 8),
-                          _buildBadge(context, 'ALLOW', Colors.green),
-                        ],
-                        if (definition.deny) ...[
-                          const SizedBox(width: 8),
-                          _buildBadge(context, 'DENY', Colors.red),
-                        ],
-                      ],
-                    ),
-                    if (icons.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Row(
-                        children: icons
-                            .map(
-                              (icon) => Padding(
-                                padding: const EdgeInsets.only(right: 6),
-                                child: Icon(
-                                  icon,
-                                  size: 16,
-                                  color: colorScheme.onSurfaceVariant,
+                    KeyedSubtree(
+                      key: DocsScreenshotKeys.deviceCardInfo(definition.index),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  displayName,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            )
-                            .toList(),
+                              if (definition.allow) ...[
+                                const SizedBox(width: 8),
+                                _buildBadge(context, 'ALLOW', Colors.green),
+                              ],
+                              if (definition.deny) ...[
+                                const SizedBox(width: 8),
+                                _buildBadge(context, 'DENY', Colors.red),
+                              ],
+                            ],
+                          ),
+                          if (icons.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Row(
+                              children: icons
+                                  .map(
+                                    (icon) => Padding(
+                                      padding: const EdgeInsets.only(right: 6),
+                                      child: Icon(
+                                        icon,
+                                        size: 16,
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
+                    ),
                     if (isConnected &&
                         deviceCubit != null &&
                         deviceCubit!.observations.isNotEmpty) ...[
                       const SizedBox(height: 4),
-                      for (final entry
-                          in deviceCubit!.observations.entries)
-                        CompactObservationWidget(
-                          label: _featureLabel(deviceCubit!, entry.key),
-                          observation: entry.value,
+                      KeyedSubtree(
+                        key: DocsScreenshotKeys.deviceCardObservability(
+                          definition.index,
                         ),
+                        child: Column(
+                          children: [
+                            for (final entry
+                                in deviceCubit!.observations.entries)
+                              CompactObservationWidget(
+                                label: _featureLabel(deviceCubit!, entry.key),
+                                observation: entry.value,
+                              ),
+                          ],
+                        ),
+                      ),
                     ],
                   ],
                 ),

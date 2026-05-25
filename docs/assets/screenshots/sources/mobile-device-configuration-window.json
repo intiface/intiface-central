@@ -1,0 +1,58 @@
+{
+  "id": "mobile-device-configuration-window",
+  "title": "Mobile device configuration panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "devices": [
+      {
+        "id": "double-vibrator",
+        "kind": "double-vibrator",
+        "displayName": "Beta Double Vibrator",
+        "index": 1,
+        "connected": false
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Beta Double Vibrator"
+      },
+      {
+        "ensureVisibleKey": "docs.deviceDetail.configuration",
+        "alignment": 0.0
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-configuration",
+      "target": {
+        "bounds": {
+          "x": 325,
+          "y": 265,
+          "width": 390,
+          "height": 350
+        }
+      },
+      "label": "Device Configuration",
+      "placement": "right",
+      "highlightPadding": 0,
+      "markerOnly": true
+    }
+  ]
+}

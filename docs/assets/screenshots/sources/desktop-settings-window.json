@@ -1,0 +1,27 @@
+{
+  "id": "desktop-settings-window",
+  "title": "Desktop Settings panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "settings",
+    "useSideNavigationBar": true,
+    "currentAppVersion": "3.0.0",
+    "latestAppVersion": "3.0.0",
+    "currentDeviceConfigVersion": "2026.05",
+    "trayIconMode": "both"
+  }
+}

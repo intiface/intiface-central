@@ -1,0 +1,82 @@
+{
+  "id": "desktop-log-window",
+  "title": "Desktop Log panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 900,
+    "height": 650
+  },
+  "entrypoint": "desktopStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "logs",
+    "useSideNavigationBar": true,
+    "displayLogLevel": "info",
+    "expandedSettings": ["gui_log_settings"],
+    "logMessages": [
+      {
+        "level": "error",
+        "elapsed": 0.586,
+        "message": "Error loading previous device session: simulated docs fixture failure"
+      },
+      {
+        "level": "warning",
+        "elapsed": 0.421,
+        "message": "DSN not set, crash reporting cannot be used in this version of Intiface Central"
+      },
+      {
+        "level": "info",
+        "elapsed": 0.398,
+        "message": "Sentry initialization skipped by bootstrap options."
+      },
+      {
+        "level": "info",
+        "elapsed": 0.265,
+        "message": "Starting file logger..."
+      },
+      {
+        "level": "info",
+        "elapsed": 0.173,
+        "message": "Initializing paths..."
+      },
+      {
+        "level": "info",
+        "elapsed": 0.064,
+        "message": "Running main builder"
+      },
+      {
+        "level": "info",
+        "elapsed": 0.012,
+        "message": "Intiface Central 3.0.0 Starting..."
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "log-settings",
+      "target": {
+        "key": "docs.log.options"
+      },
+      "label": "Log settings",
+      "placement": "right",
+      "highlightPadding": 0
+    },
+    {
+      "id": "log-messages",
+      "target": {
+        "key": "docs.log.messages"
+      },
+      "label": "Log messages",
+      "placement": "right",
+      "highlightPadding": 0
+    }
+  ]
+}

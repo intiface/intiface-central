@@ -62,7 +62,7 @@ class SettingsResetWidget extends AbstractSettingsSection with UiLoggy {
   @override
   Widget build(BuildContext context) {
     return SettingsSection(
-      title: const Text("Reset Application"),
+      title: _settingsText("Reset Application"),
       tiles: [
         SettingsTile.navigation(
           onPressed: !engineIsRunning
@@ -84,7 +84,7 @@ class SettingsResetWidget extends AbstractSettingsSection with UiLoggy {
                   );
                 }
               : null,
-          title: const Text("Reset User Device Configuration"),
+          title: _settingsText("Reset User Device Configuration"),
         ),
         SettingsTile.navigation(
           onPressed: !engineIsRunning
@@ -113,9 +113,15 @@ class SettingsResetWidget extends AbstractSettingsSection with UiLoggy {
                   );
                 }
               : null,
-          title: const Text("Reset Application Configuration"),
+          title: _settingsText("Reset Application Configuration"),
         ),
       ],
     );
   }
+}
+
+const _settingsTextStyle = TextStyle(fontFamily: 'Roboto');
+
+Text _settingsText(String text) {
+  return Text(text, style: _settingsTextStyle);
 }

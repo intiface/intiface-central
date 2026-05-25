@@ -1,0 +1,61 @@
+{
+  "id": "mobile-simulated-device-management-window",
+  "title": "Mobile simulated device management panel",
+  "mode": "widget",
+  "viewport": {
+    "width": 1040,
+    "height": 790
+  },
+  "pixelRatio": 2,
+  "theme": "light",
+  "presentation": "window",
+  "background": "transparent",
+  "window": {
+    "width": 390,
+    "height": 633
+  },
+  "entrypoint": "mobileStartup",
+  "fixture": {
+    "engine": "stopped",
+    "navigationPage": "deviceControl",
+    "useSideNavigationBar": false,
+    "useDeviceWebsocketServer": true,
+    "useSerialPort": false,
+    "useSimulatedDevices": true,
+    "simulatedDevices": [
+      {
+        "identifier": "single-vibrator",
+        "displayName": "Docs Demo Vibrator",
+        "address": "simulated://docs-vibrator"
+      }
+    ],
+    "actions": [
+      {
+        "tapText": "Manage Advanced Devices"
+      },
+      {
+        "tapText": "Simulated Devices"
+      }
+    ]
+  },
+  "callouts": [
+    {
+      "id": "device-management",
+      "target": {
+        "key": "docs.advancedDevice.existingDevices"
+      },
+      "label": "Management",
+      "placement": "right",
+      "highlightPadding": 8
+    },
+    {
+      "id": "device-addition",
+      "target": {
+        "key": "docs.advancedDevice.addDevice"
+      },
+      "label": "Addition",
+      "placement": "right",
+      "highlightPadding": 8
+    }
+  ]
+}
