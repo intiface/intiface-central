@@ -71,7 +71,7 @@ jobs:
             throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
           }
 
-          "ISCC_PATH=$isccPath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "Inno Setup compiler: $isccPath"
 
       - name: Derive build version
         run: |
@@ -97,7 +97,21 @@ jobs:
 
       - name: Build Inno Setup installer
         run: |
-          & $env:ISCC_PATH .\intiface-central-installer.iss
+          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
+          if ($iscc) {
+            $isccPath = $iscc.Source
+          } else {
+            $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (Test-Path $fallback) {
+              $isccPath = $fallback
+            }
+          }
+
+          if (-not $isccPath) {
+            throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
+          }
+
+          & $isccPath .\intiface-central-installer.iss
           exit $LASTEXITCODE
 
       - name: Upload Windows artifacts
