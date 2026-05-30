@@ -57,6 +57,22 @@ jobs:
           flutter --version
           flutter doctor -v
 
+          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
+          if ($iscc) {
+            $isccPath = $iscc.Source
+          } else {
+            $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (Test-Path $fallback) {
+              $isccPath = $fallback
+            }
+          }
+
+          if (-not $isccPath) {
+            throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
+          }
+
+          "ISCC_PATH=$isccPath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
       - name: Derive build version
         run: |
           $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
@@ -81,18 +97,7 @@ jobs:
 
       - name: Build Inno Setup installer
         run: |
-          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
-          if ($iscc) {
-            & $iscc.Source .\intiface-central-installer.iss
-            exit $LASTEXITCODE
-          }
-
-          $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $fallback)) {
-            throw "Could not find iscc on PATH or at $fallback"
-          }
-
-          & $fallback .\intiface-central-installer.iss
+          & $env:ISCC_PATH .\intiface-central-installer.iss
           exit $LASTEXITCODE
 
       - name: Upload Windows artifacts
