@@ -65,6 +65,9 @@ jobs:
           $buildName = ($pubspecVersion -split '\+')[0]
           "BUILD_VERSION=$buildName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
+      - name: Rust check
+        run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
+
       - name: Flutter build
         run: |
           flutter config --enable-windows-desktop
