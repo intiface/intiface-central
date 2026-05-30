@@ -14,6 +14,9 @@ jobs:
   windows:
     runs-on: windows-amd64
     timeout-minutes: 120
+    env:
+      BUTTPLUG_REF: mdnsfix
+      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -40,8 +43,8 @@ jobs:
             }
           }
 
-          git clone --depth 1 --branch master https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch master https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
+          git clone --depth 1 --branch $env:BUTTPLUG_REF https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
+          git clone --depth 1 --branch $env:BUTTPLUG_DART_REF https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
