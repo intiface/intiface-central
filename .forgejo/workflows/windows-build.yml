@@ -1,0 +1,91 @@
+name: Windows Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ci/windows-builder
+
+concurrency:
+  group: windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-x64
+    timeout-minutes: 120
+
+    defaults:
+      run:
+        shell: powershell
+        working-directory: intiface-central
+
+    steps:
+      - name: Checkout Buttplug
+        uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          repository: buttplugio/buttplug
+          path: buttplug
+
+      - name: Checkout Buttplug Dart
+        uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          repository: buttplugio/buttplug_dart
+          path: buttplug_dart
+
+      - name: Checkout Intiface Central
+        uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          path: intiface-central
+
+      - name: Tool versions
+        run: |
+          git --version
+          rustc --version
+          cargo --version
+          flutter --version
+          flutter doctor -v
+
+      - name: Derive build version
+        run: |
+          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
+          if (-not $versionLine) {
+            throw "Could not find version in pubspec.yaml"
+          }
+
+          $pubspecVersion = $versionLine.Matches[0].Groups[1].Value.Trim()
+          $buildName = ($pubspecVersion -split '\+')[0]
+          "BUILD_VERSION=$buildName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Flutter build
+        run: |
+          flutter config --enable-windows-desktop
+          flutter pub get
+          flutter build windows --release `
+            --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" `
+            --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
+
+      - name: Build Inno Setup installer
+        run: |
+          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
+          if ($iscc) {
+            & $iscc.Source .\intiface-central-installer.iss
+            exit $LASTEXITCODE
+          }
+
+          $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $fallback)) {
+            throw "Could not find iscc on PATH or at $fallback"
+          }
+
+          & $fallback .\intiface-central-installer.iss
+          exit $LASTEXITCODE
+
+      - name: Upload Windows artifacts
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: windows-x64-build
+          path: |
+            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
+            intiface-central/installer/intiface-central-installer.exe
+          if-no-files-found: error
