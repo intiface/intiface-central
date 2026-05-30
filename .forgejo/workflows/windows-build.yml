@@ -48,6 +48,9 @@ jobs:
           git --version
           rustc --version
           cargo --version
+          $flutterCommand = (Get-Command flutter -ErrorAction Stop).Source
+          $flutterRoot = Split-Path -Parent (Split-Path -Parent $flutterCommand)
+          git config --global --add safe.directory $flutterRoot
           flutter --version
           flutter doctor -v
 
