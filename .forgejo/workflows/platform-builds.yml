@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   linux-amd64:
-    runs-on: linux-amd64
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
       BUTTPLUG_REF: mdnsfix
