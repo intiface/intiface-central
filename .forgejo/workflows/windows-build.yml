@@ -21,22 +21,27 @@ jobs:
         working-directory: intiface-central
 
     steps:
-      - name: Checkout Buttplug
-        uses: https://data.forgejo.org/actions/checkout@v4
-        with:
-          repository: qdot/buttplug
-          path: buttplug
-
-      - name: Checkout Buttplug Dart
-        uses: https://data.forgejo.org/actions/checkout@v4
-        with:
-          repository: qdot/buttplug_dart
-          path: buttplug_dart
-
       - name: Checkout Intiface Central
         uses: https://data.forgejo.org/actions/checkout@v4
         with:
           path: intiface-central
+
+      - name: Clone sibling dependencies
+        run: |
+          $workspace = $env:GITHUB_WORKSPACE
+          if (-not $workspace) {
+            throw "GITHUB_WORKSPACE is not set"
+          }
+
+          Set-Location $workspace
+          foreach ($path in @("buttplug", "buttplug_dart")) {
+            if (Test-Path $path) {
+              Remove-Item -Recurse -Force $path
+            }
+          }
+
+          git clone --depth 1 --branch master https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
+          git clone --depth 1 --branch master https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
