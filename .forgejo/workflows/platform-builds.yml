@@ -263,11 +263,11 @@ jobs:
 
           EXECUTABLE="$APP_PATH/Contents/MacOS/Intiface Central"
           lipo -info "$EXECUTABLE"
-          lipo -verify_arch x86_64 arm64 "$EXECUTABLE"
+          lipo "$EXECUTABLE" -verify_arch x86_64 arm64
 
           while IFS= read -r binary; do
             if file "$binary" | grep -q "Mach-O"; then
-              lipo -verify_arch x86_64 arm64 "$binary"
+              lipo "$binary" -verify_arch x86_64 arm64
             fi
           done < <(find "$APP_PATH" -type f)
 
