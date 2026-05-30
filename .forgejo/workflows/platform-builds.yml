@@ -241,16 +241,26 @@ jobs:
             --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
             --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
 
+          DERIVED_DATA_PATH="$PWD/build/macos/DerivedData"
+          rm -rf "$DERIVED_DATA_PATH"
+
           xcodebuild build \
             -workspace macos/Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
+            -derivedDataPath "$DERIVED_DATA_PATH" \
             -destination "generic/platform=macOS" \
             ARCHS="x86_64 arm64" \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGNING_ALLOWED=NO
 
-          APP_PATH="$PWD/build/macos/Build/Products/Release/Intiface Central.app"
+          APP_PATH="$DERIVED_DATA_PATH/Build/Products/Release/Intiface Central.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "Could not find macOS app bundle at $APP_PATH" >&2
+            find "$DERIVED_DATA_PATH/Build/Products" -maxdepth 4 -print >&2 || true
+            exit 1
+          fi
+
           EXECUTABLE="$APP_PATH/Contents/MacOS/Intiface Central"
           lipo -info "$EXECUTABLE"
           lipo -verify_arch x86_64 arm64 "$EXECUTABLE"
