@@ -24,13 +24,13 @@ jobs:
       - name: Checkout Buttplug
         uses: https://data.forgejo.org/actions/checkout@v4
         with:
-          repository: buttplugio/buttplug
+          repository: qdot/buttplug
           path: buttplug
 
       - name: Checkout Buttplug Dart
         uses: https://data.forgejo.org/actions/checkout@v4
         with:
-          repository: buttplugio/buttplug_dart
+          repository: qdot/buttplug_dart
           path: buttplug_dart
 
       - name: Checkout Intiface Central
