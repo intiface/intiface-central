@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   windows:
-    runs-on: windows-x64
+    runs-on: windows-amd64
     timeout-minutes: 120
 
     defaults:
