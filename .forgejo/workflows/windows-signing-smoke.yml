@@ -1,0 +1,122 @@
+name: Windows signing smoke test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows-signing-smoke:
+    runs-on: windows-amd64
+
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Verify signing secrets
+        env:
+          WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
+          WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
+          WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
+        run: |
+          $missing = @()
+          foreach ($name in @("WINDOWS_CODESIGN_CERT_BASE64", "WINDOWS_CODESIGN_KEY_CONTAINER", "WINDOWS_CODESIGN_TOKEN_PASSWORD")) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              $missing += $name
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            foreach ($name in $missing) {
+              Write-Error "Missing required Forgejo secret: $name"
+            }
+            exit 1
+          }
+
+      - name: Build smoke executable
+        run: |
+          $outDir = Join-Path $env:RUNNER_TEMP "windows-signing-smoke"
+          New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+
+          $source = @'
+          using System;
+
+          public static class Program
+          {
+              public static void Main()
+              {
+                  Console.WriteLine("Intiface Central Windows signing smoke test");
+              }
+          }
+          '@
+
+          $testExe = Join-Path $outDir "intiface-signing-smoke.exe"
+          Add-Type -TypeDefinition $source -Language CSharp -OutputAssembly $testExe -OutputType ConsoleApplication
+          & $testExe
+
+      - name: Sign and verify smoke executable
+        env:
+          WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
+          WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
+          WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
+          WINDOWS_CODESIGN_CSP: ${{ secrets.WINDOWS_CODESIGN_CSP }}
+          WINDOWS_CODESIGN_TIMESTAMP_URL: ${{ secrets.WINDOWS_CODESIGN_TIMESTAMP_URL }}
+        run: |
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
+            -Recurse `
+            -Filter signtool.exe `
+            -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+
+          if (-not $signtool) {
+            throw "signtool.exe not found. Install Windows SDK signing tools on the Windows builder."
+          }
+
+          $certPath = Join-Path $env:RUNNER_TEMP "intiface-windows-codesign.cer"
+          [IO.File]::WriteAllBytes($certPath, [Convert]::FromBase64String($env:WINDOWS_CODESIGN_CERT_BASE64))
+
+          $csp = $env:WINDOWS_CODESIGN_CSP
+          if ([string]::IsNullOrWhiteSpace($csp)) {
+            $csp = "eToken Base Cryptographic Provider"
+          }
+
+          $timestampUrl = $env:WINDOWS_CODESIGN_TIMESTAMP_URL
+          if ([string]::IsNullOrWhiteSpace($timestampUrl)) {
+            $timestampUrl = "http://timestamp.digicert.com"
+          }
+
+          $keyContainer = "[{{$env:WINDOWS_CODESIGN_TOKEN_PASSWORD}}]=$env:WINDOWS_CODESIGN_KEY_CONTAINER"
+          $testExe = Join-Path $env:RUNNER_TEMP "windows-signing-smoke\intiface-signing-smoke.exe"
+
+          Write-Host "Using SignTool: $($signtool.FullName)"
+          Write-Host "Using CSP: $csp"
+          Write-Host "Using key container: $env:WINDOWS_CODESIGN_KEY_CONTAINER"
+          Write-Host "Using timestamp URL: $timestampUrl"
+
+          & $signtool.FullName sign `
+            /fd SHA256 `
+            /tr $timestampUrl `
+            /td SHA256 `
+            /f $certPath `
+            /csp $csp `
+            /kc $keyContainer `
+            /v `
+            $testExe
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          & $signtool.FullName verify /pa /v $testExe
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          $signature = Get-AuthenticodeSignature $testExe
+          $signature | Format-List Status,StatusMessage
+          $signature.SignerCertificate | Format-List Subject,Issuer,Thumbprint,NotAfter
+
+          if ($signature.Status -ne "Valid") {
+            throw "Signed smoke executable is not Authenticode-valid: $($signature.Status)"
+          }
