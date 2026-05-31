@@ -29,6 +29,25 @@ jobs:
         with:
           path: intiface-central
 
+      - name: Verify build secrets
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        run: |
+          $missing = @()
+          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID")) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              $missing += $name
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            foreach ($name in $missing) {
+              Write-Error "Missing required Forgejo secret: $name"
+            }
+            exit 1
+          }
+
       - name: Clone sibling dependencies
         run: |
           $workspace = $env:GITHUB_WORKSPACE
@@ -88,12 +107,15 @@ jobs:
         run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
 
       - name: Flutter build
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           flutter config --enable-windows-desktop
           flutter pub get
           flutter build windows --release `
-            --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" `
-            --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
+            --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
+            --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID"
 
       - name: Build Inno Setup installer
         run: |

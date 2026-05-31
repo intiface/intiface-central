@@ -31,6 +31,23 @@ jobs:
         with:
           path: intiface-central
 
+      - name: Verify build secrets
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for name in SENTRY_DSN DISCORD_CLIENT_ID; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required Forgejo secret: $name" >&2
+              missing=1
+            fi
+          done
+
+          exit "$missing"
+
       - name: Clone sibling dependencies
         run: |
           set -euo pipefail
@@ -129,6 +146,9 @@ jobs:
         run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
 
       - name: Flutter build
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           set -euo pipefail
 
@@ -137,8 +157,8 @@ jobs:
           flutter build linux --release \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
-            --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
-            --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
+            --dart-define "SENTRY_DSN=$SENTRY_DSN" \
+            --dart-define "DISCORD_CLIENT_ID=$DISCORD_CLIENT_ID"
 
       - name: Zip Linux bundle
         run: |
@@ -180,6 +200,23 @@ jobs:
         uses: https://data.forgejo.org/actions/checkout@v4
         with:
           path: intiface-central
+
+      - name: Verify build secrets
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for name in SENTRY_DSN DISCORD_CLIENT_ID; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required Forgejo secret: $name" >&2
+              missing=1
+            fi
+          done
+
+          exit "$missing"
 
       - name: Clone sibling dependencies
         run: |
@@ -230,6 +267,9 @@ jobs:
         run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
       - name: Build macOS app
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           set -euo pipefail
 
@@ -238,8 +278,8 @@ jobs:
           flutter build macos --release --config-only \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
-            --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
-            --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
+            --dart-define "SENTRY_DSN=$SENTRY_DSN" \
+            --dart-define "DISCORD_CLIENT_ID=$DISCORD_CLIENT_ID"
 
           DERIVED_DATA_PATH="$PWD/build/macos/DerivedData"
           rm -rf "$DERIVED_DATA_PATH"
@@ -300,6 +340,17 @@ jobs:
         with:
           path: intiface-central
 
+      - name: Verify build secrets
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SENTRY_DSN:-}" ]; then
+            echo "Missing required Forgejo secret: SENTRY_DSN" >&2
+            exit 1
+          fi
+
       - name: Clone sibling dependencies
         run: |
           set -euo pipefail
@@ -349,6 +400,9 @@ jobs:
         run: rustup target add aarch64-apple-ios
 
       - name: Build iOS app
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           set -euo pipefail
 
@@ -356,8 +410,8 @@ jobs:
           flutter build ios --release --no-codesign \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
-            --dart-define "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" \
-            --dart-define "DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }}"
+            --dart-define "SENTRY_DSN=$SENTRY_DSN" \
+            --dart-define "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
 
       - name: Zip iOS app bundle
         run: |

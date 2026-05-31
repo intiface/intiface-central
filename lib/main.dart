@@ -10,7 +10,7 @@ Future<void> main() async {
   var spec = Pubspec.parse(await rootBundle.loadString('pubspec.yaml'));
   if (const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
     await SentryFlutter.init((options) {
-      //options.dsn = const String.fromEnvironment('SENTRY_DSN');
+      options.dsn = const String.fromEnvironment('SENTRY_DSN');
       options.sampleRate = 1.0;
       options.release = "intiface_central@${spec.version}";
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
