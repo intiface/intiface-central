@@ -183,6 +183,140 @@ jobs:
           path: intiface-central/intiface-central-linux-amd64.zip
           if-no-files-found: error
 
+  windows-amd64:
+    runs-on: windows-amd64
+    timeout-minutes: 120
+    env:
+      BUTTPLUG_REF: mdnsfix
+      BUTTPLUG_DART_REF: master
+
+    defaults:
+      run:
+        shell: powershell
+        working-directory: intiface-central
+
+    steps:
+      - name: Checkout Intiface Central
+        uses: https://data.forgejo.org/actions/checkout@v4
+        with:
+          path: intiface-central
+
+      - name: Verify build secrets
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        run: |
+          $missing = @()
+          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID")) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              $missing += $name
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            foreach ($name in $missing) {
+              Write-Error "Missing required Forgejo secret: $name"
+            }
+            exit 1
+          }
+
+      - name: Clone sibling dependencies
+        run: |
+          $workspace = $env:GITHUB_WORKSPACE
+          if (-not $workspace) {
+            throw "GITHUB_WORKSPACE is not set"
+          }
+
+          Set-Location $workspace
+          foreach ($path in @("buttplug", "buttplug_dart")) {
+            if (Test-Path $path) {
+              Remove-Item -Recurse -Force $path
+            }
+          }
+
+          git clone --depth 1 --branch $env:BUTTPLUG_REF https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
+          git clone --depth 1 --branch $env:BUTTPLUG_DART_REF https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
+
+      - name: Tool versions
+        run: |
+          git --version
+          rustc --version
+          cargo --version
+          $flutterCommand = (Get-Command flutter -ErrorAction Stop).Source
+          $flutterRoot = Split-Path -Parent (Split-Path -Parent $flutterCommand)
+          git config --global --add safe.directory $flutterRoot
+          flutter --version
+          flutter doctor -v
+
+          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
+          if ($iscc) {
+            $isccPath = $iscc.Source
+          } else {
+            $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (Test-Path $fallback) {
+              $isccPath = $fallback
+            }
+          }
+
+          if (-not $isccPath) {
+            throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
+          }
+
+          Write-Host "Inno Setup compiler: $isccPath"
+
+      - name: Derive build version
+        run: |
+          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
+          if (-not $versionLine) {
+            throw "Could not find version in pubspec.yaml"
+          }
+
+          $pubspecVersion = $versionLine.Matches[0].Groups[1].Value.Trim()
+          $buildName = ($pubspecVersion -split '\+')[0]
+          "BUILD_VERSION=$buildName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Rust check
+        run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
+
+      - name: Flutter build
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+        run: |
+          flutter config --enable-windows-desktop
+          flutter pub get
+          flutter build windows --release `
+            --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
+            --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID"
+
+      - name: Build Inno Setup installer
+        run: |
+          $iscc = Get-Command iscc -ErrorAction SilentlyContinue
+          if ($iscc) {
+            $isccPath = $iscc.Source
+          } else {
+            $fallback = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (Test-Path $fallback) {
+              $isccPath = $fallback
+            }
+          }
+
+          if (-not $isccPath) {
+            throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
+          }
+
+          & $isccPath .\intiface-central-installer.iss
+          exit $LASTEXITCODE
+
+      - name: Upload Windows artifacts
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: windows-x64-build
+          path: |
+            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
+            intiface-central/installer/intiface-central-installer.exe
+          if-no-files-found: error
+
   macos-universal:
     runs-on: macos-latest
     timeout-minutes: 180
