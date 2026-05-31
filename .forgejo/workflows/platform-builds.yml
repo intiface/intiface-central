@@ -495,6 +495,7 @@ jobs:
           git config --global --add safe.directory "$FLUTTER_ROOT"
           flutter --version
           flutter doctor -v
+          security find-identity -v -p codesigning || true
 
       - name: Derive build version
         run: |
@@ -536,24 +537,33 @@ jobs:
             --dart-define "DISCORD_CLIENT_ID=$DISCORD_CLIENT_ID"
 
           DERIVED_DATA_PATH="$PWD/build/macos/DerivedData"
+          ARCHIVE_PATH="$PWD/build/macos/archive/Intiface Central.xcarchive"
+          EXPORT_PATH="$PWD/build/macos/export"
           rm -rf "$DERIVED_DATA_PATH"
+          rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH"
 
-          xcodebuild build \
+          xcodebuild archive \
             -workspace macos/Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
             -derivedDataPath "$DERIVED_DATA_PATH" \
+            -archivePath "$ARCHIVE_PATH" \
             -destination "generic/platform=macOS" \
+            -allowProvisioningUpdates \
             ARCHS="x86_64 arm64" \
             ONLY_ACTIVE_ARCH=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=MSRA4LCTEZ
 
-          APP_PATH="$DERIVED_DATA_PATH/Build/Products/Release/Intiface Central.app"
+          APP_PATH="$ARCHIVE_PATH/Products/Applications/Intiface Central.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "Could not find macOS app bundle at $APP_PATH" >&2
-            find "$DERIVED_DATA_PATH/Build/Products" -maxdepth 4 -print >&2 || true
+            find "$ARCHIVE_PATH" -maxdepth 5 -print >&2 || true
             exit 1
           fi
+
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 
           EXECUTABLE="$APP_PATH/Contents/MacOS/Intiface Central"
           lipo -info "$EXECUTABLE"
@@ -565,15 +575,37 @@ jobs:
             fi
           done < <(find "$APP_PATH" -type f)
 
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist ci/export-options/macos-app-store-connect.plist \
+            -allowProvisioningUpdates
+
+          EXPORTED_PKG="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.pkg' -print -quit)"
+          if [ -z "$EXPORTED_PKG" ]; then
+            echo "Could not find exported macOS package in $EXPORT_PATH" >&2
+            find "$EXPORT_PATH" -maxdepth 3 -print >&2 || true
+            exit 1
+          fi
+
+          cp "$EXPORTED_PKG" "$PWD/intiface-central-macos-app-store.pkg"
+
           ditto -c -k --sequesterRsrc --keepParent \
             "$APP_PATH" \
             "$PWD/intiface-central-macos-universal-app.zip"
+
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$ARCHIVE_PATH" \
+            "$PWD/intiface-central-macos.xcarchive.zip"
 
       - name: Upload macOS artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: macos-universal-build
-          path: intiface-central/intiface-central-macos-universal-app.zip
+          path: |
+            intiface-central/intiface-central-macos-app-store.pkg
+            intiface-central/intiface-central-macos-universal-app.zip
+            intiface-central/intiface-central-macos.xcarchive.zip
           if-no-files-found: error
 
   ios:
@@ -628,6 +660,7 @@ jobs:
           git config --global --add safe.directory "$FLUTTER_ROOT"
           flutter --version
           flutter doctor -v
+          security find-identity -v -p codesigning || true
 
       - name: Derive build version
         run: |
@@ -653,7 +686,7 @@ jobs:
       - name: Add iOS Rust target
         run: rustup target add aarch64-apple-ios
 
-      - name: Build iOS app
+      - name: Build iOS archive
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
@@ -661,31 +694,64 @@ jobs:
           set -euo pipefail
 
           flutter pub get
-          flutter build ios --release --no-codesign \
+          flutter build ios --release --config-only \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
             --dart-define "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
 
-      - name: Zip iOS app bundle
-        run: |
-          set -euo pipefail
+          DERIVED_DATA_PATH="$PWD/build/ios/DerivedData"
+          ARCHIVE_PATH="$PWD/build/ios/archive/Intiface Central.xcarchive"
+          EXPORT_PATH="$PWD/build/ios/export"
+          rm -rf "$DERIVED_DATA_PATH" "$ARCHIVE_PATH" "$EXPORT_PATH"
 
-          APP_PATH="$PWD/build/ios/iphoneos/Runner.app"
+          xcodebuild archive \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -derivedDataPath "$DERIVED_DATA_PATH" \
+            -archivePath "$ARCHIVE_PATH" \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM=MSRA4LCTEZ
+
+          APP_PATH="$ARCHIVE_PATH/Products/Applications/Runner.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "Could not find iOS app bundle at $APP_PATH" >&2
+            find "$ARCHIVE_PATH" -maxdepth 5 -print >&2 || true
             exit 1
           fi
 
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist ci/export-options/ios-app-store-connect.plist \
+            -allowProvisioningUpdates
+
+          EXPORTED_IPA="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.ipa' -print -quit)"
+          if [ -z "$EXPORTED_IPA" ]; then
+            echo "Could not find exported iOS IPA in $EXPORT_PATH" >&2
+            find "$EXPORT_PATH" -maxdepth 3 -print >&2 || true
+            exit 1
+          fi
+
+          cp "$EXPORTED_IPA" "$PWD/intiface-central-ios-app-store.ipa"
+
           ditto -c -k --sequesterRsrc --keepParent \
-            "$APP_PATH" \
-            "$PWD/intiface-central-ios-app.zip"
+            "$ARCHIVE_PATH" \
+            "$PWD/intiface-central-ios.xcarchive.zip"
 
       - name: Upload iOS artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: ios-build
-          path: intiface-central/intiface-central-ios-app.zip
+          path: |
+            intiface-central/intiface-central-ios-app-store.ipa
+            intiface-central/intiface-central-ios.xcarchive.zip
           if-no-files-found: error
 
   android-amd64:
