@@ -205,9 +205,12 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
+          WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
+          WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
         run: |
           $missing = @()
-          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID")) {
+          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID", "WINDOWS_CODESIGN_CERT_BASE64", "WINDOWS_CODESIGN_KEY_CONTAINER", "WINDOWS_CODESIGN_TOKEN_PASSWORD")) {
             if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
               $missing += $name
             }
@@ -289,6 +292,68 @@ jobs:
             --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
             --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID"
 
+      - name: Sign Windows app bundle
+        env:
+          WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
+          WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
+          WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
+          WINDOWS_CODESIGN_CSP: ${{ secrets.WINDOWS_CODESIGN_CSP }}
+          WINDOWS_CODESIGN_TIMESTAMP_URL: ${{ secrets.WINDOWS_CODESIGN_TIMESTAMP_URL }}
+        run: |
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
+            -Recurse `
+            -Filter signtool.exe `
+            -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+
+          if (-not $signtool) {
+            throw "signtool.exe not found. Install Windows SDK signing tools on the Windows builder."
+          }
+
+          $certPath = Join-Path $env:RUNNER_TEMP "intiface-windows-codesign.cer"
+          [IO.File]::WriteAllBytes($certPath, [Convert]::FromBase64String($env:WINDOWS_CODESIGN_CERT_BASE64))
+
+          $csp = $env:WINDOWS_CODESIGN_CSP
+          if ([string]::IsNullOrWhiteSpace($csp)) {
+            $csp = "eToken Base Cryptographic Provider"
+          }
+
+          $timestampUrl = $env:WINDOWS_CODESIGN_TIMESTAMP_URL
+          if ([string]::IsNullOrWhiteSpace($timestampUrl)) {
+            $timestampUrl = "http://timestamp.digicert.com"
+          }
+
+          $keyContainer = "[{{$env:WINDOWS_CODESIGN_TOKEN_PASSWORD}}]=$env:WINDOWS_CODESIGN_KEY_CONTAINER"
+
+          $bundlePath = "build\windows\x64\runner\Release"
+          $files = Get-ChildItem $bundlePath -Recurse -File |
+            Where-Object { $_.Extension -in @(".exe", ".dll") }
+
+          foreach ($file in $files) {
+            Write-Host "Signing $($file.FullName)"
+            & $signtool.FullName sign `
+              /fd SHA256 `
+              /tr $timestampUrl `
+              /td SHA256 `
+              /f $certPath `
+              /csp $csp `
+              /kc $keyContainer `
+              /as `
+              /v `
+              $file.FullName
+
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+
+            & $signtool.FullName verify /pa /v $file.FullName
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }
+
       - name: Build Inno Setup installer
         run: |
           $iscc = Get-Command iscc -ErrorAction SilentlyContinue
@@ -306,6 +371,61 @@ jobs:
           }
 
           & $isccPath .\intiface-central-installer.iss
+          exit $LASTEXITCODE
+
+      - name: Sign Windows installer
+        env:
+          WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
+          WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
+          WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
+          WINDOWS_CODESIGN_CSP: ${{ secrets.WINDOWS_CODESIGN_CSP }}
+          WINDOWS_CODESIGN_TIMESTAMP_URL: ${{ secrets.WINDOWS_CODESIGN_TIMESTAMP_URL }}
+        run: |
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
+            -Recurse `
+            -Filter signtool.exe `
+            -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+
+          if (-not $signtool) {
+            throw "signtool.exe not found. Install Windows SDK signing tools on the Windows builder."
+          }
+
+          $certPath = Join-Path $env:RUNNER_TEMP "intiface-windows-codesign.cer"
+          if (-not (Test-Path $certPath)) {
+            [IO.File]::WriteAllBytes($certPath, [Convert]::FromBase64String($env:WINDOWS_CODESIGN_CERT_BASE64))
+          }
+
+          $csp = $env:WINDOWS_CODESIGN_CSP
+          if ([string]::IsNullOrWhiteSpace($csp)) {
+            $csp = "eToken Base Cryptographic Provider"
+          }
+
+          $timestampUrl = $env:WINDOWS_CODESIGN_TIMESTAMP_URL
+          if ([string]::IsNullOrWhiteSpace($timestampUrl)) {
+            $timestampUrl = "http://timestamp.digicert.com"
+          }
+
+          $keyContainer = "[{{$env:WINDOWS_CODESIGN_TOKEN_PASSWORD}}]=$env:WINDOWS_CODESIGN_KEY_CONTAINER"
+          $installerPath = "installer\intiface-central-installer.exe"
+
+          & $signtool.FullName sign `
+            /fd SHA256 `
+            /tr $timestampUrl `
+            /td SHA256 `
+            /f $certPath `
+            /csp $csp `
+            /kc $keyContainer `
+            /v `
+            $installerPath
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          & $signtool.FullName verify /pa /v $installerPath
           exit $LASTEXITCODE
 
       - name: Upload Windows artifacts
