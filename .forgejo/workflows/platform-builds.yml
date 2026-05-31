@@ -442,12 +442,50 @@ jobs:
           exit $LASTEXITCODE
 
       - name: Upload Windows symbols to Sentry
-        shell: bash
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        run: ./scripts/upload-sentry-symbols.sh windows
+        run: |
+          $ErrorActionPreference = "Stop"
+          $ProgressPreference = "SilentlyContinue"
+
+          $sentryCli = Get-Command sentry-cli -ErrorAction SilentlyContinue
+          if ($sentryCli) {
+            $sentryCliPath = $sentryCli.Source
+          } else {
+            $tempRoot = $env:RUNNER_TEMP
+            if ([string]::IsNullOrWhiteSpace($tempRoot)) {
+              $tempRoot = [IO.Path]::GetTempPath()
+            }
+
+            $installDir = Join-Path $tempRoot "sentry-cli"
+            New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+            $sentryCliPath = Join-Path $installDir "sentry-cli.exe"
+            Invoke-WebRequest `
+              -Uri "https://downloads.sentry-cdn.com/sentry-cli/3.4.3/sentry-cli-Windows-x86_64.exe" `
+              -OutFile $sentryCliPath
+          }
+
+          $symbolPath = "build\windows\x64\runner\Release"
+          if (-not (Test-Path $symbolPath)) {
+            throw "Build output not found at '$symbolPath'."
+          }
+
+          Write-Host "Uploading Windows debug symbols from $symbolPath..."
+          & $sentryCliPath debug-files upload `
+            --org $env:SENTRY_ORG `
+            --project $env:SENTRY_PROJECT `
+            --include-sources `
+            --wait `
+            $symbolPath
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          Write-Host "Debug symbol upload complete."
 
       - name: Upload Windows artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
