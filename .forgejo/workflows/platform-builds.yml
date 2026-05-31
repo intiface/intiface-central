@@ -35,11 +35,14 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           set -euo pipefail
 
           missing=0
-          for name in SENTRY_DSN DISCORD_CLIENT_ID; do
+          for name in SENTRY_DSN DISCORD_CLIENT_ID SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
             if [ -z "${!name:-}" ]; then
               echo "Missing required Forgejo secret: $name" >&2
               missing=1
@@ -160,6 +163,13 @@ jobs:
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
             --dart-define "DISCORD_CLIENT_ID=$DISCORD_CLIENT_ID"
 
+      - name: Upload Linux symbols to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: ./scripts/upload-sentry-symbols.sh linux
+
       - name: Zip Linux bundle
         run: |
           set -euo pipefail
@@ -208,9 +218,12 @@ jobs:
           WINDOWS_CODESIGN_CERT_BASE64: ${{ secrets.WINDOWS_CODESIGN_CERT_BASE64 }}
           WINDOWS_CODESIGN_KEY_CONTAINER: ${{ secrets.WINDOWS_CODESIGN_KEY_CONTAINER }}
           WINDOWS_CODESIGN_TOKEN_PASSWORD: ${{ secrets.WINDOWS_CODESIGN_TOKEN_PASSWORD }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           $missing = @()
-          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID", "WINDOWS_CODESIGN_CERT_BASE64", "WINDOWS_CODESIGN_KEY_CONTAINER", "WINDOWS_CODESIGN_TOKEN_PASSWORD")) {
+          foreach ($name in @("SENTRY_DSN", "DISCORD_CLIENT_ID", "WINDOWS_CODESIGN_CERT_BASE64", "WINDOWS_CODESIGN_KEY_CONTAINER", "WINDOWS_CODESIGN_TOKEN_PASSWORD", "SENTRY_AUTH_TOKEN", "SENTRY_ORG", "SENTRY_PROJECT")) {
             if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
               $missing += $name
             }
@@ -428,6 +441,14 @@ jobs:
           & $signtool.FullName verify /pa /v $installerPath
           exit $LASTEXITCODE
 
+      - name: Upload Windows symbols to Sentry
+        shell: bash
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: ./scripts/upload-sentry-symbols.sh windows
+
       - name: Upload Windows artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
@@ -459,11 +480,14 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           set -euo pipefail
 
           missing=0
-          for name in SENTRY_DSN DISCORD_CLIENT_ID; do
+          for name in SENTRY_DSN DISCORD_CLIENT_ID SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
             if [ -z "${!name:-}" ]; then
               echo "Missing required Forgejo secret: $name" >&2
               missing=1
@@ -597,6 +621,13 @@ jobs:
             "$ARCHIVE_PATH" \
             "$PWD/intiface-central-macos.xcarchive.zip"
 
+      - name: Upload macOS symbols to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: ./scripts/upload-sentry-symbols.sh macos
+
       - name: Upload macOS artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
@@ -628,13 +659,21 @@ jobs:
       - name: Verify build secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           set -euo pipefail
 
-          if [ -z "${SENTRY_DSN:-}" ]; then
-            echo "Missing required Forgejo secret: SENTRY_DSN" >&2
-            exit 1
-          fi
+          missing=0
+          for name in SENTRY_DSN SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required Forgejo secret: $name" >&2
+              missing=1
+            fi
+          done
+
+          exit "$missing"
 
       - name: Clone sibling dependencies
         run: |
@@ -743,6 +782,13 @@ jobs:
             "$ARCHIVE_PATH" \
             "$PWD/intiface-central-ios.xcarchive.zip"
 
+      - name: Upload iOS symbols to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: ./scripts/upload-sentry-symbols.sh ios
+
       - name: Upload iOS artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
@@ -775,11 +821,14 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           ANDROID_KEY_PROPERTIES_BASE64: ${{ secrets.ANDROID_KEY_PROPERTIES_BASE64 }}
           ANDROID_UPLOAD_KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           set -euo pipefail
 
           missing=0
-          for name in SENTRY_DSN ANDROID_KEY_PROPERTIES_BASE64 ANDROID_UPLOAD_KEYSTORE_BASE64; do
+          for name in SENTRY_DSN ANDROID_KEY_PROPERTIES_BASE64 ANDROID_UPLOAD_KEYSTORE_BASE64 SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
             if [ -z "${!name:-}" ]; then
               echo "Missing required Forgejo secret: $name" >&2
               missing=1
@@ -872,6 +921,13 @@ jobs:
             --build-number "$BUILD_NUMBER" \
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
             --dart-define "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
+
+      - name: Upload Android symbols to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: ./scripts/upload-sentry-symbols.sh android
 
       - name: Upload Android artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4

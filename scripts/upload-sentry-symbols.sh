@@ -48,38 +48,66 @@ done
 
 # Check sentry-cli is available.
 if ! command -v sentry-cli &>/dev/null; then
-  echo "Error: sentry-cli not found on PATH."
-  echo "Install it: https://docs.sentry.io/cli/installation/"
-  exit 1
+  echo "sentry-cli not found on PATH; installing it for this job..."
+
+  if ! command -v curl &>/dev/null; then
+    echo "Error: curl is required to install sentry-cli."
+    exit 1
+  fi
+
+  INSTALL_DIR="$(mktemp -d)"
+  export INSTALL_DIR
+  curl -sL https://sentry.io/get-cli/ | sh
+  export PATH="$INSTALL_DIR:$PATH"
+
+  if ! command -v sentry-cli &>/dev/null; then
+    echo "Error: sentry-cli install completed, but sentry-cli is still not on PATH."
+    exit 1
+  fi
 fi
 
 # Resolve the debug symbol path for the given platform.
+SYMBOL_PATHS=()
 case "$PLATFORM" in
   windows)
-    SYMBOL_PATH="build/windows/x64/runner/Release"
+    SYMBOL_PATHS=("build/windows/x64/runner/Release")
     ;;
   linux)
-    SYMBOL_PATH="build/linux/x64/release/bundle"
+    SYMBOL_PATHS=("build/linux/x64/release/bundle")
     ;;
   macos)
-    SYMBOL_PATH="build/macos/Build/Products/Release"
+    SYMBOL_PATHS=("build/macos/archive/Intiface Central.xcarchive/dSYMs")
     ;;
   ios)
-    SYMBOL_PATH="build/ios/Release-iphoneos"
+    SYMBOL_PATHS=("build/ios/archive/Intiface Central.xcarchive/dSYMs")
     ;;
   android)
-    SYMBOL_PATH="build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib"
+    SYMBOL_PATHS=("build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib")
     ;;
 esac
 
-if [[ ! -d "$SYMBOL_PATH" ]]; then
-  echo "Error: Build output not found at '$SYMBOL_PATH'."
+EXISTING_SYMBOL_PATHS=()
+for path in "${SYMBOL_PATHS[@]}"; do
+  if [[ -d "$path" ]]; then
+    EXISTING_SYMBOL_PATHS+=("$path")
+  fi
+done
+
+if [[ "${#EXISTING_SYMBOL_PATHS[@]}" -eq 0 ]]; then
+  echo "Error: Build output not found for $PLATFORM."
+  printf 'Checked path: %s\n' "${SYMBOL_PATHS[@]}"
   echo "Run a release build for $PLATFORM first."
   exit 1
 fi
 
-echo "Uploading $PLATFORM debug symbols from $SYMBOL_PATH..."
-sentry-cli debug-files upload --include-sources --wait "$SYMBOL_PATH"
+echo "Uploading $PLATFORM debug symbols..."
+printf '  %s\n' "${EXISTING_SYMBOL_PATHS[@]}"
+sentry-cli debug-files upload \
+  --org "$SENTRY_ORG" \
+  --project "$SENTRY_PROJECT" \
+  --include-sources \
+  --wait \
+  "${EXISTING_SYMBOL_PATHS[@]}"
 echo "Debug symbol upload complete."
 
 # Android: upload Proguard mapping if present.
