@@ -8,8 +8,10 @@
 	<false/>
 	<key>method</key>
 	<string>developer-id</string>
+	<key>signingCertificate</key>
+	<string>Developer ID Application</string>
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>teamID</key>
