@@ -1,3 +1,23 @@
+# v3.1.0 - 2026/06/01 (All Platforms)
+
+## Features
+
+- Add redesigned device list and detail screens
+  - Connected device controls now live inside the Devices tab
+  - Device information, configuration, and feature settings now use internal page navigation
+- Add per-feature output observation charts and device list sparklines
+- Add simulated device management UI and engine setting
+- Add two-page device addition wizard
+- Add mobile mDNS platform integration
+- Update to Buttplug v10.0.3/Intiface Engine v4.0.3
+
+## Bugfixes
+
+- Fix HwPositionWithDuration configuration rendering in feature cards
+- Show a warning when the engine port is already in use
+- Handle Discord IPC failures without disrupting startup
+- Fix GUI settings emissions after close
+
 # v3.0.4 - 2026/04/01 (All Platforms)
 
 ## Features
