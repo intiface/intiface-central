@@ -620,8 +620,13 @@ jobs:
           DERIVED_DATA_PATH="$PWD/build/macos/DerivedData"
           ARCHIVE_PATH="$PWD/build/macos/archive/Intiface Central.xcarchive"
           EXPORT_PATH="$PWD/build/macos/export"
+          DEVELOPER_ID_EXPORT_PATH="$PWD/build/macos/developer-id-export"
+          DEVELOPER_ID_STAGING_PATH="$PWD/build/macos/developer-id-dmg"
+          DEVELOPER_ID_NOTARY_ZIP="$PWD/build/macos/intiface-central-macos-developer-id-notary.zip"
+          DEVELOPER_ID_DMG="$PWD/intiface-central-macos-developer-id.dmg"
           rm -rf "$DERIVED_DATA_PATH"
-          rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH"
+          rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH" "$DEVELOPER_ID_EXPORT_PATH" "$DEVELOPER_ID_STAGING_PATH" "$DEVELOPER_ID_NOTARY_ZIP"
+          rm -f "$DEVELOPER_ID_DMG"
 
           xcodebuild archive \
             -workspace macos/Runner.xcworkspace \
@@ -672,6 +677,58 @@ jobs:
 
           cp "$EXPORTED_PKG" "$PWD/intiface-central-macos-app-store.pkg"
 
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$DEVELOPER_ID_EXPORT_PATH" \
+            -exportOptionsPlist ci/export-options/macos-developer-id.plist \
+            -allowProvisioningUpdates \
+            "${XCODE_AUTH_ARGS[@]}"
+
+          DEVELOPER_ID_APP="$(find "$DEVELOPER_ID_EXPORT_PATH" -maxdepth 2 -name 'Intiface Central.app' -type d -print -quit)"
+          if [ -z "$DEVELOPER_ID_APP" ]; then
+            echo "Could not find exported Developer ID app in $DEVELOPER_ID_EXPORT_PATH" >&2
+            find "$DEVELOPER_ID_EXPORT_PATH" -maxdepth 3 -print >&2 || true
+            exit 1
+          fi
+
+          codesign --verify --deep --strict --verbose=2 "$DEVELOPER_ID_APP"
+
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$DEVELOPER_ID_APP" \
+            "$DEVELOPER_ID_NOTARY_ZIP"
+
+          xcrun notarytool submit "$DEVELOPER_ID_NOTARY_ZIP" \
+            --key "$APP_STORE_CONNECT_API_KEY_PATH" \
+            --key-id "$APP_STORE_CONNECT_API_KEY_ID" \
+            --issuer "$APP_STORE_CONNECT_API_ISSUER_ID" \
+            --wait \
+            --timeout 2h
+
+          xcrun stapler staple "$DEVELOPER_ID_APP"
+          xcrun stapler validate "$DEVELOPER_ID_APP"
+          spctl -a -vv -t exec "$DEVELOPER_ID_APP"
+
+          mkdir -p "$DEVELOPER_ID_STAGING_PATH"
+          ditto "$DEVELOPER_ID_APP" "$DEVELOPER_ID_STAGING_PATH/Intiface Central.app"
+          ln -s /Applications "$DEVELOPER_ID_STAGING_PATH/Applications"
+          hdiutil create \
+            -volname "Intiface Central" \
+            -srcfolder "$DEVELOPER_ID_STAGING_PATH" \
+            -ov \
+            -format UDZO \
+            "$DEVELOPER_ID_DMG"
+
+          xcrun notarytool submit "$DEVELOPER_ID_DMG" \
+            --key "$APP_STORE_CONNECT_API_KEY_PATH" \
+            --key-id "$APP_STORE_CONNECT_API_KEY_ID" \
+            --issuer "$APP_STORE_CONNECT_API_ISSUER_ID" \
+            --wait \
+            --timeout 2h
+
+          xcrun stapler staple "$DEVELOPER_ID_DMG"
+          xcrun stapler validate "$DEVELOPER_ID_DMG"
+          spctl -a -vv -t open --context context:primary-signature "$DEVELOPER_ID_DMG"
+
           ditto -c -k --sequesterRsrc --keepParent \
             "$APP_PATH" \
             "$PWD/intiface-central-macos-universal-app.zip"
@@ -693,6 +750,7 @@ jobs:
           name: macos-universal-build
           path: |
             intiface-central/intiface-central-macos-app-store.pkg
+            intiface-central/intiface-central-macos-developer-id.dmg
             intiface-central/intiface-central-macos-universal-app.zip
             intiface-central/intiface-central-macos.xcarchive.zip
           if-no-files-found: error
