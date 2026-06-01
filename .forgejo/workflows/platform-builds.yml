@@ -642,8 +642,7 @@ jobs:
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist ci/export-options/macos-app-store-connect.plist \
-            -allowProvisioningUpdates
+            -exportOptionsPlist ci/export-options/macos-app-store-connect.plist
 
           EXPORTED_PKG="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.pkg' -print -quit)"
           if [ -z "$EXPORTED_PKG" ]; then
@@ -810,8 +809,7 @@ jobs:
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist ci/export-options/ios-app-store-connect.plist \
-            -allowProvisioningUpdates
+            -exportOptionsPlist ci/export-options/ios-app-store-connect.plist
 
           EXPORTED_IPA="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.ipa' -print -quit)"
           if [ -z "$EXPORTED_IPA" ]; then
