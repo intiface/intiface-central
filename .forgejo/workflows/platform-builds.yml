@@ -589,6 +589,9 @@ jobs:
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           set -euo pipefail
+          caffeinate -dimsu -w "$$" &
+          CAFFEINATE_PID=$!
+          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true' EXIT
 
           flutter config --enable-macos-desktop
           flutter pub get
@@ -768,6 +771,9 @@ jobs:
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
           set -euo pipefail
+          caffeinate -dimsu -w "$$" &
+          CAFFEINATE_PID=$!
+          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true' EXIT
 
           flutter pub get
           flutter build ios --release --config-only \
