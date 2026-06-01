@@ -8,15 +8,8 @@
 	<false/>
 	<key>method</key>
 	<string>app-store-connect</string>
-	<key>provisioningProfiles</key>
-	<dict>
-		<key>com.nonpolynomial.intifacecentral</key>
-		<string>iOS Team Store Provisioning Profile: com.nonpolynomial.intifacecentral</string>
-	</dict>
-	<key>signingCertificate</key>
-	<string>Apple Distribution</string>
 	<key>signingStyle</key>
-	<string>manual</string>
+	<string>automatic</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>teamID</key>
