@@ -426,7 +426,9 @@ checksum = "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510"
 
 [[package]]
 name = "buttplug_client"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "44a67261a8383e0a4ed0d8e00962e99bc9154e5f0741cf27e87bd8b8bd08dc59"
 dependencies = [
  "buttplug_core",
  "dashmap 6.1.0",
@@ -445,7 +447,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_client_in_process"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8013376ee20cc974973cec69611fd56df89de1a42aff61b29aed48e877dec4b"
 dependencies = [
  "buttplug_client",
  "buttplug_core",
@@ -470,7 +474,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_core"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02287c1bdc4aa8f633ba1738625c040525fe9c3686e7ca4d5c9344706cd088df"
 dependencies = [
  "async-stream",
  "cfg-if",
@@ -496,7 +502,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90957025fe9e5769eafe575ffc1992350bb22cae6bfdcd08cd5f7e834a78149e"
 dependencies = [
  "aes",
  "async-trait",
@@ -536,7 +544,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_device_config"
-version = "10.0.3"
+version = "10.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09a981bb31d40e716e6b431e99504b7b719a97bab1d9f4132fdc7d1a090d7c4a"
 dependencies = [
  "buttplug_core",
  "dashmap 6.1.0",
@@ -559,7 +569,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_btleplug"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea7852a94a1e5e377e9b234034249f5283838db3cbdf1161158f96f46b9b9a6a"
 dependencies = [
  "async-trait",
  "btleplug",
@@ -578,7 +590,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_hid"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce7fc886361941e50f5c819309963c6ee7618f990b8aabca9b46307a1ee8e04a"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -597,7 +611,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_lovense_connect"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cca870028dc770de3850e207b567c0422852555b496e9bb8a230c1325399459a"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -620,7 +636,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_lovense_dongle"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf6f21c1e55c0428e00ff94749fd94d709af38f9583611a222d70a79cfac70e7"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -643,7 +661,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_serial"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5e8ecb78e1e169cf6f1032f04b8daf85ee48a88746300079ae61295356b6416"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -663,7 +683,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_websocket"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2a1afc1a516b3ff8484bdba8aedecd08c5c9060b523d576ab2ea2579dc474d0"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -686,7 +708,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_xinput"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a0e7c4edea36ac1b2a2bba356063e6bc5d4929fb8f0afa96eec4f33773900e9"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -709,7 +733,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_transport_websocket_tungstenite"
-version = "10.0.2"
+version = "10.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42a7584b1e6e85498b2167ea89db0f5c6793bc52a0ac5040dd60dd2e9bcee6a2"
 dependencies = [
  "buttplug_core",
  "dashmap 6.1.0",
@@ -1874,7 +1900,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "4.0.2"
+version = "4.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6d8dff8dfaab64951031cc05c47cfebb3192302e5d1b2a4dce5b1efa7ff5e44"
 dependencies = [
  "anyhow",
  "argh",

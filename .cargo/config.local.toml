@@ -1,0 +1,15 @@
+[patch.crates-io]
+buttplug_client = { path = "../buttplug/crates/buttplug_client" }
+buttplug_client_in_process = { path = "../buttplug/crates/buttplug_client_in_process" }
+buttplug_core = { path = "../buttplug/crates/buttplug_core" }
+buttplug_server = { path = "../buttplug/crates/buttplug_server" }
+buttplug_server_device_config = { path = "../buttplug/crates/buttplug_server_device_config" }
+buttplug_server_hwmgr_btleplug = { path = "../buttplug/crates/buttplug_server_hwmgr_btleplug" }
+buttplug_server_hwmgr_hid = { path = "../buttplug/crates/buttplug_server_hwmgr_hid" }
+buttplug_server_hwmgr_lovense_connect = { path = "../buttplug/crates/buttplug_server_hwmgr_lovense_connect" }
+buttplug_server_hwmgr_lovense_dongle = { path = "../buttplug/crates/buttplug_server_hwmgr_lovense_dongle" }
+buttplug_server_hwmgr_serial = { path = "../buttplug/crates/buttplug_server_hwmgr_serial" }
+buttplug_server_hwmgr_websocket = { path = "../buttplug/crates/buttplug_server_hwmgr_websocket" }
+buttplug_server_hwmgr_xinput = { path = "../buttplug/crates/buttplug_server_hwmgr_xinput" }
+buttplug_transport_websocket_tungstenite = { path = "../buttplug/crates/buttplug_transport_websocket_tungstenite" }
+intiface-engine = { path = "../buttplug/crates/intiface_engine" }

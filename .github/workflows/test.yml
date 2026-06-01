@@ -18,10 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: buttplugio/buttplug
-          path: buttplug
-      - uses: actions/checkout@v4
-        with:
           repository: buttplugio/buttplug_dart
           path: buttplug_dart
       - uses: actions/checkout@v4
@@ -44,10 +40,6 @@ jobs:
       run:
         working-directory: ./intiface-central
     steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: buttplugio/buttplug
-          path: buttplug
       - uses: actions/checkout@v4
         with:
           repository: buttplugio/buttplug_dart

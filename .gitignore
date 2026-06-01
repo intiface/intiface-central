@@ -146,3 +146,6 @@ target
 
 # Git worktrees
 .worktrees/
+
+# Local Cargo dependency overrides
+/.cargo/config.toml

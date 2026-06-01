@@ -92,8 +92,6 @@ Engine state managed via `lazy_static!` globals in `runtime.rs`:
 
 ## Dependencies
 
-Local path dependencies (must exist as sibling directories):
-- `../../buttplug/crates/buttplug_core`
-- `../../buttplug/crates/buttplug_server`
-- `../../buttplug/crates/buttplug_server_device_config`
-- `../../buttplug/crates/intiface_engine`
+Rust dependencies resolve from crates.io by default. For local development against a sibling `../buttplug` checkout, run `just deps-local` from the repo root. That writes `.cargo/config.toml` from `.cargo/config.local.toml` and refreshes the lockfile to path sources.
+
+Before committing or running the CI-equivalent dependency graph, run `just deps-crates` to remove the local override and refresh `rust/Cargo.lock` back to crates.io sources.
