@@ -149,3 +149,4 @@ target
 
 # Local Cargo dependency overrides
 /.cargo/config.toml
+docs/assets/screenshots/generated
