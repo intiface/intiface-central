@@ -9,7 +9,17 @@
 - Add simulated device management UI and engine setting
 - Add two-page device addition wizard
 - Add mobile mDNS platform integration
-- Update to Buttplug v10.0.3/Intiface Engine v4.0.3
+- Update to Buttplug v10.0.4/Intiface Engine v4.0.4/Device Config v10.1.1
+- Add device support
+  - Adorime Anal Vibrator 2
+  - Bestvibe Rotational Vibration
+  - Honey Play Box Frenzy
+  - Honey Play Box Noah
+  - JoyHub Aurora II, Mystor, Phantom, Pixel, Rose Star, Sync Flare, Thelma, Vortus, and Vows
+  - Lelo Boomerang
+  - Luvmazer Fantasy Nova
+  - Luvmazer Rose Finger Vibe
+  - WeVibe Jive Lite
 
 ## Bugfixes
 
@@ -17,6 +27,8 @@
 - Show a warning when the engine port is already in use
 - Handle Discord IPC failures without disrupting startup
 - Fix GUI settings emissions after close
+- Add new JoyHub Rosella 2 and Svakom Pulse Lite Neo identifiers
+- Add heater support to JoyHub Thermos
 
 # v3.0.4 - 2026/04/01 (All Platforms)
 

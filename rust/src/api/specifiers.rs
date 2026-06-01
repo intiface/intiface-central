@@ -96,7 +96,7 @@ pub fn add_websocket_specifier(protocol: String, name: String) {
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
-  dcm.add_user_communication_specifier(
+  let _ = dcm.add_user_communication_specifier(
     &protocol,
     &ProtocolCommunicationSpecifier::Websocket(WebsocketSpecifier::new(&name)),
   );
@@ -123,7 +123,7 @@ pub fn add_serial_specifier(
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
-  dcm.add_user_communication_specifier(
+  let _ = dcm.add_user_communication_specifier(
     &protocol,
     &ProtocolCommunicationSpecifier::Serial(SerialSpecifier::new(
       &port,
