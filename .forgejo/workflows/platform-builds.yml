@@ -521,11 +521,14 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
         run: |
           set -euo pipefail
 
           missing=0
-          for name in SENTRY_DSN DISCORD_CLIENT_ID SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
+          for name in SENTRY_DSN DISCORD_CLIENT_ID SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT APP_STORE_CONNECT_API_KEY_ID APP_STORE_CONNECT_API_ISSUER_ID APP_STORE_CONNECT_API_KEY_BASE64; do
             if [ -z "${!name:-}" ]; then
               echo "Missing required Forgejo secret: $name" >&2
               missing=1
@@ -587,11 +590,24 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
         run: |
           set -euo pipefail
           caffeinate -dimsu -w "$$" &
           CAFFEINATE_PID=$!
-          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true' EXIT
+          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true; rm -f "${APP_STORE_CONNECT_API_KEY_PATH:-}"' EXIT
+
+          APP_STORE_CONNECT_API_KEY_PATH="${RUNNER_TEMP:-$PWD/build}/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          mkdir -p "$(dirname "$APP_STORE_CONNECT_API_KEY_PATH")"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 -D > "$APP_STORE_CONNECT_API_KEY_PATH"
+          chmod 600 "$APP_STORE_CONNECT_API_KEY_PATH"
+          XCODE_AUTH_ARGS=(
+            -authenticationKeyPath "$APP_STORE_CONNECT_API_KEY_PATH"
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID"
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER_ID"
+          )
 
           flutter config --enable-macos-desktop
           flutter pub get
@@ -615,6 +631,7 @@ jobs:
             -archivePath "$ARCHIVE_PATH" \
             -destination "generic/platform=macOS" \
             -allowProvisioningUpdates \
+            "${XCODE_AUTH_ARGS[@]}" \
             ARCHS="x86_64 arm64" \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGN_STYLE=Automatic \
@@ -643,7 +660,8 @@ jobs:
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
             -exportOptionsPlist ci/export-options/macos-app-store-connect.plist \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            "${XCODE_AUTH_ARGS[@]}"
 
           EXPORTED_PKG="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.pkg' -print -quit)"
           if [ -z "$EXPORTED_PKG" ]; then
@@ -703,11 +721,14 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
         run: |
           set -euo pipefail
 
           missing=0
-          for name in SENTRY_DSN SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT; do
+          for name in SENTRY_DSN SENTRY_AUTH_TOKEN SENTRY_ORG SENTRY_PROJECT APP_STORE_CONNECT_API_KEY_ID APP_STORE_CONNECT_API_ISSUER_ID APP_STORE_CONNECT_API_KEY_BASE64; do
             if [ -z "${!name:-}" ]; then
               echo "Missing required Forgejo secret: $name" >&2
               missing=1
@@ -769,11 +790,24 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
         run: |
           set -euo pipefail
           caffeinate -dimsu -w "$$" &
           CAFFEINATE_PID=$!
-          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true' EXIT
+          trap 'kill "$CAFFEINATE_PID" 2>/dev/null || true; rm -f "${APP_STORE_CONNECT_API_KEY_PATH:-}"' EXIT
+
+          APP_STORE_CONNECT_API_KEY_PATH="${RUNNER_TEMP:-$PWD/build}/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          mkdir -p "$(dirname "$APP_STORE_CONNECT_API_KEY_PATH")"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 -D > "$APP_STORE_CONNECT_API_KEY_PATH"
+          chmod 600 "$APP_STORE_CONNECT_API_KEY_PATH"
+          XCODE_AUTH_ARGS=(
+            -authenticationKeyPath "$APP_STORE_CONNECT_API_KEY_PATH"
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID"
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER_ID"
+          )
 
           flutter pub get
           flutter build ios --release --config-only \
@@ -795,6 +829,7 @@ jobs:
             -archivePath "$ARCHIVE_PATH" \
             -destination "generic/platform=iOS" \
             -allowProvisioningUpdates \
+            "${XCODE_AUTH_ARGS[@]}" \
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM=MSRA4LCTEZ
 
@@ -811,7 +846,8 @@ jobs:
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
             -exportOptionsPlist ci/export-options/ios-app-store-connect.plist \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            "${XCODE_AUTH_ARGS[@]}"
 
           EXPORTED_IPA="$(find "$EXPORT_PATH" -maxdepth 1 -name '*.ipa' -print -quit)"
           if [ -z "$EXPORTED_IPA" ]; then
