@@ -718,6 +718,12 @@ jobs:
             -format UDZO \
             "$DEVELOPER_ID_DMG"
 
+          codesign --force \
+            --sign "Developer ID Application" \
+            --timestamp \
+            "$DEVELOPER_ID_DMG"
+          codesign --verify --verbose=4 "$DEVELOPER_ID_DMG"
+
           xcrun notarytool submit "$DEVELOPER_ID_DMG" \
             --key "$APP_STORE_CONNECT_API_KEY_PATH" \
             --key-id "$APP_STORE_CONNECT_API_KEY_ID" \
