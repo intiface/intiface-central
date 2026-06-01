@@ -249,7 +249,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     // Only works on Windows
     useXInput = _prefs.getBool("useXInput") ?? Platform.isWindows;
 
-    // Always default off, require user to turn them on.
+    // Most device providers default off, requiring the user to turn them on.
     useLovenseConnectService = _prefs.getBool("useLovenseConnectService") ?? false;
     useDeviceWebsocketServer = _prefs.getBool("useDeviceWebsocketServer") ?? false;
     useSimulatedDevices = _prefs.getBool("useSimulatedDevices") ?? true;

@@ -37,7 +37,23 @@ ExternalLibrary? _bundledRustLibraryForIntegrationTest() {
   final frameworkBinary = File(
     '${contentsDir.path}/Frameworks/rust_lib_intiface_central.framework/rust_lib_intiface_central',
   );
-  if (!frameworkBinary.existsSync()) return null;
+  if (frameworkBinary.existsSync()) {
+    return ExternalLibrary.open(frameworkBinary.path);
+  }
 
-  return ExternalLibrary.open(frameworkBinary.path);
+  final builtDylib = File(
+    'build/macos/Build/Products/Debug/rust_lib_intiface_central.dylib',
+  );
+  if (builtDylib.existsSync()) {
+    return ExternalLibrary.open(builtDylib.absolute.path);
+  }
+
+  final debugDylib = File(
+    'rust/target/debug/librust_lib_intiface_central.dylib',
+  );
+  if (debugDylib.existsSync()) {
+    return ExternalLibrary.open(debugDylib.absolute.path);
+  }
+
+  return null;
 }

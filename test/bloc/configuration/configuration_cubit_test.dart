@@ -43,15 +43,15 @@ void main() {
       expect(cubit.serverName, 'Intiface Server');
       expect(cubit.websocketServerPort, 12345);
       expect(cubit.startServerOnStartup, false);
-      expect(cubit.useSimulatedDevices, false);
+      expect(cubit.useSimulatedDevices, true);
       cubit.close();
     });
 
     test('setter/getter roundtrip for useSimulatedDevices', () async {
       final cubit = await IntifaceConfigurationCubit.create();
-      expect(cubit.useSimulatedDevices, false);
-      cubit.useSimulatedDevices = true;
       expect(cubit.useSimulatedDevices, true);
+      cubit.useSimulatedDevices = false;
+      expect(cubit.useSimulatedDevices, false);
       cubit.close();
     });
 
