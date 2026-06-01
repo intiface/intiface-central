@@ -13,7 +13,14 @@ import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/widget/device_list_card_widget.dart';
 
-enum _DeviceSubPage { list, detail, addType, addWebsocket, addSerial, addSimulated }
+enum _DeviceSubPage {
+  list,
+  detail,
+  addType,
+  addWebsocket,
+  addSerial,
+  addSimulated,
+}
 
 class DevicePage extends StatefulWidget {
   const DevicePage({super.key});
@@ -73,17 +80,27 @@ class _DevicePageState extends State<DevicePage> {
   @override
   Widget build(BuildContext context) {
     return switch (_currentPage) {
-      _DeviceSubPage.list => _DeviceListView(onDeviceTap: _goToDetail, onAddDeviceTap: _goToAddType),
-      _DeviceSubPage.detail => DeviceDetailPage(identifier: _selectedIdentifier!, onBack: _goBack),
+      _DeviceSubPage.list => _DeviceListView(
+        onDeviceTap: _goToDetail,
+        onAddDeviceTap: _goToAddType,
+      ),
+      _DeviceSubPage.detail => DeviceDetailPage(
+        identifier: _selectedIdentifier!,
+        onBack: _goBack,
+      ),
       _DeviceSubPage.addType => AddDeviceTypePage(
         onBack: _goBack,
         onWebsocket: _goToAddWebsocket,
         onSerial: _goToAddSerial,
         onSimulated: _goToAddSimulated,
       ),
-      _DeviceSubPage.addWebsocket => AddWebsocketDevicePage(onBack: _goBackToAddType),
+      _DeviceSubPage.addWebsocket => AddWebsocketDevicePage(
+        onBack: _goBackToAddType,
+      ),
       _DeviceSubPage.addSerial => AddSerialDevicePage(onBack: _goBackToAddType),
-      _DeviceSubPage.addSimulated => AddSimulatedDevicePage(onBack: _goBackToAddType),
+      _DeviceSubPage.addSimulated => AddSimulatedDevicePage(
+        onBack: _goBackToAddType,
+      ),
     };
   }
 }
@@ -92,7 +109,10 @@ class _DeviceListView extends StatelessWidget {
   final void Function(ExposedUserDeviceIdentifier identifier) onDeviceTap;
   final VoidCallback onAddDeviceTap;
 
-  const _DeviceListView({required this.onDeviceTap, required this.onAddDeviceTap});
+  const _DeviceListView({
+    required this.onDeviceTap,
+    required this.onAddDeviceTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -108,22 +128,33 @@ class _DeviceListView extends StatelessWidget {
 
         return BlocBuilder<DeviceManagerBloc, DeviceManagerState>(
           builder: (context, state) {
-            return BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+            return BlocBuilder<
+              UserDeviceConfigurationCubit,
+              UserDeviceConfigurationState
+            >(
               builder: (context, userConfigState) {
-                final userDeviceConfigCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
+                final userDeviceConfigCubit =
+                    BlocProvider.of<UserDeviceConfigurationCubit>(context);
                 final connectedDevices = deviceBloc.devices;
-                final connectedIndexes = connectedDevices.map((d) => d.device!.index).toSet();
-                final anyAllowed = userDeviceConfigCubit.configs.values.any((def) => def.allow);
+                final connectedIndexes = connectedDevices
+                    .map((d) => d.device!.index)
+                    .toSet();
+                final anyAllowed = userDeviceConfigCubit.configs.values.any(
+                  (def) => def.allow,
+                );
 
-                final sortedEntries = userDeviceConfigCubit.configs.entries.toList();
+                final sortedEntries = userDeviceConfigCubit.configs.entries
+                    .toList();
                 sortedEntries.sort((a, b) {
                   final aConnected = connectedIndexes.contains(a.value.index);
                   final bConnected = connectedIndexes.contains(b.value.index);
                   if (aConnected != bConnected) {
                     return aConnected ? -1 : 1;
                   }
-                  final aName = (a.value.displayName ?? a.value.name).toLowerCase();
-                  final bName = (b.value.displayName ?? b.value.name).toLowerCase();
+                  final aName = (a.value.displayName ?? a.value.name)
+                      .toLowerCase();
+                  final bName = (b.value.displayName ?? b.value.name)
+                      .toLowerCase();
                   return aName.compareTo(bName);
                 });
 
@@ -137,7 +168,9 @@ class _DeviceListView extends StatelessWidget {
                               ? TextButton(
                                   onPressed: engineRunning
                                       ? () {
-                                          deviceBloc.add(DeviceManagerStartScanningEvent());
+                                          deviceBloc.add(
+                                            DeviceManagerStartScanningEvent(),
+                                          );
                                         }
                                       : null,
                                   child: const Text("Start Scanning"),
@@ -145,7 +178,9 @@ class _DeviceListView extends StatelessWidget {
                               : TextButton(
                                   onPressed: engineRunning
                                       ? () {
-                                          deviceBloc.add(DeviceManagerStopScanningEvent());
+                                          deviceBloc.add(
+                                            DeviceManagerStopScanningEvent(),
+                                          );
                                         }
                                       : null,
                                   child: const Text("Stop Scanning"),
@@ -153,32 +188,48 @@ class _DeviceListView extends StatelessWidget {
                         ],
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          itemCount: sortedEntries.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == sortedEntries.length) {
-                              return _AddDeviceButton(enabled: !engineRunning, onTap: onAddDeviceTap);
-                            }
-                            final entry = sortedEntries[index];
-                            final isConnected = connectedIndexes.contains(entry.value.index);
-                            DeviceCubit? matchingCubit;
-                            if (isConnected) {
-                              try {
-                                matchingCubit = connectedDevices.firstWhere(
-                                  (d) => d.device?.index == entry.value.index,
-                                );
-                              } catch (_) {}
-                            }
-                            return DeviceListCard(
-                              identifier: entry.key,
-                              definition: entry.value,
-                              isConnected: isConnected,
-                              deviceCubit: matchingCubit,
-                              onTap: () => onDeviceTap(entry.key),
-                            );
-                          },
-                        ),
+                        child: sortedEntries.isEmpty
+                            ? _NoDevicesView(
+                                engineRunning: engineRunning,
+                                onAddDeviceTap: onAddDeviceTap,
+                              )
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                itemCount: sortedEntries.length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == sortedEntries.length) {
+                                    return _AddDeviceButton(
+                                      enabled: !engineRunning,
+                                      onTap: onAddDeviceTap,
+                                    );
+                                  }
+                                  final entry = sortedEntries[index];
+                                  final isConnected = connectedIndexes.contains(
+                                    entry.value.index,
+                                  );
+                                  DeviceCubit? matchingCubit;
+                                  if (isConnected) {
+                                    try {
+                                      matchingCubit = connectedDevices
+                                          .firstWhere(
+                                            (d) =>
+                                                d.device?.index ==
+                                                entry.value.index,
+                                          );
+                                    } catch (_) {}
+                                  }
+                                  return DeviceListCard(
+                                    identifier: entry.key,
+                                    definition: entry.value,
+                                    isConnected: isConnected,
+                                    deviceCubit: matchingCubit,
+                                    onTap: () => onDeviceTap(entry.key),
+                                  );
+                                },
+                              ),
                       ),
                     ],
                   ),
@@ -206,9 +257,65 @@ class _AllowModeBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'Allow-mode active: only devices marked "Allow" will connect',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.green[700]),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.green[700]),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NoDevicesView extends StatelessWidget {
+  final bool engineRunning;
+  final VoidCallback onAddDeviceTap;
+
+  const _NoDevicesView({
+    required this.engineRunning,
+    required this.onAddDeviceTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 360),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.vibration,
+                      size: 48,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No devices available',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Start the engine and connect a device to get started.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          _AddDeviceButton(enabled: !engineRunning, onTap: onAddDeviceTap),
         ],
       ),
     );
@@ -233,7 +340,11 @@ class _AddDeviceButton extends StatelessWidget {
         label: const Text('Manage Advanced Devices'),
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(double.infinity, 48),
-          side: BorderSide(color: enabled ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.12)),
+          side: BorderSide(
+            color: enabled
+                ? colorScheme.primary
+                : colorScheme.onSurface.withValues(alpha: 0.12),
+          ),
         ),
       ),
     );
