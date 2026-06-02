@@ -441,14 +441,60 @@ jobs:
           & $signtool.FullName verify /pa /v $installerPath
           exit $LASTEXITCODE
 
+      - name: Zip Windows artifacts
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $zipPath = Join-Path (Get-Location) "intiface-central-windows-x64.zip"
+          if (Test-Path $zipPath) {
+            Remove-Item -Force $zipPath
+          }
+
+          Add-Type -AssemblyName System.IO.Compression
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+          $artifactFiles = @(
+            @{
+              Path = "build\windows\x64\runner\Release\intiface_central.pdb"
+              Entry = "intiface_central.pdb"
+            },
+            @{
+              Path = "installer\intiface-central-installer.exe"
+              Entry = "intiface-central-installer.exe"
+            }
+          )
+
+          $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+          try {
+            foreach ($artifact in $artifactFiles) {
+              $path = $artifact.Path
+              if (-not (Test-Path $path)) {
+                throw "Windows artifact not found at '$path'."
+              }
+
+              $item = Get-Item $path
+              Write-Host "Adding $path ($($item.Length) bytes) as $($artifact.Entry)"
+              [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                $zip,
+                $item.FullName,
+                $artifact.Entry,
+                [System.IO.Compression.CompressionLevel]::NoCompression
+              ) | Out-Null
+            }
+          } finally {
+            $zip.Dispose()
+          }
+
+          $zipItem = Get-Item $zipPath
+          Write-Host "Windows artifact zip: $zipPath ($($zipItem.Length) bytes)"
+
       - name: Upload Windows artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: windows-x64-build
-          path: |
-            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
-            intiface-central/installer/intiface-central-installer.exe
+          path: intiface-central/intiface-central-windows-x64.zip
           if-no-files-found: error
+          compression-level: 0
 
       - name: Upload Windows symbols to Sentry
         env:
