@@ -441,6 +441,15 @@ jobs:
           & $signtool.FullName verify /pa /v $installerPath
           exit $LASTEXITCODE
 
+      - name: Upload Windows artifacts
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: windows-x64-build
+          path: |
+            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
+            intiface-central/installer/intiface-central-installer.exe
+          if-no-files-found: error
+
       - name: Upload Windows symbols to Sentry
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -486,15 +495,6 @@ jobs:
           }
 
           Write-Host "Debug symbol upload complete."
-
-      - name: Upload Windows artifacts
-        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
-        with:
-          name: windows-x64-build
-          path: |
-            intiface-central/build/windows/x64/runner/Release/intiface_central.pdb
-            intiface-central/installer/intiface-central-installer.exe
-          if-no-files-found: error
 
   macos-universal:
     runs-on: macos-latest
