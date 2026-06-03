@@ -12,9 +12,7 @@ dependencies:
     sdk: flutter
   bloc: ^9.2.0
   bloc_concurrency: ^0.3.0
-  #buttplug: ^0.0.4
-  buttplug: 
-    path: ../buttplug_dart
+  buttplug: ^1.0.0
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.3.0
   easy_debounce: ^2.0.3

@@ -16,9 +16,6 @@ jobs:
   linux-amd64:
     runs-on: linux-amd64
     timeout-minutes: 120
-    env:
-      BUTTPLUG_REF: mdnsfix
-      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -50,16 +47,6 @@ jobs:
           done
 
           exit "$missing"
-
-      - name: Clone sibling dependencies
-        run: |
-          set -euo pipefail
-
-          cd "$GITHUB_WORKSPACE"
-          rm -rf buttplug buttplug_dart
-
-          git clone --depth 1 --branch "$BUTTPLUG_REF" https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch "$BUTTPLUG_DART_REF" https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Install Linux build dependencies
         run: |
@@ -196,9 +183,6 @@ jobs:
   windows-amd64:
     runs-on: windows-amd64
     timeout-minutes: 120
-    env:
-      BUTTPLUG_REF: mdnsfix
-      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -235,23 +219,6 @@ jobs:
             }
             exit 1
           }
-
-      - name: Clone sibling dependencies
-        run: |
-          $workspace = $env:GITHUB_WORKSPACE
-          if (-not $workspace) {
-            throw "GITHUB_WORKSPACE is not set"
-          }
-
-          Set-Location $workspace
-          foreach ($path in @("buttplug", "buttplug_dart")) {
-            if (Test-Path $path) {
-              Remove-Item -Recurse -Force $path
-            }
-          }
-
-          git clone --depth 1 --branch $env:BUTTPLUG_REF https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch $env:BUTTPLUG_DART_REF https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
@@ -545,9 +512,6 @@ jobs:
   macos-universal:
     runs-on: macos-latest
     timeout-minutes: 180
-    env:
-      BUTTPLUG_REF: mdnsfix
-      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -582,16 +546,6 @@ jobs:
           done
 
           exit "$missing"
-
-      - name: Clone sibling dependencies
-        run: |
-          set -euo pipefail
-
-          cd "$GITHUB_WORKSPACE"
-          rm -rf buttplug buttplug_dart
-
-          git clone --depth 1 --branch "$BUTTPLUG_REF" https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch "$BUTTPLUG_DART_REF" https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
@@ -810,9 +764,6 @@ jobs:
   ios:
     runs-on: macos-latest
     timeout-minutes: 180
-    env:
-      BUTTPLUG_REF: mdnsfix
-      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -846,16 +797,6 @@ jobs:
           done
 
           exit "$missing"
-
-      - name: Clone sibling dependencies
-        run: |
-          set -euo pipefail
-
-          cd "$GITHUB_WORKSPACE"
-          rm -rf buttplug buttplug_dart
-
-          git clone --depth 1 --branch "$BUTTPLUG_REF" https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch "$BUTTPLUG_DART_REF" https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
@@ -991,9 +932,6 @@ jobs:
   android-amd64:
     runs-on: android-amd64
     timeout-minutes: 180
-    env:
-      BUTTPLUG_REF: mdnsfix
-      BUTTPLUG_DART_REF: master
 
     defaults:
       run:
@@ -1026,16 +964,6 @@ jobs:
           done
 
           exit "$missing"
-
-      - name: Clone sibling dependencies
-        run: |
-          set -euo pipefail
-
-          cd "$GITHUB_WORKSPACE"
-          rm -rf buttplug buttplug_dart
-
-          git clone --depth 1 --branch "$BUTTPLUG_REF" https://forgejo.buttplug.haus/qdot/buttplug.git buttplug
-          git clone --depth 1 --branch "$BUTTPLUG_DART_REF" https://forgejo.buttplug.haus/qdot/buttplug_dart.git buttplug_dart
 
       - name: Tool versions
         run: |
