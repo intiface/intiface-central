@@ -57,16 +57,19 @@ jobs:
         name: flutter build
       - name: Zip Release
         run: |
-          ROOT=`pwd`
-          ZIP=$PWD/intiface-central-linux-${{ matrix.os }}-x64.zip
-          cd build/linux/x64/release/bundle
-          zip -r $ZIP ./*
-          cd $ROOT
-          cd linux/
-          zip -u $ZIP com.nonpolynomial.intiface_central.desktop
-          zip -u $ZIP com.nonpolynomial.intiface_central.metainfo.xml
-          zip -u $ZIP run_intiface_central
-          cd $ROOT
+          ROOT=$(pwd)
+          ZIP="$ROOT/intiface-central-linux-${{ matrix.os }}-x64.zip"
+          PACKAGE_DIR="$ROOT/release/intiface-central"
+
+          rm -rf "$ROOT/release"
+          mkdir -p "$PACKAGE_DIR"
+          cp -a build/linux/x64/release/bundle/. "$PACKAGE_DIR/"
+          cp linux/com.nonpolynomial.intiface_central.desktop "$PACKAGE_DIR/"
+          cp linux/com.nonpolynomial.intiface_central.metainfo.xml "$PACKAGE_DIR/"
+          cp linux/run_intiface_central "$PACKAGE_DIR/"
+
+          cd "$ROOT/release"
+          zip -r "$ZIP" intiface-central
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
