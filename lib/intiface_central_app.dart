@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart' show ExternalLibrary;
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
+    show ExternalLibrary;
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
+import 'package:intiface_central/util/sentry_repeat_limiter.dart';
+import 'package:intiface_central/util/sentry_reporting_coordinator.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/src/rust/frb_generated.dart';
@@ -54,9 +57,13 @@ class IntifaceCentralBootstrapOptions {
   final bool initializeDiscord;
   final bool requestPlatformPermissions;
   final ExternalLibrary? rustExternalLibrary;
+  final SentryReportingController? reportingController;
+  final Future<void> Function(String sentryApiKey)?
+  initializeNativeCrashReporting;
+  final void Function(bool enabled)? updateNativeCrashReportingConsent;
   final Future<void> Function()? afterRustInit;
   final Future<void> Function(UserDeviceConfigurationCubit userConfigCubit)?
-      afterUserDeviceConfigurationInit;
+  afterUserDeviceConfigurationInit;
 
   const IntifaceCentralBootstrapOptions({
     this.initializePaths = true,
@@ -68,17 +75,24 @@ class IntifaceCentralBootstrapOptions {
     this.initializeDiscord = true,
     this.requestPlatformPermissions = true,
     this.rustExternalLibrary,
+    this.reportingController,
+    this.initializeNativeCrashReporting,
+    this.updateNativeCrashReportingConsent,
     this.afterRustInit,
     this.afterUserDeviceConfigurationInit,
   });
 }
 
 // ignore: must_be_immutable
-class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListener {
-  IntifaceCentralApp._create({required this.guiSettingsCubit});
+class IntifaceCentralApp extends StatelessWidget
+    with WindowListener, TrayListener {
+  IntifaceCentralApp._create({
+    required this.guiSettingsCubit,
+    this.bootstrapOptions = const IntifaceCentralBootstrapOptions(),
+  });
 
-  static List<bool Function(SentryEvent, {Hint? hint})> eventProcessors = [];
   final GuiSettingsCubit guiSettingsCubit;
+  final IntifaceCentralBootstrapOptions bootstrapOptions;
 
   // Stored so tray listener callbacks (outside widget tree) can access BLoC/config.
   EngineControlBloc? _engineControlBloc;
@@ -89,14 +103,24 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
   // rebuild, potentially causing FFI conflicts and window initialization issues.
   static Future<Widget>? _buildAppFuture;
   static StreamSubscription? _apiLogSubscription;
+  static StreamSubscription? _reportingSubscription;
 
-  static Future<IntifaceCentralApp> create() async {
+  static Future<IntifaceCentralApp> create({
+    IntifaceCentralBootstrapOptions options =
+        const IntifaceCentralBootstrapOptions(),
+  }) async {
     WidgetsFlutterBinding.ensureInitialized();
     var guiSettingsCubit = await GuiSettingsCubit.create();
-    return IntifaceCentralApp._create(guiSettingsCubit: guiSettingsCubit);
+    return IntifaceCentralApp._create(
+      guiSettingsCubit: guiSettingsCubit,
+      bootstrapOptions: options,
+    );
   }
 
-  void windowDisplayModeResize(bool useCompactDisplay, GuiSettingsCubit settingsCubit) {
+  void windowDisplayModeResize(
+    bool useCompactDisplay,
+    GuiSettingsCubit settingsCubit,
+  ) {
     const compactSize = Size(500, 175);
     if (useCompactDisplay) {
       windowManager.setMinimumSize(compactSize);
@@ -138,14 +162,18 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     }
 
     await trayManager.setIcon(
-      Platform.isWindows ? 'assets/icons/intiface_central_icon.ico' : 'assets/icons/intiface_central_icon.png',
+      Platform.isWindows
+          ? 'assets/icons/intiface_central_icon.ico'
+          : 'assets/icons/intiface_central_icon.png',
     );
     await trayManager.setToolTip('Intiface Central');
     await _updateTrayMenu();
     trayManager.addListener(this);
 
     // In tray_only mode, intercept window close to hide instead
-    await windowManager.setPreventClose(configCubit.trayIconMode == "tray_only");
+    await windowManager.setPreventClose(
+      configCubit.trayIconMode == "tray_only",
+    );
   }
 
   Future<void> _updateTrayMenu() async {
@@ -154,7 +182,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       items: [
         MenuItem(key: 'show_window', label: 'Show Window'),
         MenuItem.separator(),
-        MenuItem(key: 'toggle_server', label: isRunning ? 'Stop Server' : 'Start Server'),
+        MenuItem(
+          key: 'toggle_server',
+          label: isRunning ? 'Stop Server' : 'Start Server',
+        ),
         MenuItem.separator(),
         MenuItem(key: 'quit', label: 'Quit'),
       ],
@@ -189,7 +220,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           if (_engineControlBloc!.isRunning) {
             _engineControlBloc!.add(EngineControlEventStop());
           } else {
-            _engineControlBloc!.add(EngineControlEventStart(options: await _configCubit!.getEngineOptions()));
+            _engineControlBloc!.add(
+              EngineControlEventStart(
+                options: await _configCubit!.getEngineOptions(),
+              ),
+            );
           }
         }
       case 'quit':
@@ -203,7 +238,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
   }
 
   Future<Widget> buildApp({
-    IntifaceCentralBootstrapOptions options = const IntifaceCentralBootstrapOptions(),
+    IntifaceCentralBootstrapOptions options =
+        const IntifaceCentralBootstrapOptions(),
   }) async {
     var errorNotifier = ErrorNotifier();
     var multiPrinter = MultiPrinter(errorNotifier);
@@ -224,18 +260,26 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     // Bring up our settings repo.
     var configCubit = await IntifaceConfigurationCubit.create();
     // Set up Update/Configuration Pipe/Cubit.
-    var updateRepo = UpdateRepository(configCubit.currentNewsEtag, configCubit.currentDeviceConfigEtag);
+    var updateRepo = UpdateRepository(
+      configCubit.currentNewsEtag,
+      configCubit.currentDeviceConfigEtag,
+    );
 
     // Set up attachments to be sent with sentry events.
     if (options.initializeSentry && configCubit.canUseCrashReporting) {
+      options.reportingController?.setConsent(configCubit.crashReporting);
       logInfo("Sentry URL set, crash and log reporting available.");
       final dir = Directory(IntifacePaths.logPath.path);
       logInfo(IntifacePaths.logPath.path);
       var entities = (await dir.list().toList()).whereType<File>();
       Sentry.configureScope((scope) {
         scope.clearAttachments();
-        final logAttachments = entities.map((e) => IoSentryAttachment.fromFile(e));
-        final userConfigAttachment = IoSentryAttachment.fromFile(IntifacePaths.userDeviceConfigFile);
+        final logAttachments = entities.map(
+          (e) => IoSentryAttachment.fromFile(e),
+        );
+        final userConfigAttachment = IoSentryAttachment.fromFile(
+          IntifacePaths.userDeviceConfigFile,
+        );
         for (var attachment in logAttachments) {
           scope.addAttachment(attachment);
         }
@@ -244,14 +288,18 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     } else if (!options.initializeSentry) {
       logInfo("Sentry initialization skipped by bootstrap options.");
     } else {
-      logWarning("DSN not set, crash reporting cannot be used in this version of Intiface Central");
+      logWarning(
+        "DSN not set, crash reporting cannot be used in this version of Intiface Central",
+      );
     }
 
     if (isDesktop() && options.initializeWindowing) {
       // Must add this line before we work with the manager.
       await windowManager.ensureInitialized();
 
-      String windowTitle = kDebugMode ? "Intiface® Central $packageVersion DEBUG" : "Intiface® Central $packageVersion";
+      String windowTitle = kDebugMode
+          ? "Intiface® Central $packageVersion DEBUG"
+          : "Intiface® Central $packageVersion";
 
       WindowOptions windowOptions = const WindowOptions(
         //center: true,
@@ -275,9 +323,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           "Testing window position $windowPosition against ${display.name} (${display.size} ${display.visiblePosition})",
         );
         if (display.visiblePosition!.dx < windowPosition.dx &&
-            (display.visiblePosition!.dx + display.size.width) > windowPosition.dx &&
+            (display.visiblePosition!.dx + display.size.width) >
+                windowPosition.dx &&
             display.visiblePosition!.dy < windowPosition.dy &&
-            (display.visiblePosition!.dy + display.size.height) > windowPosition.dy) {
+            (display.visiblePosition!.dy + display.size.height) >
+                windowPosition.dy) {
           windowInBounds = true;
           logInfo("Window in bounds for ${display.name}");
           break;
@@ -288,7 +338,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         guiSettingsCubit.setWindowPosition(const Offset(0.0, 0.0));
       } else if (configCubit.restoreWindowLocation) {
         // Only restore the window location if the option to do so is on.
-        logInfo("Restoring window position to ${guiSettingsCubit.getWindowPosition()}");
+        logInfo(
+          "Restoring window position to ${guiSettingsCubit.getWindowPosition()}",
+        );
         await windowManager.setPosition(guiSettingsCubit.getWindowPosition());
       } else {
         logInfo("Window location not restored due to configuration settings");
@@ -328,7 +380,11 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         }
       }
       if (Platform.isAndroid) {
-        await [Permission.bluetoothConnect, Permission.bluetoothScan, Permission.notification].request();
+        await [
+          Permission.bluetoothConnect,
+          Permission.bluetoothScan,
+          Permission.notification,
+        ].request();
       } else if (Platform.isIOS) {
         await Permission.bluetooth.request();
       }
@@ -338,7 +394,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           androidNotificationOptions: AndroidNotificationOptions(
             channelId: 'notification_channel_id',
             channelName: 'Intiface Engine Notification',
-            channelDescription: 'This notification appears when the Intiface Engine foreground service is running.',
+            channelDescription:
+                'This notification appears when the Intiface Engine foreground service is running.',
             channelImportance: NotificationChannelImportance.DEFAULT,
             priority: NotificationPriority.DEFAULT,
           ),
@@ -365,7 +422,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
 
     configCubit.currentAppVersion = packageVersion;
 
-    var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
+    var deviceConfigVersion =
+        await DeviceConfiguration.getBaseConfigFileVersion();
     configCubit.currentDeviceConfigVersion = deviceConfigVersion;
 
     var networkCubit = await NetworkInfoCubit.create();
@@ -391,7 +449,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       if (state is DeviceConfigUpdateRetrieved) {
         configCubit.currentDeviceConfigEtag = state.version;
         // Load the file and pull internal version while we're at it.
-        var deviceConfigVersion = await DeviceConfiguration.getBaseConfigFileVersion();
+        var deviceConfigVersion =
+            await DeviceConfiguration.getBaseConfigFileVersion();
         configCubit.currentDeviceConfigVersion = deviceConfigVersion;
       }
       if (isDesktop()) {
@@ -414,7 +473,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
 
       // Update tray menu when engine state changes
       engineControlBloc.stream.listen((state) {
-        if (state is EngineStartedState || state is EngineStoppedState || state is EngineServerCreatedState) {
+        if (state is EngineStartedState ||
+            state is EngineStoppedState ||
+            state is EngineServerCreatedState) {
           _updateTrayMenu();
         }
       });
@@ -428,7 +489,10 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
     }
 
     var deviceControlBloc = DeviceManagerBloc(
-        engineControlBloc.stream, engineControlBloc.add, () => engineRepo.observationStream);
+      engineControlBloc.stream,
+      engineControlBloc.add,
+      () => engineRepo.observationStream,
+    );
 
     ///
     /// ORDER MATTERS HERE
@@ -479,12 +543,42 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       }
     });
 
-    if (options.initializeSentry && const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
-      await crashReporting(sentryApiKey: const String.fromEnvironment('SENTRY_DSN'));
+    final nativeInit =
+        options.initializeNativeCrashReporting ??
+        (String key) => crashReporting(sentryApiKey: key);
+    final nativeConsent =
+        options.updateNativeCrashReportingConsent ??
+        (bool enabled) => setCrashReportingConsent(enabled: enabled);
+    final controller = options.reportingController;
+    if (controller != null) {
+      final reportingCoordinator = SentryReportingCoordinator(
+        controller: controller,
+        initializeSentry: options.initializeSentry,
+        dsn: const String.fromEnvironment('SENTRY_DSN'),
+        nativeInit: nativeInit,
+        nativeConsent: nativeConsent,
+      );
+      await reportingCoordinator.applyInitialConsent(
+        configCubit.crashReporting,
+      );
+      await _reportingSubscription?.cancel();
+      _reportingSubscription = configCubit.stream.listen((state) async {
+        if (state is CrashReportingState) {
+          await reportingCoordinator.applyConsentChange(state.value);
+        }
+      });
+    } else if (options.initializeSentry) {
+      nativeConsent(configCubit.crashReporting);
+      if (configCubit.crashReporting &&
+          const String.fromEnvironment('SENTRY_DSN').isNotEmpty) {
+        await nativeInit(const String.fromEnvironment('SENTRY_DSN'));
+      }
     }
 
     DiscordBloc discordBloc = DiscordBloc();
-    if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
+    if (options.initializeDiscord &&
+        isDesktop() &&
+        configCubit.useDiscordRichPresence) {
       logInfo("Discord Rich Presence on.");
     } else {
       logInfo("Discord Rich Presence off.");
@@ -515,12 +609,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           if (service?.serviceType != null &&
               service?.instanceName != null &&
               service?.port != null) {
-            final started = await MdnsPlatformService.instance.startMdnsPublisher(
-              serviceType: service!.serviceType!,
-              instanceName: service.instanceName!,
-              port: service.port!,
-              txtRecords: service.txtRecords ?? const [],
-            );
+            final started = await MdnsPlatformService.instance
+                .startMdnsPublisher(
+                  serviceType: service!.serviceType!,
+                  instanceName: service.instanceName!,
+                  port: service.port!,
+                  txtRecords: service.txtRecords ?? const [],
+                );
             if (started) {
               logInfo("Started native iOS mDNS publisher");
             } else {
@@ -528,7 +623,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
             }
           }
         }
-        if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
+        if (options.initializeDiscord &&
+            isDesktop() &&
+            configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStartedEvent());
         }
       }
@@ -537,7 +634,9 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         if (Platform.isIOS) {
           await MdnsPlatformService.instance.stopMdnsPublisher();
         }
-        if (options.initializeDiscord && isDesktop() && configCubit.useDiscordRichPresence) {
+        if (options.initializeDiscord &&
+            isDesktop() &&
+            configCubit.useDiscordRichPresence) {
           discordBloc.add(DiscordEngineStoppedEvent());
         }
       }
@@ -571,24 +670,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
       if (btProblem != null) {
         logWarning('Skipping autostart: $btProblem');
       } else {
-        engineControlBloc.add(EngineControlEventStart(options: await configCubit.getEngineOptions()));
+        engineControlBloc.add(
+          EngineControlEventStart(
+            options: await configCubit.getEngineOptions(),
+          ),
+        );
       }
     }
-
-    // Make sure we only send crash reports if crash reporting is on or if the user is doing a manual log submission.
-    IntifaceCentralApp.eventProcessors.add((event, {hint}) {
-      logInfo(event.eventId);
-      if (!configCubit.crashReporting) {
-        if (event.tags?.containsKey("ManualLogSubmit") != true) {
-          logWarning("Crash/error received but CrashReporting is off, not sending to devs.");
-          return false;
-        }
-        logWarning("Manual log submission, crashReporting is off, overriding and sending to devs.");
-      } else {
-        logWarning("Submitting crash report/logs to developers.");
-      }
-      return true;
-    });
 
     return MultiBlocProvider(
       providers: [
@@ -603,7 +691,8 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
         BlocProvider(create: (context) => userConfigCubit),
         BlocProvider(create: (context) => guiSettingsCubit),
         // Discord RPC won't work on mobile
-        if (options.initializeDiscord && isDesktop()) BlocProvider(create: (context) => discordBloc),
+        if (options.initializeDiscord && isDesktop())
+          BlocProvider(create: (context) => discordBloc),
       ],
       child: const IntifaceCentralView(),
     );
@@ -622,7 +711,7 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
           }
           // Cache the future to prevent multiple concurrent buildApp() calls
           // which can cause FFI conflicts and race conditions
-          _buildAppFuture ??= buildApp();
+          _buildAppFuture ??= buildApp(options: bootstrapOptions);
           return FutureBuilder(
             future: _buildAppFuture,
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
@@ -633,7 +722,13 @@ class IntifaceCentralApp extends StatelessWidget with WindowListener, TrayListen
                 title: 'Intiface Central',
                 debugShowCheckedModeBanner: false,
                 home: Scaffold(
-                  body: Center(child: Image(image: AssetImage('assets/icons/intiface_central_icon.png'))),
+                  body: Center(
+                    child: Image(
+                      image: AssetImage(
+                        'assets/icons/intiface_central_icon.png',
+                      ),
+                    ),
+                  ),
                 ),
               );
             },
@@ -652,7 +747,9 @@ class IntifaceCentralView extends StatelessWidget {
     final configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
     logInfo("Using theme mode: ${configCubit.themeModeSetting}");
     return BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-      buildWhen: (previous, current) => current is ThemeModeSettingState || current is ConfigurationResetState,
+      buildWhen: (previous, current) =>
+          current is ThemeModeSettingState ||
+          current is ConfigurationResetState,
       builder: (context, state) {
         final themeMode = switch (configCubit.themeModeSetting) {
           "light" => ThemeMode.light,
@@ -662,8 +759,16 @@ class IntifaceCentralView extends StatelessWidget {
         return MaterialApp(
           title: 'Intiface Central',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue, useMaterial3: true),
-          darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue, useMaterial3: true),
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primarySwatch: Colors.blue,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.blue,
+            useMaterial3: true,
+          ),
           themeMode: themeMode,
           home: const IntifaceCentralPage(),
         );
@@ -679,19 +784,32 @@ class IntifaceCentralPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocBuilder<IntifaceConfigurationCubit, IntifaceConfigurationState>(
-        buildWhen: (previous, current) => current is UseCompactDisplayState || current is ConfigurationResetState,
+        buildWhen: (previous, current) =>
+            current is UseCompactDisplayState ||
+            current is ConfigurationResetState,
         builder: (context, state) {
-          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(context).useCompactDisplay;
+          var useCompactDisplay = BlocProvider.of<IntifaceConfigurationCubit>(
+            context,
+          ).useCompactDisplay;
           List<Widget> widgets = [const ControlWidget()];
           if (!isDesktop() || !useCompactDisplay) {
-            widgets.addAll(const [Divider(height: 2), Expanded(child: BodyWidget())]);
+            widgets.addAll(const [
+              Divider(height: 2),
+              Expanded(child: BodyWidget()),
+            ]);
           }
-          var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(context);
-          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
+          var userCubit = BlocProvider.of<UserDeviceConfigurationCubit>(
+            context,
+          );
+          var configCubit = BlocProvider.of<IntifaceConfigurationCubit>(
+            context,
+          );
           final showConnectDeprecation =
-              configCubit.useLovenseConnectService && !configCubit.hasAcknowledgedLovenseConnectDeprecation;
+              configCubit.useLovenseConnectService &&
+              !configCubit.hasAcknowledgedLovenseConnectDeprecation;
           final showDongleDeprecation =
-              (configCubit.useLovenseHIDDongle || configCubit.useLovenseSerialDongle) &&
+              (configCubit.useLovenseHIDDongle ||
+                  configCubit.useLovenseSerialDongle) &&
               !configCubit.hasAcknowledgedLovenseDongleDeprecation;
           if (showConnectDeprecation) {
             configCubit.hasAcknowledgedLovenseConnectDeprecation = true;
@@ -714,15 +832,25 @@ class IntifaceCentralPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       InkWell(
-                        onTap: () => launchUrlString("https://intiface.com/docs/intiface-central/brands/lovense/"),
+                        onTap: () => launchUrlString(
+                          "https://intiface.com/docs/intiface-central/brands/lovense/",
+                        ),
                         child: const Text(
                           "Learn more",
-                          style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
                 ),
               );
 
@@ -740,15 +868,25 @@ class IntifaceCentralPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         InkWell(
-                          onTap: () => launchUrlString("https://intiface.com/docs/intiface-central/brands/lovense/"),
+                          onTap: () => launchUrlString(
+                            "https://intiface.com/docs/intiface-central/brands/lovense/",
+                          ),
                           child: const Text(
                             "Learn more",
-                            style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                            style: TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
                   ),
                 ).then((_) {
                   if (showDongleDeprecation) showDongleDialog();

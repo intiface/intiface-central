@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2084900219;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -573748100;
 
 // Section: executor
 
@@ -2901,6 +2901,41 @@ fn wire__crate__api__runtime__send_runtime_msg_impl(
         },
     )
 }
+fn wire__crate__api__util__set_crash_reporting_consent_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "set_crash_reporting_consent",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_enabled = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok({
+                        crate::api::util::set_crash_reporting_consent(api_enabled);
+                    })?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -3962,16 +3997,22 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         66 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-        67 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+        67 => wire__crate__api__util__set_crash_reporting_consent_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        68 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
-        69 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
-        70 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
-        71 => wire__crate__api__device_config__update_user_config_impl(
+        68 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        69 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
+        70 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
+        71 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
+        72 => wire__crate__api__device_config__update_user_config_impl(
             port,
             ptr,
             rust_vec_len,
