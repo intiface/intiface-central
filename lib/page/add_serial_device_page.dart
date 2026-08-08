@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/src/rust/api/serial_ports.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
+import 'package:intiface_central/widget/config_entry_card.dart';
 import 'package:intiface_central/widget/detail_header_widget.dart';
+import 'package:intiface_central/widget/form_panel_widget.dart';
 import 'package:intiface_central/widget/stateful_dropdown_button.dart';
 
 class AddSerialDevicePage extends StatefulWidget {
@@ -90,48 +92,54 @@ class _AddSerialDevicePageState extends State<AddSerialDevicePage> {
         _ports.any((port) => port.portName == _portController.text)
         ? _portController.text
         : null;
-    return DropdownButton<String>(
-      value: currentValue,
-      hint: const Text('Port'),
-      isExpanded: true,
-      items: [
-        for (final port in _ports)
-          DropdownMenuItem(
-            value: port.portName,
-            child: Text(
-              port.product == null && port.manufacturer == null
-                  ? port.portName
-                  : '${port.portName} — ${port.product ?? port.manufacturer}',
+    return InputDecorator(
+      decoration: const InputDecoration(
+        labelText: 'Serial Port',
+        border: OutlineInputBorder(),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: currentValue,
+          hint: const Text('Port'),
+          isExpanded: true,
+          isDense: true,
+          items: [
+            for (final port in _ports)
+              DropdownMenuItem(
+                value: port.portName,
+                child: Text(
+                  port.product == null && port.manufacturer == null
+                      ? port.portName
+                      : '${port.portName} — ${port.product ?? port.manufacturer}',
+                ),
+              ),
+            const DropdownMenuItem(
+              value: _manualEntrySentinel,
+              child: Text('Enter port manually…'),
             ),
-          ),
-        const DropdownMenuItem(
-          value: _manualEntrySentinel,
-          child: Text('Enter port manually…'),
+          ],
+          onChanged: (value) {
+            if (value == _manualEntrySentinel) {
+              setState(() {
+                _manualPortEntry = true;
+              });
+            } else if (value != null) {
+              setState(() {
+                _portController.text = value;
+              });
+            }
+          },
         ),
-      ],
-      onChanged: (value) {
-        if (value == _manualEntrySentinel) {
-          setState(() {
-            _manualPortEntry = true;
-          });
-        } else if (value != null) {
-          setState(() {
-            _portController.text = value;
-          });
-        }
-      },
+      ),
     );
   }
 
   Widget _buildPortTextField() {
     return TextField(
       controller: _portController,
-      decoration: InputDecoration(
-        hintText: 'Port Name',
-        border: const OutlineInputBorder(),
-        helperText: _ports.isEmpty
-            ? 'No serial ports detected. On Linux, check that your user is in the dialout group.'
-            : null,
+      decoration: const InputDecoration(
+        labelText: 'Port Name',
+        border: OutlineInputBorder(),
       ),
     );
   }
@@ -143,242 +151,220 @@ class _AddSerialDevicePageState extends State<AddSerialDevicePage> {
         children: [
           DetailHeader(title: 'Manage Serial Devices', onBack: widget.onBack),
           Expanded(
-            child:
-                BlocBuilder<
-                  UserDeviceConfigurationCubit,
-                  UserDeviceConfigurationState
-                >(
-                  builder: (context, state) {
-                    final cubit = BlocProvider.of<UserDeviceConfigurationCubit>(
-                      context,
-                    );
-                    final sortedProtocols = cubit.protocols.toList()..sort();
+            child: BlocBuilder<UserDeviceConfigurationCubit, UserDeviceConfigurationState>(
+              builder: (context, state) {
+                final cubit = BlocProvider.of<UserDeviceConfigurationCubit>(
+                  context,
+                );
+                final sortedProtocols = cubit.protocols.toList()..sort();
 
-                    if (!_protocolSeeded && sortedProtocols.isNotEmpty) {
-                      _protocolSeeded = true;
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted) return;
-                        _protocolNotifier.value =
-                            sortedProtocols.contains(_defaultProtocol)
-                            ? _defaultProtocol
-                            : '';
-                      });
-                    }
+                if (!_protocolSeeded && sortedProtocols.isNotEmpty) {
+                  _protocolSeeded = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) return;
+                    _protocolNotifier.value =
+                        sortedProtocols.contains(_defaultProtocol)
+                        ? _defaultProtocol
+                        : '';
+                  });
+                }
 
-                    final showPortDropdown =
-                        _ports.isNotEmpty && !_manualPortEntry;
+                final showPortDropdown = _ports.isNotEmpty && !_manualPortEntry;
 
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                return FormPanel(
+                  children: [
+                    if (cubit.serialSpecifiers.isNotEmpty) ...[
+                      KeyedSubtree(
+                        key: DocsScreenshotKeys.advancedDeviceExistingDevices,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Existing Serial Devices',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                            ...cubit.serialSpecifiers.map((entry) {
+                              final (protocol, spec) = entry;
+                              return ConfigEntryCard(
+                                title: spec.port,
+                                subtitle:
+                                    '$protocol · ${spec.baudRate}/${spec.dataBits}/${spec.parity}/${spec.stopBits}',
+                                onDelete: () =>
+                                    cubit.removeSerialPort(protocol, spec.port),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                    ],
+                    KeyedSubtree(
+                      key: DocsScreenshotKeys.advancedDeviceAddDevice,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (cubit.serialSpecifiers.isNotEmpty) ...[
-                            KeyedSubtree(
-                              key: DocsScreenshotKeys
-                                  .advancedDeviceExistingDevices,
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Existing Serial Devices',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: DataTable(
-                                        columns: const [
-                                          DataColumn(label: Text('Protocol')),
-                                          DataColumn(label: Text('Port')),
-                                          DataColumn(label: Text('Info')),
-                                          DataColumn(label: Text('Delete')),
-                                        ],
-                                        rows: cubit.serialSpecifiers.map((
-                                          entry,
-                                        ) {
-                                          final (protocol, spec) = entry;
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(Text(protocol)),
-                                              DataCell(Text(spec.port)),
-                                              DataCell(
-                                                Text(
-                                                  '${spec.baudRate}/${spec.dataBits}/${spec.parity}/${spec.stopBits}',
-                                                ),
-                                              ),
-                                              DataCell(
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      cubit.removeSerialPort(
-                                                        protocol,
-                                                        spec.port,
-                                                      ),
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ],
+                          Text(
+                            'Add New Serial Device',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
+                          ),
+                          const SizedBox(height: 12),
+                          StatefulDropdownButton<String>(
+                            label: 'Protocol Type',
+                            values: sortedProtocols,
+                            valueNotifier: _protocolNotifier,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: showPortDropdown
+                                    ? _buildPortDropdown()
+                                    : _buildPortTextField(),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton.filledTonal(
+                                icon: const Icon(Icons.refresh),
+                                tooltip: 'Refresh Ports',
+                                onPressed: _refreshPorts,
+                              ),
+                            ],
+                          ),
+                          if (_ports.isEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'No serial ports detected. On Linux, check that your user is in the dialout group.',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                          if (!showPortDropdown && _ports.isNotEmpty)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _manualPortEntry = false;
+                                });
+                              },
+                              child: const Text('Use detected port'),
+                            ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _baudController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            decoration: const InputDecoration(
+                              labelText: 'Baud Rate',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ExpansionTile(
+                            tilePadding: EdgeInsets.zero,
+                            shape: const Border(),
+                            collapsedShape: const Border(),
+                            title: const Text('Advanced Line Settings'),
+                            initiallyExpanded: false,
+                            subtitle: AnimatedBuilder(
+                              animation: Listenable.merge([
+                                _dataBitsNotifier,
+                                _parityNotifier,
+                                _stopBitsNotifier,
+                              ]),
+                              builder: (context, _) => Text(
+                                '${_dataBitsNotifier.value} / ${_parityNotifier.value} / ${_stopBitsNotifier.value}',
                               ),
                             ),
-                            const SizedBox(height: 24),
-                          ],
-                          KeyedSubtree(
-                            key: DocsScreenshotKeys.advancedDeviceAddDevice,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Text(
-                                    'Add New Serial Device',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurfaceVariant,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  StatefulDropdownButton<String>(
-                                    label: 'Protocol Type',
-                                    values: sortedProtocols,
-                                    valueNotifier: _protocolNotifier,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 250,
-                                        child: showPortDropdown
-                                            ? _buildPortDropdown()
-                                            : _buildPortTextField(),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.refresh),
-                                        tooltip: 'Refresh Ports',
-                                        onPressed: _refreshPorts,
-                                      ),
-                                    ],
-                                  ),
-                                  if (!showPortDropdown && _ports.isNotEmpty)
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _manualPortEntry = false;
-                                        });
-                                      },
-                                      child: const Text('Use detected port'),
-                                    ),
-                                  const SizedBox(height: 8),
-                                  SizedBox(
-                                    width: 250,
-                                    child: TextField(
-                                      controller: _baudController,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
-                                      decoration: const InputDecoration(
-                                        hintText: 'Baud Rate',
-                                        border: OutlineInputBorder(),
-                                      ),
+                                  Expanded(
+                                    child: StatefulDropdownButton<int>(
+                                      label: 'Data Bits',
+                                      values: const [8, 7, 6, 5, 4, 3, 2, 1],
+                                      valueNotifier: _dataBitsNotifier,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  ExpansionTile(
-                                    title: const Text('Advanced Line Settings'),
-                                    initiallyExpanded: false,
-                                    subtitle: AnimatedBuilder(
-                                      animation: Listenable.merge([
-                                        _dataBitsNotifier,
-                                        _parityNotifier,
-                                        _stopBitsNotifier,
-                                      ]),
-                                      builder: (context, _) => Text(
-                                        '${_dataBitsNotifier.value} / ${_parityNotifier.value} / ${_stopBitsNotifier.value}',
-                                      ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: StatefulDropdownButton<String>(
+                                      label: 'Parity',
+                                      values: const ['N', 'E', 'O', 'S', 'M'],
+                                      valueNotifier: _parityNotifier,
                                     ),
-                                    children: [
-                                      StatefulDropdownButton<int>(
-                                        label: 'Data Bits',
-                                        values: const [8, 7, 6, 5, 4, 3, 2, 1],
-                                        valueNotifier: _dataBitsNotifier,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      StatefulDropdownButton<String>(
-                                        label: 'Parity',
-                                        values: const ['N', 'E', 'O', 'S', 'M'],
-                                        valueNotifier: _parityNotifier,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      StatefulDropdownButton<int>(
-                                        label: 'Stop Bits',
-                                        values: const [1, 0],
-                                        valueNotifier: _stopBitsNotifier,
-                                      ),
-                                    ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  FilledButton.icon(
-                                    onPressed: () {
-                                      final protocol = _protocolNotifier.value;
-                                      final port = _portController.text;
-                                      final baudText = _baudController.text;
-                                      if (protocol.isEmpty ||
-                                          port.isEmpty ||
-                                          baudText.isEmpty) {
-                                        return;
-                                      }
-                                      cubit.addSerialPort(
-                                        protocol,
-                                        port,
-                                        int.parse(baudText),
-                                        _dataBitsNotifier.value,
-                                        _stopBitsNotifier.value,
-                                        _parityNotifier.value,
-                                      );
-                                      setState(() {
-                                        _portController.clear();
-                                        _manualPortEntry = false;
-                                        _baudController.text = _defaultBaudRate;
-                                      });
-                                      _protocolNotifier.value =
-                                          _defaultProtocol;
-                                      _refreshPorts();
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Serial Device'),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: StatefulDropdownButton<int>(
+                                      label: 'Stop Bits',
+                                      values: const [1, 0],
+                                      valueNotifier: _stopBitsNotifier,
+                                    ),
                                   ),
                                 ],
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 48),
                             ),
+                            onPressed: () {
+                              final protocol = _protocolNotifier.value;
+                              final port = _portController.text;
+                              final baudText = _baudController.text;
+                              if (protocol.isEmpty ||
+                                  port.isEmpty ||
+                                  baudText.isEmpty) {
+                                return;
+                              }
+                              cubit.addSerialPort(
+                                protocol,
+                                port,
+                                int.parse(baudText),
+                                _dataBitsNotifier.value,
+                                _stopBitsNotifier.value,
+                                _parityNotifier.value,
+                              );
+                              setState(() {
+                                _portController.clear();
+                                _manualPortEntry = false;
+                                _baudController.text = _defaultBaudRate;
+                              });
+                              _protocolNotifier.value = _defaultProtocol;
+                              _refreshPorts();
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add Serial Device'),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
