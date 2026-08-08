@@ -27,8 +27,12 @@ flutter_rust_bridge_codegen generate
   - `device_config.rs` - Device configuration types and management
   - `device_config_manager.rs` - Global device config state
   - `enums.rs` - Shared enumerations
+  - `serial_ports.rs` - Serial port enumeration, via `intiface_engine::available_serial_ports`
+  - `simulated_devices.rs` - Simulated device archetypes and user entries
   - `specifiers.rs` - Device specifier types
   - `util.rs` - Utility functions (Sentry init, crash triggers)
+
+  A new module is only picked up by codegen once it is declared in `api/mod.rs`; `flutter_rust_bridge.yaml` scans `crate::api` as a whole.
 - **mobile_init/** - Platform-specific runtime creation
   - `setup/android.rs` - JNI class loader setup, `JNI_OnLoad` entry point
   - `setup/not_android.rs` - Simple tokio runtime for non-Android
@@ -95,3 +99,5 @@ Engine state managed via `lazy_static!` globals in `runtime.rs`:
 Rust dependencies resolve from crates.io by default. For local development against a sibling `../buttplug` checkout, run `just deps-local` from the repo root. That writes `.cargo/config.toml` from `.cargo/config.local.toml` and refreshes the lockfile to path sources.
 
 Before committing or running the CI-equivalent dependency graph, run `just deps-crates` to remove the local override and refresh `rust/Cargo.lock` back to crates.io sources.
+
+`api/serial_ports.rs` calls `intiface_engine::available_serial_ports`, which is not in any published `intiface-engine` release yet. Until one ships, this crate only builds under `just deps-local`.
