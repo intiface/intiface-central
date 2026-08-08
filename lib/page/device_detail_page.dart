@@ -13,6 +13,7 @@ import 'package:intiface_central/bloc/engine/engine_control_bloc.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
 import 'package:intiface_central/src/rust/api/enums.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
+import 'package:intiface_central/widget/detail_header_widget.dart';
 import 'package:intiface_central/widget/expandable_card_widget.dart';
 import 'package:intiface_central/widget/observation_chart_widget.dart';
 import 'package:loggy/loggy.dart';
@@ -95,7 +96,11 @@ class DeviceDetailPage extends StatelessWidget {
                 return Expanded(
                   child: Column(
                     children: [
-                      _DetailHeader(title: displayName, onBack: onBack),
+                      DetailHeader(
+                        title: displayName,
+                        onBack: onBack,
+                        backTooltip: 'Back to device list',
+                      ),
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
@@ -140,39 +145,6 @@ class DeviceDetailPage extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class _DetailHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
-
-  const _DetailHeader({required this.title, required this.onBack});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBack,
-            tooltip: 'Back to device list',
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

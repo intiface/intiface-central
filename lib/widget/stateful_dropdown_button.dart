@@ -62,27 +62,33 @@ class _StatefulDropdownButtonState<T> extends State<StatefulDropdownButton<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<T>(
-      value: dropdownValue,
-      hint: Text(widget.label),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(color: Colors.deepPurple),
-      underline: Container(height: 2, color: Colors.deepPurpleAccent),
-      onChanged: widget.enabled
-          ? (T? value) {
-              // This is called when the user selects an item.
-              setState(() {
-                dropdownValue = value as T;
-              });
-              widget.valueNotifier.value = value as T;
-            }
-          : null,
-      items: widget.values.map<DropdownMenuItem<T>>((T value) {
-        return DropdownMenuItem<T>(value: value, child: Text(value.toString()));
-      }).toList(),
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: widget.label,
+        border: const OutlineInputBorder(),
+        enabled: widget.enabled,
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: dropdownValue,
+          isExpanded: true,
+          isDense: true,
+          onChanged: widget.enabled
+              ? (T? value) {
+                  setState(() {
+                    dropdownValue = value as T;
+                  });
+                  widget.valueNotifier.value = value as T;
+                }
+              : null,
+          items: widget.values.map<DropdownMenuItem<T>>((T value) {
+            return DropdownMenuItem<T>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

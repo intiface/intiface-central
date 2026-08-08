@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/device_configuration/user_device_configuration_cubit.dart';
 import 'package:intiface_central/src/rust/api/serial_ports.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
+import 'package:intiface_central/widget/detail_header_widget.dart';
 import 'package:intiface_central/widget/stateful_dropdown_button.dart';
 
 class AddSerialDevicePage extends StatefulWidget {
@@ -140,7 +141,7 @@ class _AddSerialDevicePageState extends State<AddSerialDevicePage> {
     return Expanded(
       child: Column(
         children: [
-          _DetailHeader(title: 'Manage Serial Devices', onBack: widget.onBack),
+          DetailHeader(title: 'Manage Serial Devices', onBack: widget.onBack),
           Expanded(
             child:
                 BlocBuilder<
@@ -378,39 +379,6 @@ class _AddSerialDevicePageState extends State<AddSerialDevicePage> {
                     );
                   },
                 ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DetailHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
-
-  const _DetailHeader({required this.title, required this.onBack});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBack,
-            tooltip: 'Back',
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
           ),
         ],
       ),

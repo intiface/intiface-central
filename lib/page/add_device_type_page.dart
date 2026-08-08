@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
+import 'package:intiface_central/widget/detail_header_widget.dart';
 
 class AddDeviceTypePage extends StatelessWidget {
   final VoidCallback onBack;
@@ -22,7 +23,8 @@ class AddDeviceTypePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configCubit = BlocProvider.of<IntifaceConfigurationCubit>(context);
-    final isDesktop = Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final isDesktop =
+        Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
     final websocketEnabled = configCubit.useDeviceWebsocketServer;
     final serialEnabled = isDesktop && configCubit.useSerialPort;
@@ -31,7 +33,11 @@ class AddDeviceTypePage extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          _DetailHeader(title: 'Manage Advanced Devices', onBack: onBack),
+          DetailHeader(
+            title: 'Manage Advanced Devices',
+            onBack: onBack,
+            backTooltip: 'Back to device list',
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -48,7 +54,10 @@ class AddDeviceTypePage extends StatelessWidget {
                   const SizedBox(height: 16),
                   if (!websocketEnabled && !serialEnabled && !simulatedEnabled)
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 32,
+                      ),
                       child: Text(
                         'Advanced device managers can '
                         'be turned on in the Advanced Settings section of the '
@@ -61,7 +70,8 @@ class AddDeviceTypePage extends StatelessWidget {
                       key: DocsScreenshotKeys.advancedDeviceTypeSimulated,
                       icon: Icons.memory,
                       title: 'Simulated Devices',
-                      subtitle: 'Add/Manage a fake test device defined from built-in templates',
+                      subtitle:
+                          'Add/Manage a fake test device defined from built-in templates',
                       onTap: onSimulated,
                     ),
                   if (websocketEnabled)
@@ -90,40 +100,19 @@ class AddDeviceTypePage extends StatelessWidget {
   }
 }
 
-class _DetailHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
-
-  const _DetailHeader({required this.title, required this.onBack});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Row(
-        children: [
-          IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack, tooltip: 'Back to device list'),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _DeviceTypeCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
-  const _DeviceTypeCard({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap});
+  const _DeviceTypeCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -148,11 +137,18 @@ class _DeviceTypeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
