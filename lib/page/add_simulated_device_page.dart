@@ -83,16 +83,19 @@ class _AddSimulatedDevicePageState extends State<AddSimulatedDevicePage> {
                                 ),
                                 const SizedBox(height: 12),
                                 ...cubit.simulatedDevices.map((device) {
-                                  final archetype =
-                                      archetypesByIdentifier[device.identifier];
+                                  final archetypeName =
+                                      archetypesByIdentifier[device.identifier]
+                                          ?.displayName ??
+                                      device.identifier;
+                                  final customName =
+                                      device.displayName?.isNotEmpty == true;
                                   return ConfigEntryCard(
-                                    title:
-                                        device.displayName?.isNotEmpty == true
+                                    title: customName
                                         ? device.displayName!
-                                        : archetype?.displayName ??
-                                              device.identifier,
-                                    subtitle:
-                                        '${archetype?.displayName ?? device.identifier} · ${device.address}',
+                                        : archetypeName,
+                                    subtitle: customName
+                                        ? '$archetypeName · ${device.address}'
+                                        : device.address,
                                     onDelete: () => cubit.removeSimulatedDevice(
                                       device.address,
                                     ),
