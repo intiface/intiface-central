@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate log;
-
 mod api;
 mod frb_generated;
 mod in_process_frontend;

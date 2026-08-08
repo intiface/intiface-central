@@ -191,9 +191,7 @@ impl ExposedServerDeviceDefinition {
       .find(|x| x.id() == props.feature_id)
     {
       let mut f = f.clone();
-      info!("Has feature");
       if f.output.contains_key(&props.output_type) {
-        info!("Has output type");
         f.output.retain(|o| o.output_type() != props.output_type);
         let new_output = match props.output_type {
           OutputType::Vibrate => ServerDeviceFeatureOutput::Vibrate(props.clone().into()),
@@ -265,7 +263,6 @@ impl ExposedServerDeviceFeature {
 
 impl From<&ServerDeviceFeature> for ExposedServerDeviceFeature {
   fn from(value: &ServerDeviceFeature) -> Self {
-    info!("{}", value.id());
     Self {
       feature: value.clone(),
     }
@@ -587,7 +584,6 @@ pub fn update_user_config(
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
-  info!("adding device definition");
   dcm.add_user_device_definition(&identifier.into(), &config.into());
 }
 
@@ -613,10 +609,7 @@ pub fn get_device_definitions()
   dcm
     .user_device_definitions()
     .iter()
-    .map(|kv| {
-      info!("{:?}", kv.value());
-      (kv.key().clone().into(), kv.value().clone().into())
-    })
+    .map(|kv| (kv.key().clone().into(), kv.value().clone().into()))
     .collect()
 }
 
