@@ -35,7 +35,7 @@ impl From<ExposedSerialSpecifier> for SerialSpecifier {
       value.baud_rate,
       value.data_bits,
       value.stop_bits,
-      value.parity.chars().next().unwrap(),
+      value.parity.chars().next().unwrap_or('N'),
     )
   }
 }
@@ -133,7 +133,7 @@ pub fn add_serial_specifier(
       baud_rate,
       data_bits,
       stop_bits,
-      parity.chars().next().unwrap(),
+      parity.chars().next().unwrap_or('N'),
     )),
   );
 }

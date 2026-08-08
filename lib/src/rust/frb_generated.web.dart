@@ -10,6 +10,7 @@ import 'api/device_config.dart';
 import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
+import 'api/serial_ports.dart';
 import 'api/simulated_devices.dart';
 import 'api/specifiers.dart';
 import 'api/util.dart';
@@ -268,6 +269,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   EngineOptionsExternal dco_decode_engine_options_external(dynamic raw);
 
   @protected
+  ExposedSerialPortInfo dco_decode_exposed_serial_port_info(dynamic raw);
+
+  @protected
   ExposedSerialSpecifier dco_decode_exposed_serial_specifier(dynamic raw);
 
   @protected
@@ -303,6 +307,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<ExposedSerialPortInfo> dco_decode_list_exposed_serial_port_info(
+    dynamic raw,
+  );
 
   @protected
   List<ExposedSimulatedDeviceArchetype>
@@ -626,6 +635,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  ExposedSerialPortInfo sse_decode_exposed_serial_port_info(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   ExposedSerialSpecifier sse_decode_exposed_serial_specifier(
     SseDeserializer deserializer,
   );
@@ -669,6 +683,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<ExposedSerialPortInfo> sse_decode_list_exposed_serial_port_info(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<ExposedSimulatedDeviceArchetype>
@@ -1043,6 +1062,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_exposed_serial_port_info(
+    ExposedSerialPortInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_exposed_serial_specifier(
     ExposedSerialSpecifier self,
     SseSerializer serializer,
@@ -1093,6 +1118,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_exposed_serial_port_info(
+    List<ExposedSerialPortInfo> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_exposed_simulated_device_archetype(

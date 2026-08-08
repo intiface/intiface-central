@@ -6,9 +6,9 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `dispose_runtime`, `is_started`, `new`, `new`, `notified`, `reaper_loop`, `request`, `reserve_start`, `rollback_published_start`, `rollback_start`, `start_reserved`, `start`, `stop`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BACKDOOR_INCOMING_BROADCASTER`, `ENGINE_BROADCASTER`, `ENGINE_SHUTDOWN`, `EngineCleanupTimeout`, `LIFECYCLE`, `LifecycleCoordinator`, `LifecycleState`, `ReaperCommand`, `ReaperStart`, `SharedLifecycle`, `StopSignal`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `deref`, `deref`, `deref`, `deref`, `eq`, `fmt`, `fmt`, `fmt`, `initialize`, `initialize`, `initialize`, `initialize`
+// These functions are ignored because they are not marked as `pub`: `dispose_runtime`, `is_started`, `new`, `new`, `notified`, `reaper_loop`, `request`, `reserve_start`, `rollback_published_start`, `rollback_start`, `start_reserved`, `stop`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `EngineCleanupTimeout`, `LifecycleCoordinator`, `LifecycleState`, `ReaperCommand`, `ReaperStart`, `SharedLifecycle`, `StopSignal`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `eq`, `fmt`, `fmt`, `fmt`
 
 Future<bool> rustRuntimeStarted() =>
     RustLib.instance.api.crateApiRuntimeRustRuntimeStarted();

@@ -7,6 +7,7 @@ import 'api/device_config.dart';
 import 'api/device_config_manager.dart';
 import 'api/enums.dart';
 import 'api/runtime.dart';
+import 'api/serial_ports.dart';
 import 'api/simulated_devices.dart';
 import 'api/specifiers.dart';
 import 'api/util.dart';
@@ -71,7 +72,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -2084900219;
+  int get rustContentHash => 1052083565;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -346,6 +347,8 @@ abstract class RustLibApi extends BaseApi {
   crateApiSpecifiersGetUserWebsocketCommunicationSpecifiers();
 
   Future<bool> crateApiRuntimeIsEngineShutdown();
+
+  Future<List<ExposedSerialPortInfo>> crateApiSerialPortsListSerialPorts();
 
   Future<void> crateApiSpecifiersRemoveSerialSpecifier({
     required String protocol,
@@ -2461,6 +2464,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "is_engine_shutdown", argNames: []);
 
   @override
+  Future<List<ExposedSerialPortInfo>> crateApiSerialPortsListSerialPorts() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 59,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_exposed_serial_port_info,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiSerialPortsListSerialPortsConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiSerialPortsListSerialPortsConstMeta =>
+      const TaskConstMeta(debugName: "list_serial_ports", argNames: []);
+
+  @override
   Future<void> crateApiSpecifiersRemoveSerialSpecifier({
     required String protocol,
     required String port,
@@ -2474,7 +2504,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 59,
+            funcId: 60,
             port: port_,
           );
         },
@@ -2507,7 +2537,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 60,
+            funcId: 61,
             port: port_,
           );
         },
@@ -2543,7 +2573,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 61,
+            funcId: 62,
             port: port_,
           );
         },
@@ -2578,7 +2608,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 62,
+            funcId: 63,
             port: port_,
           );
         },
@@ -2614,7 +2644,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 63,
+              funcId: 64,
               port: port_,
             );
           },
@@ -2643,7 +2673,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 64,
+            funcId: 65,
             port: port_,
           );
         },
@@ -2671,7 +2701,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 65,
+            funcId: 66,
             port: port_,
           );
         },
@@ -2702,7 +2732,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 66,
+            funcId: 67,
             port: port_,
           );
         },
@@ -2734,7 +2764,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 67,
+            funcId: 68,
             port: port_,
           );
         },
@@ -2769,7 +2799,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 68,
+              funcId: 69,
               port: port_,
             );
           },
@@ -2798,7 +2828,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 69,
+            funcId: 70,
             port: port_,
           );
         },
@@ -2825,7 +2855,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 70,
+            funcId: 71,
             port: port_,
           );
         },
@@ -2863,7 +2893,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 71,
+            funcId: 72,
             port: port_,
           );
         },
@@ -3360,6 +3390,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedSerialPortInfo dco_decode_exposed_serial_port_info(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return ExposedSerialPortInfo(
+      portName: dco_decode_String(arr[0]),
+      product: dco_decode_opt_String(arr[1]),
+      manufacturer: dco_decode_opt_String(arr[2]),
+      vid: dco_decode_opt_box_autoadd_u_16(arr[3]),
+      pid: dco_decode_opt_box_autoadd_u_16(arr[4]),
+    );
+  }
+
+  @protected
   ExposedSerialSpecifier dco_decode_exposed_serial_specifier(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -3465,6 +3510,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<ExposedSerialPortInfo> dco_decode_list_exposed_serial_port_info(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_exposed_serial_port_info)
+        .toList();
   }
 
   @protected
@@ -4203,6 +4258,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ExposedSerialPortInfo sse_decode_exposed_serial_port_info(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_portName = sse_decode_String(deserializer);
+    var var_product = sse_decode_opt_String(deserializer);
+    var var_manufacturer = sse_decode_opt_String(deserializer);
+    var var_vid = sse_decode_opt_box_autoadd_u_16(deserializer);
+    var var_pid = sse_decode_opt_box_autoadd_u_16(deserializer);
+    return ExposedSerialPortInfo(
+      portName: var_portName,
+      product: var_product,
+      manufacturer: var_manufacturer,
+      vid: var_vid,
+      pid: var_pid,
+    );
+  }
+
+  @protected
   ExposedSerialSpecifier sse_decode_exposed_serial_specifier(
     SseDeserializer deserializer,
   ) {
@@ -4325,6 +4399,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ExposedSerialPortInfo> sse_decode_list_exposed_serial_port_info(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ExposedSerialPortInfo>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_exposed_serial_port_info(deserializer));
     }
     return ans_;
   }
@@ -5170,6 +5258,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_exposed_serial_port_info(
+    ExposedSerialPortInfo self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.portName, serializer);
+    sse_encode_opt_String(self.product, serializer);
+    sse_encode_opt_String(self.manufacturer, serializer);
+    sse_encode_opt_box_autoadd_u_16(self.vid, serializer);
+    sse_encode_opt_box_autoadd_u_16(self.pid, serializer);
+  }
+
+  @protected
   void sse_encode_exposed_serial_specifier(
     ExposedSerialSpecifier self,
     SseSerializer serializer,
@@ -5270,6 +5371,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_exposed_serial_port_info(
+    List<ExposedSerialPortInfo> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_exposed_serial_port_info(item, serializer);
     }
   }
 

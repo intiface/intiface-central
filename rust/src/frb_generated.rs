@@ -28,7 +28,7 @@
 
 use crate::api::device_config::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
   default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2084900219;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1052083565;
 
 // Section: executor
 
@@ -2555,6 +2555,37 @@ fn wire__crate__api__runtime__is_engine_shutdown_impl(
     },
   )
 }
+fn wire__crate__api__serial_ports__list_serial_ports_impl(
+  port_: flutter_rust_bridge::for_generated::MessagePort,
+  ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+  rust_vec_len_: i32,
+  data_len_: i32,
+) {
+  FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    flutter_rust_bridge::for_generated::TaskInfo {
+      debug_name: "list_serial_ports",
+      port: Some(port_),
+      mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+    },
+    move || {
+      let message = unsafe {
+        flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+          ptr_,
+          rust_vec_len_,
+          data_len_,
+        )
+      };
+      let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+      deserializer.end();
+      move |context| {
+        transform_result_sse::<_, ()>((move || {
+          let output_ok = Result::<_, ()>::Ok(crate::api::serial_ports::list_serial_ports())?;
+          Ok(output_ok)
+        })())
+      }
+    },
+  )
+}
 fn wire__crate__api__specifiers__remove_serial_specifier_impl(
   port_: flutter_rust_bridge::for_generated::MessagePort,
   ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -3335,6 +3366,24 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
   }
 }
 
+impl SseDecode for crate::api::serial_ports::ExposedSerialPortInfo {
+  // Codec=Sse (Serialization based), see doc to use other codecs
+  fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+    let mut var_portName = <String>::sse_decode(deserializer);
+    let mut var_product = <Option<String>>::sse_decode(deserializer);
+    let mut var_manufacturer = <Option<String>>::sse_decode(deserializer);
+    let mut var_vid = <Option<u16>>::sse_decode(deserializer);
+    let mut var_pid = <Option<u16>>::sse_decode(deserializer);
+    return crate::api::serial_ports::ExposedSerialPortInfo {
+      port_name: var_portName,
+      product: var_product,
+      manufacturer: var_manufacturer,
+      vid: var_vid,
+      pid: var_pid,
+    };
+  }
+}
+
 impl SseDecode for crate::api::specifiers::ExposedSerialSpecifier {
   // Codec=Sse (Serialization based), see doc to use other codecs
   fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3460,6 +3509,18 @@ impl SseDecode for Vec<String> {
     let mut ans_ = Vec::with_capacity(len_ as usize);
     for idx_ in 0..len_ {
       ans_.push(<String>::sse_decode(deserializer));
+    }
+    return ans_;
+  }
+}
+
+impl SseDecode for Vec<crate::api::serial_ports::ExposedSerialPortInfo> {
+  // Codec=Sse (Serialization based), see doc to use other codecs
+  fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+    let mut len_ = <i32>::sse_decode(deserializer);
+    let mut ans_ = Vec::with_capacity(len_ as usize);
+    for idx_ in 0..len_ {
+      ans_.push(<crate::api::serial_ports::ExposedSerialPortInfo>::sse_decode(deserializer));
     }
     return ans_;
   }
@@ -3743,8 +3804,7 @@ impl SseDecode for u8 {
 
 impl SseDecode for () {
   // Codec=Sse (Serialization based), see doc to use other codecs
-  fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-  }
+  fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
 }
 
 impl SseDecode for usize {
@@ -3811,40 +3871,41 @@ fn pde_ffi_dispatcher_primary_impl(
       data_len,
     ),
     58 => wire__crate__api__runtime__is_engine_shutdown_impl(port, ptr, rust_vec_len, data_len),
-    59 => {
+    59 => wire__crate__api__serial_ports__list_serial_ports_impl(port, ptr, rust_vec_len, data_len),
+    60 => {
       wire__crate__api__specifiers__remove_serial_specifier_impl(port, ptr, rust_vec_len, data_len)
     }
-    60 => wire__crate__api__simulated_devices__remove_simulated_device_impl(
+    61 => wire__crate__api__simulated_devices__remove_simulated_device_impl(
       port,
       ptr,
       rust_vec_len,
       data_len,
     ),
-    61 => {
+    62 => {
       wire__crate__api__device_config__remove_user_config_impl(port, ptr, rust_vec_len, data_len)
     }
-    62 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
+    63 => wire__crate__api__specifiers__remove_websocket_specifier_impl(
       port,
       ptr,
       rust_vec_len,
       data_len,
     ),
-    63 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
-    64 => wire__crate__api__runtime__rust_runtime_started_impl(port, ptr, rust_vec_len, data_len),
-    65 => {
+    64 => wire__crate__api__runtime__run_engine_impl(port, ptr, rust_vec_len, data_len),
+    65 => wire__crate__api__runtime__rust_runtime_started_impl(port, ptr, rust_vec_len, data_len),
+    66 => {
       wire__crate__api__runtime__send_backend_server_message_impl(port, ptr, rust_vec_len, data_len)
     }
-    66 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
-    67 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
+    67 => wire__crate__api__runtime__send_runtime_msg_impl(port, ptr, rust_vec_len, data_len),
+    68 => wire__crate__api__device_config_manager__setup_device_configuration_manager_impl(
       port,
       ptr,
       rust_vec_len,
       data_len,
     ),
-    68 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
-    69 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
-    70 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
-    71 => {
+    69 => wire__crate__api__util__setup_logging_impl(port, ptr, rust_vec_len, data_len),
+    70 => wire__crate__api__util__shutdown_logging_impl(port, ptr, rust_vec_len, data_len),
+    71 => wire__crate__api__runtime__stop_engine_impl(port, ptr, rust_vec_len, data_len),
+    72 => {
       wire__crate__api__device_config__update_user_config_impl(port, ptr, rust_vec_len, data_len)
     }
     _ => unreachable!(),
@@ -4110,6 +4171,30 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<crate::api::runtime::EngineOpt
 {
   fn into_into_dart(self) -> FrbWrapper<crate::api::runtime::EngineOptionsExternal> {
     self.into()
+  }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::serial_ports::ExposedSerialPortInfo {
+  fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+    [
+      self.port_name.into_into_dart().into_dart(),
+      self.product.into_into_dart().into_dart(),
+      self.manufacturer.into_into_dart().into_dart(),
+      self.vid.into_into_dart().into_dart(),
+      self.pid.into_into_dart().into_dart(),
+    ]
+    .into_dart()
+  }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+  for crate::api::serial_ports::ExposedSerialPortInfo
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::serial_ports::ExposedSerialPortInfo>
+  for crate::api::serial_ports::ExposedSerialPortInfo
+{
+  fn into_into_dart(self) -> crate::api::serial_ports::ExposedSerialPortInfo {
+    self
   }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -4560,6 +4645,17 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
   }
 }
 
+impl SseEncode for crate::api::serial_ports::ExposedSerialPortInfo {
+  // Codec=Sse (Serialization based), see doc to use other codecs
+  fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+    <String>::sse_encode(self.port_name, serializer);
+    <Option<String>>::sse_encode(self.product, serializer);
+    <Option<String>>::sse_encode(self.manufacturer, serializer);
+    <Option<u16>>::sse_encode(self.vid, serializer);
+    <Option<u16>>::sse_encode(self.pid, serializer);
+  }
+}
+
 impl SseEncode for crate::api::specifiers::ExposedSerialSpecifier {
   // Codec=Sse (Serialization based), see doc to use other codecs
   fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -4668,6 +4764,16 @@ impl SseEncode for Vec<String> {
     <i32>::sse_encode(self.len() as _, serializer);
     for item in self {
       <String>::sse_encode(item, serializer);
+    }
+  }
+}
+
+impl SseEncode for Vec<crate::api::serial_ports::ExposedSerialPortInfo> {
+  // Codec=Sse (Serialization based), see doc to use other codecs
+  fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+    <i32>::sse_encode(self.len() as _, serializer);
+    for item in self {
+      <crate::api::serial_ports::ExposedSerialPortInfo>::sse_encode(item, serializer);
     }
   }
 }
@@ -4914,8 +5020,7 @@ impl SseEncode for u8 {
 
 impl SseEncode for () {
   // Codec=Sse (Serialization based), see doc to use other codecs
-  fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-  }
+  fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
 }
 
 impl SseEncode for usize {
@@ -4938,7 +5043,7 @@ mod io {
   use super::*;
   use crate::api::device_config::*;
   use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-  use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+  use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
   use flutter_rust_bridge::{Handler, IntoIntoDart};
 
   // Section: boilerplate
@@ -5075,7 +5180,7 @@ mod web {
   use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
   use flutter_rust_bridge::for_generated::wasm_bindgen;
   use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-  use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+  use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
   use flutter_rust_bridge::{Handler, IntoIntoDart};
 
   // Section: boilerplate
