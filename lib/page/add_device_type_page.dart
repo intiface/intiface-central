@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intiface_central/bloc/configuration/intiface_configuration_cubit.dart';
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
 import 'package:intiface_central/widget/detail_header_widget.dart';
+import 'package:intiface_central/widget/form_panel_widget.dart';
 
 class AddDeviceTypePage extends StatelessWidget {
   final VoidCallback onBack;
@@ -39,59 +40,52 @@ class AddDeviceTypePage extends StatelessWidget {
             backTooltip: 'Back to device list',
           ),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Choose device type',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+            child: FormPanel(
+              children: [
+                Text(
+                  'Choose device type',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (!websocketEnabled && !serialEnabled && !simulatedEnabled)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                    child: Text(
+                      'Advanced device managers can '
+                      'be turned on in the Advanced Settings section of the '
+                      'App Modes panel.',
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  if (!websocketEnabled && !serialEnabled && !simulatedEnabled)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 32,
-                      ),
-                      child: Text(
-                        'Advanced device managers can '
-                        'be turned on in the Advanced Settings section of the '
-                        'App Modes panel.',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  if (simulatedEnabled)
-                    _DeviceTypeCard(
-                      key: DocsScreenshotKeys.advancedDeviceTypeSimulated,
-                      icon: Icons.memory,
-                      title: 'Simulated Devices',
-                      subtitle:
-                          'Add/Manage a fake test device defined from built-in templates',
-                      onTap: onSimulated,
-                    ),
-                  if (websocketEnabled)
-                    _DeviceTypeCard(
-                      key: DocsScreenshotKeys.advancedDeviceTypeWebsocket,
-                      icon: Icons.language,
-                      title: 'Websocket Devices',
-                      subtitle: 'Add/Manage a device over WebSocket protocol',
-                      onTap: onWebsocket,
-                    ),
-                  if (serialEnabled)
-                    _DeviceTypeCard(
-                      key: DocsScreenshotKeys.advancedDeviceTypeSerial,
-                      icon: Icons.usb,
-                      title: 'Serial Port Devices',
-                      subtitle: 'Add/Manage a serial port device',
-                      onTap: onSerial,
-                    ),
-                ],
-              ),
+                if (simulatedEnabled)
+                  _DeviceTypeCard(
+                    key: DocsScreenshotKeys.advancedDeviceTypeSimulated,
+                    icon: Icons.memory,
+                    title: 'Simulated Devices',
+                    subtitle:
+                        'Add/Manage a fake test device defined from built-in templates',
+                    onTap: onSimulated,
+                  ),
+                if (websocketEnabled)
+                  _DeviceTypeCard(
+                    key: DocsScreenshotKeys.advancedDeviceTypeWebsocket,
+                    icon: Icons.language,
+                    title: 'Websocket Devices',
+                    subtitle: 'Add/Manage a device over WebSocket protocol',
+                    onTap: onWebsocket,
+                  ),
+                if (serialEnabled)
+                  _DeviceTypeCard(
+                    key: DocsScreenshotKeys.advancedDeviceTypeSerial,
+                    icon: Icons.usb,
+                    title: 'Serial Port Devices',
+                    subtitle: 'Add/Manage a serial port device',
+                    onTap: onSerial,
+                  ),
+              ],
             ),
           ),
         ],

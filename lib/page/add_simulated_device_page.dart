@@ -4,7 +4,9 @@ import 'package:intiface_central/bloc/device_configuration/user_device_configura
 import 'package:intiface_central/src/rust/api/simulated_devices.dart'
     as simulated_api;
 import 'package:intiface_central/util/docs_screenshot_keys.dart';
+import 'package:intiface_central/widget/config_entry_card.dart';
 import 'package:intiface_central/widget/detail_header_widget.dart';
+import 'package:intiface_central/widget/form_panel_widget.dart';
 
 class AddSimulatedDevicePage extends StatefulWidget {
   final VoidCallback onBack;
@@ -60,187 +62,131 @@ class _AddSimulatedDevicePageState extends State<AddSimulatedDevicePage> {
                         archetype.identifier: archetype,
                     };
 
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (cubit.simulatedDevices.isNotEmpty) ...[
-                            KeyedSubtree(
-                              key: DocsScreenshotKeys
-                                  .advancedDeviceExistingDevices,
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Existing Simulated Devices',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: DataTable(
-                                        columns: const [
-                                          DataColumn(label: Text('Device')),
-                                          DataColumn(
-                                            label: Text('Display Name'),
-                                          ),
-                                          DataColumn(label: Text('Address')),
-                                          DataColumn(label: Text('Delete')),
-                                        ],
-                                        rows: cubit.simulatedDevices.map((
-                                          device,
-                                        ) {
-                                          final archetype =
-                                              archetypesByIdentifier[device
-                                                  .identifier];
-                                          return DataRow(
-                                            cells: [
-                                              DataCell(
-                                                Text(
-                                                  archetype?.displayName ??
-                                                      device.identifier,
-                                                ),
-                                              ),
-                                              DataCell(
-                                                Text(
-                                                  device
-                                                              .displayName
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? device.displayName!
-                                                      : archetype
-                                                                ?.displayName ??
-                                                            device.identifier,
-                                                ),
-                                              ),
-                                              DataCell(Text(device.address)),
-                                              DataCell(
-                                                TextButton(
-                                                  onPressed: () => cubit
-                                                      .removeSimulatedDevice(
-                                                        device.address,
-                                                      ),
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                          ],
+                    return FormPanel(
+                      children: [
+                        if (cubit.simulatedDevices.isNotEmpty) ...[
                           KeyedSubtree(
-                            key: DocsScreenshotKeys.advancedDeviceAddDevice,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Add New Simulated Device',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurfaceVariant,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    width: 300,
-                                    child: DropdownButtonFormField<String>(
-                                      initialValue: _selectedIdentifier,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Device Type',
-                                        border: OutlineInputBorder(),
+                            key: DocsScreenshotKeys
+                                .advancedDeviceExistingDevices,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Existing Simulated Devices',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
-                                      items: archetypes
-                                          .map(
-                                            (archetype) =>
-                                                DropdownMenuItem<String>(
-                                                  value: archetype.identifier,
-                                                  child: Text(
-                                                    archetype.displayName,
-                                                  ),
-                                                ),
-                                          )
-                                          .toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedIdentifier = value;
-                                        });
-                                      },
+                                ),
+                                const SizedBox(height: 12),
+                                ...cubit.simulatedDevices.map((device) {
+                                  final archetype =
+                                      archetypesByIdentifier[device.identifier];
+                                  return ConfigEntryCard(
+                                    title:
+                                        device.displayName?.isNotEmpty == true
+                                        ? device.displayName!
+                                        : archetype?.displayName ??
+                                              device.identifier,
+                                    subtitle:
+                                        '${archetype?.displayName ?? device.identifier} · ${device.address}',
+                                    onDelete: () => cubit.removeSimulatedDevice(
+                                      device.address,
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  if (_selectedIdentifier != null &&
-                                      archetypesByIdentifier[_selectedIdentifier] !=
-                                          null)
-                                    _ArchetypeSummary(
-                                      archetype:
-                                          archetypesByIdentifier[_selectedIdentifier]!,
-                                    ),
-                                  const SizedBox(height: 8),
-                                  SizedBox(
-                                    width: 300,
-                                    child: TextField(
-                                      controller: _displayNameController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Display Name (Optional)',
-                                        border: OutlineInputBorder(),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  FilledButton.icon(
-                                    onPressed: archetypeIdentifiers.isEmpty
-                                        ? null
-                                        : () {
-                                            final identifier =
-                                                _selectedIdentifier;
-                                            final displayName =
-                                                _displayNameController.text
-                                                    .trim();
-                                            if (identifier == null) return;
-                                            cubit.addSimulatedDevice(
-                                              identifier,
-                                              displayName.isEmpty
-                                                  ? null
-                                                  : displayName,
-                                            );
-                                            _displayNameController.clear();
-                                            setState(() {
-                                              _selectedIdentifier = null;
-                                            });
-                                          },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Simulated Device'),
-                                  ),
-                                ],
-                              ),
+                                  );
+                                }),
+                              ],
                             ),
                           ),
+                          const SizedBox(height: 16),
+                          const Divider(),
+                          const SizedBox(height: 16),
                         ],
-                      ),
+                        KeyedSubtree(
+                          key: DocsScreenshotKeys.advancedDeviceAddDevice,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Add New Simulated Device',
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                              const SizedBox(height: 12),
+                              DropdownButtonFormField<String>(
+                                initialValue: _selectedIdentifier,
+                                decoration: const InputDecoration(
+                                  labelText: 'Device Type',
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: archetypes
+                                    .map(
+                                      (archetype) => DropdownMenuItem<String>(
+                                        value: archetype.identifier,
+                                        child: Text(archetype.displayName),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedIdentifier = value;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              if (_selectedIdentifier != null &&
+                                  archetypesByIdentifier[_selectedIdentifier] !=
+                                      null)
+                                _ArchetypeSummary(
+                                  archetype:
+                                      archetypesByIdentifier[_selectedIdentifier]!,
+                                ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _displayNameController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Display Name (Optional)',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              FilledButton.icon(
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
+                                ),
+                                onPressed: archetypeIdentifiers.isEmpty
+                                    ? null
+                                    : () {
+                                        final identifier = _selectedIdentifier;
+                                        final displayName =
+                                            _displayNameController.text.trim();
+                                        if (identifier == null) return;
+                                        cubit.addSimulatedDevice(
+                                          identifier,
+                                          displayName.isEmpty
+                                              ? null
+                                              : displayName,
+                                        );
+                                        _displayNameController.clear();
+                                        setState(() {
+                                          _selectedIdentifier = null;
+                                        });
+                                      },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Add Simulated Device'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
