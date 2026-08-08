@@ -58,8 +58,30 @@ class _AddSerialDevicePageState extends State<AddSerialDevicePage> {
     final ports = await listSerialPorts();
     if (!mounted) return;
     setState(() {
-      _ports = ports;
+      _ports = _preferCalloutPorts(ports);
     });
+  }
+
+  // macOS exposes each port twice, as a /dev/cu.* callout device and a
+  // /dev/tty.* dial-in device. The dial-in half blocks on carrier detect and is
+  // never what we want here. Linux names (/dev/ttyUSB0) have no dot and are
+  // left alone.
+  List<ExposedSerialPortInfo> _preferCalloutPorts(
+    List<ExposedSerialPortInfo> ports,
+  ) {
+    final calloutNames = ports
+        .map((port) => port.portName)
+        .where((name) => name.startsWith('/dev/cu.'))
+        .toSet();
+    return ports
+        .where(
+          (port) =>
+              !port.portName.startsWith('/dev/tty.') ||
+              !calloutNames.contains(
+                port.portName.replaceFirst('/dev/tty.', '/dev/cu.'),
+              ),
+        )
+        .toList();
   }
 
   Widget _buildPortDropdown() {
