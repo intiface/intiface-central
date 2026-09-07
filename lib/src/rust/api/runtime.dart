@@ -34,8 +34,7 @@ class EngineOptionsExternal {
   final String? userDeviceConfigJson;
   final String? userDeviceConfigPath;
   final String serverName;
-  final bool websocketUseAllInterfaces;
-  final int? websocketPort;
+  final String? websocketListenAddress;
   final int? frontendWebsocketPort;
   final bool frontendInProcessChannel;
   final int maxPingTime;
@@ -65,8 +64,7 @@ class EngineOptionsExternal {
     this.userDeviceConfigJson,
     this.userDeviceConfigPath,
     required this.serverName,
-    required this.websocketUseAllInterfaces,
-    this.websocketPort,
+    this.websocketListenAddress,
     this.frontendWebsocketPort,
     required this.frontendInProcessChannel,
     required this.maxPingTime,
@@ -98,8 +96,7 @@ class EngineOptionsExternal {
       userDeviceConfigJson.hashCode ^
       userDeviceConfigPath.hashCode ^
       serverName.hashCode ^
-      websocketUseAllInterfaces.hashCode ^
-      websocketPort.hashCode ^
+      websocketListenAddress.hashCode ^
       frontendWebsocketPort.hashCode ^
       frontendInProcessChannel.hashCode ^
       maxPingTime.hashCode ^
@@ -133,8 +130,7 @@ class EngineOptionsExternal {
           userDeviceConfigJson == other.userDeviceConfigJson &&
           userDeviceConfigPath == other.userDeviceConfigPath &&
           serverName == other.serverName &&
-          websocketUseAllInterfaces == other.websocketUseAllInterfaces &&
-          websocketPort == other.websocketPort &&
+          websocketListenAddress == other.websocketListenAddress &&
           frontendWebsocketPort == other.frontendWebsocketPort &&
           frontendInProcessChannel == other.frontendInProcessChannel &&
           maxPingTime == other.maxPingTime &&

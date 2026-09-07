@@ -3324,38 +3324,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EngineOptionsExternal dco_decode_engine_options_external(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 29)
-      throw Exception('unexpected arr length: expect 29 but see ${arr.length}');
+    if (arr.length != 28)
+      throw Exception('unexpected arr length: expect 28 but see ${arr.length}');
     return EngineOptionsExternal(
       deviceConfigJson: dco_decode_opt_String(arr[0]),
       userDeviceConfigJson: dco_decode_opt_String(arr[1]),
       userDeviceConfigPath: dco_decode_opt_String(arr[2]),
       serverName: dco_decode_String(arr[3]),
-      websocketUseAllInterfaces: dco_decode_bool(arr[4]),
-      websocketPort: dco_decode_opt_box_autoadd_u_16(arr[5]),
-      frontendWebsocketPort: dco_decode_opt_box_autoadd_u_16(arr[6]),
-      frontendInProcessChannel: dco_decode_bool(arr[7]),
-      maxPingTime: dco_decode_u_32(arr[8]),
-      useBluetoothLe: dco_decode_bool(arr[9]),
-      useSerialPort: dco_decode_bool(arr[10]),
-      useHid: dco_decode_bool(arr[11]),
-      useLovenseDongleSerial: dco_decode_bool(arr[12]),
-      useLovenseDongleHid: dco_decode_bool(arr[13]),
-      useXinput: dco_decode_bool(arr[14]),
-      useLovenseConnect: dco_decode_bool(arr[15]),
-      useDeviceWebsocketServer: dco_decode_bool(arr[16]),
-      useSimulatedDevices: dco_decode_bool(arr[17]),
-      deviceWebsocketServerPort: dco_decode_opt_box_autoadd_u_16(arr[18]),
-      crashMainThread: dco_decode_bool(arr[19]),
-      crashTaskThread: dco_decode_bool(arr[20]),
-      websocketClientAddress: dco_decode_opt_String(arr[21]),
-      broadcastServerMdns: dco_decode_bool(arr[22]),
-      mdnsSuffix: dco_decode_opt_String(arr[23]),
-      repeaterMode: dco_decode_bool(arr[24]),
-      repeaterLocalPort: dco_decode_opt_box_autoadd_u_16(arr[25]),
-      repeaterRemoteAddress: dco_decode_opt_String(arr[26]),
-      restApiPort: dco_decode_opt_box_autoadd_u_16(arr[27]),
-      emitOutputObservations: dco_decode_bool(arr[28]),
+      websocketListenAddress: dco_decode_opt_String(arr[4]),
+      frontendWebsocketPort: dco_decode_opt_box_autoadd_u_16(arr[5]),
+      frontendInProcessChannel: dco_decode_bool(arr[6]),
+      maxPingTime: dco_decode_u_32(arr[7]),
+      useBluetoothLe: dco_decode_bool(arr[8]),
+      useSerialPort: dco_decode_bool(arr[9]),
+      useHid: dco_decode_bool(arr[10]),
+      useLovenseDongleSerial: dco_decode_bool(arr[11]),
+      useLovenseDongleHid: dco_decode_bool(arr[12]),
+      useXinput: dco_decode_bool(arr[13]),
+      useLovenseConnect: dco_decode_bool(arr[14]),
+      useDeviceWebsocketServer: dco_decode_bool(arr[15]),
+      useSimulatedDevices: dco_decode_bool(arr[16]),
+      deviceWebsocketServerPort: dco_decode_opt_box_autoadd_u_16(arr[17]),
+      crashMainThread: dco_decode_bool(arr[18]),
+      crashTaskThread: dco_decode_bool(arr[19]),
+      websocketClientAddress: dco_decode_opt_String(arr[20]),
+      broadcastServerMdns: dco_decode_bool(arr[21]),
+      mdnsSuffix: dco_decode_opt_String(arr[22]),
+      repeaterMode: dco_decode_bool(arr[23]),
+      repeaterLocalPort: dco_decode_opt_box_autoadd_u_16(arr[24]),
+      repeaterRemoteAddress: dco_decode_opt_String(arr[25]),
+      restApiPort: dco_decode_opt_box_autoadd_u_16(arr[26]),
+      emitOutputObservations: dco_decode_bool(arr[27]),
     );
   }
 
@@ -4140,8 +4139,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_userDeviceConfigJson = sse_decode_opt_String(deserializer);
     var var_userDeviceConfigPath = sse_decode_opt_String(deserializer);
     var var_serverName = sse_decode_String(deserializer);
-    var var_websocketUseAllInterfaces = sse_decode_bool(deserializer);
-    var var_websocketPort = sse_decode_opt_box_autoadd_u_16(deserializer);
+    var var_websocketListenAddress = sse_decode_opt_String(deserializer);
     var var_frontendWebsocketPort = sse_decode_opt_box_autoadd_u_16(
       deserializer,
     );
@@ -4174,8 +4172,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       userDeviceConfigJson: var_userDeviceConfigJson,
       userDeviceConfigPath: var_userDeviceConfigPath,
       serverName: var_serverName,
-      websocketUseAllInterfaces: var_websocketUseAllInterfaces,
-      websocketPort: var_websocketPort,
+      websocketListenAddress: var_websocketListenAddress,
       frontendWebsocketPort: var_frontendWebsocketPort,
       frontendInProcessChannel: var_frontendInProcessChannel,
       maxPingTime: var_maxPingTime,
@@ -5142,8 +5139,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.userDeviceConfigJson, serializer);
     sse_encode_opt_String(self.userDeviceConfigPath, serializer);
     sse_encode_String(self.serverName, serializer);
-    sse_encode_bool(self.websocketUseAllInterfaces, serializer);
-    sse_encode_opt_box_autoadd_u_16(self.websocketPort, serializer);
+    sse_encode_opt_String(self.websocketListenAddress, serializer);
     sse_encode_opt_box_autoadd_u_16(self.frontendWebsocketPort, serializer);
     sse_encode_bool(self.frontendInProcessChannel, serializer);
     sse_encode_u_32(self.maxPingTime, serializer);

@@ -3008,8 +3008,7 @@ const _: fn() = || {
   let _: Option<String> = EngineOptionsExternal.user_device_config_json;
   let _: Option<String> = EngineOptionsExternal.user_device_config_path;
   let _: String = EngineOptionsExternal.server_name;
-  let _: bool = EngineOptionsExternal.websocket_use_all_interfaces;
-  let _: Option<u16> = EngineOptionsExternal.websocket_port;
+  let _: Option<String> = EngineOptionsExternal.websocket_listen_address;
   let _: Option<u16> = EngineOptionsExternal.frontend_websocket_port;
   let _: bool = EngineOptionsExternal.frontend_in_process_channel;
   let _: u32 = EngineOptionsExternal.max_ping_time;
@@ -3276,8 +3275,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
     let mut var_userDeviceConfigJson = <Option<String>>::sse_decode(deserializer);
     let mut var_userDeviceConfigPath = <Option<String>>::sse_decode(deserializer);
     let mut var_serverName = <String>::sse_decode(deserializer);
-    let mut var_websocketUseAllInterfaces = <bool>::sse_decode(deserializer);
-    let mut var_websocketPort = <Option<u16>>::sse_decode(deserializer);
+    let mut var_websocketListenAddress = <Option<String>>::sse_decode(deserializer);
     let mut var_frontendWebsocketPort = <Option<u16>>::sse_decode(deserializer);
     let mut var_frontendInProcessChannel = <bool>::sse_decode(deserializer);
     let mut var_maxPingTime = <u32>::sse_decode(deserializer);
@@ -3306,8 +3304,7 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
       user_device_config_json: var_userDeviceConfigJson,
       user_device_config_path: var_userDeviceConfigPath,
       server_name: var_serverName,
-      websocket_use_all_interfaces: var_websocketUseAllInterfaces,
-      websocket_port: var_websocketPort,
+      websocket_listen_address: var_websocketListenAddress,
       frontend_websocket_port: var_frontendWebsocketPort,
       frontend_in_process_channel: var_frontendInProcessChannel,
       max_ping_time: var_maxPingTime,
@@ -4052,12 +4049,7 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
       self.0.user_device_config_json.into_into_dart().into_dart(),
       self.0.user_device_config_path.into_into_dart().into_dart(),
       self.0.server_name.into_into_dart().into_dart(),
-      self
-        .0
-        .websocket_use_all_interfaces
-        .into_into_dart()
-        .into_dart(),
-      self.0.websocket_port.into_into_dart().into_dart(),
+      self.0.websocket_listen_address.into_into_dart().into_dart(),
       self.0.frontend_websocket_port.into_into_dart().into_dart(),
       self
         .0
@@ -4532,8 +4524,7 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
     <Option<String>>::sse_encode(self.user_device_config_json, serializer);
     <Option<String>>::sse_encode(self.user_device_config_path, serializer);
     <String>::sse_encode(self.server_name, serializer);
-    <bool>::sse_encode(self.websocket_use_all_interfaces, serializer);
-    <Option<u16>>::sse_encode(self.websocket_port, serializer);
+    <Option<String>>::sse_encode(self.websocket_listen_address, serializer);
     <Option<u16>>::sse_encode(self.frontend_websocket_port, serializer);
     <bool>::sse_encode(self.frontend_in_process_channel, serializer);
     <u32>::sse_encode(self.max_ping_time, serializer);
