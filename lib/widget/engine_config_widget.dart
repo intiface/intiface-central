@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter/services.dart';
@@ -214,16 +212,14 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
       ),
     ];
     if (isDesktop()) {
-      if (Platform.isWindows) {
-        deviceSettings.addAll([
-          SettingsTile.switchTile(
-            enabled: !engineIsRunning,
-            initialValue: cubit.useXInput,
-            onToggle: (value) => cubit.useXInput = value,
-            title: _settingsText("XBox Compatible Gamepads (XInput)"),
-          ),
-        ]);
-      }
+      deviceSettings.addAll([
+        SettingsTile.switchTile(
+          enabled: !engineIsRunning,
+          initialValue: cubit.useSdlGamepad,
+          onToggle: (value) => cubit.useSdlGamepad = value,
+          title: _settingsText("Gamepads (SDL)"),
+        ),
+      ]);
 
       deviceSettings.addAll([
         SettingsTile.switchTile(

@@ -39,9 +39,9 @@ class UseBluetoothLEState extends IntifaceConfigurationState {
   UseBluetoothLEState(this.value);
 }
 
-class UseXInputState extends IntifaceConfigurationState {
+class UseSdlGamepadState extends IntifaceConfigurationState {
   final bool value;
-  UseXInputState(this.value);
+  UseSdlGamepadState(this.value);
 }
 
 class UseLovenseConnectServiceState extends IntifaceConfigurationState {
@@ -246,8 +246,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     // True on all platforms
     useBluetoothLE = _prefs.getBool("useBluetoothLE") ?? true;
 
-    // Only works on Windows
-    useXInput = _prefs.getBool("useXInput") ?? Platform.isWindows;
+    useSdlGamepad = _prefs.getBool("useSdlGamepad") ?? isDesktop();
 
     // Most device providers default off, requiring the user to turn them on.
     useLovenseConnectService = _prefs.getBool("useLovenseConnectService") ?? false;
@@ -422,14 +421,11 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     emit(UseLovenseConnectServiceState(value));
   }
 
-  bool get useXInput {
-    if (Platform.isWindows) return _prefs.getBool("useXInput")!;
-    return false;
-  }
+  bool get useSdlGamepad => _prefs.getBool("useSdlGamepad")!;
 
-  set useXInput(bool value) {
-    _prefs.setBool("useXInput", value);
-    emit(UseXInputState(value));
+  set useSdlGamepad(bool value) {
+    _prefs.setBool("useSdlGamepad", value);
+    emit(UseSdlGamepadState(value));
   }
 
   bool get useDeviceWebsocketServer => _prefs.getBool("useDeviceWebsocketServer")!;
@@ -580,14 +576,14 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       userDeviceConfigJson: userDeviceConfigFile,
       userDeviceConfigPath: IntifacePaths.userDeviceConfigFile.path,
       websocketListenAddress:
-          "${websocketServerAllInterfaces ? "0.0.0.0" : "127.0.0.1"}:${websocketServerPort}",
+          "${websocketServerAllInterfaces ? "0.0.0.0" : "127.0.0.1"}:$websocketServerPort",
       frontendInProcessChannel: isMobile(),
       maxPingTime: serverMaxPingTime,
       useBluetoothLe: useBluetoothLE,
       useSerialPort: isDesktop() ? useSerialPort : false,
       useLovenseDongleSerial: isDesktop() ? useLovenseSerialDongle : false,
       useLovenseDongleHid: isDesktop() ? useLovenseHIDDongle : false,
-      useXinput: isDesktop() ? useXInput : false,
+      useSdlGamepad: isDesktop() ? useSdlGamepad : false,
       useLovenseConnect: isDesktop() ? useLovenseConnectService : false,
       useDeviceWebsocketServer: useDeviceWebsocketServer,
       useSimulatedDevices: useSimulatedDevices,

@@ -19,6 +19,7 @@ void stubConfigurationCubit(
   bool checkForUpdateOnStart = false,
   bool useSimulatedDevices = false,
   bool useBluetoothLE = true,
+  bool useSdlGamepad = false,
   bool useSerialPort = false,
   bool useProcessEngine = false,
   bool useDeviceWebsocketServer = false,
@@ -57,6 +58,7 @@ void stubConfigurationCubit(
   when(() => mock.checkForUpdateOnStart).thenReturn(checkForUpdateOnStart);
   when(() => mock.useSimulatedDevices).thenReturn(useSimulatedDevices);
   when(() => mock.useBluetoothLE).thenReturn(useBluetoothLE);
+  when(() => mock.useSdlGamepad).thenReturn(useSdlGamepad);
   when(() => mock.useSerialPort).thenReturn(useSerialPort);
   when(() => mock.useProcessEngine).thenReturn(useProcessEngine);
   when(
