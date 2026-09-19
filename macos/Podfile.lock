@@ -71,7 +71,7 @@ SPEC CHECKSUMS:
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   network_info_plus: 21d1cd6a015ccb2fdff06a1fbfa88d54b4e92f61
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
-  rust_lib_intiface_central: 022999145d0fd06423075656b771a72399774216
+  rust_lib_intiface_central: fded49dc966c9d7840562cb7ae66b0f3ad7e6d1b
   screen_retriever_macos: c5508cc3c66ff0d4db650480cf0ab691e220d933
   Sentry: 5321d74bdd28d6f6f8beaa1ca06f1fdc746bff49
   sentry_flutter: 01a996130a18996b59600c51e68b0e6364cde8b3

@@ -3196,6 +3196,7 @@ dependencies = [
  "log-panics",
  "once_cell",
  "parking_lot",
+ "sdl3-sys",
  "sentry",
  "serde",
  "serde_json",

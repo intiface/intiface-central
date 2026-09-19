@@ -46,6 +46,11 @@ crossbeam-channel = "0.5.17"
 parking_lot = "0.12"
 uuid = "1.26.1"
 
+# SDL's bundled hidapi collides with the hidapi crate's Darwin objects
+# (lovense dongle manager) at final link; keep only one hidapi per platform.
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+sdl3-sys = { version = "0.7.1", features = ["no-sdl-hidapi"] }
+
 [target.'cfg(target_os = "android")'.dependencies]
 # THESE VERSIONS ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.

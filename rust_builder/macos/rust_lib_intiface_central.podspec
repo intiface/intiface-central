@@ -19,7 +19,10 @@ A new Flutter FFI plugin project.
   # `../src/*` so that the C sources can be shared among all target platforms.
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
-  s.framework        = 'CoreBluetooth'
+  s.frameworks = 'CoreBluetooth', 'GameController', 'CoreHaptics'
+  # ForceFeedback is deprecated and absent from the arm64 SDK; SDL's haptic
+  # backend references it only from x86_64 objects, so link it weakly.
+  s.weak_frameworks = 'ForceFeedback'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.11'
