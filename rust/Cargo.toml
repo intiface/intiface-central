@@ -17,7 +17,7 @@ flutter_rust_bridge = { version = "=2.12.0", features = ["uuid"] }
 buttplug_core = "11.0.1"
 buttplug_server = "12.0.0"
 buttplug_server_device_config = "12.0.0"
-intiface-engine = "5.0.0"
+intiface-engine = "5.0.1"
 #buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
 #buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
 #buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }

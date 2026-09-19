@@ -477,7 +477,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_client_in_process"
-version = "12.0.0"
+version = "12.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42eb298ab0fa66ca05840a55b7af05d5bbef943de53c2fa4ddc52b1b880458f8"
 dependencies = [
  "buttplug_client",
  "buttplug_core",
@@ -633,7 +635,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_lovense_dongle"
-version = "12.0.0"
+version = "12.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31248945855c6f0db5f30437d835cefcabb19a3dd91f1829d1f4ae93d86b2687"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -656,7 +660,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_sdl_gamepad"
-version = "12.0.0"
+version = "12.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24cfc97c4be8c205bf9466a07c0647c8e952219b3232ae9e0b4dacb44d88d628"
 dependencies = [
  "async-trait",
  "buttplug_core",
@@ -1904,7 +1910,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "5.0.0"
+version = "5.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2296f599bdffcf82944c560b4369871edee9d5352f894191f24f1a552c9d335"
 dependencies = [
  "anyhow",
  "argh",
