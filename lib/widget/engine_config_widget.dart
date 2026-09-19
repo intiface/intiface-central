@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter/services.dart';
@@ -238,25 +240,32 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
           },
           title: _settingsText("Lovense Connect Service (DEPRECATED)"),
         ),
-        SettingsTile.switchTile(
-          enabled: !engineIsRunning,
-          initialValue: cubit.useLovenseHIDDongle,
-          onToggle: (value) {
-            cubit.useLovenseHIDDongle = value;
-            if (value) {
-              _showDeprecationDialog(
-                context,
-                "Lovense USB Dongle Deprecated",
-                "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
-                "https://intiface.com/docs/intiface-central/brands/lovense/",
-              );
-            }
-          },
-          title: _settingsText(
-            "Lovense USB Dongle (HID/White Circuit Board) (DEPRECATED)",
-          ),
-        ),
       ]);
+      // The Lovense HID dongle manager is unavailable on macOS; the engine
+      // gates it out because SDL's bundled hidapi collides with the hidapi
+      // crate there.
+      if (!Platform.isMacOS) {
+        deviceSettings.add(
+          SettingsTile.switchTile(
+            enabled: !engineIsRunning,
+            initialValue: cubit.useLovenseHIDDongle,
+            onToggle: (value) {
+              cubit.useLovenseHIDDongle = value;
+              if (value) {
+                _showDeprecationDialog(
+                  context,
+                  "Lovense USB Dongle Deprecated",
+                  "The Lovense USB Dongle device managers are deprecated and will be removed in the next version of Intiface Central.",
+                  "https://intiface.com/docs/intiface-central/brands/lovense/",
+                );
+              }
+            },
+            title: _settingsText(
+              "Lovense USB Dongle (HID/White Circuit Board) (DEPRECATED)",
+            ),
+          ),
+        );
+      }
     }
 
     deviceSettings.add(
