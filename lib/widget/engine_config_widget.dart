@@ -228,12 +228,6 @@ class _EngineConfigWidgetState extends State<EngineConfigWidget> {
       deviceSettings.addAll([
         SettingsTile.switchTile(
           enabled: !engineIsRunning,
-          initialValue: cubit.useHID,
-          onToggle: (value) => cubit.useHID = value,
-          title: _settingsText("HID Devices (Joycon, etc...)"),
-        ),
-        SettingsTile.switchTile(
-          enabled: !engineIsRunning,
           initialValue: cubit.useLovenseConnectService,
           onToggle: (value) {
             cubit.useLovenseConnectService = value;

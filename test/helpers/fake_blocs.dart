@@ -20,7 +20,6 @@ void stubConfigurationCubit(
   bool useSimulatedDevices = false,
   bool useBluetoothLE = true,
   bool useSerialPort = false,
-  bool useHID = true,
   bool useProcessEngine = false,
   bool useDeviceWebsocketServer = false,
   bool websocketServerAllInterfaces = false,
@@ -59,7 +58,6 @@ void stubConfigurationCubit(
   when(() => mock.useSimulatedDevices).thenReturn(useSimulatedDevices);
   when(() => mock.useBluetoothLE).thenReturn(useBluetoothLE);
   when(() => mock.useSerialPort).thenReturn(useSerialPort);
-  when(() => mock.useHID).thenReturn(useHID);
   when(() => mock.useProcessEngine).thenReturn(useProcessEngine);
   when(
     () => mock.useDeviceWebsocketServer,

@@ -254,7 +254,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
     useDeviceWebsocketServer = _prefs.getBool("useDeviceWebsocketServer") ?? false;
     useSimulatedDevices = _prefs.getBool("useSimulatedDevices") ?? true;
     useSerialPort = _prefs.getBool("useSerialPort") ?? false;
-    useHID = _prefs.getBool("useHID") ?? false;
     useLovenseHIDDongle = _prefs.getBool("useLovenseHIDDongle") ?? false;
     useLovenseSerialDongle = _prefs.getBool("useLovenseSerialDongle") ?? false;
     hasAcknowledgedLovenseConnectDeprecation = _prefs.getBool("hasAcknowledgedLovenseConnectDeprecation") ?? false;
@@ -403,13 +402,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
   set useSerialPort(bool value) {
     _prefs.setBool("useSerialPort", value);
     emit(UseSerialPortState(value));
-  }
-
-  bool get useHID => _prefs.getBool("useHID")!;
-
-  set useHID(bool value) {
-    _prefs.setBool("useHID", value);
-    emit(UseHIDState(value));
   }
 
   bool get useLovenseHIDDongle => _prefs.getBool("useLovenseHIDDongle")!;
@@ -593,7 +585,6 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       maxPingTime: serverMaxPingTime,
       useBluetoothLe: useBluetoothLE,
       useSerialPort: isDesktop() ? useSerialPort : false,
-      useHid: isDesktop() ? useHID : false,
       useLovenseDongleSerial: isDesktop() ? useLovenseSerialDongle : false,
       useLovenseDongleHid: isDesktop() ? useLovenseHIDDongle : false,
       useXinput: isDesktop() ? useXInput : false,
