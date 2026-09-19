@@ -579,8 +579,8 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       deviceConfigJson: deviceConfigFile,
       userDeviceConfigJson: userDeviceConfigFile,
       userDeviceConfigPath: IntifacePaths.userDeviceConfigFile.path,
-      websocketUseAllInterfaces: websocketServerAllInterfaces,
-      websocketPort: websocketServerPort,
+      websocketListenAddress:
+          "${websocketServerAllInterfaces ? "0.0.0.0" : "127.0.0.1"}:${websocketServerPort}",
       frontendInProcessChannel: isMobile(),
       maxPingTime: serverMaxPingTime,
       useBluetoothLe: useBluetoothLE,
