@@ -51,6 +51,23 @@ uuid = "1.26.1"
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 jni = "0.22.4"
 
+# Local buttplug development tree. Manifest-level patches (unlike the
+# .cargo/config.toml variety) apply no matter where the build is invoked
+# from — Xcode's iOS builds run cargo from DerivedData, outside the repo.
+[patch.crates-io]
+buttplug_client = { path = "../../buttplug/crates/buttplug_client" }
+buttplug_client_in_process = { path = "../../buttplug/crates/buttplug_client_in_process" }
+buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
+buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
+buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
+buttplug_server_hwmgr_btleplug = { path = "../../buttplug/crates/buttplug_server_hwmgr_btleplug" }
+buttplug_server_hwmgr_lovense_connect = { path = "../../buttplug/crates/buttplug_server_hwmgr_lovense_connect" }
+buttplug_server_hwmgr_lovense_dongle = { path = "../../buttplug/crates/buttplug_server_hwmgr_lovense_dongle" }
+buttplug_server_hwmgr_sdl_gamepad = { path = "../../buttplug/crates/buttplug_server_hwmgr_sdl_gamepad" }
+buttplug_server_hwmgr_serial = { path = "../../buttplug/crates/buttplug_server_hwmgr_serial" }
+buttplug_server_hwmgr_websocket = { path = "../../buttplug/crates/buttplug_server_hwmgr_websocket" }
+buttplug_transport_websocket_tungstenite = { path = "../../buttplug/crates/buttplug_transport_websocket_tungstenite" }
+intiface-engine = { path = "../../buttplug/crates/intiface_engine" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
