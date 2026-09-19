@@ -1,27 +1,20 @@
 use crate::frb_generated::StreamSink;
-use jni::objects::GlobalRef;
-use jni::{AttachGuard, JNIEnv, JavaVM};
+use jni::objects::{Global, JObject};
+use jni::{jni_sig, jni_str, JavaVM};
 use once_cell::sync::OnceCell;
-use std::cell::RefCell;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 
 use crate::mobile_init::MobileInitError;
 
-static CLASS_LOADER: OnceCell<GlobalRef> = OnceCell::new();
+static CLASS_LOADER: OnceCell<Global<JObject<'static>>> = OnceCell::new();
 pub static JAVAVM: OnceCell<JavaVM> = OnceCell::new();
-
-std::thread_local! {
-  static JNI_ENV: RefCell<Option<AttachGuard<'static>>> = RefCell::new(None);
-}
 
 pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, MobileInitError> {
   let vm = JAVAVM.get().ok_or(MobileInitError::JavaVM)?;
-  let env = vm.attach_current_thread().unwrap();
-
   // We create runtimes multiple times. Only run our loader setup once.
   if CLASS_LOADER.get().is_none() {
-    setup_class_loader(&env).unwrap();
+    setup_class_loader(vm)?;
   }
   let runtime = {
     tokio::runtime::Builder::new_multi_thread()
@@ -31,36 +24,30 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, MobileInitError>
         let id = ATOMIC_ID.fetch_add(1, Ordering::SeqCst);
         format!("intiface-thread-{}", id)
       })
-      .on_thread_stop(move || {
-        JNI_ENV.with(|f| *f.borrow_mut() = None);
-      })
       .on_thread_start(move || {
-        // We now need to call the following code block via JNI calls. God help us.
-        //
-        //  java.lang.Thread.currentThread().setContextClassLoader(
-        //    java.lang.ClassLoader.getSystemClassLoader()
-        //  );
+        // Give each tokio worker thread the app's context class loader so
+        // JNI class lookups work from runtime threads. jni 0.22's
+        // attach_current_thread attaches the thread permanently by default;
+        // the closure only scopes the JNI calls.
         let vm = JAVAVM.get().unwrap();
-        let env = vm.attach_current_thread().unwrap();
-        let thread = env
-          .call_static_method(
-            "java/lang/Thread",
-            "currentThread",
-            "()Ljava/lang/Thread;",
-            &[],
-          )
-          .unwrap()
-          .l()
-          .unwrap();
-        env
-          .call_method(
-            thread,
-            "setContextClassLoader",
-            "(Ljava/lang/ClassLoader;)V",
+        vm.attach_current_thread(|env| {
+          let thread = env
+            .call_static_method(
+              jni_str!("java/lang/Thread"),
+              jni_str!("currentThread"),
+              jni_sig!("()Ljava/lang/Thread;"),
+              &[],
+            )?
+            .l()?;
+          env.call_method(
+            &thread,
+            jni_str!("setContextClassLoader"),
+            jni_sig!("(Ljava/lang/ClassLoader;)V"),
             &[CLASS_LOADER.get().unwrap().as_obj().into()],
-          )
-          .unwrap();
-        JNI_ENV.with(|f| *f.borrow_mut() = Some(env));
+          )?;
+          Ok::<_, jni::errors::Error>(())
+        })
+        .unwrap();
       })
       .build()
       .unwrap()
@@ -68,26 +55,31 @@ pub fn create_runtime(_: StreamSink<String>) -> Result<Runtime, MobileInitError>
   Ok(runtime)
 }
 
-fn setup_class_loader(env: &JNIEnv) -> Result<(), MobileInitError> {
-  let thread = env
-    .call_static_method(
-      "java/lang/Thread",
-      "currentThread",
-      "()Ljava/lang/Thread;",
-      &[],
-    )?
-    .l()?;
-  let class_loader = env
-    .call_method(
-      thread,
-      "getContextClassLoader",
-      "()Ljava/lang/ClassLoader;",
-      &[],
-    )?
-    .l()?;
+fn setup_class_loader(vm: &JavaVM) -> Result<(), MobileInitError> {
+  let class_loader: Global<JObject<'static>> = vm
+    .attach_current_thread(|env| -> Result<Global<JObject<'static>>, jni::errors::Error> {
+      let thread = env
+        .call_static_method(
+          jni_str!("java/lang/Thread"),
+          jni_str!("currentThread"),
+          jni_sig!("()Ljava/lang/Thread;"),
+          &[],
+        )?
+        .l()?;
+      let class_loader = env
+        .call_method(
+          &thread,
+          jni_str!("getContextClassLoader"),
+          jni_sig!("()Ljava/lang/ClassLoader;"),
+          &[],
+        )?
+        .l()?;
+      Ok(env.new_global_ref(class_loader)?)
+    })
+    .map_err(MobileInitError::Jni)?;
 
   CLASS_LOADER
-    .set(env.new_global_ref(class_loader)?)
+    .set(class_loader)
     .map_err(|_| MobileInitError::ClassLoader)
 }
 
@@ -96,8 +88,10 @@ fn setup_class_loader(env: &JNIEnv) -> Result<(), MobileInitError> {
 #[cfg(target_os = "android")]
 #[unsafe(no_mangle)]
 pub extern "C" fn JNI_OnLoad(vm: jni::JavaVM, _res: *const std::os::raw::c_void) -> jni::sys::jint {
-  let env = vm.get_env().unwrap();
-  btleplug::platform::init(&env).unwrap();
+  vm.attach_current_thread(|env| {
+    btleplug::platform::init(env).map_err(|_| jni::errors::Error::JavaException)
+  })
+  .unwrap();
   let _ = JAVAVM.set(vm);
-  jni::JNIVersion::V6.into()
+  jni::JNIVersion::V1_6.into()
 }
