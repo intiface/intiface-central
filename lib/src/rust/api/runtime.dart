@@ -34,24 +34,22 @@ class EngineOptionsExternal {
   final String? userDeviceConfigJson;
   final String? userDeviceConfigPath;
   final String serverName;
-  final bool websocketUseAllInterfaces;
-  final int? websocketPort;
+  final String? websocketListenAddress;
+  final String? websocketClientAddress;
   final int? frontendWebsocketPort;
   final bool frontendInProcessChannel;
   final int maxPingTime;
   final bool useBluetoothLe;
   final bool useSerialPort;
-  final bool useHid;
   final bool useLovenseDongleSerial;
   final bool useLovenseDongleHid;
-  final bool useXinput;
+  final bool useSdlGamepad;
   final bool useLovenseConnect;
   final bool useDeviceWebsocketServer;
   final bool useSimulatedDevices;
   final int? deviceWebsocketServerPort;
   final bool crashMainThread;
   final bool crashTaskThread;
-  final String? websocketClientAddress;
   final bool broadcastServerMdns;
   final String? mdnsSuffix;
   final bool repeaterMode;
@@ -65,24 +63,22 @@ class EngineOptionsExternal {
     this.userDeviceConfigJson,
     this.userDeviceConfigPath,
     required this.serverName,
-    required this.websocketUseAllInterfaces,
-    this.websocketPort,
+    this.websocketListenAddress,
+    this.websocketClientAddress,
     this.frontendWebsocketPort,
     required this.frontendInProcessChannel,
     required this.maxPingTime,
     required this.useBluetoothLe,
     required this.useSerialPort,
-    required this.useHid,
     required this.useLovenseDongleSerial,
     required this.useLovenseDongleHid,
-    required this.useXinput,
+    required this.useSdlGamepad,
     required this.useLovenseConnect,
     required this.useDeviceWebsocketServer,
     required this.useSimulatedDevices,
     this.deviceWebsocketServerPort,
     required this.crashMainThread,
     required this.crashTaskThread,
-    this.websocketClientAddress,
     required this.broadcastServerMdns,
     this.mdnsSuffix,
     required this.repeaterMode,
@@ -98,24 +94,22 @@ class EngineOptionsExternal {
       userDeviceConfigJson.hashCode ^
       userDeviceConfigPath.hashCode ^
       serverName.hashCode ^
-      websocketUseAllInterfaces.hashCode ^
-      websocketPort.hashCode ^
+      websocketListenAddress.hashCode ^
+      websocketClientAddress.hashCode ^
       frontendWebsocketPort.hashCode ^
       frontendInProcessChannel.hashCode ^
       maxPingTime.hashCode ^
       useBluetoothLe.hashCode ^
       useSerialPort.hashCode ^
-      useHid.hashCode ^
       useLovenseDongleSerial.hashCode ^
       useLovenseDongleHid.hashCode ^
-      useXinput.hashCode ^
+      useSdlGamepad.hashCode ^
       useLovenseConnect.hashCode ^
       useDeviceWebsocketServer.hashCode ^
       useSimulatedDevices.hashCode ^
       deviceWebsocketServerPort.hashCode ^
       crashMainThread.hashCode ^
       crashTaskThread.hashCode ^
-      websocketClientAddress.hashCode ^
       broadcastServerMdns.hashCode ^
       mdnsSuffix.hashCode ^
       repeaterMode.hashCode ^
@@ -133,24 +127,22 @@ class EngineOptionsExternal {
           userDeviceConfigJson == other.userDeviceConfigJson &&
           userDeviceConfigPath == other.userDeviceConfigPath &&
           serverName == other.serverName &&
-          websocketUseAllInterfaces == other.websocketUseAllInterfaces &&
-          websocketPort == other.websocketPort &&
+          websocketListenAddress == other.websocketListenAddress &&
+          websocketClientAddress == other.websocketClientAddress &&
           frontendWebsocketPort == other.frontendWebsocketPort &&
           frontendInProcessChannel == other.frontendInProcessChannel &&
           maxPingTime == other.maxPingTime &&
           useBluetoothLe == other.useBluetoothLe &&
           useSerialPort == other.useSerialPort &&
-          useHid == other.useHid &&
           useLovenseDongleSerial == other.useLovenseDongleSerial &&
           useLovenseDongleHid == other.useLovenseDongleHid &&
-          useXinput == other.useXinput &&
+          useSdlGamepad == other.useSdlGamepad &&
           useLovenseConnect == other.useLovenseConnect &&
           useDeviceWebsocketServer == other.useDeviceWebsocketServer &&
           useSimulatedDevices == other.useSimulatedDevices &&
           deviceWebsocketServerPort == other.deviceWebsocketServerPort &&
           crashMainThread == other.crashMainThread &&
           crashTaskThread == other.crashTaskThread &&
-          websocketClientAddress == other.websocketClientAddress &&
           broadcastServerMdns == other.broadcastServerMdns &&
           mdnsSuffix == other.mdnsSuffix &&
           repeaterMode == other.repeaterMode &&

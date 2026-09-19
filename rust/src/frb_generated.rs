@@ -3039,24 +3039,22 @@ const _: fn() = || {
   let _: Option<String> = EngineOptionsExternal.user_device_config_json;
   let _: Option<String> = EngineOptionsExternal.user_device_config_path;
   let _: String = EngineOptionsExternal.server_name;
-  let _: bool = EngineOptionsExternal.websocket_use_all_interfaces;
-  let _: Option<u16> = EngineOptionsExternal.websocket_port;
+  let _: Option<String> = EngineOptionsExternal.websocket_listen_address;
+  let _: Option<String> = EngineOptionsExternal.websocket_client_address;
   let _: Option<u16> = EngineOptionsExternal.frontend_websocket_port;
   let _: bool = EngineOptionsExternal.frontend_in_process_channel;
   let _: u32 = EngineOptionsExternal.max_ping_time;
   let _: bool = EngineOptionsExternal.use_bluetooth_le;
   let _: bool = EngineOptionsExternal.use_serial_port;
-  let _: bool = EngineOptionsExternal.use_hid;
   let _: bool = EngineOptionsExternal.use_lovense_dongle_serial;
   let _: bool = EngineOptionsExternal.use_lovense_dongle_hid;
-  let _: bool = EngineOptionsExternal.use_xinput;
+  let _: bool = EngineOptionsExternal.use_sdl_gamepad;
   let _: bool = EngineOptionsExternal.use_lovense_connect;
   let _: bool = EngineOptionsExternal.use_device_websocket_server;
   let _: bool = EngineOptionsExternal.use_simulated_devices;
   let _: Option<u16> = EngineOptionsExternal.device_websocket_server_port;
   let _: bool = EngineOptionsExternal.crash_main_thread;
   let _: bool = EngineOptionsExternal.crash_task_thread;
-  let _: Option<String> = EngineOptionsExternal.websocket_client_address;
   let _: bool = EngineOptionsExternal.broadcast_server_mdns;
   let _: Option<String> = EngineOptionsExternal.mdns_suffix;
   let _: bool = EngineOptionsExternal.repeater_mode;
@@ -3307,24 +3305,22 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
     let mut var_userDeviceConfigJson = <Option<String>>::sse_decode(deserializer);
     let mut var_userDeviceConfigPath = <Option<String>>::sse_decode(deserializer);
     let mut var_serverName = <String>::sse_decode(deserializer);
-    let mut var_websocketUseAllInterfaces = <bool>::sse_decode(deserializer);
-    let mut var_websocketPort = <Option<u16>>::sse_decode(deserializer);
+    let mut var_websocketListenAddress = <Option<String>>::sse_decode(deserializer);
+    let mut var_websocketClientAddress = <Option<String>>::sse_decode(deserializer);
     let mut var_frontendWebsocketPort = <Option<u16>>::sse_decode(deserializer);
     let mut var_frontendInProcessChannel = <bool>::sse_decode(deserializer);
     let mut var_maxPingTime = <u32>::sse_decode(deserializer);
     let mut var_useBluetoothLe = <bool>::sse_decode(deserializer);
     let mut var_useSerialPort = <bool>::sse_decode(deserializer);
-    let mut var_useHid = <bool>::sse_decode(deserializer);
     let mut var_useLovenseDongleSerial = <bool>::sse_decode(deserializer);
     let mut var_useLovenseDongleHid = <bool>::sse_decode(deserializer);
-    let mut var_useXinput = <bool>::sse_decode(deserializer);
+    let mut var_useSdlGamepad = <bool>::sse_decode(deserializer);
     let mut var_useLovenseConnect = <bool>::sse_decode(deserializer);
     let mut var_useDeviceWebsocketServer = <bool>::sse_decode(deserializer);
     let mut var_useSimulatedDevices = <bool>::sse_decode(deserializer);
     let mut var_deviceWebsocketServerPort = <Option<u16>>::sse_decode(deserializer);
     let mut var_crashMainThread = <bool>::sse_decode(deserializer);
     let mut var_crashTaskThread = <bool>::sse_decode(deserializer);
-    let mut var_websocketClientAddress = <Option<String>>::sse_decode(deserializer);
     let mut var_broadcastServerMdns = <bool>::sse_decode(deserializer);
     let mut var_mdnsSuffix = <Option<String>>::sse_decode(deserializer);
     let mut var_repeaterMode = <bool>::sse_decode(deserializer);
@@ -3337,24 +3333,22 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
       user_device_config_json: var_userDeviceConfigJson,
       user_device_config_path: var_userDeviceConfigPath,
       server_name: var_serverName,
-      websocket_use_all_interfaces: var_websocketUseAllInterfaces,
-      websocket_port: var_websocketPort,
+      websocket_listen_address: var_websocketListenAddress,
+      websocket_client_address: var_websocketClientAddress,
       frontend_websocket_port: var_frontendWebsocketPort,
       frontend_in_process_channel: var_frontendInProcessChannel,
       max_ping_time: var_maxPingTime,
       use_bluetooth_le: var_useBluetoothLe,
       use_serial_port: var_useSerialPort,
-      use_hid: var_useHid,
       use_lovense_dongle_serial: var_useLovenseDongleSerial,
       use_lovense_dongle_hid: var_useLovenseDongleHid,
-      use_xinput: var_useXinput,
+      use_sdl_gamepad: var_useSdlGamepad,
       use_lovense_connect: var_useLovenseConnect,
       use_device_websocket_server: var_useDeviceWebsocketServer,
       use_simulated_devices: var_useSimulatedDevices,
       device_websocket_server_port: var_deviceWebsocketServerPort,
       crash_main_thread: var_crashMainThread,
       crash_task_thread: var_crashTaskThread,
-      websocket_client_address: var_websocketClientAddress,
       broadcast_server_mdns: var_broadcastServerMdns,
       mdns_suffix: var_mdnsSuffix,
       repeater_mode: var_repeaterMode,
@@ -4113,12 +4107,8 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
       self.0.user_device_config_json.into_into_dart().into_dart(),
       self.0.user_device_config_path.into_into_dart().into_dart(),
       self.0.server_name.into_into_dart().into_dart(),
-      self
-        .0
-        .websocket_use_all_interfaces
-        .into_into_dart()
-        .into_dart(),
-      self.0.websocket_port.into_into_dart().into_dart(),
+      self.0.websocket_listen_address.into_into_dart().into_dart(),
+      self.0.websocket_client_address.into_into_dart().into_dart(),
       self.0.frontend_websocket_port.into_into_dart().into_dart(),
       self
         .0
@@ -4128,14 +4118,13 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
       self.0.max_ping_time.into_into_dart().into_dart(),
       self.0.use_bluetooth_le.into_into_dart().into_dart(),
       self.0.use_serial_port.into_into_dart().into_dart(),
-      self.0.use_hid.into_into_dart().into_dart(),
       self
         .0
         .use_lovense_dongle_serial
         .into_into_dart()
         .into_dart(),
       self.0.use_lovense_dongle_hid.into_into_dart().into_dart(),
-      self.0.use_xinput.into_into_dart().into_dart(),
+      self.0.use_sdl_gamepad.into_into_dart().into_dart(),
       self.0.use_lovense_connect.into_into_dart().into_dart(),
       self
         .0
@@ -4150,7 +4139,6 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
         .into_dart(),
       self.0.crash_main_thread.into_into_dart().into_dart(),
       self.0.crash_task_thread.into_into_dart().into_dart(),
-      self.0.websocket_client_address.into_into_dart().into_dart(),
       self.0.broadcast_server_mdns.into_into_dart().into_dart(),
       self.0.mdns_suffix.into_into_dart().into_dart(),
       self.0.repeater_mode.into_into_dart().into_dart(),
@@ -4617,24 +4605,22 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
     <Option<String>>::sse_encode(self.user_device_config_json, serializer);
     <Option<String>>::sse_encode(self.user_device_config_path, serializer);
     <String>::sse_encode(self.server_name, serializer);
-    <bool>::sse_encode(self.websocket_use_all_interfaces, serializer);
-    <Option<u16>>::sse_encode(self.websocket_port, serializer);
+    <Option<String>>::sse_encode(self.websocket_listen_address, serializer);
+    <Option<String>>::sse_encode(self.websocket_client_address, serializer);
     <Option<u16>>::sse_encode(self.frontend_websocket_port, serializer);
     <bool>::sse_encode(self.frontend_in_process_channel, serializer);
     <u32>::sse_encode(self.max_ping_time, serializer);
     <bool>::sse_encode(self.use_bluetooth_le, serializer);
     <bool>::sse_encode(self.use_serial_port, serializer);
-    <bool>::sse_encode(self.use_hid, serializer);
     <bool>::sse_encode(self.use_lovense_dongle_serial, serializer);
     <bool>::sse_encode(self.use_lovense_dongle_hid, serializer);
-    <bool>::sse_encode(self.use_xinput, serializer);
+    <bool>::sse_encode(self.use_sdl_gamepad, serializer);
     <bool>::sse_encode(self.use_lovense_connect, serializer);
     <bool>::sse_encode(self.use_device_websocket_server, serializer);
     <bool>::sse_encode(self.use_simulated_devices, serializer);
     <Option<u16>>::sse_encode(self.device_websocket_server_port, serializer);
     <bool>::sse_encode(self.crash_main_thread, serializer);
     <bool>::sse_encode(self.crash_task_thread, serializer);
-    <Option<String>>::sse_encode(self.websocket_client_address, serializer);
     <bool>::sse_encode(self.broadcast_server_mdns, serializer);
     <Option<String>>::sse_encode(self.mdns_suffix, serializer);
     <bool>::sse_encode(self.repeater_mode, serializer);

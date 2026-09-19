@@ -3354,38 +3354,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EngineOptionsExternal dco_decode_engine_options_external(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 29)
-      throw Exception('unexpected arr length: expect 29 but see ${arr.length}');
+    if (arr.length != 27)
+      throw Exception('unexpected arr length: expect 27 but see ${arr.length}');
     return EngineOptionsExternal(
       deviceConfigJson: dco_decode_opt_String(arr[0]),
       userDeviceConfigJson: dco_decode_opt_String(arr[1]),
       userDeviceConfigPath: dco_decode_opt_String(arr[2]),
       serverName: dco_decode_String(arr[3]),
-      websocketUseAllInterfaces: dco_decode_bool(arr[4]),
-      websocketPort: dco_decode_opt_box_autoadd_u_16(arr[5]),
+      websocketListenAddress: dco_decode_opt_String(arr[4]),
+      websocketClientAddress: dco_decode_opt_String(arr[5]),
       frontendWebsocketPort: dco_decode_opt_box_autoadd_u_16(arr[6]),
       frontendInProcessChannel: dco_decode_bool(arr[7]),
       maxPingTime: dco_decode_u_32(arr[8]),
       useBluetoothLe: dco_decode_bool(arr[9]),
       useSerialPort: dco_decode_bool(arr[10]),
-      useHid: dco_decode_bool(arr[11]),
-      useLovenseDongleSerial: dco_decode_bool(arr[12]),
-      useLovenseDongleHid: dco_decode_bool(arr[13]),
-      useXinput: dco_decode_bool(arr[14]),
-      useLovenseConnect: dco_decode_bool(arr[15]),
-      useDeviceWebsocketServer: dco_decode_bool(arr[16]),
-      useSimulatedDevices: dco_decode_bool(arr[17]),
-      deviceWebsocketServerPort: dco_decode_opt_box_autoadd_u_16(arr[18]),
-      crashMainThread: dco_decode_bool(arr[19]),
-      crashTaskThread: dco_decode_bool(arr[20]),
-      websocketClientAddress: dco_decode_opt_String(arr[21]),
-      broadcastServerMdns: dco_decode_bool(arr[22]),
-      mdnsSuffix: dco_decode_opt_String(arr[23]),
-      repeaterMode: dco_decode_bool(arr[24]),
-      repeaterLocalPort: dco_decode_opt_box_autoadd_u_16(arr[25]),
-      repeaterRemoteAddress: dco_decode_opt_String(arr[26]),
-      restApiPort: dco_decode_opt_box_autoadd_u_16(arr[27]),
-      emitOutputObservations: dco_decode_bool(arr[28]),
+      useLovenseDongleSerial: dco_decode_bool(arr[11]),
+      useLovenseDongleHid: dco_decode_bool(arr[12]),
+      useSdlGamepad: dco_decode_bool(arr[13]),
+      useLovenseConnect: dco_decode_bool(arr[14]),
+      useDeviceWebsocketServer: dco_decode_bool(arr[15]),
+      useSimulatedDevices: dco_decode_bool(arr[16]),
+      deviceWebsocketServerPort: dco_decode_opt_box_autoadd_u_16(arr[17]),
+      crashMainThread: dco_decode_bool(arr[18]),
+      crashTaskThread: dco_decode_bool(arr[19]),
+      broadcastServerMdns: dco_decode_bool(arr[20]),
+      mdnsSuffix: dco_decode_opt_String(arr[21]),
+      repeaterMode: dco_decode_bool(arr[22]),
+      repeaterLocalPort: dco_decode_opt_box_autoadd_u_16(arr[23]),
+      repeaterRemoteAddress: dco_decode_opt_String(arr[24]),
+      restApiPort: dco_decode_opt_box_autoadd_u_16(arr[25]),
+      emitOutputObservations: dco_decode_bool(arr[26]),
     );
   }
 
@@ -4195,8 +4193,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_userDeviceConfigJson = sse_decode_opt_String(deserializer);
     var var_userDeviceConfigPath = sse_decode_opt_String(deserializer);
     var var_serverName = sse_decode_String(deserializer);
-    var var_websocketUseAllInterfaces = sse_decode_bool(deserializer);
-    var var_websocketPort = sse_decode_opt_box_autoadd_u_16(deserializer);
+    var var_websocketListenAddress = sse_decode_opt_String(deserializer);
+    var var_websocketClientAddress = sse_decode_opt_String(deserializer);
     var var_frontendWebsocketPort = sse_decode_opt_box_autoadd_u_16(
       deserializer,
     );
@@ -4204,10 +4202,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_maxPingTime = sse_decode_u_32(deserializer);
     var var_useBluetoothLe = sse_decode_bool(deserializer);
     var var_useSerialPort = sse_decode_bool(deserializer);
-    var var_useHid = sse_decode_bool(deserializer);
     var var_useLovenseDongleSerial = sse_decode_bool(deserializer);
     var var_useLovenseDongleHid = sse_decode_bool(deserializer);
-    var var_useXinput = sse_decode_bool(deserializer);
+    var var_useSdlGamepad = sse_decode_bool(deserializer);
     var var_useLovenseConnect = sse_decode_bool(deserializer);
     var var_useDeviceWebsocketServer = sse_decode_bool(deserializer);
     var var_useSimulatedDevices = sse_decode_bool(deserializer);
@@ -4216,7 +4213,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
     var var_crashMainThread = sse_decode_bool(deserializer);
     var var_crashTaskThread = sse_decode_bool(deserializer);
-    var var_websocketClientAddress = sse_decode_opt_String(deserializer);
     var var_broadcastServerMdns = sse_decode_bool(deserializer);
     var var_mdnsSuffix = sse_decode_opt_String(deserializer);
     var var_repeaterMode = sse_decode_bool(deserializer);
@@ -4229,24 +4225,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       userDeviceConfigJson: var_userDeviceConfigJson,
       userDeviceConfigPath: var_userDeviceConfigPath,
       serverName: var_serverName,
-      websocketUseAllInterfaces: var_websocketUseAllInterfaces,
-      websocketPort: var_websocketPort,
+      websocketListenAddress: var_websocketListenAddress,
+      websocketClientAddress: var_websocketClientAddress,
       frontendWebsocketPort: var_frontendWebsocketPort,
       frontendInProcessChannel: var_frontendInProcessChannel,
       maxPingTime: var_maxPingTime,
       useBluetoothLe: var_useBluetoothLe,
       useSerialPort: var_useSerialPort,
-      useHid: var_useHid,
       useLovenseDongleSerial: var_useLovenseDongleSerial,
       useLovenseDongleHid: var_useLovenseDongleHid,
-      useXinput: var_useXinput,
+      useSdlGamepad: var_useSdlGamepad,
       useLovenseConnect: var_useLovenseConnect,
       useDeviceWebsocketServer: var_useDeviceWebsocketServer,
       useSimulatedDevices: var_useSimulatedDevices,
       deviceWebsocketServerPort: var_deviceWebsocketServerPort,
       crashMainThread: var_crashMainThread,
       crashTaskThread: var_crashTaskThread,
-      websocketClientAddress: var_websocketClientAddress,
       broadcastServerMdns: var_broadcastServerMdns,
       mdnsSuffix: var_mdnsSuffix,
       repeaterMode: var_repeaterMode,
@@ -5230,24 +5224,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.userDeviceConfigJson, serializer);
     sse_encode_opt_String(self.userDeviceConfigPath, serializer);
     sse_encode_String(self.serverName, serializer);
-    sse_encode_bool(self.websocketUseAllInterfaces, serializer);
-    sse_encode_opt_box_autoadd_u_16(self.websocketPort, serializer);
+    sse_encode_opt_String(self.websocketListenAddress, serializer);
+    sse_encode_opt_String(self.websocketClientAddress, serializer);
     sse_encode_opt_box_autoadd_u_16(self.frontendWebsocketPort, serializer);
     sse_encode_bool(self.frontendInProcessChannel, serializer);
     sse_encode_u_32(self.maxPingTime, serializer);
     sse_encode_bool(self.useBluetoothLe, serializer);
     sse_encode_bool(self.useSerialPort, serializer);
-    sse_encode_bool(self.useHid, serializer);
     sse_encode_bool(self.useLovenseDongleSerial, serializer);
     sse_encode_bool(self.useLovenseDongleHid, serializer);
-    sse_encode_bool(self.useXinput, serializer);
+    sse_encode_bool(self.useSdlGamepad, serializer);
     sse_encode_bool(self.useLovenseConnect, serializer);
     sse_encode_bool(self.useDeviceWebsocketServer, serializer);
     sse_encode_bool(self.useSimulatedDevices, serializer);
     sse_encode_opt_box_autoadd_u_16(self.deviceWebsocketServerPort, serializer);
     sse_encode_bool(self.crashMainThread, serializer);
     sse_encode_bool(self.crashTaskThread, serializer);
-    sse_encode_opt_String(self.websocketClientAddress, serializer);
     sse_encode_bool(self.broadcastServerMdns, serializer);
     sse_encode_opt_String(self.mdnsSuffix, serializer);
     sse_encode_bool(self.repeaterMode, serializer);
