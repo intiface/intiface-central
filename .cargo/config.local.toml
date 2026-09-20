@@ -1,2 +1,0 @@
-# Buttplug patch table moved to rust/Cargo.toml [patch.crates-io]
-# so that Xcode's DerivedData builds (cwd outside the repo) resolve it too.
