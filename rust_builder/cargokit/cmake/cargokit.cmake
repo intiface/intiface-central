@@ -36,6 +36,26 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
         set(CARGOKIT_TARGET_PLATFORM "windows-x64")
     endif()
 
+    # run_build_tool.cmd derives dart from FLUTTER_ROOT. Developer machines
+    # carry it as an environment variable; runner service accounts do not,
+    # and generated_config.cmake sets the cmake variable only inside the
+    # flutter/ child scope, which never reaches plugin scope. Fall back
+    # through the environment, then locate flutter on PATH.
+    if(NOT FLUTTER_ROOT)
+        set(FLUTTER_ROOT "$ENV{FLUTTER_ROOT}")
+    endif()
+    if(NOT FLUTTER_ROOT)
+        find_program(CARGOKIT_FLUTTER_EXECUTABLE NAMES flutter flutter.bat)
+        if(CARGOKIT_FLUTTER_EXECUTABLE)
+            get_filename_component(_CARGOKIT_FLUTTER_BIN_DIR
+                "${CARGOKIT_FLUTTER_EXECUTABLE}" DIRECTORY)
+            get_filename_component(FLUTTER_ROOT
+                "${_CARGOKIT_FLUTTER_BIN_DIR}/.." ABSOLUTE)
+            unset(_CARGOKIT_FLUTTER_BIN_DIR)
+        endif()
+        unset(CARGOKIT_FLUTTER_EXECUTABLE CACHE)
+    endif()
+
     set(CARGOKIT_ENV
         "CARGOKIT_CMAKE=${CMAKE_COMMAND}"
         "CARGOKIT_CONFIGURATION=$<CONFIG>"
@@ -49,7 +69,7 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
     )
 
     if(NOT FLUTTER_ROOT)
-        message(WARNING "Cargokit: FLUTTER_ROOT is not set in cmake scope; build_tool dart resolution will fail")
+        message(WARNING "Cargokit: could not resolve FLUTTER_ROOT; build_tool dart resolution will fail")
     endif()
 
     if (WIN32)
