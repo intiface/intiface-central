@@ -13,6 +13,14 @@ cd /D "%CARGOKIT_TOOL_TEMP_DIR%"
 SET BUILD_TOOL_PKG_DIR=%BASEDIR%build_tool
 SET DART=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart
 
+REM Temporary diagnostics: show what the script actually received.
+echo Cargokit: CARGOKIT_TOOL_TEMP_DIR="%CARGOKIT_TOOL_TEMP_DIR%"
+echo Cargokit: FLUTTER_ROOT="%FLUTTER_ROOT%"
+echo Cargokit: DART="%DART%"
+if not exist "%DART%" (
+    echo Cargokit: dart executable not found at the path above.
+)
+
 set BUILD_TOOL_PKG_DIR_POSIX=%BUILD_TOOL_PKG_DIR:\=/%
 
 (

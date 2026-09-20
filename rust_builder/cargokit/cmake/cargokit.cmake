@@ -48,6 +48,10 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
         "FLUTTER_ROOT=${FLUTTER_ROOT}"
     )
 
+    if(NOT FLUTTER_ROOT)
+        message(WARNING "Cargokit: FLUTTER_ROOT is not set in cmake scope; build_tool dart resolution will fail")
+    endif()
+
     if (WIN32)
         set(SCRIPT_EXTENSION ".cmd")
         set(IMPORT_LIB_EXTENSION ".lib")
