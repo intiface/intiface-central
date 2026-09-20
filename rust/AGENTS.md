@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents when working with code in this repository.
 
 ## Purpose
 
@@ -82,6 +82,8 @@ From Cargo.toml:
 
 Same applies to `jni` and `jni-utils` versions for Android.
 
+`flutter_rust_bridge` must also agree exactly across every surface: the Dart dependency in `pubspec.yaml`, the `=x.y.z` pin in `rust/Cargo.toml`, the installed `flutter_rust_bridge_codegen` binary, and the regenerated bindings. Explicit version checks run during `RustLib.init()` (Dart vs generated) and on first Rust handler use (generated vs Rust); successful compilation alone does not establish compatibility. Move all four together: bump `pubspec.yaml` and `rust/Cargo.toml`, run `flutter pub get` (resolving `pubspec.lock`), `cargo install flutter_rust_bridge_codegen --version <ver>`, then `flutter_rust_bridge_codegen generate`, and let `rust/Cargo.lock` resolve.
+
 ## Global State
 
 Engine state managed via `lazy_static!` globals in `runtime.rs`:
@@ -100,4 +102,4 @@ Rust dependencies resolve from crates.io by default. For local development again
 
 Before committing or running the CI-equivalent dependency graph, run `just deps-crates` to remove the local override and refresh `rust/Cargo.lock` back to crates.io sources.
 
-`api/serial_ports.rs` calls `intiface_engine::available_serial_ports`, which is not in any published `intiface-engine` release yet. Until one ships, this crate only builds under `just deps-local`.
+`api/serial_ports.rs` calls `intiface_engine::available_serial_ports`, which is published as of `intiface-engine` 5.0.1, so this crate builds from crates.io.
