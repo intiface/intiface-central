@@ -45,6 +45,7 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
         "CARGOKIT_TARGET_PLATFORM=${CARGOKIT_TARGET_PLATFORM}"
         "CARGOKIT_TOOL_TEMP_DIR=${CARGOKIT_TEMP_DIR}/tool"
         "CARGOKIT_ROOT_PROJECT_DIR=${CMAKE_SOURCE_DIR}"
+        "FLUTTER_ROOT=${FLUTTER_ROOT}"
     )
 
     if (WIN32)
