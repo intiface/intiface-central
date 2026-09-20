@@ -79,13 +79,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          if ! command -v rustc >/dev/null 2>&1; then
+          export RUSTUP_HOME="$HOME/.rustup"
+          export CARGO_HOME="$HOME/.cargo"
+
+          if [ ! -x "$CARGO_HOME/bin/rustup" ]; then
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
               | sh -s -- -y --profile minimal
           fi
 
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+          export PATH="$CARGO_HOME/bin:$PATH"
 
           rustup update stable
           rustup default stable
@@ -566,17 +569,26 @@ jobs:
 
           exit "$missing"
 
+      - name: Install macOS build dependencies
+        run: |
+          set -euo pipefail
+
+          brew install cmake
+
       - name: Update Rust toolchain
         run: |
           set -euo pipefail
 
-          if ! command -v rustup >/dev/null 2>&1; then
+          export RUSTUP_HOME="$HOME/.rustup"
+          export CARGO_HOME="$HOME/.cargo"
+
+          if [ ! -x "$CARGO_HOME/bin/rustup" ]; then
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
               | sh -s -- -y --profile minimal
           fi
 
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+          export PATH="$CARGO_HOME/bin:$PATH"
 
           rustup update stable
           rustup default stable
@@ -845,17 +857,26 @@ jobs:
 
           exit "$missing"
 
+      - name: Install macOS build dependencies
+        run: |
+          set -euo pipefail
+
+          brew install cmake
+
       - name: Update Rust toolchain
         run: |
           set -euo pipefail
 
-          if ! command -v rustup >/dev/null 2>&1; then
+          export RUSTUP_HOME="$HOME/.rustup"
+          export CARGO_HOME="$HOME/.cargo"
+
+          if [ ! -x "$CARGO_HOME/bin/rustup" ]; then
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
               | sh -s -- -y --profile minimal
           fi
 
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+          export PATH="$CARGO_HOME/bin:$PATH"
 
           rustup update stable
           rustup default stable
@@ -1044,13 +1065,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          if ! command -v rustup >/dev/null 2>&1; then
+          export RUSTUP_HOME="$HOME/.rustup"
+          export CARGO_HOME="$HOME/.cargo"
+
+          if [ ! -x "$CARGO_HOME/bin/rustup" ]; then
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
               | sh -s -- -y --profile minimal
           fi
 
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+          export PATH="$CARGO_HOME/bin:$PATH"
 
           rustup update stable
           rustup default stable
