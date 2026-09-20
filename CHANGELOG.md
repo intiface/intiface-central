@@ -1,3 +1,20 @@
+# v3.2.0 - 2026/09/20 (All Platforms)
+
+## Features
+
+- Added SDL Gamepad Support
+  - Allows gamepad rumble control on win/mac/linux
+  - Removed XInput and Joycon HW Managers
+- Updated Serial Dialog
+  - Sucks less now
+- Raised minimum macOS version to 12.0
+  - Required by the updated Sentry SDK; macOS 11 is no longer supported
+
+## Bugfixes
+
+- Fix macOS, iOS, and Android builds failing to compile after dependency updates (tray_manager 0.7 API change, flutter_foreground_task 11 iOS module layout, flutter_rust_bridge Dart/Rust version skew)
+- Fix engine startup failing with a Flutter/Rust bridge version mismatch by aligning the bridge to 2.13.0 across Dart, Rust, and codegen
+
 # v3.1.1 - 2026/08/02 (All Platforms)
 
 ## Features
