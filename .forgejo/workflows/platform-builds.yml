@@ -243,6 +243,15 @@ jobs:
           rustup update stable
           rustup default stable
 
+      - name: Install Flutter toolchain
+        run: |
+          Remove-Item -Recurse -Force "$env:USERPROFILE\flutter" -ErrorAction SilentlyContinue
+          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$env:USERPROFILE\flutter"
+          Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\flutter\bin"
+          $env:PATH = "$env:USERPROFILE\flutter\bin;$env:PATH"
+          flutter config --no-analytics
+          dart --disable-analytics
+
       - name: Tool versions
         run: |
           git --version
