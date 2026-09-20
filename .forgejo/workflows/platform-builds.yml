@@ -87,6 +87,9 @@ jobs:
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           export PATH="$HOME/.cargo/bin:$PATH"
 
+          rustup update stable
+          rustup default stable
+
           if ! command -v flutter >/dev/null 2>&1; then
             rm -rf "$HOME/flutter"
             git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
@@ -228,6 +231,17 @@ jobs:
             }
             exit 1
           }
+
+      - name: Update Rust toolchain
+        run: |
+          if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
+            Invoke-WebRequest -Uri 'https://win.rustup.rs/x86_64' -OutFile "$env:TEMP\rustup-init.exe"
+            & "$env:TEMP\rustup-init.exe" -y --profile minimal
+          }
+          Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\.cargo\bin"
+          $env:PATH = "$env:USERPROFILE\.cargo\bin;$env:PATH"
+          rustup update stable
+          rustup default stable
 
       - name: Tool versions
         run: |
@@ -543,6 +557,21 @@ jobs:
 
           exit "$missing"
 
+      - name: Update Rust toolchain
+        run: |
+          set -euo pipefail
+
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
+
+          rustup update stable
+          rustup default stable
+
       - name: Tool versions
         run: |
           set -euo pipefail
@@ -794,6 +823,21 @@ jobs:
 
           exit "$missing"
 
+      - name: Update Rust toolchain
+        run: |
+          set -euo pipefail
+
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
+
+          rustup update stable
+          rustup default stable
+
       - name: Tool versions
         run: |
           set -euo pipefail
@@ -960,6 +1004,21 @@ jobs:
           done
 
           exit "$missing"
+
+      - name: Update Rust toolchain
+        run: |
+          set -euo pipefail
+
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
+
+          rustup update stable
+          rustup default stable
 
       - name: Tool versions
         run: |
