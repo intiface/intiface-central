@@ -258,6 +258,10 @@ jobs:
           Remove-Item -Recurse -Force "$env:USERPROFILE\flutter" -ErrorAction SilentlyContinue
           git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$env:USERPROFILE\flutter"
           Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\flutter\bin"
+          # Cargokit's run_build_tool.cmd derives dart from %FLUTTER_ROOT% and
+          # dies with "path not found" when the variable is unset, which it
+          # never is on a dev box but always is under the runner service.
+          Add-Content -Path $env:GITHUB_ENV -Value "FLUTTER_ROOT=$env:USERPROFILE\flutter"
           $env:PATH = "$env:USERPROFILE\flutter\bin;$env:PATH"
           flutter config --no-analytics
           dart --disable-analytics
