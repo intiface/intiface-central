@@ -419,9 +419,9 @@ checksum = "dc0b364ead1874514c8c2855ab558056ebfeb775653e7ae45ff72f28f8f3166c"
 
 [[package]]
 name = "btleplug"
-version = "0.13.1"
+version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a4d4e33a859e1ee58567c86f75e92c298bb08eea6849065d799811dadd96264"
+checksum = "dbd99d9109865e385227c69c27dd97e090834a3c5b2ceb19172a7fcf17312cc7"
 dependencies = [
  "async-trait",
  "bitflags 2.13.2",
@@ -601,9 +601,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_btleplug"
-version = "12.0.0"
+version = "12.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80be25f3a59937b7e5c834bc49402ccfeb9096b96751daf3f9c8cba65e48903a"
+checksum = "e43f4bbf815ff933037dd1844f8b2ac05d08afa289ceaa4404040cc77dbb65b9"
 dependencies = [
  "async-trait",
  "btleplug",
@@ -1928,9 +1928,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "5.0.1"
+version = "5.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2296f599bdffcf82944c560b4369871edee9d5352f894191f24f1a552c9d335"
+checksum = "25fe6d47ae8ed146ea5255cf87eecfcd113a2e765da9f999b8c4cfa52aab83bd"
 dependencies = [
  "anyhow",
  "argh",
