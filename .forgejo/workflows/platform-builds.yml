@@ -199,6 +199,13 @@ jobs:
     runs-on: windows-amd64
     timeout-minutes: 120
 
+    env:
+      # SDL3's CMake/MSBuild bootstrap nests .tlog paths past the MSVC 248
+      # character directory ceiling inside the cargo build tree; disabling
+      # file tracking removes them (and skips incremental up-to-date checks,
+      # which CI builds do not rely on).
+      TrackFileAccess: "false"
+
     defaults:
       run:
         shell: powershell
