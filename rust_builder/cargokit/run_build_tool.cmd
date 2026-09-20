@@ -10,8 +10,12 @@ if not exist "%CARGOKIT_TOOL_TEMP_DIR%" (
 )
 cd /D "%CARGOKIT_TOOL_TEMP_DIR%"
 
+if not exist ".dart_tool" (
+    mkdir ".dart_tool"
+)
+
 SET BUILD_TOOL_PKG_DIR=%BASEDIR%build_tool
-SET DART=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart
+SET "DART=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\dart.exe"
 
 REM Temporary diagnostics: show what the script actually received.
 echo Cargokit: CARGOKIT_TOOL_TEMP_DIR="%CARGOKIT_TOOL_TEMP_DIR%"
@@ -99,3 +103,5 @@ If %ERRORLEVEL% equ 253 (
     "%DART%" compile kernel bin/build_tool_runner.dart
     "%DART%" "%PRECOMPILED%" %*
 )
+
+exit /b %ERRORLEVEL%

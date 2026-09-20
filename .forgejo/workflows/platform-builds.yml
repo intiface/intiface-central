@@ -255,14 +255,21 @@ jobs:
 
       - name: Install Flutter toolchain
         run: |
-          Remove-Item -Recurse -Force "$env:USERPROFILE\flutter" -ErrorAction SilentlyContinue
-          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$env:USERPROFILE\flutter"
-          Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\flutter\bin"
-          # Cargokit's run_build_tool.cmd derives dart from %FLUTTER_ROOT% and
-          # dies with "path not found" when the variable is unset, which it
-          # never is on a dev box but always is under the runner service.
-          Add-Content -Path $env:GITHUB_ENV -Value "FLUTTER_ROOT=$env:USERPROFILE\flutter"
-          $env:PATH = "$env:USERPROFILE\flutter\bin;$env:PATH"
+          # Keep the SDK outside C:\Windows (MSBuild custom steps could not
+          # see it under System32\systemprofile) and outside %USERPROFILE%
+          # (remove-reclone per run raced any overlapping job). Fetch+reset
+          # keeps it on stable tip without deleting a live checkout.
+          $sdk = 'C:\sdk\flutter'
+          if (Test-Path "$sdk\.git") {
+            git -C $sdk fetch --depth 1 origin stable
+            git -C $sdk reset --hard FETCH_HEAD
+          } else {
+            Remove-Item -Recurse -Force $sdk -ErrorAction SilentlyContinue
+            git clone --depth 1 --branch stable https://github.com/flutter/flutter.git $sdk
+          }
+          Add-Content -Path $env:GITHUB_PATH -Value "$sdk\bin"
+          Add-Content -Path $env:GITHUB_ENV -Value "FLUTTER_ROOT=$sdk"
+          $env:PATH = "$sdk\bin;$env:PATH"
           flutter config --no-analytics
           dart --disable-analytics
 
@@ -333,6 +340,9 @@ jobs:
           Get-PSDrive C | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
           flutter config --enable-windows-desktop
           flutter pub get
+          # Set in-process so MSBuild custom steps inherit it regardless of
+          # GITHUB_ENV support in the runner.
+          $env:FLUTTER_ROOT = 'C:\sdk\flutter'
           # The runner wrapper sets ErrorActionPreference=Stop; under Windows
           # PowerShell 5.1 that turns the build's first stderr line (e.g. a
           # compiler warning) into a terminating NativeCommandError.
