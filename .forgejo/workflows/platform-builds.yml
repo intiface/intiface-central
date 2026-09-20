@@ -161,7 +161,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          ZIP="$PWD/intiface-central-linux-amd64.zip"
+          if [ -r /etc/os-release ]; then
+            . /etc/os-release
+            LINUX_DISTRO_TAG="${ID:-linux}-${VERSION_ID:-unknown}"
+          else
+            LINUX_DISTRO_TAG="linux-unknown"
+          fi
+
+          ZIP="$PWD/intiface-central-v${BUILD_NAME}-linux-${LINUX_DISTRO_TAG}-x64.zip"
           rm -f "$ZIP"
 
           cd build/linux/x64/release/bundle
@@ -173,11 +180,13 @@ jobs:
             com.nonpolynomial.intiface_central.metainfo.xml \
             run_intiface_central
 
+          echo "LINUX_ZIP_NAME=${ZIP##*/}" >> "$GITHUB_ENV"
+
       - name: Upload Linux artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: linux-amd64-build
-          path: intiface-central/intiface-central-linux-amd64.zip
+          path: intiface-central/${{ env.LINUX_ZIP_NAME }}
           if-no-files-found: error
 
   windows-amd64:
@@ -246,6 +255,23 @@ jobs:
           }
 
           Write-Host "Inno Setup compiler: $isccPath"
+
+      - name: Derive build version
+        run: |
+          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
+          if (-not $versionLine) {
+            throw "Could not find version in pubspec.yaml"
+          }
+
+          $fullVersion = $versionLine.Matches[0].Groups[1].Value.Trim()
+          $parts = $fullVersion -split '\+', 2
+          $buildName = $parts[0]
+          $buildNumber = if ($parts.Count -gt 1) { $parts[1] } else { "$env:GITHUB_RUN_NUMBER" }
+
+          Add-Content -Path $env:GITHUB_ENV -Value "BUILD_NAME=$buildName"
+          Add-Content -Path $env:GITHUB_ENV -Value "BUILD_NUMBER=$buildNumber"
+          Write-Host "Build name: $buildName"
+          Write-Host "Build number: $buildNumber"
 
       - name: Rust check
         run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
@@ -405,58 +431,31 @@ jobs:
           & $signtool.FullName verify /pa /v $installerPath
           exit $LASTEXITCODE
 
-      - name: Zip Windows artifacts
+      - name: Stage Windows artifacts
         run: |
           $ErrorActionPreference = "Stop"
 
-          $zipPath = Join-Path (Get-Location) "intiface-central-windows-x64.zip"
-          if (Test-Path $zipPath) {
-            Remove-Item -Force $zipPath
-          }
+          Copy-Item "installer\intiface-central-installer.exe" "intiface-central-v$env:BUILD_NAME-win-x64.exe" -Force
+          Copy-Item "build\windows\x64\runner\Release\intiface_central.pdb" "intiface_central.pdb" -Force
 
-          Add-Type -AssemblyName System.IO.Compression
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-          $artifactFiles = @(
-            @{
-              Path = "build\windows\x64\runner\Release\intiface_central.pdb"
-              Entry = "intiface_central.pdb"
-            },
-            @{
-              Path = "installer\intiface-central-installer.exe"
-              Entry = "intiface-central-installer.exe"
-            }
-          )
-
-          $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
-          try {
-            foreach ($artifact in $artifactFiles) {
-              $path = $artifact.Path
-              if (-not (Test-Path $path)) {
-                throw "Windows artifact not found at '$path'."
-              }
-
-              $item = Get-Item $path
-              Write-Host "Adding $path ($($item.Length) bytes) as $($artifact.Entry)"
-              [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-                $zip,
-                $item.FullName,
-                $artifact.Entry,
-                [System.IO.Compression.CompressionLevel]::NoCompression
-              ) | Out-Null
-            }
-          } finally {
-            $zip.Dispose()
-          }
-
-          $zipItem = Get-Item $zipPath
-          Write-Host "Windows artifact zip: $zipPath ($($zipItem.Length) bytes)"
+          $exe = Get-Item "intiface-central-v$env:BUILD_NAME-win-x64.exe"
+          $pdb = Get-Item "intiface_central.pdb"
+          Write-Host "Windows release artifact: $($exe.Name) ($($exe.Length) bytes)"
+          Write-Host "Windows debug symbols: $($pdb.Name) ($($pdb.Length) bytes)"
 
       - name: Upload Windows artifacts
         uses: https://code.forgejo.org/forgejo/upload-artifact@v4
         with:
           name: windows-x64-build
-          path: intiface-central/intiface-central-windows-x64.zip
+          path: intiface-central/intiface-central-v${{ env.BUILD_NAME }}-win-x64.exe
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Upload Windows debug symbols
+        uses: https://code.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: windows-x64-pdb
+          path: intiface-central/intiface_central.pdb
           if-no-files-found: error
           compression-level: 0
 
@@ -620,7 +619,7 @@ jobs:
           DEVELOPER_ID_EXPORT_PATH="$PWD/build/macos/developer-id-export"
           DEVELOPER_ID_STAGING_PATH="$PWD/build/macos/developer-id-dmg"
           DEVELOPER_ID_NOTARY_ZIP="$PWD/build/macos/intiface-central-macos-developer-id-notary.zip"
-          DEVELOPER_ID_DMG="$PWD/intiface-central-macos-developer-id.dmg"
+          DEVELOPER_ID_DMG="$PWD/intiface-central-v${BUILD_NAME}-macos-universal.dmg"
           rm -rf "$DERIVED_DATA_PATH"
           rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH" "$DEVELOPER_ID_EXPORT_PATH" "$DEVELOPER_ID_STAGING_PATH" "$DEVELOPER_ID_NOTARY_ZIP"
           rm -f "$DEVELOPER_ID_DMG"
@@ -753,7 +752,7 @@ jobs:
           name: macos-universal-build
           path: |
             intiface-central/intiface-central-macos-app-store.pkg
-            intiface-central/intiface-central-macos-developer-id.dmg
+            intiface-central/intiface-central-v${{ env.BUILD_NAME }}-macos-universal.dmg
             intiface-central/intiface-central-macos-universal-app.zip
             intiface-central/intiface-central-macos.xcarchive.zip
           if-no-files-found: error
@@ -1040,6 +1039,13 @@ jobs:
       - name: Verify Android native libraries
         run: ./scripts/verify-android-native-libs.sh
 
+      - name: Stage Android artifacts
+        run: |
+          set -euo pipefail
+
+          cp build/app/outputs/flutter-apk/app-release.apk \
+            "intiface-central-v${BUILD_NAME}-android-arm-universal.apk"
+
       - name: Upload Android symbols to Sentry
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -1052,6 +1058,6 @@ jobs:
         with:
           name: android-release-build
           path: |
-            intiface-central/build/app/outputs/flutter-apk/app-release.apk
+            intiface-central/intiface-central-v${{ env.BUILD_NAME }}-android-arm-universal.apk
             intiface-central/build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
