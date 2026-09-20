@@ -329,11 +329,16 @@ jobs:
           Get-PSDrive C | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
           flutter config --enable-windows-desktop
           flutter pub get
+          # The runner wrapper sets ErrorActionPreference=Stop; under Windows
+          # PowerShell 5.1 that turns the build's first stderr line (e.g. a
+          # compiler warning) into a terminating NativeCommandError.
+          $ErrorActionPreference = 'Continue'
           flutter build windows --release --verbose `
             --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
             --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID" `
             2>&1 | Tee-Object -FilePath windows_build.log
           $code = $LASTEXITCODE
+          $ErrorActionPreference = 'Stop'
           if ($code -ne 0) {
             Write-Output "=== Disk free after failed build ==="
             Get-PSDrive C | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
