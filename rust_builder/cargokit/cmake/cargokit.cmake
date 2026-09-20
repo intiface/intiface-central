@@ -25,7 +25,10 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
         set(CARGOKIT_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
         set(OUTPUT_LIB "${CMAKE_CURRENT_BINARY_DIR}/${CARGOKIT_LIB_FULL_NAME}")
     endif()
-    set(CARGOKIT_TEMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/cargokit_build")
+    # Keep Cargo/CMake's intermediate tree close to the top-level build
+    # directory. SDL builds a deeply nested CMake probe tree, and putting it
+    # below the plugin directory can exceed Windows' legacy path limits.
+    set(CARGOKIT_TEMP_DIR "${CMAKE_BINARY_DIR}/cargo")
 
     if (FLUTTER_TARGET_PLATFORM)
         set(CARGOKIT_TARGET_PLATFORM "${FLUTTER_TARGET_PLATFORM}")
