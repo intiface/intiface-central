@@ -262,6 +262,17 @@ jobs:
           flutter config --no-analytics
           dart --disable-analytics
 
+      - name: Install NuGet CLI
+        run: |
+          $nugetDir = "C:\tools\nuget"
+          New-Item -ItemType Directory -Force $nugetDir | Out-Null
+          if (-not (Test-Path "$nugetDir\nuget.exe")) {
+            Invoke-WebRequest -Uri 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' -OutFile "$nugetDir\nuget.exe"
+          }
+          Add-Content -Path $env:GITHUB_PATH -Value $nugetDir
+          $env:PATH = "$nugetDir;$env:PATH"
+          & "$nugetDir\nuget.exe" help -Verbosity quiet | Select-Object -First 1
+
       - name: Tool versions
         run: |
           git --version
