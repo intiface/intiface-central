@@ -18,6 +18,7 @@ import 'package:intiface_central/bloc/util/asset_cubit.dart';
 import 'package:intiface_central/bloc/util/gui_settings_cubit.dart';
 import 'package:intiface_central/bloc/util/navigation_cubit.dart';
 import 'package:intiface_central/src/rust/api/device_config.dart';
+import 'package:intiface_central/src/rust/api/serial_ports.dart';
 import 'package:intiface_central/src/rust/api/simulated_devices.dart'
     as simulated_api;
 import 'package:intiface_central/src/rust/api/specifiers.dart';
@@ -32,6 +33,7 @@ import '../helpers/ffi_fixtures.dart';
 import '../helpers/fake_blocs.dart';
 import '../helpers/mocks.dart';
 import '../helpers/pump_app.dart';
+import '../helpers/rust_lib_mock.dart';
 import 'docs_screenshot_spec.dart';
 
 const _artifactDirectory = 'docs/assets/screenshots/generated';
@@ -68,6 +70,9 @@ class DocsWidgetScreenshotGenerator {
     }
 
     _setViewport(tester);
+
+    setUpRustLibMock(_rustApiForFixture());
+    addTearDown(tearDownRustLibMock);
 
     final rawBoundaryKey = GlobalKey();
     await _pumpSpec(tester, rawBoundaryKey, const []);
@@ -587,6 +592,17 @@ class DocsWidgetScreenshotGenerator {
         ),
       );
     }).toList();
+  }
+
+  MockRustLibApi _rustApiForFixture() {
+    final api = MockRustLibApi();
+    final ports = _serialSpecifiersForFixture()
+        .map((record) => ExposedSerialPortInfo(portName: record.$2.port))
+        .toList();
+    when(
+      () => api.crateApiSerialPortsListSerialPorts(),
+    ).thenAnswer((_) async => ports);
+    return api;
   }
 
   List<simulated_api.ExposedSimulatedDeviceArchetype>
