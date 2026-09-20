@@ -572,6 +572,19 @@ jobs:
           rustup update stable
           rustup default stable
 
+      - name: Install Flutter toolchain
+        run: |
+          set -euo pipefail
+
+          rm -rf "$HOME/flutter"
+          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
+
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/flutter/bin:$PATH"
+
+          flutter config --no-analytics
+          dart --disable-analytics
+
       - name: Tool versions
         run: |
           set -euo pipefail
@@ -837,6 +850,19 @@ jobs:
 
           rustup update stable
           rustup default stable
+
+      - name: Install Flutter toolchain
+        run: |
+          set -euo pipefail
+
+          rm -rf "$HOME/flutter"
+          git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
+
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/flutter/bin:$PATH"
+
+          flutter config --no-analytics
+          dart --disable-analytics
 
       - name: Tool versions
         run: |
