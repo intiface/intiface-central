@@ -329,7 +329,17 @@ jobs:
           flutter pub get
           flutter build windows --release `
             --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
-            --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID"
+            --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID" `
+            2>&1 | Tee-Object -FilePath windows_build.log
+          $code = $LASTEXITCODE
+          if ($code -ne 0) {
+            Write-Output "=== windows_build.log: matching lines ==="
+            Select-String -Path windows_build.log -Pattern 'error|Exception|Failed|failed' |
+              Select-Object -First 40 | ForEach-Object { $_.Line }
+            Write-Output "=== windows_build.log: last 150 lines ==="
+            Get-Content windows_build.log -Tail 150
+          }
+          exit $code
 
       - name: Sign Windows app bundle
         env:
