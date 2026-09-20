@@ -325,14 +325,18 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
         run: |
+          Write-Output "=== Disk free before build ==="
+          Get-PSDrive C | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
           flutter config --enable-windows-desktop
           flutter pub get
-          flutter build windows --release `
+          flutter build windows --release --verbose `
             --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
             --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID" `
             2>&1 | Tee-Object -FilePath windows_build.log
           $code = $LASTEXITCODE
           if ($code -ne 0) {
+            Write-Output "=== Disk free after failed build ==="
+            Get-PSDrive C | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
             Write-Output "=== windows_build.log: matching lines ==="
             Select-String -Path windows_build.log -Pattern 'error|Exception|Failed|failed' |
               Select-Object -First 40 | ForEach-Object { $_.Line }
