@@ -347,7 +347,7 @@ jobs:
           # PowerShell 5.1 that turns the build's first stderr line (e.g. a
           # compiler warning) into a terminating NativeCommandError.
           $ErrorActionPreference = 'Continue'
-          flutter build windows --release --verbose `
+          flutter build windows --release `
             --dart-define "SENTRY_DSN=$env:SENTRY_DSN" `
             --dart-define "DISCORD_CLIENT_ID=$env:DISCORD_CLIENT_ID" `
             2>&1 | Tee-Object -FilePath windows_build.log
