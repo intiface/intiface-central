@@ -40,7 +40,7 @@ flutter pub run build_runner build
 flutter_rust_bridge_codegen generate
 ```
 
-**Linux build dependencies:** `ninja-build`, `libudev-dev`, `libgtk-3-dev`, `libcurl4-openssl-dev`
+**Linux build dependencies:** `ninja-build`, `libudev-dev`, `libgtk-3-dev`, `libcurl4-openssl-dev`. `tray_manager` 0.5.x's Linux CMake also needs ayatana/appindicator dev packages at configure time; CI runner images provide them. The plugin is runtime-gated off on Linux (`supportsTray()`) and intentionally left compiled in, matching 3.1.1.
 
 ## Architecture
 

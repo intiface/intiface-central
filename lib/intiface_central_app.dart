@@ -41,7 +41,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:sentry/sentry_io.dart';
-import 'package:tray_manager/legacy.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:intiface_central/src/rust/frb_generated.dart';
 import 'package:intiface_central/src/rust/api/util.dart';

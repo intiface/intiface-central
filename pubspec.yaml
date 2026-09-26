@@ -47,7 +47,8 @@ dependencies:
   url_launcher: ^6.3.2
   version: ^3.0.2
   web_socket_channel: ^3.0.3
-  tray_manager: ^0.7.0
+  # This needs to stay < 0.7.0 until the cnativeapi bug is fixed
+  tray_manager: ^0.5.3
   window_manager: ^0.5.1
   flutter_multi_slider: ^2.0.1
   discord_rich_presence: ^1.1.1
