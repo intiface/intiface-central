@@ -1,3 +1,16 @@
+# v3.2.1 - 2026/09/27 (All Platforms)
+
+## Bugfixes
+
+- Fix Tray Manager crash on windows
+  - Rolled back to v0.5.3 to avoid cnativeapi crash
+- Update to btleplug 0.13.3
+  - Contains several small fixes, but also cleans up double free in Android that was #1 crash
+- Restore < 3.2.0 XInput configurations
+  - So our new config using SDL doesn't break everyone that hasn't updated yet
+- Update to latest Buttplug
+  - Tons of small bug fixes
+
 # v3.2.0 - 2026/09/20 (All Platforms)
 
 ## Features
