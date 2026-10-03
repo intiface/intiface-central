@@ -18,14 +18,15 @@ class CompactObservationWidget extends StatelessWidget {
     return BlocBuilder<ObservationCubit, ObservationState>(
       bloc: observation,
       builder: (context, state) {
-        final bufferSize = ObservationCubit.bufferSize;
-        final spots = <FlSpot>[];
-        final step = 10.0 / (bufferSize - 1);
-        for (var i = 0; i < state.values.length; i++) {
-          spots.add(FlSpot(-i * step, state.values[i]));
-        }
+        final spots = state.samples
+            .map(
+              (sample) =>
+                  FlSpot(state.secondsFromWindowEnd(sample), sample.value),
+            )
+            .toList(growable: false);
 
         final lineColor = Theme.of(context).colorScheme.primary;
+        final minY = observation.minValue;
 
         return Row(
           children: [
@@ -34,9 +35,9 @@ class CompactObservationWidget extends StatelessWidget {
               child: Text(
                 label,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 9,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 9,
+                ),
                 overflow: TextOverflow.clip,
                 maxLines: 1,
               ),
@@ -46,9 +47,9 @@ class CompactObservationWidget extends StatelessWidget {
                 height: 16,
                 child: LineChart(
                   LineChartData(
-                    minX: -10,
+                    minX: -ObservationCubit.historyWindow.inSeconds.toDouble(),
                     maxX: 0,
-                    minY: 0,
+                    minY: minY,
                     maxY: 1.0,
                     clipData: const FlClipData.all(),
                     lineBarsData: [
@@ -61,6 +62,14 @@ class CompactObservationWidget extends StatelessWidget {
                         belowBarData: BarAreaData(
                           show: true,
                           color: lineColor.withValues(alpha: 0.1),
+                          cutOffY: 0,
+                          applyCutOffY: minY < 0,
+                        ),
+                        aboveBarData: BarAreaData(
+                          show: minY < 0,
+                          color: lineColor.withValues(alpha: 0.1),
+                          cutOffY: 0,
+                          applyCutOffY: true,
                         ),
                       ),
                     ],
@@ -69,6 +78,7 @@ class CompactObservationWidget extends StatelessWidget {
                     borderData: FlBorderData(show: false),
                     lineTouchData: const LineTouchData(enabled: false),
                   ),
+                  duration: Duration.zero,
                 ),
               ),
             ),

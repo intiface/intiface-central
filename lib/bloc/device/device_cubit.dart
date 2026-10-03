@@ -29,6 +29,7 @@ class DeviceCubit extends Cubit<DeviceState> {
     _clientDevice = device;
     for (var feature in _clientDevice!.features.values) {
       if (feature.feature.output != null) {
+        int? minSteps;
         int? maxSteps;
         for (var output in feature.feature.output!.entries) {
           if (output.key == OutputType.hwPositionWithDuration) {
@@ -36,14 +37,18 @@ class DeviceCubit extends Cubit<DeviceState> {
           } else {
             _outputs.add(ValueOutputCubit(feature, output.key));
           }
-          final steps = output.value.value![1];
-          if (maxSteps == null || steps > maxSteps) {
-            maxSteps = steps;
+          final steps = output.value.value!;
+          if (minSteps == null || steps[0] < minSteps) {
+            minSteps = steps[0];
+          }
+          if (maxSteps == null || steps[1] > maxSteps) {
+            maxSteps = steps[1];
           }
         }
         _observations[feature.feature.featureIndex] = ObservationCubit(
           deviceIndex: _clientDevice!.index,
           featureIndex: feature.feature.featureIndex,
+          minSteps: minSteps!,
           maxSteps: maxSteps!,
           observationStream: _observationStream,
         );

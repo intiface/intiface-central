@@ -13,31 +13,38 @@ class ObservationChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lineColor = Theme.of(context).colorScheme.primary;
-
     return BlocBuilder<ObservationCubit, ObservationState>(
       bloc: _observationCubit,
       builder: (context, state) {
-        final spots = <FlSpot>[];
-        final latestValue = state.values.isEmpty ? 0.0 : state.values.first;
-        final step = 10.0 / (state.values.length - 1);
-        for (var i = 0; i < state.values.length; i++) {
-          spots.add(FlSpot(-i * step, state.values[i]));
-        }
+        final theme = Theme.of(context);
+        final lineColor = theme.colorScheme.primary;
+        final gridColor = theme.dividerColor.withValues(alpha: 0.25);
+        final labelStyle = theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+          fontSize: 9,
+        );
+        final spots = state.samples
+            .map(
+              (sample) =>
+                  FlSpot(state.secondsFromWindowEnd(sample), sample.value),
+            )
+            .toList(growable: false);
+        final latestValue = state.currentValue;
+        final minY = _observationCubit.minValue;
 
         return Semantics(
           label:
               'Device output observation ${_observationCubit.deviceIndex}:${_observationCubit.featureIndex}',
-          value: latestValue.toStringAsFixed(2),
+          value: '${(latestValue * 100).round()} percent',
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            padding: const EdgeInsets.fromLTRB(12, 6, 12, 4),
             child: SizedBox(
-              height: 60,
+              height: 112,
               child: LineChart(
                 LineChartData(
-                  minX: -10,
+                  minX: -ObservationCubit.historyWindow.inSeconds.toDouble(),
                   maxX: 0,
-                  minY: 0,
+                  minY: minY,
                   maxY: 1.0,
                   clipData: const FlClipData.all(),
                   lineBarsData: [
@@ -47,36 +54,101 @@ class ObservationChartWidget extends StatelessWidget {
                       isStepLineChart: false,
                       color: lineColor,
                       barWidth: 2,
-                      dotData: const FlDotData(show: false),
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(
+                        show: true,
+                        checkToShowDot: (spot, _) =>
+                            spots.isNotEmpty && spot == spots.last,
+                        getDotPainter: (_, _, _, _) => FlDotCirclePainter(
+                          radius: 3,
+                          color: lineColor,
+                          strokeWidth: 1.5,
+                          strokeColor: theme.colorScheme.surface,
+                        ),
+                      ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: lineColor.withValues(alpha: 0.15),
+                        cutOffY: 0,
+                        applyCutOffY: minY < 0,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            lineColor.withValues(alpha: 0.18),
+                            lineColor.withValues(alpha: 0.02),
+                          ],
+                        ),
+                      ),
+                      aboveBarData: BarAreaData(
+                        show: minY < 0,
+                        cutOffY: 0,
+                        applyCutOffY: true,
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            lineColor.withValues(alpha: 0.18),
+                            lineColor.withValues(alpha: 0.02),
+                          ],
+                        ),
                       ),
                     ),
                   ],
-                  titlesData: const FlTitlesData(show: false),
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 0.5,
+                        reservedSize: 30,
+                        getTitlesWidget: (value, meta) => SideTitleWidget(
+                          meta: meta,
+                          space: 4,
+                          child: Text(
+                            '${(value * 100).round()}%',
+                            style: labelStyle,
+                          ),
+                        ),
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 2,
+                        reservedSize: 20,
+                        getTitlesWidget: (value, meta) => SideTitleWidget(
+                          meta: meta,
+                          space: 4,
+                          child: Text(
+                            value == 0 ? 'now' : '${value.round()}s',
+                            style: labelStyle,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   gridData: FlGridData(
                     show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: 0.5,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: Theme.of(
-                        context,
-                      ).dividerColor.withValues(alpha: 0.3),
-                      strokeWidth: 0.5,
-                    ),
+                    drawVerticalLine: true,
+                    horizontalInterval: 0.25,
+                    verticalInterval: 2,
+                    getDrawingHorizontalLine: (_) =>
+                        FlLine(color: gridColor, strokeWidth: 0.5),
+                    getDrawingVerticalLine: (_) =>
+                        FlLine(color: gridColor, strokeWidth: 0.5),
                   ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).dividerColor.withValues(alpha: 0.3),
-                      width: 0.5,
-                    ),
+                    border: Border.all(color: gridColor, width: 0.5),
                   ),
                   lineTouchData: const LineTouchData(enabled: false),
                 ),
+                duration: Duration.zero,
               ),
             ),
           ),
