@@ -802,11 +802,28 @@ class DocsWidgetScreenshotGenerator {
     required List<double> values,
   }) {
     final observationCubit = MockObservationCubit();
-    when(() => observationCubit.state).thenReturn(ObservationState(values));
+    final windowEnd = Duration.zero;
+    final samples = values
+        .asMap()
+        .entries
+        .map(
+          (entry) => ObservationSample(
+            timestamp:
+                windowEnd -
+                ObservationCubit.historyWindow *
+                    ((values.length - entry.key - 1) / (values.length - 1)),
+            value: entry.value,
+          ),
+        )
+        .toList(growable: false);
+    when(
+      () => observationCubit.state,
+    ).thenReturn(ObservationState(samples: samples, windowEnd: windowEnd));
     when(() => observationCubit.stream).thenAnswer((_) => const Stream.empty());
     when(() => observationCubit.deviceIndex).thenReturn(deviceIndex);
     when(() => observationCubit.featureIndex).thenReturn(featureIndex);
     when(() => observationCubit.maxSteps).thenReturn(20);
+    when(() => observationCubit.minValue).thenReturn(0.0);
     return observationCubit;
   }
 
@@ -1178,7 +1195,7 @@ class _DocsDeviceOutputFeature {
   }
 
   static List<double> _seededObservationValues(int seed) {
-    return List<double>.generate(ObservationCubit.bufferSize, (index) {
+    return List<double>.generate(601, (index) {
       final phase = (index + seed * 7) % 24;
       final value = phase < 12 ? phase / 12 : (24 - phase) / 12;
       return value.clamp(0.0, 1.0).toDouble();

@@ -1,75 +1,144 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:bloc/bloc.dart';
 import 'package:intiface_central/bloc/engine/engine_messages.dart';
 
-class ObservationState {
-  final List<double> values;
+typedef ObservationClock = Duration Function();
+typedef ObservationTimerFactory =
+    Timer Function(Duration interval, void Function() callback);
 
-  ObservationState(this.values);
+class ObservationSample {
+  final Duration timestamp;
+  final double value;
+
+  const ObservationSample({required this.timestamp, required this.value});
+}
+
+class ObservationState {
+  final List<ObservationSample> samples;
+  final Duration windowEnd;
+
+  const ObservationState({required this.samples, required this.windowEnd});
+
+  double get currentValue => samples.isEmpty ? 0.0 : samples.last.value;
+
+  double secondsFromWindowEnd(ObservationSample sample) {
+    return (sample.timestamp - windowEnd).inMicroseconds /
+        Duration.microsecondsPerSecond;
+  }
 }
 
 class ObservationCubit extends Cubit<ObservationState> {
-  static const int bufferSize = 100;
+  static const Duration historyWindow = Duration(seconds: 10);
+  static const Duration presentationInterval = Duration(microseconds: 16667);
+  static const int maxHistorySamples = 1200;
 
   final int deviceIndex;
   final int featureIndex;
+  final int minSteps;
   final int maxSteps;
-  final Queue<double> _buffer = Queue.of(List.filled(bufferSize, 0.0));
+  final ObservationClock _clock;
+  final ObservationTimerFactory _timerFactory;
+  final Queue<ObservationSample> _history = Queue<ObservationSample>();
   StreamSubscription<DeviceOutputObservation>? _subscription;
   Timer? _tickTimer;
-  double _lastValue = 0.0;
+  Duration _lastTimestamp = Duration.zero;
+  double _currentValue = 0.0;
 
   ObservationCubit({
     required this.deviceIndex,
     required this.featureIndex,
+    this.minSteps = 0,
     required this.maxSteps,
     required Stream<DeviceOutputObservation> observationStream,
-  }) : super(ObservationState(List.filled(bufferSize, 0.0))) {
+    ObservationClock? clock,
+    ObservationTimerFactory? timerFactory,
+  }) : _clock = clock ?? _createClock(),
+       _timerFactory = timerFactory ?? _createTimer,
+       super(const ObservationState(samples: [], windowEnd: Duration.zero)) {
+    final now = _now();
+    _history
+      ..add(
+        ObservationSample(timestamp: now - historyWindow, value: _currentValue),
+      )
+      ..add(ObservationSample(timestamp: now, value: _currentValue));
+    _emitState(now);
+
     _subscription = observationStream
-        .where((obs) =>
-            obs.deviceIndex == deviceIndex &&
-            obs.featureIndex == featureIndex)
+        .where(
+          (obs) =>
+              obs.deviceIndex == deviceIndex &&
+              obs.featureIndex == featureIndex,
+        )
         .listen(_onObservation);
 
-    _startTimer();
+    _tickTimer = _timerFactory(presentationInterval, _tick);
   }
 
   void _onObservation(DeviceOutputObservation obs) {
+    if (isClosed) return;
+
     final normalized = maxSteps > 0 ? obs.value / maxSteps : 0.0;
-    _lastValue = normalized.clamp(0.0, 1.0);
-    _push(_lastValue);
-    _restartTimer();
+    _currentValue = normalized.clamp(minValue, 1.0);
   }
 
-  void _startTimer() {
-    _tickTimer = Timer.periodic(
-      const Duration(milliseconds: 100),
-      (_) => _tick(),
-    );
+  static ObservationClock _createClock() {
+    final stopwatch = Stopwatch()..start();
+    return () => stopwatch.elapsed;
   }
 
-  void _restartTimer() {
-    _tickTimer?.cancel();
-    _startTimer();
+  static Timer _createTimer(Duration interval, void Function() callback) {
+    return Timer.periodic(interval, (_) => callback());
   }
 
   void _tick() {
     if (isClosed) return;
-    _push(_lastValue);
+
+    final now = _now();
+    _history.add(ObservationSample(timestamp: now, value: _currentValue));
+    _pruneHistory(now);
+    _emitState(now);
   }
 
-  void _push(double value) {
-    if (isClosed) return;
-    _buffer.removeLast();
-    _buffer.addFirst(value);
-    emit(ObservationState(List.unmodifiable(_buffer.toList())));
+  Duration _now() {
+    final timestamp = _clock();
+    if (timestamp < _lastTimestamp) {
+      return _lastTimestamp;
+    }
+    _lastTimestamp = timestamp;
+    return timestamp;
   }
+
+  void _pruneHistory(Duration now) {
+    final cutoff = now - historyWindow;
+    while (_history.length > 2 && _history.elementAt(1).timestamp < cutoff) {
+      _history.removeFirst();
+    }
+    while (_history.length > maxHistorySamples) {
+      _history.removeFirst();
+    }
+  }
+
+  void _emitState(Duration now) {
+    if (isClosed) return;
+    emit(
+      ObservationState(
+        samples: List<ObservationSample>.unmodifiable(_history),
+        windowEnd: now,
+      ),
+    );
+  }
+
+  double get minValue =>
+      maxSteps > 0 ? (minSteps / maxSteps).clamp(-1.0, 0.0) : 0.0;
+
+  bool get hasActiveTimer => _tickTimer?.isActive ?? false;
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     _tickTimer?.cancel();
-    _subscription?.cancel();
-    return super.close();
+    await _subscription?.cancel();
+    await super.close();
   }
 }
