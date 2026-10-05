@@ -1,3 +1,18 @@
+# v3.2.2 - 2026/10/05 (All Platforms)
+
+## Features
+
+- Smoothed device output observation charts
+  - Charts now scroll in real time based on when samples were received, instead of only moving when new device events arrive
+  - Signed outputs like rotation now chart from -100% to 100% instead of clamping to zero
+  - Device detail chart now has percentage and time axes, grid lines, and a current value marker
+
+## Bugfixes
+
+- Keep chart history aligned to the 10 second window when device timers run faster than nominal
+- Update to Buttplug 12.0.2 / Intiface Engine 5.0.5
+  - Updates btleplug to 0.13.4
+
 # v3.2.1 - 2026/09/27 (All Platforms)
 
 ## Bugfixes
