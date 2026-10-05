@@ -116,7 +116,12 @@ class ObservationCubit extends Cubit<ObservationState> {
       _history.removeFirst();
     }
     while (_history.length > maxHistorySamples) {
-      _history.removeFirst();
+      if (_history.first.timestamp < cutoff) {
+        // Keep the window-edge sample so the line still reaches the left edge.
+        _history.remove(_history.elementAt(1));
+      } else {
+        _history.removeFirst();
+      }
     }
   }
 
@@ -132,8 +137,6 @@ class ObservationCubit extends Cubit<ObservationState> {
 
   double get minValue =>
       maxSteps > 0 ? (minSteps / maxSteps).clamp(-1.0, 0.0) : 0.0;
-
-  bool get hasActiveTimer => _tickTimer?.isActive ?? false;
 
   @override
   Future<void> close() async {

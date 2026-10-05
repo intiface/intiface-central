@@ -88,6 +88,34 @@ void main() {
       );
     });
 
+    test('keeps the window-edge sample when the safety cap binds', () async {
+      final observations = StreamController<DeviceOutputObservation>.broadcast(
+        sync: true,
+      );
+      final harness = ObservationHarness();
+      final cubit = _createCubit(observations, harness);
+      addTearDown(() async {
+        await cubit.close();
+        await observations.close();
+      });
+
+      for (var i = 0; i < 2 * ObservationCubit.maxHistorySamples; i++) {
+        harness.advance(const Duration(milliseconds: 5));
+      }
+
+      final samples = cubit.state.samples;
+      expect(
+        samples.length,
+        lessThanOrEqualTo(ObservationCubit.maxHistorySamples),
+      );
+      expect(
+        samples.first.timestamp,
+        lessThanOrEqualTo(
+          cubit.state.windowEnd - ObservationCubit.historyWindow,
+        ),
+      );
+    });
+
     test(
       'timestamps move existing samples left as the window advances',
       () async {
@@ -116,10 +144,9 @@ void main() {
       final harness = ObservationHarness();
       final cubit = _createCubit(observations, harness);
 
-      expect(cubit.hasActiveTimer, isTrue);
+      expect(harness.timer!.isActive, isTrue);
       await cubit.close();
 
-      expect(cubit.hasActiveTimer, isFalse);
       expect(harness.timer!.isActive, isFalse);
       await observations.close();
     });
