@@ -402,9 +402,9 @@ checksum = "dc0b364ead1874514c8c2855ab558056ebfeb775653e7ae45ff72f28f8f3166c"
 
 [[package]]
 name = "btleplug"
-version = "0.13.3"
+version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea3b8e1364e25155f481cabb5a4fce097a73b84f3493ff1930c2c642d44fc858"
+checksum = "f48faeeeb43498bf6f58a610cb92e68ac3ebef7dd723963fd172e67f045b058c"
 dependencies = [
  "async-trait",
  "bitflags 2.13.2",
@@ -462,9 +462,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_client_in_process"
-version = "12.0.3"
+version = "12.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45a07c3658a8ac728cff3509c1ac97f1001887c5e1e856c6f34ec97b7ec764f8"
+checksum = "8fcd397c3eb7efbcfbe4c84e46cf9c10773b6a4a23f79f5057c25739ce3fbeb2"
 dependencies = [
  "buttplug_client",
  "buttplug_core",
@@ -518,9 +518,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server"
-version = "12.0.1"
+version = "12.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b4dabd4f59f353f5b4b021a1fae7bd73c23be5b37085f3aa070efe2f2614065"
+checksum = "46d6ce21f035cb8f87c24973e8ea0f17633b94b67144aeaf9b75377c745d6f7c"
 dependencies = [
  "aes",
  "async-trait",
@@ -584,9 +584,9 @@ dependencies = [
 
 [[package]]
 name = "buttplug_server_hwmgr_btleplug"
-version = "12.0.2"
+version = "12.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c48c40199e2ce01a148882771b28152733e7c60df32bcd7e6d8c8b2ef71a857"
+checksum = "00a316246049a131d9f3c56920d04015c08e555357b141b54ba22cf8e0f08cb1"
 dependencies = [
  "async-trait",
  "btleplug",
@@ -1911,9 +1911,9 @@ dependencies = [
 
 [[package]]
 name = "intiface-engine"
-version = "5.0.4"
+version = "5.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95f94ff6ed6d4ce3bd4dcf50429420f2ea839957e93978c83b30036e3be13c56"
+checksum = "6fbfbe9196a429747cfc54d25307403db596668796e8f77855a7acc19f06ccac"
 dependencies = [
  "anyhow",
  "argh",
@@ -3130,7 +3130,7 @@ checksum = "5a2d2f3481209a6b42eec2fbb49063fb4e8d35b57023401495d4fe0f85c817f0"
 
 [[package]]
 name = "rust_lib_intiface_central"
-version = "2.1.3"
+version = "2.1.4"
 dependencies = [
  "anyhow",
  "async-trait",

@@ -1,6 +1,6 @@
 [package]
 name = "rust_lib_intiface_central"
-version = "2.1.3"
+version = "2.1.4"
 license-file = "../LICENSE.md"
 authors = ["Nonpolynomial Labs, LLC <kyle@nonpolynomial.com>"]
 description = "Rust-Flutter bridge for IntifaceEngine" 
@@ -15,9 +15,9 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 flutter_rust_bridge = { version = "=2.13.0", features = ["uuid"] }
 buttplug_core = "11.0.2"
-buttplug_server = "12.0.1"
+buttplug_server = "12.0.2"
 buttplug_server_device_config = "12.0.1"
-intiface-engine = "5.0.4"
+intiface-engine = "5.0.5"
 #buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
 #buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
 #buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
@@ -30,7 +30,7 @@ anyhow = "1.0.104"
 # THIS VERSION ABSOLUTELY, POSITIVELY MUST MATCH WHATEVER BUTTPLUG LINKS, OTHERWISE THERE WILL BE
 # STATIC MISALIGNMENT AND YOU DO NOT WANT TO SPEND ANOTHER 3 DAYS DEBUGGING THAT.
 #btleplug = { version = "0.12", path = "../../btleplug" }
-btleplug = { version = "0.13.3" }
+btleplug = { version = "0.13.4" }
 thiserror = "2.0.21"
 getset = "0.1.7"
 serde = "1.0.229"
